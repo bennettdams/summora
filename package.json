@@ -53,5 +53,7 @@
     "tailwindcss": "^2.1.1",
     "typescript": "^4.1.3"
   },
-  "//devDependencies": ["autoprefixer & postcss for Tailwind"]
+  "//devDependencies": [
+    "autoprefixer & postcss for Tailwind"
+  ]
 }

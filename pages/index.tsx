@@ -1,14 +1,16 @@
 import Head from 'next/head'
 
 export const Home = (): JSX.Element => (
-  <div className="min-h-screen flex flex-col items-center justify-center">
+  <div className="min-h-screen flex flex-col items-center justify-center bg-lime-50">
     <Head>
       <title>Condu</title>
       <link rel="icon" href="/favicon.ico" />
     </Head>
 
-    <main className="flex-1 flex flex-col items-center justify-center">
-      <h1 className="title bg-red-200">Welcome to Condu!</h1>
+    <header className="h-12 w-full top-0 fixed bg-lime-500">Condu</header>
+
+    <main className="flex-1 mt-20 flex flex-col">
+      <h1 className="bg-red-200">Welcome to Condu!</h1>
     </main>
 
     <footer className="w-full h-24 border-t flex items-center justify-center">
