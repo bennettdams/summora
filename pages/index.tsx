@@ -1,7 +1,11 @@
 import { GetServerSideProps } from 'next'
+import Link from 'next/link'
 import Head from 'next/head'
 import { Post, Prisma, PrismaClient } from '@prisma/client'
 import { useState } from 'react'
+import useRouterRefresh from '../hooks/use-router-refresh'
+import { useRouter } from 'next/router'
+
 const prisma = new PrismaClient()
 
 export const getServerSideProps: GetServerSideProps = async () => {
@@ -31,10 +35,13 @@ export const Home = ({
 }: {
   initialPosts: Post[]
 }): JSX.Element => {
+  const refresh = useRouterRefresh()
+  const router = useRouter()
+  const refreshData = () => router.replace(router.asPath)
   const [posts] = useState<Post[]>(initialPosts)
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-lime-50">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-fuchsia-100 via-teal-100 to-blue-300">
       <Head>
         <title>Condu</title>
         <link rel="icon" href="/favicon.ico" />
@@ -48,9 +55,11 @@ export const Home = ({
           onClick={async () => {
             try {
               const result = await savePost({
-                title: 'title 2',
+                title: 'title ' + Math.random(),
                 content: 'content',
               })
+              refresh()
+              refreshData()
               console.log(result)
             } catch (err) {
               console.log(err)
@@ -59,11 +68,15 @@ export const Home = ({
         >
           New
         </button>
-        <ul>
+        <div>
           {posts.map((post) => (
-            <li key={post.id}>{post.title}</li>
+            <Link key={post.id} href={`/post/${post.id}`}>
+              <div className="bg-white">
+                <p>{post.title}</p>
+              </div>
+            </Link>
           ))}
-        </ul>
+        </div>
       </main>
 
       <footer className="w-full h-24 border-t flex items-center justify-center">

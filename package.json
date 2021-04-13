@@ -11,6 +11,8 @@
     "type-check": "tsc --pretty --noEmit",
     "p:dev": "npx prisma migrate dev",
     "p:studio": "npx prisma studio",
+    "p:reset": "npx prisma migrate reset",
+    "p:create": "npx prisma migrate dev --create-only",
     "format": "prettier --write .",
     "lint": "eslint . --ext ts --ext tsx --ext js",
     "test": "jest",
