@@ -1,8 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-import { PrismaClient, Prisma } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { Prisma } from '@prisma/client'
+import { prisma } from '../../prisma/prisma'
 
 // http://localhost:3000/api/seed
 
@@ -11,6 +10,8 @@ export default async (
   res: NextApiResponse
 ): Promise<void> => {
   try {
+    await prisma.post.deleteMany({})
+
     posts.forEach(async (post) => {
       await prisma.post.create({ data: post })
     })
@@ -21,6 +22,7 @@ export default async (
 }
 
 const posts: Prisma.PostCreateInput[] = [...new Array(3)].map((_, i) => ({
-  title: i + 1 + ' title',
-  content: i + 1 + ' content',
+  title: 'title ' + (i + 1),
+  content: 'content' + (i + 1),
+  createdAt: new Date().toISOString(),
 }))

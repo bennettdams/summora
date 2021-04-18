@@ -34,7 +34,8 @@
     "@prisma/client": "^2.20.1",
     "next": "latest",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "react-query": "^3.13.10"
   },
   "devDependencies": {
     "@testing-library/react": "^11.2.5",
@@ -48,6 +49,7 @@
     "eslint": "^7.19.0",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "husky": "^4.2.3",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^26.6.3",
