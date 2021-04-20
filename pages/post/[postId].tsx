@@ -1,7 +1,9 @@
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
+import { Box } from '../../components/Box'
+import { Button } from '../../components/Button'
 import { LoadingAnimation } from '../../components/LoadingAnimation'
-import { Page } from '../../components/Page'
+import { Page, PageSection } from '../../components/Page'
 import { usePost } from '../../data/post-helper'
 
 // export const getServerSideProps: GetServerSideProps = async ({
@@ -44,12 +46,19 @@ export const PostPage = (): JSX.Element => {
         <ErrorPage statusCode={400}>Error while fetching post</ErrorPage>
       ) : post ? (
         <>
-          <h1 className="text-2xl">{post.title}</h1>
-          <h1 className="text-sm">{post.id}</h1>
-          <p>{post.content}</p>
+          <PageSection hideTopMargin>
+            <Box>
+              <h1 className="text-2xl">{post.title}</h1>
+              <h1 className="text-sm">{post.id}</h1>
+              <p>{post.content}</p>
+            </Box>
+          </PageSection>
+          <PageSection>
+            <Button>Add step</Button>
+          </PageSection>
         </>
       ) : (
-        <p>weird</p>
+        <p>error?</p>
       )}
     </Page>
   )

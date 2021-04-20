@@ -3,8 +3,6 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { Prisma } from '@prisma/client'
 import { prisma } from '../../prisma/prisma'
 
-// http://localhost:3000/api/seed
-
 export default async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -21,8 +19,12 @@ export default async (
   }
 }
 
-const posts: Prisma.PostCreateInput[] = [...new Array(3)].map((_, i) => ({
-  title: 'title ' + (i + 1),
-  content: 'content' + (i + 1),
+const posts: Prisma.PostCreateInput[] = [...new Array(11)].map((_, i) => ({
+  title: 'Title ' + (i + 1),
+  subtitle:
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' + (i + 1),
+  content:
+    'Vestibulum aliquam, lorem in laoreet facilisis, sapien augue varius velit, nec mollis sem augue vel mauris. Ut aliquet, augue eu fringilla tincidunt, dui massa sodales erat, id imperdiet neque metus sit amet urna. In vitae eros a massa tincidunt placerat. Donec vehicula nisi et erat dapibus condimentum.' +
+    (i + 1),
   createdAt: new Date().toISOString(),
 }))

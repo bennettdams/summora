@@ -1,9 +1,11 @@
-import Link from 'next/link'
 import Head from 'next/head'
-import { Page } from '../components/Page'
+import { Page, PageSection } from '../components/Page'
 import ErrorPage from 'next/error'
 import { LoadingAnimation } from '../components/LoadingAnimation'
 import { usePosts } from '../data/post-helper'
+import { Link } from '../components/Link'
+import { Post } from '.prisma/client'
+import { Box } from '../components/Box'
 
 export const Home = (): JSX.Element => {
   const { posts, isLoading, createPost } = usePosts()
@@ -14,37 +16,44 @@ export const Home = (): JSX.Element => {
         <title>Condun</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <h1>Welcome to Condun!</h1>
+
+      <div className="text-center text-7xl font-extrabold leading-none tracking-tight">
+        <span className="uppercase decoration-clone bg-clip-text text-transparent bg-gradient-to-b from-amber-400 to-orange-800">
+          Condun
+        </span>
+      </div>
+
       {isLoading ? (
         <LoadingAnimation />
       ) : !posts ? (
         <ErrorPage statusCode={404}>Error while fetching posts</ErrorPage>
       ) : (
         <>
-          <button
-            onClick={async () => {
-              try {
-                await createPost({
-                  title: 'title ' + Math.random(),
-                  content: 'content' + Math.random(),
-                  createdAt: new Date().toISOString(),
-                })
-              } catch (err) {
-                console.log(err)
-              }
-            }}
-          >
-            New
-          </button>
-          <div className="flex-1 space-y-2">
-            {posts.map((post) => (
-              <Link key={post.id} href={`/post/${post.id}`}>
-                <div className="bg-white cursor-pointer p-4">
-                  <p>{post.title}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <PageSection>
+            <button
+              className="p-10 bg-green-300"
+              onClick={async () => {
+                try {
+                  await createPost({
+                    title: 'title ' + Math.random(),
+                    content: 'content' + Math.random(),
+                    createdAt: new Date().toISOString(),
+                  })
+                } catch (err) {
+                  console.log(err)
+                }
+              }}
+            >
+              New
+            </button>
+          </PageSection>
+          <PageSection>
+            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:gap-12">
+              {posts.map((post) => (
+                <PostItem key={post.id} post={post} />
+              ))}
+            </div>
+          </PageSection>
         </>
       )}
     </Page>
@@ -52,3 +61,50 @@ export const Home = (): JSX.Element => {
 }
 
 export default Home
+
+function PostItem({ post }: { post: Post }): JSX.Element {
+  return (
+    <Link to={`/post/${post.id}`}>
+      <Box noPadding>
+        <div className="w-full p-4 h-60 bg-gradient-to-b from-fuchsia-50 to-blue-50 pb-24 rounded-lg text-center relative">
+          <h2 className="tracking-widest text-xs font-medium text-gray-400">
+            CATEGORY
+          </h2>
+          <h1 className="mt-1 sm:text-2xl text-xl font-medium">{post.title}</h1>
+          <p className="mt-3 leading-relaxed">{post.subtitle}</p>
+          <div className="text-center mt-2 leading-none flex justify-center absolute bottom-0 left-0 w-full py-4">
+            <span className="text-gray-400 mr-3 inline-flex items-center leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
+              <svg
+                className="w-4 h-4 mr-1"
+                stroke="currentColor"
+                strokeWidth="2"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                viewBox="0 0 24 24"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              1.2K
+            </span>
+            <span className="text-gray-400 inline-flex items-center leading-none text-sm">
+              <svg
+                className="w-4 h-4 mr-1"
+                stroke="currentColor"
+                strokeWidth="2"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                viewBox="0 0 24 24"
+              >
+                <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
+              </svg>
+              6
+            </span>
+          </div>
+        </div>
+      </Box>
+    </Link>
+  )
+}

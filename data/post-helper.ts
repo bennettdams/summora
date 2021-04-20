@@ -3,12 +3,12 @@ import { useMutation, useQuery } from 'react-query'
 import { queryClient } from '../pages/_app'
 
 const url = '/api/posts'
-const queryKey = 'posts'
+export const queryKeyPosts = 'posts'
 
 function usePostsMutation() {
   const createMutation = useMutation(createPost, {
     onSuccess: () => {
-      queryClient.invalidateQueries(queryKey)
+      queryClient.invalidateQueries(queryKeyPosts)
     },
   })
 
@@ -16,7 +16,10 @@ function usePostsMutation() {
 }
 
 export function usePosts() {
-  const { data, isLoading, isError } = useQuery<Post[]>(queryKey, fetchPosts)
+  const { data, isLoading, isError } = useQuery<Post[]>(
+    queryKeyPosts,
+    fetchPosts
+  )
   const { create } = usePostsMutation()
 
   return { posts: data || null, isLoading, isError, createPost: create.mutate }
@@ -24,7 +27,7 @@ export function usePosts() {
 
 export function usePost(postId: string | null) {
   const { data, isLoading, isError } = useQuery<Post>(
-    [queryKey, postId],
+    [queryKeyPosts, postId],
     () => fetchPost(postId || ''),
     { enabled: !!postId }
   )

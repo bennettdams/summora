@@ -7,3 +7,17 @@ export function Page({ children }: { children: ReactNode }): JSX.Element {
     </main>
   )
 }
+
+export function PageSection({
+  children,
+  hideTopMargin = false,
+}: {
+  children: ReactNode
+  hideTopMargin?: boolean
+}): JSX.Element {
+  return (
+    <section className={`w-full ${hideTopMargin ? 'mt-0' : 'mt-10'}`}>
+      {children}
+    </section>
+  )
+}

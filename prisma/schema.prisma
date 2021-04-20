@@ -11,8 +11,9 @@ generator client {
 }
 
 model Post {
-  id        String @id @default(cuid())
+  id        String  @id @default(cuid())
   createdAt String
   title     String
+  subtitle  String?
   content   String
 }
