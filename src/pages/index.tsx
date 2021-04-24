@@ -4,8 +4,8 @@ import ErrorPage from 'next/error'
 import { LoadingAnimation } from '../components/LoadingAnimation'
 import { usePosts } from '../data/post-helper'
 import { Link } from '../components/Link'
-import { Post } from '.prisma/client'
 import { Box } from '../components/Box'
+import { Post } from './api/posts/[postId]'
 
 export const Home = (): JSX.Element => {
   const { posts, isLoading, createPost } = usePosts()
@@ -37,9 +37,10 @@ export const Home = (): JSX.Element => {
                   await createPost({
                     title: 'title ' + Math.random(),
                     subtitle: 'subtitle ' + Math.random(),
+                    category: 'category A',
                   })
                 } catch (err) {
-                  console.log(err)
+                  throw new Error(err)
                 }
               }}
             >
@@ -67,7 +68,7 @@ function PostItem({ post }: { post: Post }): JSX.Element {
       <Box noPadding>
         <div className="w-full p-4 h-60 bg-gradient-to-b from-fuchsia-50 to-blue-50 rounded-xl text-center relative">
           <h2 className="tracking-widest text-xs font-medium text-gray-400">
-            CATEGORY
+            {post.category}
           </h2>
           <h1 className="mt-1 sm:text-2xl text-xl font-medium">{post.title}</h1>
           <p className="mt-3 leading-relaxed">{post.subtitle}</p>

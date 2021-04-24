@@ -1,5 +1,6 @@
-import { Post, Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { useMutation, useQuery } from 'react-query'
+import { Post } from '../pages/api/posts/[postId]'
 import { queryClient } from '../pages/_app'
 
 const url = '/api/posts'
@@ -31,6 +32,7 @@ export function usePost(postId: string | null) {
     () => fetchPost(postId || ''),
     { enabled: !!postId }
   )
+
   const { create } = usePostsMutation()
 
   return { post: data || null, isLoading, isError, create: create.mutate }

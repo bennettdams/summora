@@ -1,5 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
+import { Prisma } from '@prisma/client'
+
+export type Post = Exclude<Prisma.PromiseReturnType<typeof getPost>, null>
+
+async function getPost(postId: string) {
+  return await prisma.post.findUnique({
+    where: { id: postId },
+    include: { segments: true },
+  })
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -19,7 +29,7 @@ export default async function handler(
       } else if (typeof postId !== 'string') {
         res.status(400).end('Post ID wrong format!')
       } else {
-        const post = await prisma.post.findUnique({ where: { id: postId } })
+        const post = await getPost(postId)
         res.status(200).json(post)
       }
       break

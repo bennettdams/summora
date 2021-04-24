@@ -19,23 +19,23 @@ generator client {
 // }
 
 model Post {
+  id        String        @id @default(cuid())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  title     String
+  subtitle  String?
+  category  String
+  segments  PostSegment[]
+}
+
+model PostSegment {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   title     String
   subtitle  String?
-  // segments  PostSegment[]
+  // for Post.segments
+  Post      Post     @relation(fields: [postId], references: [id])
+  postId    String
+  //
 }
-
-// model PostSegment {
-//   id        String  @id @default(cuid())
-//   createdAt String
-//   updatedAt String
-//   title     String
-//   subtitle  String?
-//   content   String
-//   // Post
-//   Post      Post    @relation(fields: [postId], references: [id])
-//   postId    String // relation scalar field  (used in the `@relation` attribute above)
-//   //
-// }

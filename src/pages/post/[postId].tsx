@@ -1,3 +1,4 @@
+import { PostSegment } from '@prisma/client'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { Box } from '../../components/Box'
@@ -49,8 +50,8 @@ export const PostPage = (): JSX.Element => {
           <PageSection hideTopMargin>
             <div className="flex flex-col md:flex-row">
               <div className="w-full md:w-2/3">
-                <p className="text-5xl">{post.title}</p>
-                <p className="italic">{post.subtitle}</p>
+                <p className="text-5xl text-white">{post.title}</p>
+                <p className="italic mt-2">{post.subtitle}</p>
               </div>
               <div className="w-full md:w-1/3">
                 <Box>
@@ -68,7 +69,11 @@ export const PostPage = (): JSX.Element => {
             </div>
           </PageSection>
           <PageSection>
-            <div>{/* <p>{post.content}</p> */}</div>
+            <div>
+              {post.segments.map((segment) => (
+                <Segment key={segment.id} segment={segment} />
+              ))}
+            </div>
           </PageSection>
           <PageSection>
             <Button>Add step</Button>
@@ -82,3 +87,7 @@ export const PostPage = (): JSX.Element => {
 }
 
 export default PostPage
+
+function Segment({ segment }: { segment: PostSegment }) {
+  return <div key={segment.id}>{segment.title}</div>
+}
