@@ -47,11 +47,28 @@ export const PostPage = (): JSX.Element => {
       ) : post ? (
         <>
           <PageSection hideTopMargin>
-            <Box>
-              <h1 className="text-2xl">{post.title}</h1>
-              <h1 className="text-sm">{post.id}</h1>
-              <p>{post.content}</p>
-            </Box>
+            <div className="flex flex-col md:flex-row">
+              <div className="w-full md:w-2/3">
+                <p className="text-5xl">{post.title}</p>
+                <p className="italic">{post.subtitle}</p>
+              </div>
+              <div className="w-full md:w-1/3">
+                <Box>
+                  <div className="divide-y-1">
+                    <p className="text-sm">{post.id}</p>
+                    <p>
+                      Created at: {new Date(post.createdAt).toLocaleString()}
+                    </p>
+                    <p>
+                      Updated at: {new Date(post.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                </Box>
+              </div>
+            </div>
+          </PageSection>
+          <PageSection>
+            <div>{/* <p>{post.content}</p> */}</div>
           </PageSection>
           <PageSection>
             <Button>Add step</Button>

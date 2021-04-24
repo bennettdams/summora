@@ -10,10 +10,32 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// model Post {
+//   id        String   @id @default(cuid())
+//   createdAt DateTime @default(now())
+//   title     String
+//   subtitle  String?
+//   content   String
+// }
+
 model Post {
-  id        String  @id @default(cuid())
-  createdAt String
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   title     String
   subtitle  String?
-  content   String
+  // segments  PostSegment[]
 }
+
+// model PostSegment {
+//   id        String  @id @default(cuid())
+//   createdAt String
+//   updatedAt String
+//   title     String
+//   subtitle  String?
+//   content   String
+//   // Post
+//   Post      Post    @relation(fields: [postId], references: [id])
+//   postId    String // relation scalar field  (used in the `@relation` attribute above)
+//   //
+// }

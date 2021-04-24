@@ -36,8 +36,7 @@ export const Home = (): JSX.Element => {
                 try {
                   await createPost({
                     title: 'title ' + Math.random(),
-                    content: 'content' + Math.random(),
-                    createdAt: new Date().toISOString(),
+                    subtitle: 'subtitle ' + Math.random(),
                   })
                 } catch (err) {
                   console.log(err)
@@ -66,14 +65,14 @@ function PostItem({ post }: { post: Post }): JSX.Element {
   return (
     <Link to={`/post/${post.id}`}>
       <Box noPadding>
-        <div className="w-full p-4 h-60 bg-gradient-to-b from-fuchsia-50 to-blue-50 pb-24 rounded-lg text-center relative">
+        <div className="w-full p-4 h-60 bg-gradient-to-b from-fuchsia-50 to-blue-50 rounded-xl text-center relative">
           <h2 className="tracking-widest text-xs font-medium text-gray-400">
             CATEGORY
           </h2>
           <h1 className="mt-1 sm:text-2xl text-xl font-medium">{post.title}</h1>
           <p className="mt-3 leading-relaxed">{post.subtitle}</p>
-          <div className="text-center mt-2 leading-none flex justify-center absolute bottom-0 left-0 w-full py-4">
-            <span className="text-gray-400 mr-3 inline-flex items-center leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
+          <div className="text-center mt-2 leading-none flex justify-center absolute bottom-0 w-full py-3 space-x-4">
+            <span className="text-gray-400 inline-flex items-center leading-none text-sm py-1">
               <svg
                 className="w-4 h-4 mr-1"
                 stroke="currentColor"
@@ -101,6 +100,9 @@ function PostItem({ post }: { post: Post }): JSX.Element {
                 <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
               </svg>
               6
+            </span>
+            <span className="text-gray-400 inline-flex items-center leading-none text-sm">
+              {post.createdAt.toLocaleDateString()}
             </span>
           </div>
         </div>

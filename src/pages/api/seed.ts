@@ -9,9 +9,13 @@ export default async (
 ): Promise<void> => {
   try {
     await prisma.post.deleteMany({})
+    // await prisma.postSegment.deleteMany({})
+
+    const postIdsCreated: string[] = []
 
     posts.forEach(async (post) => {
-      await prisma.post.create({ data: post })
+      const postCreated = await prisma.post.create({ data: post })
+      postIdsCreated.push(postCreated.id)
     })
     res.status(200).json(posts)
   } catch (err) {
@@ -19,12 +23,12 @@ export default async (
   }
 }
 
-const posts: Prisma.PostCreateInput[] = [...new Array(11)].map((_, i) => ({
-  title: 'Title ' + (i + 1),
-  subtitle:
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' + (i + 1),
-  content:
-    'Vestibulum aliquam, lorem in laoreet facilisis, sapien augue varius velit, nec mollis sem augue vel mauris. Ut aliquet, augue eu fringilla tincidunt, dui massa sodales erat, id imperdiet neque metus sit amet urna. In vitae eros a massa tincidunt placerat. Donec vehicula nisi et erat dapibus condimentum.' +
-    (i + 1),
-  createdAt: new Date().toISOString(),
-}))
+const posts: Prisma.PostCreateInput[] = [...new Array(11)].map((_, i) => {
+  const post: Prisma.PostCreateInput = {
+    title:
+      'This is a title that is a bit longer for testing purposes ' + (i + 1),
+    subtitle:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' + (i + 1),
+  }
+  return post
+})

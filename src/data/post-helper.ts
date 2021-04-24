@@ -45,7 +45,25 @@ async function fetchPosts(): Promise<Post[]> {
     throw new Error(response.statusText)
   }
 
-  return await response.json()
+  const postsJSON = await response.json()
+  const posts = postsJSON.map((postJSON: Post) => transformPost(postJSON))
+
+  return posts
+}
+
+async function fetchPost(postId: string): Promise<Post> {
+  const response = await fetch(`${url}/${postId}`, {
+    method: 'GET',
+  })
+
+  if (!response.ok) {
+    throw new Error(response.statusText)
+  }
+
+  const postJSON = await response.json()
+  const post = transformPost(postJSON)
+
+  return post
 }
 
 async function createPost(post: Prisma.PostCreateInput): Promise<Post> {
@@ -61,15 +79,6 @@ async function createPost(post: Prisma.PostCreateInput): Promise<Post> {
   return await response.json()
 }
 
-async function fetchPost(postId: string): Promise<Post> {
-  console.log(`${url}/${postId}`)
-  const response = await fetch(`${url}/${postId}`, {
-    method: 'GET',
-  })
-
-  if (!response.ok) {
-    throw new Error(response.statusText)
-  }
-
-  return await response.json()
+function transformPost(post: Post): Post {
+  return { ...post, createdAt: new Date(post.createdAt) }
 }

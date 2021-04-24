@@ -9,7 +9,7 @@ export function Box({
 }): JSX.Element {
   return (
     <div
-      className={`box bg-white rounded-lg shadow-md hover:shadow-lg ${
+      className={`box bg-white rounded-xl shadow-md hover:shadow-lg ${
         noPadding ? 'p-0' : 'p-10'
       }`}
     >
