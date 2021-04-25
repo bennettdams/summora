@@ -109,7 +109,8 @@ function Segment({
   return (
     <Box smallPadding>
       <h2 className="text-teal-500 text-xl">
-        {segment.title} <span>{segment.id}</span>
+        <span>{segment.segmentNo}</span> <span>{segment.title}</span>{' '}
+        <span>{segment.id}</span>
       </h2>
       <h2 className="text-gray-500 text-lg italic">{segment.subtitle}</h2>
 
@@ -127,7 +128,7 @@ function Segment({
             }}
             key={item.id}
           >
-            {item.content}
+            <span>{item.itemNo}</span> <span>{item.content}</span>
           </p>
         ))}
       </div>

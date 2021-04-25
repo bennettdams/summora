@@ -53,9 +53,9 @@ async function updatePostSegmentItem(
       },
       include: {
         segments: {
-          orderBy: { createdAt: 'asc' },
+          orderBy: { segmentNo: 'asc' },
           include: {
-            items: { orderBy: { createdAt: 'asc' } },
+            items: { orderBy: { itemNo: 'asc' } },
           },
         },
       },
