@@ -5,7 +5,7 @@ import { Footer } from '../components/Footer'
 import { Header } from '../components/Header'
 import '../styles/globals.css'
 
-export const queryClient = new QueryClient()
+const queryClient = new QueryClient()
 
 function App({ Component, pageProps }: AppProps): JSX.Element {
   return (

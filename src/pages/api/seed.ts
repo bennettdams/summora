@@ -33,6 +33,7 @@ export default async (
             create: [
               {
                 title: 'Segment title 1',
+                subtitle: 'Segment subtitle 1',
                 items: {
                   create: [
                     { content: 'Item content 1' },
@@ -42,6 +43,7 @@ export default async (
               },
               {
                 title: 'Segment title 2',
+                subtitle: 'Segment subtitle 2',
                 items: {
                   create: [
                     { content: 'Item content 1' },

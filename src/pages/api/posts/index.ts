@@ -13,7 +13,9 @@ export default async function handler(
 
   switch (method) {
     case 'GET': {
-      const posts = await prisma.post.findMany()
+      const posts = await prisma.post.findMany({
+        orderBy: { createdAt: 'asc' },
+      })
       res.status(200).json(posts)
       break
     }

@@ -1,8 +1,10 @@
+import { useQueryClient } from 'react-query'
 import { queryKeyPosts } from '../data/post-helper'
-import { queryClient } from '../pages/_app'
 import { Link } from './Link'
 
 export function Header(): JSX.Element {
+  const queryClient = useQueryClient()
+
   return (
     <header className="h-12 z-40 w-full flex items-center justify-center top-0 fixed bg-lime-500">
       <div className="mx-auto w-full flex flex-wrap p-5 flex-col md:flex-row items-center">
