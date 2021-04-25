@@ -29,13 +29,25 @@ model Post {
 }
 
 model PostSegment {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String            @id @default(cuid())
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
   title     String
   subtitle  String?
+  items     PostSegmentItem[]
   // for Post.segments
-  Post      Post     @relation(fields: [postId], references: [id])
+  Post      Post              @relation(fields: [postId], references: [id])
   postId    String
+  //
+}
+
+model PostSegmentItem {
+  id            String      @id @default(cuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  content       String
+  // for PostSegment.items
+  PostSegment   PostSegment @relation(fields: [postSegmentId], references: [id])
+  postSegmentId String
   //
 }

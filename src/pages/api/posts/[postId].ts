@@ -3,11 +3,13 @@ import { prisma } from '../../../prisma/prisma'
 import { Prisma } from '@prisma/client'
 
 export type Post = Exclude<Prisma.PromiseReturnType<typeof getPost>, null>
+export type PostSegment = Post['segments'][number]
+export type PostSegmentItem = PostSegment['items'][number]
 
 async function getPost(postId: string) {
   return await prisma.post.findUnique({
     where: { id: postId },
-    include: { segments: true },
+    include: { segments: { include: { items: true } } },
   })
 }
 
@@ -20,7 +22,7 @@ export default async function handler(
     method,
   } = req
 
-  console.log('API post ', postId, method)
+  console.log('API post ', method, postId)
 
   switch (method) {
     case 'GET': {

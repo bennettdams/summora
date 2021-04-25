@@ -1,4 +1,3 @@
-import { PostSegment } from '@prisma/client'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { Box } from '../../components/Box'
@@ -6,6 +5,7 @@ import { Button } from '../../components/Button'
 import { LoadingAnimation } from '../../components/LoadingAnimation'
 import { Page, PageSection } from '../../components/Page'
 import { usePost } from '../../data/post-helper'
+import { PostSegment } from '../api/posts/[postId]'
 
 // export const getServerSideProps: GetServerSideProps = async ({
 //   params,
@@ -69,7 +69,7 @@ export const PostPage = (): JSX.Element => {
             </div>
           </PageSection>
           <PageSection>
-            <div>
+            <div className="space-y-4">
               {post.segments.map((segment) => (
                 <Segment key={segment.id} segment={segment} />
               ))}
@@ -89,5 +89,15 @@ export const PostPage = (): JSX.Element => {
 export default PostPage
 
 function Segment({ segment }: { segment: PostSegment }) {
-  return <div key={segment.id}>{segment.title}</div>
+  return (
+    <Box smallPadding>
+      <h2 className="text-teal-500 text-xl">
+        {segment.title} <span>{segment.id}</span>
+      </h2>
+
+      {segment.items.map((item) => (
+        <p key={item.id}>{item.content}</p>
+      ))}
+    </Box>
+  )
 }
