@@ -1,5 +1,7 @@
 import { Prisma } from '@prisma/client'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { PostSegmentItemCreate } from '../pages/api/post-segment-items'
+import { PostSegmentItemUpdate } from '../pages/api/post-segment-items/[postSegmentItemId]'
 import { PostPostsAPI } from '../pages/api/posts'
 import {
   PostPostAPI,
@@ -26,6 +28,12 @@ function usePostsMutation() {
 function usePostMutation(postId: string) {
   const queryClient = useQueryClient()
 
+  const createPostSegmentItemMutation = useMutation(createPostSegmentItem, {
+    onSuccess: (data: PostPostAPI) => {
+      queryClient.setQueryData([queryKeyPosts, postId], data)
+    },
+  })
+
   const updatePostSegmentItemMutation = useMutation(updatePostSegmentItem, {
     onSuccess: (data: PostPostAPI) => {
       queryClient.setQueryData([queryKeyPosts, postId], data)
@@ -48,7 +56,7 @@ function usePostMutation(postId: string) {
   //   },
   // })
 
-  return { updatePostSegmentItemMutation }
+  return { createPostSegmentItemMutation, updatePostSegmentItemMutation }
 }
 
 export function usePosts() {
@@ -73,12 +81,16 @@ export function usePost(postId: string, enabled = true) {
     { enabled }
   )
 
-  const { updatePostSegmentItemMutation } = usePostMutation(postId)
+  const {
+    createPostSegmentItemMutation,
+    updatePostSegmentItemMutation,
+  } = usePostMutation(postId)
 
   return {
     post: data || null,
     isLoading,
     isError,
+    createPostSegmentItem: createPostSegmentItemMutation.mutate,
     updatePostSegmentItem: updatePostSegmentItemMutation.mutate,
   }
 }
@@ -131,12 +143,6 @@ async function fetchPost(postId: string): Promise<PostPostAPI> {
   return post
 }
 
-export interface PostSegmentItemUpdate {
-  postId: string
-  postSegmentId: string
-  postSegmentItemToUpdate: Prisma.PostSegmentItemUpdateWithoutPostSegmentInput
-}
-
 async function updatePostSegmentItem({
   postId,
   postSegmentId,
@@ -151,6 +157,7 @@ async function updatePostSegmentItem({
     postId,
     postSegmentId,
     postSegmentItemToUpdate: {
+      id: postSegmentItemToUpdate.id,
       content: postSegmentItemToUpdate.content,
     },
   }
@@ -162,6 +169,37 @@ async function updatePostSegmentItem({
       body: JSON.stringify(body),
     }
   )
+
+  if (!response.ok) {
+    throw new Error(response.statusText)
+  }
+
+  const postJSON: PostPostAPI = await response.json()
+  const postUpdated: PostPostAPI = transformPostPostAPI(postJSON)
+
+  return postUpdated
+}
+
+async function createPostSegmentItem({
+  postId,
+  postSegmentId,
+  postSegmentItemToCreate,
+}: PostSegmentItemCreate): Promise<PostPostAPI> {
+  if (!postId || !postSegmentId)
+    throw new Error(
+      'Cannot update post segment item, no post ID / post segment ID!'
+    )
+
+  const body: PostSegmentItemCreate = {
+    postId,
+    postSegmentId,
+    postSegmentItemToCreate,
+  }
+
+  const response = await fetch(`${urlPostSegmentItem}`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  })
 
   if (!response.ok) {
     throw new Error(response.statusText)

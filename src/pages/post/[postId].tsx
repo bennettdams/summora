@@ -91,7 +91,7 @@ function PostPageWrapper({ post }: { post: PostPostAPI }) {
         </div>
       </PageSection>
       <PageSection>
-        <Button>Add step</Button>
+        <Button onClick={() => console.log('here')}>Add step</Button>
       </PageSection>
     </>
   )
@@ -104,7 +104,10 @@ function Segment({
   segment: PostSegmentPostAPI
   postId: string
 }) {
-  const { updatePostSegmentItem } = usePost(postId, false)
+  const { createPostSegmentItem, updatePostSegmentItem } = usePost(
+    postId,
+    false
+  )
 
   return (
     <Box smallPadding>
@@ -135,6 +138,21 @@ function Segment({
           </p>
         ))}
       </div>
+
+      <Button
+        onClick={() => {
+          createPostSegmentItem({
+            postId,
+            postSegmentId: segment.id,
+            postSegmentItemToCreate: {
+              content: 'some new content :))))',
+              itemNo: segment.items.length + 1,
+            },
+          })
+        }}
+      >
+        Add
+      </Button>
     </Box>
   )
 }

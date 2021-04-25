@@ -1,6 +1,5 @@
 import { Prisma } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { PostSegmentItemUpdate } from '../../../data/post-helper'
 import { prisma } from '../../../prisma/prisma'
 
 // async function updatePostSegmentItem(
@@ -21,13 +20,23 @@ import { prisma } from '../../../prisma/prisma'
 //   }
 // }
 
-async function updatePostSegmentItem(
-  postId: string,
-  postSegmentId: string,
-  postSegmentItemId: string,
-  postSegmentItem: Prisma.PostSegmentItemUpdateWithoutPostSegmentInput
-) {
+export interface PostSegmentItemUpdate {
+  postId: string
+  postSegmentId: string
+  postSegmentItemToUpdate: Prisma.PostSegmentItemUpdateWithoutPostSegmentInput
+}
+
+async function updatePostSegmentItem({
+  postId,
+  postSegmentId,
+  postSegmentItemToUpdate,
+}: PostSegmentItemUpdate) {
   const now = new Date()
+
+  const postSegmentItemId = postSegmentItemToUpdate.id
+  if (typeof postSegmentItemId !== 'string')
+    throw new Error('Post segment item ID is missing/in the wrong format!')
+
   try {
     return await prisma.post.update({
       where: {
@@ -47,7 +56,7 @@ async function updatePostSegmentItem(
                   where: {
                     id: postSegmentItemId,
                   },
-                  data: postSegmentItem,
+                  data: postSegmentItemToUpdate,
                 },
               },
             },
@@ -97,12 +106,11 @@ export default async function handler(
         if (!postId) {
           res.status(404).end('No post ID!')
         } else {
-          const postUpdated = await updatePostSegmentItem(
+          const postUpdated = await updatePostSegmentItem({
             postId,
             postSegmentId,
-            postSegmentItemId,
-            postSegmentItemToUpdate
-          )
+            postSegmentItemToUpdate,
+          })
 
           res.status(200).json(postUpdated)
         }
