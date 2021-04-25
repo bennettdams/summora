@@ -3,6 +3,21 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { Prisma } from '@prisma/client'
 import { prisma } from '../../../prisma/prisma'
 
+export type PostPostsAPI = Exclude<
+  Prisma.PromiseReturnType<typeof findPosts>,
+  null
+>[number]
+
+async function findPosts() {
+  try {
+    return await prisma.post.findMany({
+      orderBy: { createdAt: 'asc' },
+    })
+  } catch (error) {
+    throw new Error(`Error while finding posts: ${error}`)
+  }
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -13,9 +28,7 @@ export default async function handler(
 
   switch (method) {
     case 'GET': {
-      const posts = await prisma.post.findMany({
-        orderBy: { createdAt: 'asc' },
-      })
+      const posts = await findPosts()
       res.status(200).json(posts)
       break
     }

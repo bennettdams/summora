@@ -5,7 +5,7 @@ import { LoadingAnimation } from '../components/LoadingAnimation'
 import { usePosts } from '../data/post-helper'
 import { Link } from '../components/Link'
 import { Box } from '../components/Box'
-import { Post } from './api/posts/[postId]'
+import { PostPostsAPI } from './api/posts'
 
 export const Home = (): JSX.Element => {
   const { posts, isLoading, createPost } = usePosts()
@@ -62,7 +62,7 @@ export const Home = (): JSX.Element => {
 
 export default Home
 
-function PostItem({ post }: { post: Post }): JSX.Element {
+function PostItem({ post }: { post: PostPostsAPI }): JSX.Element {
   return (
     <Link to={`/post/${post.id}`}>
       <Box noPadding>
@@ -103,7 +103,7 @@ function PostItem({ post }: { post: Post }): JSX.Element {
               6
             </span>
             <span className="text-gray-400 inline-flex items-center leading-none text-sm">
-              {post.createdAt.toLocaleDateString()}
+              {post.updatedAt.toLocaleDateString()}
             </span>
           </div>
         </div>

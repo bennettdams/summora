@@ -2,9 +2,12 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
 import { Prisma } from '@prisma/client'
 
-export type Post = Exclude<Prisma.PromiseReturnType<typeof findPost>, null>
-export type PostSegment = Post['segments'][number]
-export type PostSegmentItem = PostSegment['items'][number]
+export type PostPostAPI = Exclude<
+  Prisma.PromiseReturnType<typeof findPost>,
+  null
+>
+export type PostSegmentPostAPI = PostPostAPI['segments'][number]
+export type PostSegmentItemPostAPI = PostSegmentPostAPI['items'][number]
 
 async function findPost(postId: string) {
   try {

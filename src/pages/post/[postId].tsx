@@ -5,7 +5,7 @@ import { Button } from '../../components/Button'
 import { LoadingAnimation } from '../../components/LoadingAnimation'
 import { Page, PageSection } from '../../components/Page'
 import { usePost } from '../../data/post-helper'
-import { Post, PostSegment } from '../api/posts/[postId]'
+import { PostPostAPI, PostSegmentPostAPI } from '../api/posts/[postId]'
 
 // export const getServerSideProps: GetServerSideProps = async ({
 //   params,
@@ -63,7 +63,7 @@ function Wrapper({ postId }: { postId: string }) {
   )
 }
 
-function PostPageWrapper({ post }: { post: Post }) {
+function PostPageWrapper({ post }: { post: PostPostAPI }) {
   return (
     <>
       <PageSection hideTopMargin>
@@ -76,8 +76,8 @@ function PostPageWrapper({ post }: { post: Post }) {
             <Box>
               <div className="divide-y-1">
                 <p className="text-sm">{post.id}</p>
-                <p>Created at: {new Date(post.createdAt).toLocaleString()}</p>
-                <p>Updated at: {new Date(post.createdAt).toLocaleString()}</p>
+                <p>Created at: {post.createdAt.toISOString()}</p>
+                <p>Updated at: {post.updatedAt.toISOString()}</p>
               </div>
             </Box>
           </div>
@@ -101,23 +101,24 @@ function Segment({
   segment,
   postId,
 }: {
-  segment: PostSegment
+  segment: PostSegmentPostAPI
   postId: string
 }) {
   const { updatePostSegmentItem } = usePost(postId, false)
 
   return (
     <Box smallPadding>
-      <h2 className="text-teal-500 text-xl">
+      <h2 className="w-full text-teal-500 text-xl">
         <span>{segment.segmentNo}</span> <span>{segment.title}</span>{' '}
         <span>{segment.id}</span>
+        <span className="float-right">{segment.updatedAt.toISOString()}</span>
       </h2>
       <h2 className="text-gray-500 text-lg italic">{segment.subtitle}</h2>
 
       <div className="space-y-2">
         {segment.items.map((item) => (
           <p
-            className="cursor-pointer bg-red-100"
+            className="cursor-pointer space-x-2"
             onClick={() => {
               const newContent = 'new item content ' + Math.random()
               updatePostSegmentItem({
@@ -128,7 +129,9 @@ function Segment({
             }}
             key={item.id}
           >
-            <span>{item.itemNo}</span> <span>{item.content}</span>
+            <span>{item.itemNo}</span>
+            <span>{item.content}</span>
+            <span>{item.updatedAt.toISOString()}</span>
           </p>
         ))}
       </div>

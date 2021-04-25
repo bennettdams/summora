@@ -27,18 +27,21 @@ async function updatePostSegmentItem(
   postSegmentItemId: string,
   postSegmentItem: Prisma.PostSegmentItemUpdateWithoutPostSegmentInput
 ) {
+  const now = new Date()
   try {
     return await prisma.post.update({
       where: {
         id: postId,
       },
       data: {
+        updatedAt: now,
         segments: {
           update: {
             where: {
               id: postSegmentId,
             },
             data: {
+              updatedAt: now,
               items: {
                 update: {
                   where: {
