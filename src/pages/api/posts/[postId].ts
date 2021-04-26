@@ -15,8 +15,8 @@ async function findPost(postId: string) {
       where: { id: postId },
       include: {
         segments: {
-          orderBy: { segmentNo: 'asc' },
-          include: { items: { orderBy: { itemNo: 'asc' } } },
+          orderBy: { createdAt: 'asc' },
+          include: { items: { orderBy: { createdAt: 'asc' } } },
         },
       },
     })

@@ -34,22 +34,34 @@ export default async (
               {
                 title: 'Segment title 1',
                 subtitle: 'Segment subtitle 1',
-                segmentNo: 1,
+                // segmentNo: 1,
                 items: {
                   create: [
-                    { content: 'Item content 1', itemNo: 1 },
-                    { content: 'Item content 2', itemNo: 2 },
+                    {
+                      content: 'Item content 1',
+                      // itemNo: 1
+                    },
+                    {
+                      content: 'Item content 2',
+                      // itemNo: 2
+                    },
                   ],
                 },
               },
               {
                 title: 'Segment title 2',
                 subtitle: 'Segment subtitle 2',
-                segmentNo: 2,
+                // segmentNo: 2,
                 items: {
                   create: [
-                    { content: 'Item content 1', itemNo: 1 },
-                    { content: 'Item content 2', itemNo: 2 },
+                    {
+                      content: 'Item content 1',
+                      //  itemNo: 1
+                    },
+                    {
+                      content: 'Item content 2',
+                      // itemNo: 2
+                    },
                   ],
                 },
               },

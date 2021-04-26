@@ -6,7 +6,7 @@ export function Header(): JSX.Element {
   const queryClient = useQueryClient()
 
   return (
-    <header className="h-12 z-40 w-full flex items-center justify-center top-0 fixed bg-lime-500">
+    <header className="h-12 z-40 w-full flex items-center justify-center top-0 fixed text-white bg-lime-900">
       <div className="mx-auto w-full flex flex-wrap p-5 flex-col md:flex-row items-center">
         <Link to="/">
           <div className="text-left text-4xl font-extrabold leading-none tracking-tight">

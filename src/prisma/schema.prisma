@@ -35,7 +35,6 @@ model PostSegment {
   title     String
   subtitle  String?
   items     PostSegmentItem[]
-  segmentNo Int               @default(1)
   // for Post.segments
   Post      Post              @relation(fields: [postId], references: [id])
   postId    String
@@ -47,7 +46,6 @@ model PostSegmentItem {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   content       String
-  itemNo        Int         @default(1)
   // for PostSegment.items
   PostSegment   PostSegment @relation(fields: [postSegmentId], references: [id])
   postSegmentId String

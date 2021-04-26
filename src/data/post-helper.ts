@@ -88,8 +88,14 @@ export function usePost(postId: string, enabled = true) {
 
   return {
     post: data || null,
-    isLoading,
-    isError,
+    isLoading:
+      isLoading ||
+      createPostSegmentItemMutation.isLoading ||
+      updatePostSegmentItemMutation.isLoading,
+    isError:
+      isError ||
+      createPostSegmentItemMutation.isError ||
+      updatePostSegmentItemMutation.isError,
     createPostSegmentItem: createPostSegmentItemMutation.mutate,
     updatePostSegmentItem: updatePostSegmentItemMutation.mutate,
   }
