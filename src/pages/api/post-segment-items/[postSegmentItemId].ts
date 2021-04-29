@@ -106,13 +106,13 @@ export default async function handler(
         if (!postId) {
           res.status(404).end('No post ID!')
         } else {
-          const postUpdated = await updatePostSegmentItem({
+          const postWithUpdatedPostSegmentItem = await updatePostSegmentItem({
             postId,
             postSegmentId,
             postSegmentItemToUpdate,
           })
 
-          res.status(200).json(postUpdated)
+          res.status(200).json(postWithUpdatedPostSegmentItem)
         }
         break
       }

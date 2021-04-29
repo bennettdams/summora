@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { PostSegmentCreate } from '../pages/api/post-segment'
 import { PostSegmentItemCreate } from '../pages/api/post-segment-items'
 import { PostSegmentItemUpdate } from '../pages/api/post-segment-items/[postSegmentItemId]'
 import { PostPostsAPI } from '../pages/api/posts'
@@ -11,6 +12,7 @@ import {
 
 const urlPost = '/api/posts'
 const urlPostSegmentItem = '/api/post-segment-items'
+const urlPostSegment = '/api/post-segment'
 export const queryKeyPosts = 'posts'
 
 function usePostsMutation() {
@@ -34,13 +36,23 @@ function usePostMutation(postId: string) {
     },
   })
 
+  const createPostSegmentMutation = useMutation(createPostSegment, {
+    onSuccess: (data: PostPostAPI) => {
+      queryClient.setQueryData([queryKeyPosts, postId], data)
+    },
+  })
+
   const updatePostSegmentItemMutation = useMutation(updatePostSegmentItem, {
     onSuccess: (data: PostPostAPI) => {
       queryClient.setQueryData([queryKeyPosts, postId], data)
     },
   })
 
-  return { createPostSegmentItemMutation, updatePostSegmentItemMutation }
+  return {
+    createPostSegmentItemMutation,
+    updatePostSegmentItemMutation,
+    createPostSegmentMutation,
+  }
 }
 
 export function usePosts() {
@@ -68,6 +80,7 @@ export function usePost(postId: string, enabled = true) {
   const {
     createPostSegmentItemMutation,
     updatePostSegmentItemMutation,
+    createPostSegmentMutation,
   } = usePostMutation(postId)
 
   return {
@@ -75,12 +88,15 @@ export function usePost(postId: string, enabled = true) {
     isLoading:
       isLoading ||
       createPostSegmentItemMutation.isLoading ||
-      updatePostSegmentItemMutation.isLoading,
+      updatePostSegmentItemMutation.isLoading ||
+      createPostSegmentMutation.isLoading,
     isError:
       isError ||
       createPostSegmentItemMutation.isError ||
-      updatePostSegmentItemMutation.isError,
+      updatePostSegmentItemMutation.isError ||
+      createPostSegmentMutation.isError,
     createPostSegmentItem: createPostSegmentItemMutation.mutateAsync,
+    createPostSegment: createPostSegmentMutation.mutateAsync,
     updatePostSegmentItem: updatePostSegmentItemMutation.mutateAsync,
   }
 }
@@ -102,6 +118,21 @@ async function fetchPosts(): Promise<PostPostsAPI[]> {
   return posts
 }
 
+async function fetchPost(postId: string): Promise<PostPostAPI> {
+  const response = await fetch(`${urlPost}/${postId}`, {
+    method: 'GET',
+  })
+
+  if (!response.ok) {
+    throw new Error(response.statusText)
+  }
+
+  const postJSON: PostPostAPI = await response.json()
+  const post: PostPostAPI = transformPostPostAPI(postJSON)
+
+  return post
+}
+
 async function createPost(post: Prisma.PostCreateInput): Promise<PostPostsAPI> {
   const response = await fetch(urlPost, {
     method: 'POST',
@@ -116,21 +147,6 @@ async function createPost(post: Prisma.PostCreateInput): Promise<PostPostsAPI> {
   const postCreated: PostPostsAPI = transformPostPostsAPI(postJSON)
 
   return postCreated
-}
-
-async function fetchPost(postId: string): Promise<PostPostAPI> {
-  const response = await fetch(`${urlPost}/${postId}`, {
-    method: 'GET',
-  })
-
-  if (!response.ok) {
-    throw new Error(response.statusText)
-  }
-
-  const postJSON: PostPostAPI = await response.json()
-  const post: PostPostAPI = transformPostPostAPI(postJSON)
-
-  return post
 }
 
 async function updatePostSegmentItem({
@@ -196,9 +212,35 @@ async function createPostSegmentItem({
   }
 
   const postJSON: PostPostAPI = await response.json()
-  const postCreated: PostPostAPI = transformPostPostAPI(postJSON)
+  const postUpdated: PostPostAPI = transformPostPostAPI(postJSON)
 
-  return postCreated
+  return postUpdated
+}
+
+async function createPostSegment({
+  postId,
+  postSegmentToCreate,
+}: PostSegmentCreate): Promise<PostPostAPI> {
+  if (!postId) throw new Error('Cannot create post segment, no post ID!')
+
+  const body: PostSegmentCreate = {
+    postId,
+    postSegmentToCreate,
+  }
+
+  const response = await fetch(`${urlPostSegment}`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  })
+
+  if (!response.ok) {
+    throw new Error(response.statusText)
+  }
+
+  const postJSON: PostPostAPI = await response.json()
+  const postUpdated: PostPostAPI = transformPostPostAPI(postJSON)
+
+  return postUpdated
 }
 
 function transformPostPostAPI(post: PostPostAPI): PostPostAPI {

@@ -2,17 +2,15 @@ import { Prisma } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
 
-export interface PostSegmentItemCreate {
+export interface PostSegmentCreate {
   postId: string
-  postSegmentId: string
-  postSegmentItemToCreate: Prisma.PostSegmentItemCreateWithoutPostSegmentInput
+  postSegmentToCreate: Prisma.PostSegmentCreateWithoutPostInput
 }
 
-async function createPostSegmentItem({
+async function createPostSegment({
   postId,
-  postSegmentId,
-  postSegmentItemToCreate,
-}: PostSegmentItemCreate) {
+  postSegmentToCreate,
+}: PostSegmentCreate) {
   const now = new Date()
 
   try {
@@ -23,17 +21,7 @@ async function createPostSegmentItem({
       data: {
         updatedAt: now,
         segments: {
-          update: {
-            where: {
-              id: postSegmentId,
-            },
-            data: {
-              updatedAt: now,
-              items: {
-                create: postSegmentItemToCreate,
-              },
-            },
-          },
+          create: postSegmentToCreate,
         },
       },
       include: {
@@ -52,7 +40,7 @@ async function createPostSegmentItem({
       },
     })
   } catch (error) {
-    throw new Error(`Error while create post segment item: ${error}`)
+    throw new Error(`Error while create post segment: ${error}`)
   }
 }
 
@@ -62,30 +50,27 @@ export default async function handler(
 ): Promise<void> {
   const { body: requestBody, method } = req
 
-  console.log('API post segment item', method)
+  console.log('API post segment ', method)
   switch (method) {
     case 'POST': {
-      const {
-        postId,
-        postSegmentId,
-        postSegmentItemToCreate,
-      }: PostSegmentItemCreate = JSON.parse(requestBody)
+      const { postId, postSegmentToCreate }: PostSegmentCreate = JSON.parse(
+        requestBody
+      )
 
-      if (!postId || !postSegmentId) {
-        res.status(404).end('No post ID or post segment ID!')
+      if (!postId) {
+        res.status(404).end('No post ID!')
       } else {
-        const postWithCreatedSegmentItem = await createPostSegmentItem({
+        const postWithCreatedSegment = await createPostSegment({
           postId,
-          postSegmentId,
-          postSegmentItemToCreate: {
-            ...postSegmentItemToCreate,
+          postSegmentToCreate: {
+            ...postSegmentToCreate,
             id: undefined,
           },
         })
 
         // await new Promise((resolve) => setTimeout(resolve, 3000))
 
-        res.status(200).json(postWithCreatedSegmentItem)
+        res.status(200).json(postWithCreatedSegment)
       }
       break
     }

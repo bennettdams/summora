@@ -35,8 +35,8 @@ export default async function handler(
     case 'POST': {
       try {
         const post: Prisma.PostCreateInput = JSON.parse(requestBody)
-        const postSaved = await prisma.post.create({ data: post })
-        res.status(200).json(postSaved)
+        const postCreated = await prisma.post.create({ data: post })
+        res.status(200).json(postCreated)
       } catch (err) {
         res.status(400).json({ message: 'Something went wrong' })
       }
