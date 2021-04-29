@@ -39,12 +39,12 @@ async function createPostSegmentItem({
       include: {
         segments: {
           orderBy: {
-            segmentNo: 'asc',
+            createdAt: 'asc',
           },
           include: {
             items: {
               orderBy: {
-                itemNo: 'asc',
+                createdAt: 'asc',
               },
             },
           },
@@ -74,13 +74,18 @@ export default async function handler(
       if (!postId || !postSegmentId) {
         res.status(404).end('No post ID or post segment ID!')
       } else {
-        const postCreated = await createPostSegmentItem({
+        const postSegmentItemCreated = await createPostSegmentItem({
           postId,
           postSegmentId,
-          postSegmentItemToCreate,
+          postSegmentItemToCreate: {
+            ...postSegmentItemToCreate,
+            id: undefined,
+          },
         })
 
-        res.status(200).json(postCreated)
+        // await new Promise((resolve) => setTimeout(resolve, 3000))
+
+        res.status(200).json(postSegmentItemCreated)
       }
       break
     }

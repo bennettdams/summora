@@ -1,11 +1,20 @@
+import { Prisma } from '.prisma/client'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import { Box } from '../../components/Box'
 import { Button } from '../../components/Button'
+import { FormInput } from '../../components/FormInput'
 import { LoadingAnimation } from '../../components/LoadingAnimation'
 import { Page, PageSection } from '../../components/Page'
 import { usePost } from '../../data/post-helper'
-import { PostPostAPI, PostSegmentPostAPI } from '../api/posts/[postId]'
+import { PostSegmentItemCreate } from '../api/post-segment-items'
+import { PostSegmentItemUpdate } from '../api/post-segment-items/[postSegmentItemId]'
+import {
+  PostPostAPI,
+  PostSegmentItemPostAPI,
+  PostSegmentPostAPI,
+} from '../api/posts/[postId]'
 
 // export const getServerSideProps: GetServerSideProps = async ({
 //   params,
@@ -85,8 +94,13 @@ function PostPageWrapper({ post }: { post: PostPostAPI }) {
       </PageSection>
       <PageSection>
         <div className="space-y-4">
-          {post.segments.map((segment) => (
-            <Segment postId={post.id} key={segment.id} segment={segment} />
+          {post.segments.map((segment, index) => (
+            <Segment
+              index={index + 1}
+              postId={post.id}
+              key={segment.id}
+              segment={segment}
+            />
           ))}
         </div>
       </PageSection>
@@ -99,60 +113,94 @@ function PostPageWrapper({ post }: { post: PostPostAPI }) {
 
 function Segment({
   segment,
+  index,
   postId,
 }: {
   segment: PostSegmentPostAPI
+  index: number
   postId: string
 }) {
-  const { createPostSegmentItem, updatePostSegmentItem } = usePost(
+  const { createPostSegmentItem, updatePostSegmentItem, isLoading } = usePost(
     postId,
     false
   )
+  const [items, setItems] = useState<PostSegmentItemPostAPI[]>(segment.items)
+
+  useEffect(() => setItems(segment.items), [segment.items])
+
+  async function handleCreate(inputValue: string): Promise<void> {
+    const postSegmentItemToCreate: PostSegmentItemCreate['postSegmentItemToCreate'] = {
+      content: inputValue,
+    }
+    setItems((prevItems) => [
+      ...prevItems,
+      {
+        id: 'new' + Math.random(),
+        content: postSegmentItemToCreate.content,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        postSegmentId: segment.id,
+      },
+    ])
+
+    await createPostSegmentItem({
+      postId,
+      postSegmentId: segment.id,
+      postSegmentItemToCreate,
+    })
+  }
 
   return (
     <Box smallPadding>
       <h2 className="w-full text-teal-500 text-xl">
-        <span>{segment.segmentNo}</span> <span>{segment.title}</span>{' '}
+        <span>{index}</span> <span>{segment.title}</span>{' '}
         <span>{segment.id}</span>
         <span className="float-right">{segment.updatedAt.toISOString()}</span>
       </h2>
       <h2 className="text-gray-500 text-lg italic">{segment.subtitle}</h2>
 
       <div className="space-y-2">
-        {segment.items.map((item) => (
+        {items.map((item, index) => (
           <p
             className="cursor-pointer space-x-2"
-            onClick={() => {
-              const newContent = 'new item content ' + Math.random()
-              updatePostSegmentItem({
-                postId,
-                postSegmentId: segment.id,
-                postSegmentItemToUpdate: { ...item, content: newContent },
-              })
+            onClick={async () => {
+              const postSegmentItemToUpdate: PostSegmentItemUpdate['postSegmentItemToUpdate'] = {
+                ...item,
+                content: 'new item content ' + Math.random(),
+              }
+
+              const content = postSegmentItemToUpdate.content
+              if (typeof content === 'string') {
+                setItems((prevItems) =>
+                  prevItems.map((prevItem) => {
+                    if (prevItem.id !== postSegmentItemToUpdate.id) {
+                      return prevItem
+                    } else {
+                      return { ...prevItem, content }
+                    }
+                  })
+                )
+
+                await updatePostSegmentItem({
+                  postId,
+                  postSegmentId: segment.id,
+                  postSegmentItemToUpdate,
+                })
+              }
             }}
             key={item.id}
           >
-            <span>{item.itemNo}</span>
+            <span className="inline-block w-20">
+              {isLoading && index === items.length - 1 ? 'load' : index + 1}
+            </span>
+            <span className="inline-block w-64">{item.id}</span>
             <span>{item.content}</span>
             <span>{item.updatedAt.toISOString()}</span>
           </p>
         ))}
       </div>
 
-      <Button
-        onClick={() => {
-          createPostSegmentItem({
-            postId,
-            postSegmentId: segment.id,
-            postSegmentItemToCreate: {
-              content: 'some new content :))))',
-              itemNo: segment.items.length + 1,
-            },
-          })
-        }}
-      >
-        Add
-      </Button>
+      <FormInput placeholder="New item" onSubmit={handleCreate}></FormInput>
     </Box>
   )
 }

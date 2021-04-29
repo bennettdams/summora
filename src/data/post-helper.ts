@@ -39,22 +39,6 @@ function usePostMutation(postId: string) {
       queryClient.setQueryData([queryKeyPosts, postId], data)
     },
   })
-  // const updatePostSegmentItemMutation = useMutation(
-  //   async (newSegmentItem: Prisma.PostSegmentItemUpdateInput) =>
-  //     await updatePostSegmentItem(postId, 'asd', newSegmentItem),
-  //   {
-  //     onSuccess: (data: Post) => {
-  //       // console.log('item', data.segments[0].items[0])
-  //       queryClient.setQueryData([queryKeyPosts, postId], data)
-  //     },
-  //   }
-  // )
-
-  // const mutation = useMutation(updatePostSegmentItem, {
-  //   onSuccess: (data) => {
-  //     queryClient.setQueryData(['todo', { id: 5 }], data)
-  //   },
-  // })
 
   return { createPostSegmentItemMutation, updatePostSegmentItemMutation }
 }
@@ -96,8 +80,8 @@ export function usePost(postId: string, enabled = true) {
       isError ||
       createPostSegmentItemMutation.isError ||
       updatePostSegmentItemMutation.isError,
-    createPostSegmentItem: createPostSegmentItemMutation.mutate,
-    updatePostSegmentItem: updatePostSegmentItemMutation.mutate,
+    createPostSegmentItem: createPostSegmentItemMutation.mutateAsync,
+    updatePostSegmentItem: updatePostSegmentItemMutation.mutateAsync,
   }
 }
 
@@ -193,7 +177,7 @@ async function createPostSegmentItem({
 }: PostSegmentItemCreate): Promise<PostPostAPI> {
   if (!postId || !postSegmentId)
     throw new Error(
-      'Cannot update post segment item, no post ID / post segment ID!'
+      'Cannot create post segment item, no post ID / post segment ID!'
     )
 
   const body: PostSegmentItemCreate = {
@@ -212,9 +196,9 @@ async function createPostSegmentItem({
   }
 
   const postJSON: PostPostAPI = await response.json()
-  const postUpdated: PostPostAPI = transformPostPostAPI(postJSON)
+  const postCreated: PostPostAPI = transformPostPostAPI(postJSON)
 
-  return postUpdated
+  return postCreated
 }
 
 function transformPostPostAPI(post: PostPostAPI): PostPostAPI {

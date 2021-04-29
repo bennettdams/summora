@@ -26,22 +26,27 @@ export default async (
     // })
 
     posts.forEach(async (post) => {
+      const now = new Date().getTime()
+      const step = 100
       await prisma.post.create({
         data: {
           ...post,
           segments: {
             create: [
               {
+                createdAt: new Date(now + 1 * step),
                 title: 'Segment title 1',
-                subtitle: 'Segment subtitle 1',
+                subtitle: 'Subtitle 1',
                 // segmentNo: 1,
                 items: {
                   create: [
                     {
+                      createdAt: new Date(now + 2 * step),
                       content: 'Item content 1',
                       // itemNo: 1
                     },
                     {
+                      createdAt: new Date(now + 3 * step),
                       content: 'Item content 2',
                       // itemNo: 2
                     },
@@ -49,16 +54,19 @@ export default async (
                 },
               },
               {
+                createdAt: new Date(now + 4 * step),
                 title: 'Segment title 2',
-                subtitle: 'Segment subtitle 2',
+                subtitle: 'Subtitle 2',
                 // segmentNo: 2,
                 items: {
                   create: [
                     {
+                      createdAt: new Date(now + 5 * step),
                       content: 'Item content 1',
                       //  itemNo: 1
                     },
                     {
+                      createdAt: new Date(now + 6 * step),
                       content: 'Item content 2',
                       // itemNo: 2
                     },
@@ -71,34 +79,13 @@ export default async (
       })
     })
 
-    // const postSegments = await prisma.postSegment.findMany()
-    // console.log('segment:s', postSegments.length)
-    // postSegments.forEach(async (postSegment, index) => {
-    //   await prisma.postSegment.update({
-    //     where: { id: postSegment.id },
-    //     data: {
-    //       items: {
-    //         createMany: {
-    //           data: [
-    //             { content: `#1 some item content ${postSegment.id} ${index}` },
-    //             { content: `#2 some item content ${postSegment.id} ${index}` },
-    //           ],
-    //         },
-    //       },
-    //     },
-    //     // works also:
-    //     // data: { items: { create: { content: 'Some item content ' + index } } },
-    //   })
-    // })
-
-    // res.status(200).json(posts)
     res.status(200).json(`seeded ${posts.length} posts`)
   } catch (err) {
     res.status(400).json({ message: 'Something went wrong!' + err })
   }
 }
 
-const posts: Prisma.PostCreateInput[] = [...new Array(3)].map((_, i) => {
+const posts: Prisma.PostCreateInput[] = [...new Array(5)].map((_, i) => {
   const post: Prisma.PostCreateInput = {
     title:
       'Post title    This is a title that is a bit longer for testing purposes ' +
