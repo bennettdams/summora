@@ -150,11 +150,9 @@ function Segment({
   index: number
   postId: string
 }) {
-  const { createPostSegmentItem, updatePostSegmentItem, isLoading } = usePost(
-    postId,
-    false
-  )
+  const { createPostSegmentItem, isLoading } = usePost(postId, false)
   const [items, setItems] = useState<PostSegmentItemPostAPI[]>(segment.items)
+  const [showInput, setShowInput] = useState(false)
 
   useEffect(() => setItems(segment.items), [segment.items])
 
@@ -181,57 +179,98 @@ function Segment({
   }
 
   return (
-    <div className="w-full p-10 rounded-xl bg-gradient-to-br from-teal-300 to-blue-400">
-      <h2 className="w-full text-white text-xl">
-        <span>{index}</span> <span>{segment.title}</span>{' '}
-        <span>{segment.id}</span>
-        <span className="float-right">{segment.updatedAt.toISOString()}</span>
-      </h2>
-      <h2 className="text-gray-500 text-lg italic">{segment.subtitle}</h2>
+    <div className="w-full p-10 rounded-xl bg-gradient-to-br from-green-50 to-teal-50">
+      <div className="w-full text-xl flex flex-row items-center">
+        <div className="w-20 text-left">
+          <span className="text-4xl italic">{index}</span>
+        </div>
+        <div className="flex-grow flex flex-col">
+          <div className="flex-1">
+            <span>{segment.title}</span> <span>{segment.id}</span>
+            <span className="float-right">
+              {segment.updatedAt.toISOString()}
+            </span>
+          </div>
+          <div className="flex-1">
+            <span className="text-gray-500 text-lg italic">
+              {segment.subtitle}
+            </span>
+          </div>
+        </div>
+      </div>
 
-      <div className="space-y-2 ml-">
+      <div className="mt-2 space-y-2">
         {items.map((item, index) => (
-          <Box key={item.id} smallPadding>
-            <p
-              className="cursor-pointer space-x-2"
-              onClick={async () => {
-                const postSegmentItemToUpdate: PostSegmentItemUpdate['postSegmentItemToUpdate'] = {
-                  ...item,
-                  content: 'new item content ' + Math.random(),
-                }
-
-                const content = postSegmentItemToUpdate.content
-                if (typeof content === 'string') {
-                  setItems((prevItems) =>
-                    prevItems.map((prevItem) => {
-                      if (prevItem.id !== postSegmentItemToUpdate.id) {
-                        return prevItem
-                      } else {
-                        return { ...prevItem, content }
-                      }
-                    })
-                  )
-
-                  await updatePostSegmentItem({
-                    postId,
-                    postSegmentId: segment.id,
-                    postSegmentItemToUpdate,
-                  })
-                }
-              }}
-            >
-              <span className="inline-block w-20">
-                {isLoading && index === items.length - 1 ? 'load' : index + 1}
-              </span>
-              <span className="inline-block w-64">{item.id}</span>
-              <span>{item.content}</span>
-              <span>{item.updatedAt.toISOString()}</span>
-            </p>
-          </Box>
+          <PostSegmentItem
+            key={item.id}
+            itemInitial={item}
+            postId={postId}
+            segmentId={segment.id}
+            index={index}
+          />
         ))}
       </div>
 
-      <FormInput placeholder="New item" onSubmit={handleCreate}></FormInput>
+      <div className="h-20 flex items-center">
+        {showInput ? (
+          <FormInput
+            placeholder="New item"
+            onSubmit={handleCreate}
+            onBlur={() => setShowInput(false)}
+          />
+        ) : (
+          <Button onClick={() => setShowInput(true)}>Add item</Button>
+        )}
+      </div>
     </div>
+  )
+}
+
+function PostSegmentItem({
+  itemInitial,
+  index,
+  postId,
+  segmentId,
+}: {
+  itemInitial: PostSegmentItemPostAPI
+  index: number
+  postId: string
+  segmentId: string
+}) {
+  const [item, setItem] = useState<PostSegmentItemPostAPI>(itemInitial)
+  const { updatePostSegmentItem, isLoading } = usePost(postId, false)
+
+  useEffect(() => setItem(itemInitial), [itemInitial])
+
+  return (
+    <Box key={item.id} smallPadding>
+      <p
+        className="cursor-pointer space-x-2"
+        onClick={async () => {
+          const postSegmentItemToUpdate: PostSegmentItemUpdate['postSegmentItemToUpdate'] = {
+            ...item,
+            content: 'new item content ' + Math.random(),
+          }
+
+          const content = postSegmentItemToUpdate.content
+          if (typeof content === 'string') {
+            setItem((prevItem) => ({ ...prevItem, content }))
+
+            await updatePostSegmentItem({
+              postId,
+              postSegmentId: segmentId,
+              postSegmentItemToUpdate,
+            })
+          }
+        }}
+      >
+        <span className="inline-block italic w-20">
+          {isLoading ? 'load' : index + 1}
+        </span>
+        <span className="inline-block w-64">{item.id}</span>
+        <span>{item.content}</span>
+        <span>{item.updatedAt.toISOString()}</span>
+      </p>
+    </Box>
   )
 }
