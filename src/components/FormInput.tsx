@@ -1,19 +1,21 @@
 import { ChangeEvent, FormEvent, ReactNode, useState } from 'react'
 
-const defaultValue = ''
-
 export function FormInput({
   placeholder,
   children,
   onSubmit,
-  onBlur,
+  autoFocus = true,
+  initialValue = '',
+  resetOnSubmit = false,
 }: {
   onSubmit: (inputValue: string) => Promise<void>
-  onBlur?: () => void
   placeholder?: string
   children?: ReactNode
+  autoFocus?: boolean
+  initialValue?: string
+  resetOnSubmit?: boolean
 }): JSX.Element {
-  const [inputValue, setInputValue] = useState<string>(defaultValue)
+  const [inputValue, setInputValue] = useState<string>(initialValue)
   const [id] = useState(Math.random())
   const [isDisabled, setIsDisabled] = useState(false)
 
@@ -22,12 +24,17 @@ export function FormInput({
 
     setIsDisabled(true)
 
-    if (inputValue !== '' && inputValue !== defaultValue) {
+    if (inputValue !== '' && inputValue !== initialValue) {
       const inputValueNew = inputValue
-      setInputValue(defaultValue)
+
+      if (resetOnSubmit) {
+        setInputValue('')
+      }
+
       await onSubmit(inputValueNew)
     }
 
+    // throws error for cases where input is unmounted after submit...
     setIsDisabled(false)
   }
 
@@ -41,12 +48,11 @@ export function FormInput({
       </label>
 
       <input
-        onBlur={onBlur}
         type="text"
         name="input"
         value={inputValue}
         disabled={isDisabled}
-        autoFocus
+        autoFocus={autoFocus}
         placeholder={placeholder}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           setInputValue(event.target.value)

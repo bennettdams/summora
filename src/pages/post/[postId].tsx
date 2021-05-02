@@ -1,6 +1,6 @@
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Box } from '../../components/Box'
 import { Button } from '../../components/Button'
 import { FormInput } from '../../components/FormInput'
@@ -8,6 +8,7 @@ import { LoadingAnimation } from '../../components/LoadingAnimation'
 import { Page, PageSection } from '../../components/Page'
 import { usePost } from '../../data/post-helper'
 import { PostSegmentCreate } from '../api/post-segment'
+import { PostSegmentUpdate } from '../api/post-segment/[postSegmentId]'
 import { PostSegmentItemCreate } from '../api/post-segment-items'
 import { PostSegmentItemUpdate } from '../api/post-segment-items/[postSegmentItemId]'
 import {
@@ -15,6 +16,7 @@ import {
   PostSegmentItemPostAPI,
   PostSegmentPostAPI,
 } from '../api/posts/[postId]'
+import { useOnClickOutside } from '../../util/use-on-click-outside'
 
 // export const getServerSideProps: GetServerSideProps = async ({
 //   params,
@@ -128,7 +130,7 @@ function PostPageWrapper({ post }: { post: PostPostAPI }) {
               index={index + 1}
               postId={post.id}
               key={segment.id}
-              segment={segment}
+              segmentInitial={segment}
             />
           ))}
         </div>
@@ -142,19 +144,45 @@ function PostPageWrapper({ post }: { post: PostPostAPI }) {
 }
 
 function Segment({
-  segment,
+  segmentInitial,
   index,
   postId,
 }: {
-  segment: PostSegmentPostAPI
+  segmentInitial: PostSegmentPostAPI
   index: number
   postId: string
 }) {
-  const { createPostSegmentItem, isLoading } = usePost(postId, false)
+  const { createPostSegmentItem, updatePostSegment } = usePost(postId, false)
+  const [segment, setSegment] = useState<PostSegmentPostAPI>(segmentInitial)
+  useEffect(() => setSegment(segmentInitial), [segmentInitial])
   const [items, setItems] = useState<PostSegmentItemPostAPI[]>(segment.items)
-  const [showInput, setShowInput] = useState(false)
-
   useEffect(() => setItems(segment.items), [segment.items])
+
+  const [isSegmentEditable, setIsSegmentEditable] = useState(false)
+  const [showItemInput, setShowItemInput] = useState(false)
+
+  const refEdit = useRef<HTMLDivElement>(null)
+  useOnClickOutside(refEdit, () => setIsSegmentEditable(false))
+  const refEditItem = useRef<HTMLDivElement>(null)
+  useOnClickOutside(refEditItem, () => setShowItemInput(false))
+
+  async function handleUpdateTitle(inputValue: string): Promise<void> {
+    const postSegmentToUpdate: PostSegmentUpdate['postSegmentToUpdate'] = {
+      ...segment,
+      title: inputValue,
+    }
+
+    const title = postSegmentToUpdate.title
+    if (typeof title === 'string') {
+      setSegment((prevSegment) => ({ ...prevSegment, title }))
+
+      await updatePostSegment({
+        postId,
+        postSegmentToUpdate,
+      })
+    }
+    setIsSegmentEditable(false)
+  }
 
   async function handleCreate(inputValue: string): Promise<void> {
     const postSegmentItemToCreate: PostSegmentItemCreate['postSegmentItemToCreate'] = {
@@ -180,23 +208,42 @@ function Segment({
 
   return (
     <div className="w-full p-10 rounded-xl bg-gradient-to-br from-green-50 to-teal-50">
-      <div className="w-full text-xl flex flex-row items-center">
+      <div className="w-full h-20 text-xl flex flex-row items-center">
         <div className="w-20 text-left">
           <span className="text-4xl italic">{index}</span>
         </div>
-        <div className="flex-grow flex flex-col">
-          <div className="flex-1">
-            <span>{segment.title}</span> <span>{segment.id}</span>
-            <span className="float-right">
-              {segment.updatedAt.toISOString()}
-            </span>
+        {isSegmentEditable ? (
+          <div className="flex-grow" ref={refEdit}>
+            <FormInput
+              placeholder="Title.."
+              initialValue={segment.title}
+              onSubmit={handleUpdateTitle}
+            />
+            <FormInput
+              placeholder="Subitle.."
+              initialValue={segment.subtitle || ''}
+              onSubmit={handleUpdateTitle}
+              autoFocus={false}
+            />
           </div>
-          <div className="flex-1">
-            <span className="text-gray-500 text-lg italic">
-              {segment.subtitle}
-            </span>
+        ) : (
+          <div
+            className="flex-grow flex flex-col"
+            onClick={() => setIsSegmentEditable(true)}
+          >
+            <div className="flex-1">
+              <span>{segment.title}</span> <span>{segment.id}</span>
+              <span className="float-right">
+                {segment.updatedAt.toISOString()}
+              </span>
+            </div>
+            <div className="flex-1">
+              <span className="text-gray-500 text-lg italic">
+                {segment.subtitle}
+              </span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="mt-2 space-y-2">
@@ -211,15 +258,15 @@ function Segment({
         ))}
       </div>
 
-      <div className="h-20 flex items-center">
-        {showInput ? (
+      <div className="h-20 flex items-center" ref={refEditItem}>
+        {showItemInput ? (
           <FormInput
             placeholder="New item"
+            resetOnSubmit
             onSubmit={handleCreate}
-            onBlur={() => setShowInput(false)}
           />
         ) : (
-          <Button onClick={() => setShowInput(true)}>Add item</Button>
+          <Button onClick={() => setShowItemInput(true)}>Add item</Button>
         )}
       </div>
     </div>

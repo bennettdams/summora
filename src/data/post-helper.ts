@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { PostSegmentCreate } from '../pages/api/post-segment'
 import { PostSegmentItemCreate } from '../pages/api/post-segment-items'
 import { PostSegmentItemUpdate } from '../pages/api/post-segment-items/[postSegmentItemId]'
+import { PostSegmentUpdate } from '../pages/api/post-segment/[postSegmentId]'
 import { PostPostsAPI } from '../pages/api/posts'
 import {
   PostPostAPI,
@@ -42,6 +43,12 @@ function usePostMutation(postId: string) {
     },
   })
 
+  const updatePostSegmentMutation = useMutation(updatePostSegment, {
+    onSuccess: (data: PostPostAPI) => {
+      queryClient.setQueryData([queryKeyPosts, postId], data)
+    },
+  })
+
   const updatePostSegmentItemMutation = useMutation(updatePostSegmentItem, {
     onSuccess: (data: PostPostAPI) => {
       queryClient.setQueryData([queryKeyPosts, postId], data)
@@ -52,6 +59,7 @@ function usePostMutation(postId: string) {
     createPostSegmentItemMutation,
     updatePostSegmentItemMutation,
     createPostSegmentMutation,
+    updatePostSegmentMutation,
   }
 }
 
@@ -81,6 +89,7 @@ export function usePost(postId: string, enabled = true) {
     createPostSegmentItemMutation,
     updatePostSegmentItemMutation,
     createPostSegmentMutation,
+    updatePostSegmentMutation,
   } = usePostMutation(postId)
 
   return {
@@ -89,15 +98,18 @@ export function usePost(postId: string, enabled = true) {
       isLoading ||
       createPostSegmentItemMutation.isLoading ||
       updatePostSegmentItemMutation.isLoading ||
-      createPostSegmentMutation.isLoading,
+      createPostSegmentMutation.isLoading ||
+      updatePostSegmentMutation.isLoading,
     isError:
       isError ||
       createPostSegmentItemMutation.isError ||
       updatePostSegmentItemMutation.isError ||
-      createPostSegmentMutation.isError,
+      createPostSegmentMutation.isError ||
+      updatePostSegmentMutation.isError,
     createPostSegmentItem: createPostSegmentItemMutation.mutateAsync,
     createPostSegment: createPostSegmentMutation.mutateAsync,
     updatePostSegmentItem: updatePostSegmentItemMutation.mutateAsync,
+    updatePostSegment: updatePostSegmentMutation.mutateAsync,
   }
 }
 
@@ -175,6 +187,37 @@ async function updatePostSegmentItem({
       body: JSON.stringify(body),
     }
   )
+
+  if (!response.ok) {
+    throw new Error(response.statusText)
+  }
+
+  const postJSON: PostPostAPI = await response.json()
+  const postUpdated: PostPostAPI = transformPostPostAPI(postJSON)
+
+  return postUpdated
+}
+
+async function updatePostSegment({
+  postId,
+  postSegmentToUpdate,
+}: PostSegmentUpdate): Promise<PostPostAPI> {
+  if (!postId || !postSegmentToUpdate.id)
+    throw new Error('Cannot update post segment, no post ID / post segment ID!')
+
+  const body: PostSegmentUpdate = {
+    postId,
+    postSegmentToUpdate: {
+      id: postSegmentToUpdate.id,
+      title: postSegmentToUpdate.title,
+      subtitle: postSegmentToUpdate.subtitle,
+    },
+  }
+
+  const response = await fetch(`${urlPostSegment}/${postSegmentToUpdate.id}`, {
+    method: 'PUT',
+    body: JSON.stringify(body),
+  })
 
   if (!response.ok) {
     throw new Error(response.statusText)
