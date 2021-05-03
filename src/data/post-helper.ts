@@ -1,9 +1,9 @@
 import { Prisma } from '@prisma/client'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { PostSegmentCreate } from '../pages/api/post-segment'
+import { PostSegmentCreate } from '../pages/api/post-segments'
 import { PostSegmentItemCreate } from '../pages/api/post-segment-items'
 import { PostSegmentItemUpdate } from '../pages/api/post-segment-items/[postSegmentItemId]'
-import { PostSegmentUpdate } from '../pages/api/post-segment/[postSegmentId]'
+import { PostSegmentUpdate } from '../pages/api/post-segments/[postSegmentId]'
 import { PostPostsAPI } from '../pages/api/posts'
 import {
   PostPostAPI,
@@ -13,7 +13,7 @@ import {
 
 const urlPost = '/api/posts'
 const urlPostSegmentItem = '/api/post-segment-items'
-const urlPostSegment = '/api/post-segment'
+const urlPostSegment = '/api/post-segments'
 export const queryKeyPosts = 'posts'
 
 function usePostsMutation() {

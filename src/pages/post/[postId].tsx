@@ -7,8 +7,8 @@ import { FormInput } from '../../components/FormInput'
 import { LoadingAnimation } from '../../components/LoadingAnimation'
 import { Page, PageSection } from '../../components/Page'
 import { usePost } from '../../data/post-helper'
-import { PostSegmentCreate } from '../api/post-segment'
-import { PostSegmentUpdate } from '../api/post-segment/[postSegmentId]'
+import { PostSegmentCreate } from '../api/post-segments'
+import { PostSegmentUpdate } from '../api/post-segments/[postSegmentId]'
 import { PostSegmentItemCreate } from '../api/post-segment-items'
 import { PostSegmentItemUpdate } from '../api/post-segment-items/[postSegmentItemId]'
 import {
@@ -74,29 +74,34 @@ function Wrapper({ postId }: { postId: string }) {
   )
 }
 
+const newSegmentId = 'new-segment-id'
+
 function PostPageWrapper({ post }: { post: PostPostAPI }) {
   const { createPostSegment, isLoading } = usePost(post.id, false)
-  const [segments, setSegments] = useState<PostSegmentPostAPI[]>(post.segments)
+  const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
 
+  const [segments, setSegments] = useState<PostSegmentPostAPI[]>(post.segments)
   useEffect(() => setSegments(post.segments), [post.segments])
 
   async function handleCreate(): Promise<void> {
     const postSegmentToCreate: PostSegmentCreate['postSegmentToCreate'] = {
-      title: 'New title ' + Math.random(),
-      subtitle: 'subtitle ' + Math.random(),
+      title: '',
+      subtitle: '',
     }
     setSegments((prevSegments) => [
       ...prevSegments,
       {
         postId: post.id,
-        id: 'new' + Math.random(),
-        title: postSegmentToCreate.title ?? 'new',
-        subtitle: postSegmentToCreate.subtitle ?? 'new',
+        id: newSegmentId + Math.random(),
+        title: postSegmentToCreate.title ?? '',
+        subtitle: postSegmentToCreate.subtitle ?? '',
         items: [],
         createdAt: new Date(),
         updatedAt: new Date(),
       },
     ])
+
+    setHasNewSegmentBeenEdited(false)
 
     await createPostSegment({
       postId: post.id,
@@ -130,13 +135,19 @@ function PostPageWrapper({ post }: { post: PostPostAPI }) {
               index={index + 1}
               postId={post.id}
               key={segment.id}
-              segmentInitial={segment}
+              segmentExternal={segment}
+              isEditableExternal={
+                !hasNewSegmentBeenEdited && index === segments.length - 1
+              }
+              onInitialEdit={() => setHasNewSegmentBeenEdited(true)}
             />
           ))}
         </div>
       </PageSection>
       <PageSection>
-        <Button onClick={handleCreate}>Add step</Button>
+        <Button onClick={handleCreate} disabled={!hasNewSegmentBeenEdited}>
+          Add step
+        </Button>
         {isLoading && <p>loading</p>}
       </PageSection>
     </>
@@ -144,25 +155,32 @@ function PostPageWrapper({ post }: { post: PostPostAPI }) {
 }
 
 function Segment({
-  segmentInitial,
+  segmentExternal,
   index,
   postId,
+  isEditableExternal = false,
+  onInitialEdit,
 }: {
-  segmentInitial: PostSegmentPostAPI
+  segmentExternal: PostSegmentPostAPI
   index: number
   postId: string
+  isEditableExternal?: boolean
+  onInitialEdit?: () => void
 }) {
   const { createPostSegmentItem, updatePostSegment } = usePost(postId, false)
-  const [segment, setSegment] = useState<PostSegmentPostAPI>(segmentInitial)
-  useEffect(() => setSegment(segmentInitial), [segmentInitial])
+  const [segment, setSegment] = useState<PostSegmentPostAPI>(segmentExternal)
+  useEffect(() => setSegment(segmentExternal), [segmentExternal])
   const [items, setItems] = useState<PostSegmentItemPostAPI[]>(segment.items)
   useEffect(() => setItems(segment.items), [segment.items])
 
-  const [isSegmentEditable, setIsSegmentEditable] = useState(false)
+  const [isSegmentEditable, setIsSegmentEditable] = useState(isEditableExternal)
+  useEffect(() => setIsSegmentEditable(isEditableExternal), [
+    isEditableExternal,
+  ])
   const [showItemInput, setShowItemInput] = useState(false)
 
   const refEdit = useRef<HTMLDivElement>(null)
-  useOnClickOutside(refEdit, () => setIsSegmentEditable(false))
+  useOnClickOutside(refEdit, () => setIsSegmentEditable(isEditableExternal))
   const refEditItem = useRef<HTMLDivElement>(null)
   useOnClickOutside(refEditItem, () => setShowItemInput(false))
 
@@ -175,6 +193,27 @@ function Segment({
     const title = postSegmentToUpdate.title
     if (typeof title === 'string') {
       setSegment((prevSegment) => ({ ...prevSegment, title }))
+
+      await updatePostSegment({
+        postId,
+        postSegmentToUpdate,
+      })
+    }
+    setIsSegmentEditable(false)
+  }
+
+  async function handleUpdateSubtitle(inputValue: string): Promise<void> {
+    const postSegmentToUpdate: PostSegmentUpdate['postSegmentToUpdate'] = {
+      ...segment,
+      subtitle: inputValue,
+    }
+
+    const subtitle = postSegmentToUpdate.subtitle
+    if (typeof subtitle === 'string') {
+      setSegment((prevSegment) => ({ ...prevSegment, subtitle }))
+
+      // When creating a segment, the title is editable initially. This resets this.
+      if (onInitialEdit) onInitialEdit()
 
       await updatePostSegment({
         postId,
@@ -222,7 +261,7 @@ function Segment({
             <FormInput
               placeholder="Subitle.."
               initialValue={segment.subtitle || ''}
-              onSubmit={handleUpdateTitle}
+              onSubmit={handleUpdateSubtitle}
               autoFocus={false}
             />
           </div>
@@ -250,7 +289,7 @@ function Segment({
         {items.map((item, index) => (
           <PostSegmentItem
             key={item.id}
-            itemInitial={item}
+            itemExternal={item}
             postId={postId}
             segmentId={segment.id}
             index={index}
@@ -274,50 +313,68 @@ function Segment({
 }
 
 function PostSegmentItem({
-  itemInitial,
+  itemExternal,
   index,
   postId,
   segmentId,
 }: {
-  itemInitial: PostSegmentItemPostAPI
+  itemExternal: PostSegmentItemPostAPI
   index: number
   postId: string
   segmentId: string
 }) {
-  const [item, setItem] = useState<PostSegmentItemPostAPI>(itemInitial)
   const { updatePostSegmentItem, isLoading } = usePost(postId, false)
 
-  useEffect(() => setItem(itemInitial), [itemInitial])
+  const [item, setItem] = useState<PostSegmentItemPostAPI>(itemExternal)
+  useEffect(() => setItem(itemExternal), [itemExternal])
+
+  const [isEditable, setIsEditable] = useState(false)
+
+  const refEdit = useRef<HTMLDivElement>(null)
+  useOnClickOutside(refEdit, () => setIsEditable(false))
+
+  async function handleUpdate(inputValue: string): Promise<void> {
+    const postSegmentItemToUpdate: PostSegmentItemUpdate['postSegmentItemToUpdate'] = {
+      ...item,
+      content: inputValue,
+    }
+
+    const content = postSegmentItemToUpdate.content
+    if (typeof content === 'string') {
+      setItem((prevItem) => ({ ...prevItem, content }))
+
+      await updatePostSegmentItem({
+        postId,
+        postSegmentId: segmentId,
+        postSegmentItemToUpdate,
+      })
+    }
+    setIsEditable(false)
+  }
 
   return (
     <Box key={item.id} smallPadding>
-      <p
-        className="cursor-pointer space-x-2"
-        onClick={async () => {
-          const postSegmentItemToUpdate: PostSegmentItemUpdate['postSegmentItemToUpdate'] = {
-            ...item,
-            content: 'new item content ' + Math.random(),
-          }
-
-          const content = postSegmentItemToUpdate.content
-          if (typeof content === 'string') {
-            setItem((prevItem) => ({ ...prevItem, content }))
-
-            await updatePostSegmentItem({
-              postId,
-              postSegmentId: segmentId,
-              postSegmentItemToUpdate,
-            })
-          }
-        }}
+      <div
+        className="cursor-pointer w-full space-x-2 flex items-center"
+        ref={refEdit}
+        onClick={() => setIsEditable(true)}
       >
-        <span className="inline-block italic w-20">
-          {isLoading ? 'load' : index + 1}
-        </span>
-        <span className="inline-block w-64">{item.id}</span>
-        <span>{item.content}</span>
+        <div className="inline-block italic w-20">
+          <span>{isLoading ? 'load' : index + 1}</span>
+        </div>
+        {isEditable ? (
+          <FormInput
+            initialValue={item.content}
+            placeholder="New item"
+            resetOnSubmit
+            onSubmit={handleUpdate}
+          />
+        ) : (
+          <span>{item.content}</span>
+        )}
+        <span className="text-xs inline-block w-64">{item.id}</span>
         <span>{item.updatedAt.toISOString()}</span>
-      </p>
+      </div>
     </Box>
   )
 }

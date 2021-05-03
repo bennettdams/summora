@@ -39,7 +39,7 @@ export function FormInput({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
+    <form onSubmit={handleSubmit} className="w-full inline-block">
       <label
         htmlFor={`inputId ${id}`}
         className="block text-sm font-medium text-gray-700"
