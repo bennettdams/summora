@@ -2,7 +2,7 @@ import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { Box } from '../../components/Box'
-import { Button } from '../../components/Button'
+import { Button, ButtonAdd } from '../../components/Button'
 import { FormInput } from '../../components/FormInput'
 import { LoadingAnimation } from '../../components/LoadingAnimation'
 import { Page, PageSection } from '../../components/Page'
@@ -247,6 +247,8 @@ function Segment({
     })
   }
 
+  const formId = `post-segment-item-new-${segment.id}`
+
   return (
     <div className="w-full p-10 rounded-xl bg-gradient-to-br from-green-50 to-teal-50">
       <div className="w-full h-20 text-xl flex flex-row items-center">
@@ -301,13 +303,22 @@ function Segment({
 
       <div className="h-20 flex items-center" ref={refEditItem}>
         {showItemInput ? (
-          <FormInput
-            placeholder="New item"
-            resetOnSubmit
-            onSubmit={handleCreate}
-          />
+          <>
+            <button className="inline" form={formId} type="submit">
+              <IconCheck />
+            </button>
+            <IconX onClick={() => setShowItemInput(false)} className="ml-4" />
+            <div className="ml-4 w-full">
+              <FormInput
+                placeholder="New item"
+                formId={formId}
+                resetOnSubmit
+                onSubmit={handleCreate}
+              />
+            </div>
+          </>
         ) : (
-          <Button onClick={() => setShowItemInput(true)}>Add item</Button>
+          <ButtonAdd size="huge" onClick={() => setShowItemInput(true)} />
         )}
       </div>
     </div>

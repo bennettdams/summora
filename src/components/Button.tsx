@@ -1,14 +1,17 @@
 import { ReactNode } from 'react'
+import { IconAdd, IconProps } from './Icon'
+
+interface ButtonProps {
+  onClick: () => void
+  children?: ReactNode
+  disabled?: boolean
+}
 
 export function Button({
   onClick,
   children,
   disabled = false,
-}: {
-  onClick: () => void
-  children: ReactNode
-  disabled?: boolean
-}): JSX.Element {
+}: ButtonProps): JSX.Element {
   return (
     <button
       onClick={onClick}
@@ -20,6 +23,24 @@ export function Button({
       }
     >
       {children}
+    </button>
+  )
+}
+
+export function ButtonAdd({
+  onClick,
+  disabled = false,
+  size,
+}: ButtonProps & { size?: IconProps['size'] }): JSX.Element {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={
+        'disabled:bg-gray-200 disabled:cursor-not-allowed focus:outline-none'
+      }
+    >
+      <IconAdd size={size} onClick={onClick} />
     </button>
   )
 }
