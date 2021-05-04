@@ -17,6 +17,8 @@ import {
   PostSegmentPostAPI,
 } from '../api/posts/[postId]'
 import { useOnClickOutside } from '../../util/use-on-click-outside'
+import { IconCheck, IconEdit, IconTrash, IconX } from '../../components/Icon'
+import { useHover } from '../../util/use-hover'
 
 // export const getServerSideProps: GetServerSideProps = async ({
 //   params,
@@ -324,6 +326,7 @@ function PostSegmentItem({
   segmentId: string
 }) {
   const { updatePostSegmentItem, isLoading } = usePost(postId, false)
+  const [ref, isHovered] = useHover<HTMLDivElement>()
 
   const [item, setItem] = useState<PostSegmentItemPostAPI>(itemExternal)
   useEffect(() => setItem(itemExternal), [itemExternal])
@@ -352,27 +355,48 @@ function PostSegmentItem({
     setIsEditable(false)
   }
 
+  const formId = `post-segment-item-${item.id}`
+
   return (
-    <Box key={item.id} smallPadding>
-      <div
-        className="cursor-pointer w-full space-x-2 flex items-center"
-        ref={refEdit}
-        onClick={() => setIsEditable(true)}
-      >
-        <div className="inline-block italic w-20">
-          <span>{isLoading ? 'load' : index + 1}</span>
+    <Box
+      key={item.id}
+      onClick={() => setIsEditable(true)}
+      refExternal={refEdit}
+      smallPadding
+    >
+      <div ref={ref} className="space-x-2 flex items-center">
+        <div className="inline-flex italic w-20 items-center">
+          {isLoading ? (
+            'load'
+          ) : isEditable ? (
+            <>
+              <button className="inline" form={formId} type="submit">
+                <IconCheck />
+              </button>
+              <IconX onClick={() => setIsEditable(false)} className="ml-4" />
+            </>
+          ) : isHovered ? (
+            <>
+              <IconTrash /> <IconEdit className="ml-4" />
+            </>
+          ) : (
+            <span>{index + 1}</span>
+          )}
         </div>
         {isEditable ? (
-          <FormInput
-            initialValue={item.content}
-            placeholder="New item"
-            resetOnSubmit
-            onSubmit={handleUpdate}
-          />
+          <>
+            <FormInput
+              initialValue={item.content}
+              placeholder="New item"
+              resetOnSubmit
+              onSubmit={handleUpdate}
+              formId={formId}
+            />
+          </>
         ) : (
           <span>{item.content}</span>
         )}
-        <span className="text-xs inline-block w-64">{item.id}</span>
+        {/* <span className="text-xs inline-block w-64">{item.id}</span> */}
         <span>{item.updatedAt.toISOString()}</span>
       </div>
     </Box>

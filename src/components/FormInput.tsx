@@ -7,6 +7,7 @@ export function FormInput({
   autoFocus = true,
   initialValue = '',
   resetOnSubmit = false,
+  formId,
 }: {
   onSubmit: (inputValue: string) => Promise<void>
   placeholder?: string
@@ -14,6 +15,7 @@ export function FormInput({
   autoFocus?: boolean
   initialValue?: string
   resetOnSubmit?: boolean
+  formId?: string
 }): JSX.Element {
   const [inputValue, setInputValue] = useState<string>(initialValue)
   const [id] = useState(Math.random())
@@ -39,7 +41,7 @@ export function FormInput({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="w-full inline-block">
+    <form id={formId} onSubmit={handleSubmit} className="w-full inline-block">
       <label
         htmlFor={`inputId ${id}`}
         className="block text-sm font-medium text-gray-700"
