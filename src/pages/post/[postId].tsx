@@ -150,7 +150,7 @@ function PostPageWrapper({ post }: { post: PostPostAPI }) {
         <Button onClick={handleCreate} disabled={!hasNewSegmentBeenEdited}>
           Add step
         </Button>
-        {isLoading && <p>loading</p>}
+        {isLoading && <LoadingAnimation />}
       </PageSection>
     </>
   )
@@ -247,7 +247,7 @@ function Segment({
     })
   }
 
-  const formId = `post-segment-item-new-${segment.id}`
+  const formIdNew = `post-segment-item-new-${segment.id}`
 
   return (
     <div className="w-full p-10 rounded-xl bg-gradient-to-br from-green-50 to-teal-50">
@@ -304,14 +304,14 @@ function Segment({
       <div className="h-20 flex items-center" ref={refEditItem}>
         {showItemInput ? (
           <>
-            <button className="inline" form={formId} type="submit">
+            <button className="inline" form={formIdNew} type="submit">
               <IconCheck />
             </button>
             <IconX onClick={() => setShowItemInput(false)} className="ml-4" />
             <div className="ml-4 w-full">
               <FormInput
                 placeholder="New item"
-                formId={formId}
+                formId={formIdNew}
                 resetOnSubmit
                 onSubmit={handleCreate}
               />
@@ -378,7 +378,7 @@ function PostSegmentItem({
       <div ref={ref} className="space-x-2 flex items-center">
         <div className="inline-flex italic w-20 items-center">
           {isLoading ? (
-            'load'
+            <LoadingAnimation />
           ) : isEditable ? (
             <>
               <button className="inline" form={formId} type="submit">

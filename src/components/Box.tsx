@@ -1,4 +1,4 @@
-import { MouseEvent, ReactNode, RefObject } from 'react'
+import { ReactNode, RefObject } from 'react'
 
 export function Box({
   children,
@@ -16,10 +16,7 @@ export function Box({
 )): JSX.Element {
   return (
     <div
-      onClick={(event: MouseEvent) => {
-        event.stopPropagation()
-        onClick && onClick()
-      }}
+      onClick={() => onClick && onClick()}
       ref={refExternal}
       className={`box bg-white rounded-xl shadow-md hover:shadow-lg ${
         noPadding ? 'p-0' : smallPadding ? 'p-4' : 'p-10'
