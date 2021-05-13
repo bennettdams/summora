@@ -6,6 +6,7 @@ import { usePosts } from '../data/post-helper'
 import { Link } from '../components/Link'
 import { Box } from '../components/Box'
 import { PostPostsAPI } from './api/posts'
+import { postCategories } from '../static/categories'
 
 export const Home = (): JSX.Element => {
   const { posts, isLoading, createPost } = usePosts()
@@ -46,6 +47,18 @@ export const Home = (): JSX.Element => {
             >
               New
             </button>
+          </PageSection>
+          <PageSection>
+            <p className="text-2xl italic">Find by category</p>
+            <div className="grid gap-6 grid-cols-2 md:grid-cols-4 text-center text-lg">
+              {postCategories.map((category) => (
+                <Box smallPadding key={category.id}>
+                  <span className="hover:font-bold cursor-pointer">
+                    {category.title}
+                  </span>
+                </Box>
+              ))}
+            </div>
           </PageSection>
           <PageSection>
             <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:gap-12">
