@@ -11,6 +11,7 @@ export default async (
     await prisma.postSegmentItem.deleteMany({})
     await prisma.postSegment.deleteMany({})
     await prisma.post.deleteMany({})
+    await prisma.postCategory.deleteMany({})
 
     // posts.forEach(async (post) => {
     //   await prisma.post.create({
@@ -24,13 +25,26 @@ export default async (
     //     },
     //   })
     // })
+    await prisma.postCategory.createMany({ data: postCategories })
+
+    const noOfPostCategories = postCategories.length
+    const min = 0
+    const max = Math.floor(noOfPostCategories)
 
     posts.forEach(async (post) => {
       const now = new Date().getTime()
       const step = 100
+
       await prisma.post.create({
         data: {
           ...post,
+          category: {
+            connect: {
+              id:
+                postCategories[Math.floor(Math.random() * (max - min) + min)] // assign random category
+                  .id,
+            },
+          },
           segments: {
             create: [
               {
@@ -85,17 +99,18 @@ export default async (
   }
 }
 
-const posts: Prisma.PostCreateInput[] = [...new Array(5)].map((_, i) => {
-  const post: Prisma.PostCreateInput = {
-    title:
-      'Post title    This is a title that is a bit longer for testing purposes ' +
-      (i + 1),
-    subtitle:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' + (i + 1),
-    category: 'Category A',
+const posts: Prisma.PostCreateWithoutCategoryInput[] = [...new Array(5)].map(
+  (_, i) => {
+    const post: Prisma.PostCreateWithoutCategoryInput = {
+      title:
+        'Post title    This is a title that is a bit longer for testing purposes ' +
+        (i + 1),
+      subtitle:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' + (i + 1),
+    }
+    return post
   }
-  return post
-})
+)
 
 // for inline create
 // const segments: Prisma.PostSegmentCreateWithoutPostInput[] = [
@@ -128,3 +143,37 @@ const posts: Prisma.PostCreateInput[] = [...new Array(5)].map((_, i) => {
 //   })
 //   postSegmentIdsCreated.push(postSegmentCreated.id)
 // })
+
+export const postCategories: Prisma.PostCategoryCreateInput[] = [
+  { id: 'books', title: 'Books', description: '..' },
+  { id: 'movies', title: 'Movies', description: '..' },
+  { id: 'series', title: 'Series', description: '..' },
+  { id: 'music', title: 'Music', description: '..' },
+  { id: 'gaming', title: 'Gaming', description: '..' },
+  { id: 'pc-electronics', title: 'PC & Electronics', description: '..' },
+  { id: 'household', title: 'Electronic', description: '..' },
+  { id: 'animals', title: 'Animals', description: '..' },
+  { id: 'nature', title: 'Nature', description: '..' },
+  { id: 'beauty', title: 'Beauty', description: '..' },
+  { id: 'vehicles', title: 'Vehicles', description: '..' },
+  { id: 'food-drinks', title: 'Food & drinks', description: '..' },
+  { id: 'education', title: 'Education', description: '..' },
+  { id: 'babys', title: 'Babys', description: '..' },
+  { id: 'fashion', title: 'Fashion', description: '..' },
+  { id: 'sports', title: 'Sports', description: '..' },
+]
+
+export const postTags: Prisma.PostTagCreateInput[] = [
+  { id: 'tutorial', title: 'Tutorial', description: '..' },
+  { id: 'summary', title: 'Summary', description: '..' },
+  { id: 'how-to', title: 'How-to', description: '..' },
+  { id: 'knowledge', title: 'Knowledge', description: '..' },
+  { id: 'legal', title: 'Legal', description: '..' },
+  {
+    id: 'everyday life',
+    title: 'Everyday life',
+    description: '..',
+  },
+  { id: 'for dummies', title: 'For dummies', description: '..' },
+  { id: 'history', title: 'History', description: '..' },
+]

@@ -6,10 +6,37 @@ import { usePosts } from '../data/post-helper'
 import { Link } from '../components/Link'
 import { Box } from '../components/Box'
 import { PostPostsAPI } from './api/posts'
-import { postCategories } from '../static/categories'
+import { GetStaticProps } from 'next'
+import { prisma } from '../prisma/prisma'
+import { PostCategory } from '.prisma/client'
 
-export const Home = (): JSX.Element => {
+export const getStaticProps: GetStaticProps = async () => {
+  const postCategories = await prisma.postCategory.findMany()
+  // const posts = await prisma.post.findMany({
+  //   orderBy: {
+  //     createdAt: 'desc',
+  //   },
+  //   take: 10,
+  // })
+
+  return {
+    props: {
+      // posts,
+      postCategories,
+    },
+    revalidate: 60 * 2, // seconds
+  }
+}
+
+export const Home = ({
+  // posts,
+  postCategories,
+}: {
+  // posts: Post[]
+  postCategories: PostCategory[]
+}): JSX.Element => {
   const { posts, isLoading, createPost } = usePosts()
+  // const { createPost } = usePosts()
 
   return (
     <Page>
@@ -24,42 +51,52 @@ export const Home = (): JSX.Element => {
         </span>
       </div>
 
+      <PageSection>
+        <p className="text-2xl italic">Find by category</p>
+        <div className="grid gap-6 grid-cols-2 md:grid-cols-4 text-center text-lg">
+          {postCategories.map((category) => (
+            <Box smallPadding key={category.id}>
+              <span className="hover:font-bold cursor-pointer">
+                {category.title}
+              </span>
+            </Box>
+          ))}
+        </div>
+      </PageSection>
+
+      {/* <PageSection>
+        <button
+          className="p-10 bg-green-300"
+          onClick={async () => {
+            try {
+              await createPost({
+                title: 'title ' + Math.random(),
+                subtitle: 'subtitle ' + Math.random(),
+                category: 'books',
+              })
+            } catch (err) {
+              throw new Error(err)
+            }
+          }}
+        >
+          New
+        </button>
+      </PageSection> */}
+
+      {/* <PageSection>
+        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:gap-12">
+          {posts.map((post) => (
+            <PostItem key={post.id} post={post} />
+          ))}
+        </div>
+      </PageSection> */}
+
       {isLoading ? (
         <LoadingAnimation />
       ) : !posts ? (
         <ErrorPage statusCode={404}>Error while fetching posts</ErrorPage>
       ) : (
         <>
-          <PageSection>
-            <button
-              className="p-10 bg-green-300"
-              onClick={async () => {
-                try {
-                  await createPost({
-                    title: 'title ' + Math.random(),
-                    subtitle: 'subtitle ' + Math.random(),
-                    category: 'category A',
-                  })
-                } catch (err) {
-                  throw new Error(err)
-                }
-              }}
-            >
-              New
-            </button>
-          </PageSection>
-          <PageSection>
-            <p className="text-2xl italic">Find by category</p>
-            <div className="grid gap-6 grid-cols-2 md:grid-cols-4 text-center text-lg">
-              {postCategories.map((category) => (
-                <Box smallPadding key={category.id}>
-                  <span className="hover:font-bold cursor-pointer">
-                    {category.title}
-                  </span>
-                </Box>
-              ))}
-            </div>
-          </PageSection>
           <PageSection>
             <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:gap-12">
               {posts.map((post) => (
@@ -81,7 +118,7 @@ function PostItem({ post }: { post: PostPostsAPI }): JSX.Element {
       <Box noPadding>
         <div className="w-full p-4 h-60 bg-gradient-to-b from-fuchsia-50 to-blue-50 rounded-xl text-center relative">
           <h2 className="tracking-widest text-xs font-medium text-gray-400">
-            {post.category}
+            {post.category.title}
           </h2>
           <h1 className="mt-1 sm:text-2xl text-xl font-medium">{post.title}</h1>
           <p className="mt-3 leading-relaxed">{post.subtitle}</p>

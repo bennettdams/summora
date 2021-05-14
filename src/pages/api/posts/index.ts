@@ -12,6 +12,9 @@ async function findPosts() {
   try {
     return await prisma.post.findMany({
       orderBy: { createdAt: 'asc' },
+      include: {
+        category: true,
+      },
     })
   } catch (error) {
     throw new Error(`Error while finding posts: ${error}`)

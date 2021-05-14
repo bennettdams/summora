@@ -19,13 +19,14 @@ generator client {
 // }
 
 model Post {
-  id        String        @id @default(cuid())
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  title     String
-  subtitle  String?
-  category  String
-  segments  PostSegment[]
+  id             String        @id @default(cuid())
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  title          String
+  subtitle       String?
+  category       PostCategory  @relation(fields: [postCategoryId], references: [id])
+  segments       PostSegment[]
+  postCategoryId String
 }
 
 model PostSegment {
@@ -50,4 +51,17 @@ model PostSegmentItem {
   PostSegment   PostSegment @relation(fields: [postSegmentId], references: [id])
   postSegmentId String
   //
+}
+
+model PostCategory {
+  id          String @id
+  title       String
+  description String
+  Post        Post[]
+}
+
+model PostTag {
+  id          String @id
+  title       String
+  description String
 }

@@ -14,6 +14,7 @@
     "p:studio": "npx prisma studio --schema ./src/prisma/schema.prisma",
     "p:reset": "npx prisma migrate reset --schema ./src/prisma/schema.prisma",
     "p:generate": "npx prisma generate --schema ./src/prisma/schema.prisma",
+    "p:format": "npx prisma format --schema ./src/prisma/schema.prisma",
     "format": "prettier --write .",
     "lint": "eslint . --ext ts --ext tsx --ext js",
     "test": "jest",
@@ -40,6 +41,9 @@
     "react-dom": "^17.0.1",
     "react-query": "^3.13.10"
   },
+  "//dependencies": [
+    "superjson and babel-plugin-superjson-next for serializing dates with Prisma & Next.js. In .babelrc: plugins: [ 'superjson-next' ] "
+  ],
   "devDependencies": {
     "@testing-library/react": "^11.2.5",
     "@types/jest": "^26.0.20",
