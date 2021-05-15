@@ -134,6 +134,7 @@ async function fetchPost(postId: string): Promise<PostPostAPI> {
   const response = await fetch(`${urlPost}/${postId}`, {
     method: 'GET',
   })
+  // await new Promise((resolve) => setTimeout(resolve, 5000))
 
   if (!response.ok) {
     throw new Error(response.statusText)

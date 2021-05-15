@@ -115,8 +115,8 @@ export default Home
 function PostItem({ post }: { post: PostPostsAPI }): JSX.Element {
   return (
     <Link to={`/post/${post.id}`}>
-      <Box noPadding>
-        <div className="w-full p-4 h-60 bg-gradient-to-b from-fuchsia-50 to-blue-50 rounded-xl text-center relative">
+      <Box smallPadding>
+        <div className="w-full h-60 text-center relative">
           <h2 className="tracking-widest text-xs font-medium text-gray-400">
             {post.category.title}
           </h2>

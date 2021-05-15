@@ -19,46 +19,63 @@ import {
 import { useOnClickOutside } from '../../util/use-on-click-outside'
 import { IconCheck, IconEdit, IconTrash, IconX } from '../../components/Icon'
 import { useHover } from '../../util/use-hover'
+import { GetServerSideProps } from 'next'
+import { prisma } from '../../prisma/prisma'
+import { PostCategory } from '.prisma/client'
+import { DropdownSelect } from '../../components/DropdownSelect'
 
-// export const getServerSideProps: GetServerSideProps = async ({
-//   params,
-//   res,
-// }) => {
-//   if (!params || typeof params.id !== 'string') {
-//     res.statusCode = 404
-//     return { props: {} }
-//   } else {
-//     // await new Promise((resolve) => setTimeout(resolve, 5000))
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  res,
+}) => {
+  if (!params || typeof params.postId !== 'string') {
+    res.statusCode = 404
+    return { props: {} }
+  } else {
+    // await new Promise((resolve) => setTimeout(resolve, 2000))
 
-//     const post = await prisma.post.findUnique({
-//       where: { id: params.id },
-//     })
-//     return {
-//       props: {
-//         initialPost: post,
-//       },
-//     }
-//   }
-// }
+    const postCategories = await prisma.postCategory.findMany()
+
+    return {
+      props: {
+        postCategories,
+      },
+    }
+  }
+}
 
 // export const PostPage: NextPage<{ initialPost: Post | null }> = ({
 //   initialPost = null,
 // }): JSX.Element => {
-export const PostPage = (): JSX.Element => {
+export const PostPage = ({
+  postCategories,
+}: {
+  postCategories: PostCategory[]
+}): JSX.Element => {
   const {
     query: { postId },
   } = useRouter()
 
-  return !!postId && typeof postId === 'string' ? (
-    <Wrapper postId={postId} />
-  ) : (
-    <LoadingAnimation />
+  return (
+    <div>
+      {!!postId && typeof postId === 'string' ? (
+        <Wrapper postId={postId} postCategories={postCategories} />
+      ) : (
+        <LoadingAnimation />
+      )}
+    </div>
   )
 }
 
 export default PostPage
 
-function Wrapper({ postId }: { postId: string }) {
+function Wrapper({
+  postId,
+  postCategories,
+}: {
+  postId: string
+  postCategories: PostCategory[]
+}) {
   const { post, isLoading, isError } = usePost(postId)
 
   return (
@@ -68,7 +85,7 @@ function Wrapper({ postId }: { postId: string }) {
       ) : isError ? (
         <ErrorPage statusCode={400}>Error while fetching post</ErrorPage>
       ) : post ? (
-        <PostPageWrapper post={post} />
+        <PostPageWrapper post={post} postCategories={postCategories} />
       ) : (
         <p>error?</p>
       )}
@@ -78,7 +95,13 @@ function Wrapper({ postId }: { postId: string }) {
 
 const newSegmentId = 'new-segment-id'
 
-function PostPageWrapper({ post }: { post: PostPostAPI }) {
+function PostPageWrapper({
+  post,
+  postCategories,
+}: {
+  post: PostPostAPI
+  postCategories: PostCategory[]
+}) {
   const { createPostSegment, isLoading } = usePost(post.id, false)
   const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
 
@@ -129,6 +152,14 @@ function PostPageWrapper({ post }: { post: PostPostAPI }) {
             </Box>
           </div>
         </div>
+      </PageSection>
+      <PageSection>
+        <DropdownSelect
+          items={postCategories.map((cat) => ({
+            id: cat.id,
+            title: cat.title,
+          }))}
+        />
       </PageSection>
       <PageSection>
         <div className="space-y-16">
