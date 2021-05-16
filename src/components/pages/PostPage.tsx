@@ -19,6 +19,8 @@ import {
   PostSegmentPostAPI,
   PostSegmentItemPostAPI,
 } from '../../pages/api/posts/[postId]'
+import { Views } from '../Likes'
+import { Comments } from '../Comments'
 
 export function PostPageWrapper({
   post,
@@ -66,27 +68,76 @@ export function PostPageWrapper({
         <div className="flex flex-col md:flex-row">
           <div className="w-full md:w-2/3">
             <p className="text-5xl text-white">{post.title}</p>
-            <p className="italic mt-2">{post.subtitle}</p>
+
+            <p className="mt-2">
+              <span className="uppercase inline-block py-1 px-2 rounded bg-orange-100 text-orange-800 text-xs font-medium tracking-widest">
+                {post.category.title}
+              </span>
+              <span className="italic ml-2">{post.subtitle}</span>
+            </p>
           </div>
           <div className="w-full md:w-1/3">
-            <Box>
-              <div className="divide-y-1">
-                <p className="text-sm">{post.id}</p>
-                <p>Created at: {post.createdAt.toISOString()}</p>
-                <p>Updated at: {post.updatedAt.toISOString()}</p>
+            <Box smallPadding>
+              <div className="flex divide-gray-400 divide-x">
+                <div className="flex-1 flex flex-col items-center justify-center">
+                  <div className="w-12 h-12 text-center rounded-full inline-flex items-center justify-center bg-gray-200 text-gray-400">
+                    <svg
+                      fill="none"
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      className="w-8 h-8"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                  </div>
+
+                  <div className="w-12 h-1 my-2 bg-indigo-500 rounded"></div>
+
+                  <div className="flex flex-col items-center text-center justify-center">
+                    <h2 className="font-medium leading-none title-font text-gray-900 text-lg">
+                      Username
+                    </h2>
+                  </div>
+                </div>
+
+                <div className="flex-1 text-center">
+                  <div>
+                    <Views>1.2K</Views>
+                    <span className="ml-2">
+                      <Comments>6</Comments>
+                    </span>
+                  </div>
+                  <p>
+                    Created at: {post.createdAt.getUTCMonth()}-
+                    {post.createdAt.getUTCDate()}
+                  </p>
+                  <p>
+                    Updated at: {post.updatedAt.getUTCMonth()}-
+                    {post.updatedAt.getUTCDate()}
+                  </p>
+                </div>
               </div>
             </Box>
+            <div>
+              <span>Select category:</span>
+              <div className="inline">
+                <DropdownSelect
+                  items={postCategories.map((cat) => ({
+                    id: cat.id,
+                    title: cat.title,
+                  }))}
+                  initialItem={post.category}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </PageSection>
-      <PageSection>
-        <DropdownSelect
-          items={postCategories.map((cat) => ({
-            id: cat.id,
-            title: cat.title,
-          }))}
-        />
-      </PageSection>
+
       <PageSection>
         <div className="space-y-16">
           {segments.map((segment, index) => (
@@ -103,6 +154,7 @@ export function PostPageWrapper({
           ))}
         </div>
       </PageSection>
+
       <PageSection>
         <Button onClick={handleCreate} disabled={!hasNewSegmentBeenEdited}>
           Add step

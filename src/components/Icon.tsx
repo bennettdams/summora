@@ -3,7 +3,7 @@ import {
   CheckIcon,
   XIcon,
   TrashIcon,
-  PlusCircleIcon,
+  PlusIcon,
 } from '@heroicons/react/solid'
 import { MouseEvent } from 'react'
 
@@ -71,11 +71,8 @@ export function IconAdd({
   onClick,
 }: IconProps): JSX.Element {
   return (
-    <PlusCircleIcon
-      className={
-        'cursor-pointer text-white border bg-gradient-to-br from-orange-500 to-lime-600 rounded-full shadow-md transition ease-in-out transform hover:rotate-90 hover:scale-105 duration-200' +
-        ` ${sizes[size]} ${className}`
-      }
+    <PlusIcon
+      className={'text-white' + ` ${sizes[size]} ${className}`}
       onClick={(event: MouseEvent) => {
         event.stopPropagation()
         onClick && onClick()

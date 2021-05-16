@@ -37,7 +37,7 @@ export function ButtonAdd({
       onClick={onClick}
       disabled={disabled}
       className={
-        'disabled:bg-gray-200 disabled:cursor-not-allowed focus:outline-none'
+        'disabled:bg-gray-200 cursor-pointer text-transparent border bg-gradient-to-br from-orange-500 to-lime-600 rounded-full shadow-md transition ease-in-out transform hover:rotate-90 hover:scale-105 duration-200 disabled:cursor-not-allowed focus:outline-none'
       }
     >
       <IconAdd size={size} onClick={onClick} />

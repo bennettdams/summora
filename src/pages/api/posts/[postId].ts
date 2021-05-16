@@ -18,6 +18,7 @@ async function findPost(postId: string) {
           orderBy: { createdAt: 'asc' },
           include: { items: { orderBy: { createdAt: 'asc' } } },
         },
+        category: true,
       },
     })
   } catch (error) {

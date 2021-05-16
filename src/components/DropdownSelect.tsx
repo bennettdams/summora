@@ -7,8 +7,14 @@ export interface DropdownItem {
   title: string
 }
 
-export function DropdownSelect({ items }: { items: DropdownItem[] }) {
-  const [selected, setSelected] = useState(items[0])
+export function DropdownSelect({
+  items,
+  initialItem,
+}: {
+  items: DropdownItem[]
+  initialItem?: DropdownItem
+}): JSX.Element {
+  const [selected, setSelected] = useState(initialItem ?? items[0])
 
   return (
     <Listbox value={selected} onChange={setSelected}>
