@@ -9,6 +9,11 @@ export type PostPostAPI = Exclude<
 export type PostSegmentPostAPI = PostPostAPI['segments'][number]
 export type PostSegmentItemPostAPI = PostSegmentPostAPI['items'][number]
 
+export interface PostUpdate {
+  postId: string
+  postToUpdate: Prisma.PostUpdateWithoutSegmentsInput & { categoryId: string }
+}
+
 async function findPost(postId: string) {
   try {
     return await prisma.post.findUnique({
@@ -26,12 +31,49 @@ async function findPost(postId: string) {
   }
 }
 
+async function updatePost({ postId, postToUpdate }: PostUpdate) {
+  const now = new Date()
+
+  if (typeof postId !== 'string')
+    throw new Error('Post ID is missing/in the wrong format!')
+
+  try {
+    return await prisma.post.update({
+      where: {
+        id: postId,
+      },
+      data: {
+        updatedAt: now,
+        title: postToUpdate.title,
+        subtitle: postToUpdate.subtitle,
+        category: {
+          connect: {
+            id: postToUpdate.categoryId,
+          },
+        },
+      },
+      include: {
+        segments: {
+          orderBy: { createdAt: 'asc' },
+          include: {
+            items: { orderBy: { createdAt: 'asc' } },
+          },
+        },
+        category: true,
+      },
+    })
+  } catch (error) {
+    throw new Error(`Error while updating post with ID ${postId}: ${error}`)
+  }
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
   const {
     query: { postId },
+    body: requestBody,
     method,
   } = req
 
@@ -48,6 +90,21 @@ export default async function handler(
           res.status(404).json(`Cannot find post for id ${postId}`)
         } else {
           res.status(200).json(post)
+        }
+        break
+      }
+      case 'PUT': {
+        const { postId, postToUpdate }: PostUpdate = JSON.parse(requestBody)
+
+        if (!postId) {
+          res.status(404).end('No post ID!')
+        } else {
+          const postUpdated = await updatePost({
+            postId,
+            postToUpdate,
+          })
+
+          res.status(200).json(postUpdated)
         }
         break
       }

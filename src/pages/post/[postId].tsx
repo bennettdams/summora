@@ -14,7 +14,13 @@ export const getServerSideProps: GetServerSideProps = async ({
   } else {
     const post = await prisma.post.findUnique({
       where: { id: params.postId },
-      include: { category: true, segments: { include: { items: true } } },
+      include: {
+        category: true,
+        segments: {
+          orderBy: { createdAt: 'asc' },
+          include: { items: { orderBy: { createdAt: 'asc' } } },
+        },
+      },
     })
     const postCategories = await prisma.postCategory.findMany()
 
@@ -34,7 +40,7 @@ const PostViewPage = ({
   post: PostPostAPI
   postCategories: PostCategory[]
 }): JSX.Element => {
-  return <PostPageWrapper post={post} postCategories={postCategories} />
+  return <PostPageWrapper postInitial={post} postCategories={postCategories} />
 }
 
 export default PostViewPage

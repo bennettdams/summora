@@ -2,7 +2,7 @@ import { PostCategory } from '@prisma/client'
 import { useState, useEffect, useRef } from 'react'
 import { Box } from '../Box'
 import { Button, ButtonAdd } from '../Button'
-import { DropdownSelect } from '../DropdownSelect'
+import { DropdownItem, DropdownSelect } from '../DropdownSelect'
 import { FormInput } from '../FormInput'
 import { IconCheck, IconX, IconTrash, IconEdit } from '../Icon'
 import { LoadingAnimation } from '../LoadingAnimation'
@@ -23,13 +23,16 @@ import { Views } from '../Likes'
 import { Comments } from '../Comments'
 
 export function PostPageWrapper({
-  post,
+  postInitial,
   postCategories,
 }: {
-  post: PostPostAPI
+  postInitial: PostPostAPI
   postCategories: PostCategory[]
 }): JSX.Element {
-  const { createPostSegment, isLoading } = usePost(post.id, false)
+  const [post, setPost] = useState<PostPostAPI>(postInitial)
+  useEffect(() => setPost(postInitial), [postInitial])
+
+  const { updatePost, createPostSegment, isLoading } = usePost(post.id, false)
   const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
   const newSegmentId = 'new-segment-id'
 
@@ -60,6 +63,18 @@ export function PostPageWrapper({
       postId: post.id,
       postSegmentToCreate,
     })
+  }
+
+  async function handleOnCategorySelect(newCategory: DropdownItem) {
+    const postNew = await updatePost({
+      postId: post.id,
+      postToUpdate: {
+        title: post.title,
+        subtitle: post.subtitle,
+        categoryId: newCategory.id,
+      },
+    })
+    setPost(postNew)
   }
 
   return (
@@ -125,13 +140,18 @@ export function PostPageWrapper({
             <div>
               <span>Select category:</span>
               <div className="inline">
-                <DropdownSelect
-                  items={postCategories.map((cat) => ({
-                    id: cat.id,
-                    title: cat.title,
-                  }))}
-                  initialItem={post.category}
-                />
+                {isLoading ? (
+                  <LoadingAnimation />
+                ) : (
+                  <DropdownSelect
+                    onChange={handleOnCategorySelect}
+                    items={postCategories.map((cat) => ({
+                      id: cat.id,
+                      title: cat.title,
+                    }))}
+                    initialItem={post.category}
+                  />
+                )}
               </div>
             </div>
           </div>

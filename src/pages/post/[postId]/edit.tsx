@@ -65,7 +65,7 @@ function Wrapper({
       ) : isError ? (
         <ErrorPage statusCode={400}>Error while fetching post</ErrorPage>
       ) : post ? (
-        <PostPageWrapper post={post} postCategories={postCategories} />
+        <PostPageWrapper postInitial={post} postCategories={postCategories} />
       ) : (
         <p>error?</p>
       )}

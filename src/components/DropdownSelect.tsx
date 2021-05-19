@@ -1,6 +1,6 @@
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
-import React, { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 
 export interface DropdownItem {
   id: string
@@ -10,14 +10,22 @@ export interface DropdownItem {
 export function DropdownSelect({
   items,
   initialItem,
+  onChange,
 }: {
   items: DropdownItem[]
   initialItem?: DropdownItem
+  onChange: (newItem: DropdownItem) => void
 }): JSX.Element {
   const [selected, setSelected] = useState(initialItem ?? items[0])
+  useEffect(() => setSelected(initialItem ?? items[0]), [initialItem, items])
+
+  function handleSelect(newItem: DropdownItem) {
+    setSelected(newItem)
+    onChange(newItem)
+  }
 
   return (
-    <Listbox value={selected} onChange={setSelected}>
+    <Listbox value={selected} onChange={handleSelect}>
       <div className="relative mt-1">
         <Listbox.Button className="relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm">
           <span className="block truncate">{selected.title}</span>

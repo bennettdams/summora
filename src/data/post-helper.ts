@@ -9,6 +9,7 @@ import {
   PostPostAPI,
   PostSegmentItemPostAPI,
   PostSegmentPostAPI,
+  PostUpdate,
 } from '../pages/api/posts/[postId]'
 
 const urlPost = '/api/posts'
@@ -43,6 +44,13 @@ function usePostMutation(postId: string) {
     },
   })
 
+  const updatePostMutation = useMutation(updatePost, {
+    onSuccess: (data: PostPostAPI) => {
+      console.log(data)
+      queryClient.setQueryData([queryKeyPosts, postId], data)
+    },
+  })
+
   const updatePostSegmentMutation = useMutation(updatePostSegment, {
     onSuccess: (data: PostPostAPI) => {
       queryClient.setQueryData([queryKeyPosts, postId], data)
@@ -56,6 +64,7 @@ function usePostMutation(postId: string) {
   })
 
   return {
+    updatePostMutation,
     createPostSegmentItemMutation,
     updatePostSegmentItemMutation,
     createPostSegmentMutation,
@@ -86,6 +95,7 @@ export function usePost(postId: string, enabled = true) {
   )
 
   const {
+    updatePostMutation,
     createPostSegmentItemMutation,
     updatePostSegmentItemMutation,
     createPostSegmentMutation,
@@ -96,16 +106,19 @@ export function usePost(postId: string, enabled = true) {
     post: data || null,
     isLoading:
       isLoading ||
+      updatePostMutation.isLoading ||
       createPostSegmentItemMutation.isLoading ||
       updatePostSegmentItemMutation.isLoading ||
       createPostSegmentMutation.isLoading ||
       updatePostSegmentMutation.isLoading,
     isError:
       isError ||
+      updatePostMutation.isError ||
       createPostSegmentItemMutation.isError ||
       updatePostSegmentItemMutation.isError ||
       createPostSegmentMutation.isError ||
       updatePostSegmentMutation.isError,
+    updatePost: updatePostMutation.mutateAsync,
     createPostSegmentItem: createPostSegmentItemMutation.mutateAsync,
     createPostSegment: createPostSegmentMutation.mutateAsync,
     updatePostSegmentItem: updatePostSegmentItemMutation.mutateAsync,
@@ -188,6 +201,37 @@ async function updatePostSegmentItem({
       body: JSON.stringify(body),
     }
   )
+
+  if (!response.ok) {
+    throw new Error(response.statusText)
+  }
+
+  const postJSON: PostPostAPI = await response.json()
+  const postUpdated: PostPostAPI = transformPostPostAPI(postJSON)
+
+  return postUpdated
+}
+
+async function updatePost({
+  postId,
+  postToUpdate,
+}: PostUpdate): Promise<PostPostAPI> {
+  if (!postId) throw new Error('Cannot update post, no post ID!')
+
+  const body: PostUpdate = {
+    postId,
+    postToUpdate: {
+      id: postToUpdate.id,
+      title: postToUpdate.title,
+      subtitle: postToUpdate.subtitle,
+      categoryId: postToUpdate.categoryId,
+    },
+  }
+
+  const response = await fetch(`${urlPost}/${postToUpdate.id}`, {
+    method: 'PUT',
+    body: JSON.stringify(body),
+  })
 
   if (!response.ok) {
     throw new Error(response.statusText)
