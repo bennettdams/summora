@@ -46,7 +46,6 @@ function usePostMutation(postId: string) {
 
   const updatePostMutation = useMutation(updatePost, {
     onSuccess: (data: PostPostAPI) => {
-      console.log(data)
       queryClient.setQueryData([queryKeyPosts, postId], data)
     },
   })

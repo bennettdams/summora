@@ -36,8 +36,15 @@ export function PostPageWrapper({
   const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
   const newSegmentId = 'new-segment-id'
 
+  const [refCategory] = useHover<HTMLDivElement>(() =>
+    setShowCategoryDropdown(true)
+  )
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
+
   const [segments, setSegments] = useState<PostSegmentPostAPI[]>(post.segments)
   useEffect(() => setSegments(post.segments), [post.segments])
+
+  useOnClickOutside(refCategory, () => setShowCategoryDropdown(false))
 
   async function handleCreate(): Promise<void> {
     const postSegmentToCreate: PostSegmentCreate['postSegmentToCreate'] = {
@@ -66,6 +73,7 @@ export function PostPageWrapper({
   }
 
   async function handleOnCategorySelect(newCategory: DropdownItem) {
+    setShowCategoryDropdown(false)
     const postNew = await updatePost({
       postId: post.id,
       postToUpdate: {
@@ -83,14 +91,30 @@ export function PostPageWrapper({
         <div className="flex flex-col md:flex-row">
           <div className="w-full md:w-2/3">
             <p className="text-5xl text-white">{post.title}</p>
+            <div className="inline mt-2" ref={refCategory}>
+              {isLoading ? (
+                <LoadingAnimation />
+              ) : showCategoryDropdown ? (
+                <div className="inline-block w-1/4">
+                  <DropdownSelect
+                    onChange={handleOnCategorySelect}
+                    items={postCategories.map((cat) => ({
+                      id: cat.id,
+                      title: cat.title,
+                    }))}
+                    initialItem={post.category}
+                  />
+                </div>
+              ) : (
+                <span className="uppercase inline-block py-1 px-2 rounded bg-orange-100 text-orange-800 text-xs font-medium tracking-widest">
+                  {post.category.title}
+                </span>
+              )}
+            </div>
 
-            <p className="mt-2">
-              <span className="uppercase inline-block py-1 px-2 rounded bg-orange-100 text-orange-800 text-xs font-medium tracking-widest">
-                {post.category.title}
-              </span>
-              <span className="italic ml-2">{post.subtitle}</span>
-            </p>
+            <span className="italic ml-2">{post.subtitle}</span>
           </div>
+
           <div className="w-full md:w-1/3">
             <Box smallPadding>
               <div className="flex divide-gray-400 divide-x">
@@ -137,23 +161,6 @@ export function PostPageWrapper({
                 </div>
               </div>
             </Box>
-            <div>
-              <span>Select category:</span>
-              <div className="inline">
-                {isLoading ? (
-                  <LoadingAnimation />
-                ) : (
-                  <DropdownSelect
-                    onChange={handleOnCategorySelect}
-                    items={postCategories.map((cat) => ({
-                      id: cat.id,
-                      title: cat.title,
-                    }))}
-                    initialItem={post.category}
-                  />
-                )}
-              </div>
-            </div>
           </div>
         </div>
       </PageSection>
@@ -210,8 +217,12 @@ function Segment({
   ])
   const [showItemInput, setShowItemInput] = useState(false)
 
-  const refEdit = useRef<HTMLDivElement>(null)
-  useOnClickOutside(refEdit, () => setIsSegmentEditable(isEditableExternal))
+  const [refSegmentTitle, isHovered] = useHover<HTMLDivElement>()
+
+  const refSegmentEdit = useRef<HTMLDivElement>(null)
+  useOnClickOutside(refSegmentEdit, () =>
+    setIsSegmentEditable(isEditableExternal)
+  )
   const refEditItem = useRef<HTMLDivElement>(null)
   useOnClickOutside(refEditItem, () => setShowItemInput(false))
 
@@ -279,13 +290,13 @@ function Segment({
   const formIdNew = `post-segment-item-new-${segment.id}`
 
   return (
-    <div className="w-full p-10 rounded-xl bg-gradient-to-br from-green-50 to-teal-50">
+    <div className="w-full p-10 rounded-xl bg-gradient-to-br from-green-200 to-indigo-100">
       <div className="w-full h-20 text-xl flex flex-row items-center">
         <div className="w-20 text-left">
           <span className="text-4xl italic">{index}</span>
         </div>
         {isSegmentEditable ? (
-          <div className="flex-grow" ref={refEdit}>
+          <div className="flex-grow" ref={refSegmentEdit}>
             <FormInput
               placeholder="Title.."
               initialValue={segment.title}
@@ -300,19 +311,29 @@ function Segment({
           </div>
         ) : (
           <div
-            className="flex-grow flex flex-col"
+            className="flex-grow flex cursor-pointer hover:text-orange-700"
             onClick={() => setIsSegmentEditable(true)}
+            ref={refSegmentTitle}
           >
-            <div className="flex-1">
-              <span>{segment.title}</span> <span>{segment.id}</span>
-              <span className="float-right">
-                {segment.updatedAt.toISOString()}
-              </span>
-            </div>
-            <div className="flex-1">
-              <span className="text-gray-500 text-lg italic">
-                {segment.subtitle}
-              </span>
+            {isHovered && (
+              <div className="grid place-items-center">
+                <IconEdit />
+              </div>
+            )}
+
+            <div className="ml-6 flex flex-col hover:text-orange-700">
+              <div className="flex-1">
+                <span>{segment.title}</span> <span>{segment.id}</span>
+                <span className="float-right">
+                  {segment.updatedAt.toISOString()}
+                </span>
+              </div>
+
+              <div className="flex-1">
+                <span className="text-gray-500 hover:text-orange-700 text-lg italic">
+                  {segment.subtitle}
+                </span>
+              </div>
             </div>
           </div>
         )}
@@ -403,6 +424,7 @@ function PostSegmentItem({
       onClick={() => setIsEditable(true)}
       refExternal={refEdit}
       smallPadding
+      isHighlighted={isEditable}
     >
       <div ref={ref} className="space-x-2 flex items-center">
         <div className="inline-flex italic w-20 items-center">

@@ -6,10 +6,12 @@ export function Box({
   smallPadding = false,
   onClick,
   refExternal,
+  isHighlighted = false,
 }: {
   children: ReactNode
   onClick?: () => void
   refExternal?: RefObject<HTMLDivElement>
+  isHighlighted?: boolean
 } & (
   | { smallPadding?: boolean; noPadding?: never }
   | { smallPadding?: never; noPadding?: boolean }
@@ -18,9 +20,11 @@ export function Box({
     <div
       onClick={() => onClick && onClick()}
       ref={refExternal}
-      className={`box bg-gradient-to-b from-fuchsia-50 to-blue-50 rounded-xl shadow-md hover:shadow-lg ${
+      className={`box rounded-xl shadow-md hover:shadow-lg ${
         noPadding ? 'p-0' : smallPadding ? 'p-4' : 'p-10'
-      } ${onClick && 'cursor-pointer'}`}
+      } ${onClick && 'cursor-pointer'} ${
+        !isHighlighted ? 'bg-white' : 'from-fuchsia-200 to-blue-200'
+      }`}
     >
       {children}
     </div>

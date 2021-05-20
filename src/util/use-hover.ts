@@ -1,12 +1,21 @@
 import { MutableRefObject, useState, useRef, useEffect } from 'react'
 
-export function useHover<T>(): [MutableRefObject<T>, boolean] {
+export function useHover<T>(
+  onEnter?: () => void,
+  onLeave?: () => void
+): [MutableRefObject<T>, boolean] {
   const [isHovered, setIsHovered] = useState<boolean>(false)
 
   const ref: any = useRef<T | null>(null)
 
-  const handleMouseOver = (): void => setIsHovered(true)
-  const handleMouseOut = (): void => setIsHovered(false)
+  const handleMouseOver = (): void => {
+    setIsHovered(true)
+    onEnter && onEnter()
+  }
+  const handleMouseOut = (): void => {
+    setIsHovered(false)
+    onLeave && onLeave()
+  }
 
   useEffect(
     () => {
