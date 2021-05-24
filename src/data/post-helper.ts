@@ -220,14 +220,14 @@ async function updatePost({
   const body: PostUpdate = {
     postId,
     postToUpdate: {
-      id: postToUpdate.id,
+      id: postId,
       title: postToUpdate.title,
       subtitle: postToUpdate.subtitle,
       categoryId: postToUpdate.categoryId,
     },
   }
 
-  const response = await fetch(`${urlPost}/${postToUpdate.id}`, {
+  const response = await fetch(`${urlPost}/${postId}`, {
     method: 'PUT',
     body: JSON.stringify(body),
   })

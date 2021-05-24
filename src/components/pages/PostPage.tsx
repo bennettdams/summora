@@ -18,6 +18,7 @@ import {
   PostPostAPI,
   PostSegmentPostAPI,
   PostSegmentItemPostAPI,
+  PostUpdate,
 } from '../../pages/api/posts/[postId]'
 import { Views } from '../Likes'
 import { Comments } from '../Comments'
@@ -72,8 +73,14 @@ export function PostPageWrapper({
     })
   }
 
+  const [isTitleEditable, setIsTitleEditable] = useState(false)
+  const [refTitle, isHovered] = useHover<HTMLDivElement>()
+  const refTitleEdit = useRef<HTMLDivElement>(null)
+  useOnClickOutside(refTitleEdit, () => setIsTitleEditable(false))
+
   async function handleOnCategorySelect(newCategory: DropdownItem) {
     setShowCategoryDropdown(false)
+
     const postNew = await updatePost({
       postId: post.id,
       postToUpdate: {
@@ -82,15 +89,87 @@ export function PostPageWrapper({
         categoryId: newCategory.id,
       },
     })
+
     setPost(postNew)
+  }
+
+  async function handleUpdateTitle(inputValue: string): Promise<void> {
+    const postToUpdate: PostUpdate['postToUpdate'] = {
+      title: inputValue,
+      subtitle: post.subtitle,
+      categoryId: post.category.id,
+    }
+
+    const title = postToUpdate.title
+    if (typeof title === 'string') {
+      setPost((prePost) => ({ ...prePost, title }))
+
+      await updatePost({
+        postId: post.id,
+        postToUpdate,
+      })
+    }
+
+    setIsTitleEditable(false)
+  }
+
+  async function handleUpdateSubitle(inputValue: string): Promise<void> {
+    const postToUpdate: PostUpdate['postToUpdate'] = {
+      title: post.title,
+      subtitle: inputValue,
+      categoryId: post.category.id,
+    }
+
+    const subtitle = postToUpdate.subtitle
+    if (typeof subtitle === 'string') {
+      setPost((prePost) => ({ ...prePost, subtitle }))
+
+      await updatePost({
+        postId: post.id,
+        postToUpdate,
+      })
+    }
+
+    setIsTitleEditable(false)
   }
 
   return (
     <Page>
       <PageSection hideTopMargin>
         <div className="flex flex-col md:flex-row">
-          <div className="w-full md:w-2/3">
-            <p className="text-5xl text-white">{post.title}</p>
+          <div
+            className="w-full md:w-2/3"
+            ref={refTitle}
+            onClick={() => setIsTitleEditable(true)}
+          >
+            {isTitleEditable ? (
+              <div className="h-40 mr-10" ref={refTitleEdit}>
+                <FormInput
+                  placeholder="Title.."
+                  initialValue={post.title}
+                  onSubmit={handleUpdateTitle}
+                />
+                <FormInput
+                  placeholder="Subitle.."
+                  initialValue={post.subtitle ?? ''}
+                  onSubmit={handleUpdateSubitle}
+                  autoFocus={false}
+                />
+              </div>
+            ) : (
+              <>
+                <p className="text-5xl text-white">
+                  {isHovered && (
+                    <span className="mr-10">
+                      <IconEdit className="inline" />
+                    </span>
+                  )}
+
+                  <span>{post.title}</span>
+                </p>
+              </>
+            )}
+
             <div className="inline mt-2" ref={refCategory}>
               {isLoading ? (
                 <LoadingAnimation />
@@ -112,7 +191,9 @@ export function PostPageWrapper({
               )}
             </div>
 
-            <span className="italic ml-2">{post.subtitle}</span>
+            {!isTitleEditable && (
+              <span className="italic ml-2">{post.subtitle}</span>
+            )}
           </div>
 
           <div className="w-full md:w-1/3">
