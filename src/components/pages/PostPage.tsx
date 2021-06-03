@@ -15,23 +15,23 @@ import { PostSegmentItemUpdate } from '../../pages/api/post-segment-items/[postS
 import { PostSegmentCreate } from '../../pages/api/post-segments'
 import { PostSegmentUpdate } from '../../pages/api/post-segments/[postSegmentId]'
 import {
-  PostPostAPI,
   PostSegmentPostAPI,
   PostSegmentItemPostAPI,
   PostUpdate,
 } from '../../pages/api/posts/[postId]'
 import { Views } from '../Likes'
 import { Comments } from '../Comments'
+import { PostPostPage } from '../../pages/post/[postId]'
 
 export function PostPageWrapper({
   postInitial,
   postCategories,
 }: {
-  postInitial: PostPostAPI
+  postInitial: PostPostPage
   postCategories: PostCategory[]
 }): JSX.Element {
-  const [post, setPost] = useState<PostPostAPI>(postInitial)
-  useEffect(() => setPost(postInitial), [postInitial])
+  const [post, setPost] = useState<PostPostPage>(postInitial)
+  // useEffect(() => setPost(postInitial), [postInitial])
 
   const { updatePost, createPostSegment, isLoading } = usePost(post.id, false)
   const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
@@ -133,6 +133,8 @@ export function PostPageWrapper({
     setIsTitleEditable(false)
   }
 
+  const formId = 'formPost'
+
   return (
     <Page>
       <PageSection hideTopMargin>
@@ -144,16 +146,25 @@ export function PostPageWrapper({
           >
             {isTitleEditable ? (
               <div className="h-40 mr-10" ref={refTitleEdit}>
+                <button className="inline" form={formId} type="submit">
+                  <IconCheck />
+                </button>
+                <IconX
+                  onClick={() => setIsTitleEditable(false)}
+                  className="ml-4"
+                />
                 <FormInput
                   placeholder="Title.."
                   initialValue={post.title}
                   onSubmit={handleUpdateTitle}
+                  formId={formId}
                 />
                 <FormInput
                   placeholder="Subitle.."
                   initialValue={post.subtitle ?? ''}
                   onSubmit={handleUpdateSubitle}
                   autoFocus={false}
+                  formId={formId}
                 />
               </div>
             ) : (

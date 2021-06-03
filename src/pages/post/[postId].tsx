@@ -1,8 +1,28 @@
 import { GetServerSideProps } from 'next'
 import { prisma } from '../../prisma/prisma'
-import { PostCategory } from '.prisma/client'
+import { PostCategory, PrismaClient } from '.prisma/client'
 import { PostPageWrapper } from '../../components/pages/PostPage'
 import { PostPostAPI } from '../api/posts/[postId]'
+import { Prisma } from '@prisma/client'
+
+export type PostPostPage = Exclude<
+  Prisma.PromiseReturnType<typeof findPost>,
+  null
+>
+
+async function findPost(prisma: PrismaClient, postId: string) {
+  return await prisma.post.findUnique({
+    where: { id: postId },
+    include: {
+      category: true,
+      tags: true,
+      segments: {
+        orderBy: { createdAt: 'asc' },
+        include: { items: { orderBy: { createdAt: 'asc' } } },
+      },
+    },
+  })
+}
 
 export const getServerSideProps: GetServerSideProps = async ({
   params,
@@ -12,16 +32,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     res.statusCode = 404
     return { props: {} }
   } else {
-    const post = await prisma.post.findUnique({
-      where: { id: params.postId },
-      include: {
-        category: true,
-        segments: {
-          orderBy: { createdAt: 'asc' },
-          include: { items: { orderBy: { createdAt: 'asc' } } },
-        },
-      },
-    })
+    const post = await findPost(prisma, params.postId)
     const postCategories = await prisma.postCategory.findMany()
 
     return {
