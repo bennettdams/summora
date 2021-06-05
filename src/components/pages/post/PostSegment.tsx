@@ -162,13 +162,14 @@ export function PostSegment({
 
       <div className="mt-2 space-y-2">
         {items.map((item, index) => (
-          <PostSegmentItem
-            key={item.id}
-            itemExternal={item}
-            postId={postId}
-            segmentId={segment.id}
-            index={index}
-          />
+          <div className="w-full" key={item.id}>
+            <PostSegmentItem
+              itemExternal={item}
+              postId={postId}
+              segmentId={segment.id}
+              index={index}
+            />
+          </div>
         ))}
       </div>
 

@@ -7,11 +7,13 @@ export function Box({
   onClick,
   refExternal,
   isHighlighted = false,
+  inline = false,
 }: {
   children: ReactNode
   onClick?: () => void
   refExternal?: RefObject<HTMLDivElement>
   isHighlighted?: boolean
+  inline?: boolean
 } & (
   | { smallPadding?: boolean; noPadding?: never }
   | { smallPadding?: never; noPadding?: boolean }
@@ -24,7 +26,7 @@ export function Box({
         noPadding ? 'p-0' : smallPadding ? 'p-4' : 'p-10'
       } ${onClick && 'cursor-pointer'} ${
         !isHighlighted ? 'bg-white' : 'from-fuchsia-200 to-blue-200'
-      }`}
+      } ${inline && 'inline-block'}`}
     >
       {children}
     </div>

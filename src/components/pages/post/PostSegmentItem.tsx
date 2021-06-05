@@ -59,6 +59,7 @@ export function PostSegmentItem({
       refExternal={refEdit}
       smallPadding
       isHighlighted={isEditable}
+      inline
     >
       <div ref={ref} className="space-x-2 flex items-center">
         <div className="inline-flex italic w-20 items-center">
