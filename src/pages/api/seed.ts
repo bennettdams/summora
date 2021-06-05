@@ -3,6 +3,12 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { Prisma } from '@prisma/client'
 import { prisma } from '../../prisma/prisma'
 
+function getRandom<T>(arr: T[]) {
+  const min = 0
+  const max = Math.floor(arr.length)
+  return arr[Math.floor(Math.random() * (max - min) + min)]
+}
+
 export default async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -12,24 +18,13 @@ export default async (
     await prisma.postSegment.deleteMany({})
     await prisma.post.deleteMany({})
     await prisma.postCategory.deleteMany({})
+    await prisma.postTag.deleteMany({})
 
-    // posts.forEach(async (post) => {
-    //   await prisma.post.create({
-    //     data: {
-    //       ...post,
-    //       segments: {
-    //         createMany: {
-    //           data: segments,
-    //         },
-    //       },
-    //     },
-    //   })
-    // })
     await prisma.postCategory.createMany({ data: postCategories })
+    const postCategoriesCreated = await prisma.postCategory.findMany()
 
-    const noOfPostCategories = postCategories.length
-    const min = 0
-    const max = Math.floor(noOfPostCategories)
+    await prisma.postTag.createMany({ data: postTags })
+    const postTagsCreated = await prisma.postTag.findMany()
 
     posts.forEach(async (post) => {
       const now = new Date().getTime()
@@ -40,10 +35,17 @@ export default async (
           ...post,
           category: {
             connect: {
-              id:
-                postCategories[Math.floor(Math.random() * (max - min) + min)] // assign random category
-                  .id,
+              id: getRandom(postCategoriesCreated).id,
             },
+          },
+          tags: {
+            connect: [
+              { id: getRandom(postTagsCreated).id },
+              { id: getRandom(postTagsCreated).id },
+              { id: getRandom(postTagsCreated).id },
+              { id: getRandom(postTagsCreated).id },
+              { id: getRandom(postTagsCreated).id },
+            ],
           },
           segments: {
             create: [
@@ -99,7 +101,7 @@ export default async (
   }
 }
 
-const posts: Prisma.PostCreateWithoutCategoryInput[] = [...new Array(5)].map(
+const posts: Prisma.PostCreateWithoutCategoryInput[] = [...new Array(10)].map(
   (_, i) => {
     const post: Prisma.PostCreateWithoutCategoryInput = {
       title:
@@ -163,17 +165,16 @@ export const postCategories: Prisma.PostCategoryCreateInput[] = [
   { id: 'sports', title: 'Sports', description: '..' },
 ]
 
-export const postTags: Prisma.PostTagCreateInput[] = [
-  { id: 'tutorial', title: 'Tutorial', description: '..' },
-  { id: 'summary', title: 'Summary', description: '..' },
-  { id: 'how-to', title: 'How-to', description: '..' },
-  { id: 'knowledge', title: 'Knowledge', description: '..' },
-  { id: 'legal', title: 'Legal', description: '..' },
+export const postTags: Prisma.PostTagCreateWithoutPostsInput[] = [
+  { title: 'Tutorial', description: '..' },
+  { title: 'Summary', description: '..' },
+  { title: 'How-to', description: '..' },
+  { title: 'Knowledge', description: '..' },
+  { title: 'Legal', description: '..' },
   {
-    id: 'everyday life',
     title: 'Everyday life',
     description: '..',
   },
-  { id: 'for dummies', title: 'For dummies', description: '..' },
-  { id: 'history', title: 'History', description: '..' },
+  { title: 'For dummies', description: '..' },
+  { title: 'History', description: '..' },
 ]

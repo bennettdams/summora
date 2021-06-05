@@ -24,9 +24,15 @@ model Post {
   updatedAt      DateTime      @updatedAt
   title          String
   subtitle       String?
-  category       PostCategory  @relation(fields: [postCategoryId], references: [id])
+  // segments
   segments       PostSegment[]
+  // category
+  category       PostCategory  @relation(fields: [postCategoryId], references: [id])
   postCategoryId String
+  //
+  // tags
+  tags           PostTag[]
+  //
 }
 
 model PostSegment {
@@ -61,7 +67,12 @@ model PostCategory {
 }
 
 model PostTag {
-  id          String @id
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   title       String
   description String
+  // post
+  posts       Post[]
+  //
 }
