@@ -39,13 +39,9 @@ export default async (
             },
           },
           tags: {
-            connect: [
-              { id: getRandom(postTagsCreated).id },
-              { id: getRandom(postTagsCreated).id },
-              { id: getRandom(postTagsCreated).id },
-              { id: getRandom(postTagsCreated).id },
-              { id: getRandom(postTagsCreated).id },
-            ],
+            connect: [...new Array(60)].map((_) => ({
+              id: getRandom(postTagsCreated).id,
+            })),
           },
           segments: {
             create: [

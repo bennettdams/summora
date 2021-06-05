@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next'
 import { prisma } from '../../prisma/prisma'
 import { PostCategory, PrismaClient } from '.prisma/client'
-import { PostPageWrapper } from '../../components/pages/PostPage'
+import { PostPageWrapper } from '../../components/pages/post/PostPage'
 import { PostPostAPI } from '../api/posts/[postId]'
 import { Prisma } from '@prisma/client'
 
