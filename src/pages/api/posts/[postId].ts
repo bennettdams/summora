@@ -11,7 +11,10 @@ export type PostSegmentItemPostAPI = PostSegmentPostAPI['items'][number]
 
 export interface PostUpdate {
   postId: string
-  postToUpdate: Prisma.PostUpdateWithoutSegmentsInput & { categoryId: string }
+  postToUpdate: Prisma.PostUpdateWithoutSegmentsInput & {
+    categoryId: string
+    tagIds: string[]
+  }
 }
 
 async function findPost(postId: string) {
@@ -24,6 +27,7 @@ async function findPost(postId: string) {
           include: { items: { orderBy: { createdAt: 'asc' } } },
         },
         category: true,
+        tags: true,
       },
     })
   } catch (error) {
@@ -51,6 +55,7 @@ async function updatePost({ postId, postToUpdate }: PostUpdate) {
             id: postToUpdate.categoryId,
           },
         },
+        tags: { set: postToUpdate.tagIds.map((tagId) => ({ id: tagId })) },
       },
       include: {
         segments: {
@@ -60,6 +65,7 @@ async function updatePost({ postId, postToUpdate }: PostUpdate) {
           },
         },
         category: true,
+        tags: true,
       },
     })
   } catch (error) {

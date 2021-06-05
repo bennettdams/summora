@@ -224,6 +224,7 @@ async function updatePost({
       title: postToUpdate.title,
       subtitle: postToUpdate.subtitle,
       categoryId: postToUpdate.categoryId,
+      tagIds: postToUpdate.tagIds,
     },
   }
 

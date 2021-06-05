@@ -1,4 +1,4 @@
-import { PostCategory } from '@prisma/client'
+import { PostCategory, PostTag } from '@prisma/client'
 import { useState, useEffect, useRef } from 'react'
 import { Box } from '../Box'
 import { Button, ButtonAdd } from '../Button'
@@ -45,6 +45,9 @@ export function PostPageWrapper({
   const [segments, setSegments] = useState<PostSegmentPostAPI[]>(post.segments)
   useEffect(() => setSegments(post.segments), [post.segments])
 
+  const [tags, setTags] = useState<PostTag[]>(post.tags)
+  useEffect(() => setTags(post.tags), [post.tags])
+
   useOnClickOutside(refCategory, () => setShowCategoryDropdown(false))
 
   async function handleCreate(): Promise<void> {
@@ -87,6 +90,7 @@ export function PostPageWrapper({
         title: post.title,
         subtitle: post.subtitle,
         categoryId: newCategory.id,
+        tagIds: tags.map((tag) => tag.id),
       },
     })
 
@@ -98,6 +102,7 @@ export function PostPageWrapper({
       title: inputValue,
       subtitle: post.subtitle,
       categoryId: post.category.id,
+      tagIds: tags.map((tag) => tag.id),
     }
 
     const title = postToUpdate.title
@@ -118,6 +123,7 @@ export function PostPageWrapper({
       title: post.title,
       subtitle: inputValue,
       categoryId: post.category.id,
+      tagIds: tags.map((tag) => tag.id),
     }
 
     const subtitle = postToUpdate.subtitle
@@ -131,6 +137,27 @@ export function PostPageWrapper({
     }
 
     setIsTitleEditable(false)
+  }
+
+  async function handleRemoveTag(tagIdToRemove: string): Promise<void> {
+    const tagsNew: PostTag[] = post.tags.filter(
+      (tag) => tag.id !== tagIdToRemove
+    )
+
+    const postToUpdate: PostUpdate['postToUpdate'] = {
+      title: post.title,
+      subtitle: post.subtitle,
+      categoryId: post.category.id,
+      tagIds: tagsNew.map((tag) => tag.id),
+    }
+    setTags(tagsNew)
+
+    const postUpdated = await updatePost({
+      postId: post.id,
+      postToUpdate,
+    })
+
+    setPost(postUpdated)
   }
 
   const formId = 'formPost'
@@ -255,6 +282,20 @@ export function PostPageWrapper({
             </Box>
           </div>
         </div>
+      </PageSection>
+
+      <PageSection>
+        <p>Tags</p>
+        {tags.map((tag) => (
+          <p
+            onClick={() => {
+              handleRemoveTag(tag.id)
+            }}
+            key={tag.id}
+          >
+            {tag.title}
+          </p>
+        ))}
       </PageSection>
 
       <PageSection>
