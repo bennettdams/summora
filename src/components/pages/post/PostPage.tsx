@@ -1,7 +1,7 @@
-import { PostCategory, PostTag } from '@prisma/client'
+import { PostTag } from '@prisma/client'
 import { useState, useEffect, useRef } from 'react'
 import { Box } from '../../Box'
-import { Button } from '../../Button'
+import { Button, ButtonAdd } from '../../Button'
 import { DropdownItem, DropdownSelect } from '../../DropdownSelect'
 import { FormInput } from '../../FormInput'
 import { IconCheck, IconX, IconEdit } from '../../Icon'
@@ -12,23 +12,23 @@ import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
 import { PostSegmentCreate } from '../../../pages/api/post-segments'
 import {
+  PostPostAPI,
   PostSegmentPostAPI,
   PostUpdate,
 } from '../../../pages/api/posts/[postId]'
 import { Views } from '../../Likes'
 import { Comments } from '../../Comments'
-import { PostPostPage } from '../../../pages/post/[postId]'
+import { PostPageProps } from '../../../pages/post/[postId]'
 import { PostSegment } from './PostSegment'
 import { Tag } from './Tag'
 
 export function PostPageWrapper({
-  postInitial,
+  post: postInitial,
   postCategories,
-}: {
-  postInitial: PostPostPage
-  postCategories: PostCategory[]
-}): JSX.Element {
-  const [post, setPost] = useState<PostPostPage>(postInitial)
+  tagsSorted,
+  tagsSortedForCategory,
+}: PostPageProps): JSX.Element {
+  const [post, setPost] = useState<PostPageProps['post']>(postInitial)
   useEffect(() => setPost(postInitial), [postInitial])
 
   const { updatePost, createPostSegment, isLoading } = usePost(post.id, false)
@@ -43,7 +43,7 @@ export function PostPageWrapper({
   const [segments, setSegments] = useState<PostSegmentPostAPI[]>(post.segments)
   useEffect(() => setSegments(post.segments), [post.segments])
 
-  const [tags, setTags] = useState<PostTag[]>(post.tags)
+  const [tags, setTags] = useState<PostPostAPI['tags']>(post.tags)
   useEffect(() => setTags(post.tags), [post.tags])
 
   useOnClickOutside(refCategory, () => setShowCategoryDropdown(false))
@@ -78,6 +78,8 @@ export function PostPageWrapper({
   const [refTitle, isHovered] = useHover<HTMLDivElement>()
   const refTitleEdit = useRef<HTMLDivElement>(null)
   useOnClickOutside(refTitleEdit, () => setIsTitleEditable(false))
+
+  const [isShownTagSelection, setIsShownTagSelection] = useState(false)
 
   async function handleOnCategorySelect(newCategory: DropdownItem) {
     setShowCategoryDropdown(false)
@@ -298,6 +300,43 @@ export function PostPageWrapper({
             />
           ))}
         </div>
+      </PageSection>
+
+      <PageSection>
+        {!isShownTagSelection ? (
+          <div className="flex flex-row items-center justify-center">
+            <span>Add tag</span>
+            <span className="ml-2">
+              <ButtonAdd
+                size="big"
+                onClick={() => setIsShownTagSelection(true)}
+              />
+            </span>
+          </div>
+        ) : (
+          <div className="flex space-x-10">
+            <div className="flex-1">
+              <Box inline>
+                <p>Popular in general</p>
+                <div className="mt-2 flex flex-wrap -m-1">
+                  {tagsSorted.map((tag) => (
+                    <Tag key={tag.id} tagInitial={tag} />
+                  ))}
+                </div>
+              </Box>
+            </div>
+            <div className="flex-1">
+              <Box inline>
+                <p>Popular for this category</p>
+                <div className="mt-2 flex-1 flex flex-wrap -m-1">
+                  {tagsSortedForCategory.map((tag) => (
+                    <Tag key={tag.id} tagInitial={tag} />
+                  ))}
+                </div>
+              </Box>
+            </div>
+          </div>
+        )}
       </PageSection>
 
       <PageSection>

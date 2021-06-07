@@ -39,7 +39,7 @@ export default async (
             },
           },
           tags: {
-            connect: [...new Array(60)].map((_) => ({
+            connect: [...new Array(15)].map((_) => ({
               id: getRandom(postTagsCreated).id,
             })),
           },
@@ -162,15 +162,17 @@ export const postCategories: Prisma.PostCategoryCreateInput[] = [
 ]
 
 export const postTags: Prisma.PostTagCreateWithoutPostsInput[] = [
-  { title: 'Tutorial', description: '..' },
-  { title: 'Summary', description: '..' },
-  { title: 'How-to', description: '..' },
-  { title: 'Knowledge', description: '..' },
-  { title: 'Legal', description: '..' },
+  ...new Array(10),
+].flatMap((_, i) => [
+  { title: 'Tutorial' + i, description: '..' },
+  { title: 'Summary' + i, description: '..' },
+  { title: 'How-to' + i, description: '..' },
+  { title: 'Knowledge' + i, description: '..' },
+  { title: 'Legal' + i, description: '..' },
   {
-    title: 'Everyday life',
+    title: 'Everyday life' + i,
     description: '..',
   },
-  { title: 'For dummies', description: '..' },
-  { title: 'History', description: '..' },
-]
+  { title: 'For dummies' + i, description: '..' },
+  { title: 'History' + i, description: '..' },
+])
