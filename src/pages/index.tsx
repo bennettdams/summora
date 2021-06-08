@@ -37,8 +37,7 @@ export const Home = ({
   // posts: Post[]
   postCategories: PostCategory[]
 }): JSX.Element => {
-  const { posts, isLoading, createPost } = usePosts()
-  // const { createPost } = usePosts()
+  const { posts, isLoading } = usePosts()
 
   return (
     <Page>

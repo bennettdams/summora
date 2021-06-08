@@ -162,7 +162,7 @@ export const postCategories: Prisma.PostCategoryCreateInput[] = [
 ]
 
 export const postTags: Prisma.PostTagCreateWithoutPostsInput[] = [
-  ...new Array(10),
+  ...new Array(100),
 ].flatMap((_, i) => [
   { title: 'Tutorial' + i, description: '..' },
   { title: 'Summary' + i, description: '..' },

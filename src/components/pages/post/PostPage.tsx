@@ -21,6 +21,7 @@ import { Comments } from '../../Comments'
 import { PostPageProps } from '../../../pages/post/[postId]'
 import { PostSegment } from './PostSegment'
 import { Tag } from './Tag'
+import { useSearchTags } from '../../../data/use-search-tags'
 
 export function PostPageWrapper({
   post: postInitial,
@@ -161,6 +162,9 @@ export function PostPageWrapper({
   }
 
   const formId = 'formPost'
+
+  const [inputTagSearch, setInputTagSearch] = useState('dum')
+  const { tagsSearched, isFetching } = useSearchTags(inputTagSearch)
 
   return (
     <Page>
@@ -317,7 +321,26 @@ export function PostPageWrapper({
           <div className="flex space-x-10">
             <div className="flex-1">
               <Box inline>
-                <p>Popular in general</p>
+                <div className="w-full flex items-center space-x-3">
+                  <span className="italic">Search</span>
+                  <span className="font-bold">{inputTagSearch}</span>
+                  {isFetching && <LoadingAnimation small />}
+                </div>
+                <FormInput
+                  initialValue={inputTagSearch}
+                  onSubmit={async (inputNew) => setInputTagSearch(inputNew)}
+                />
+                <div className="mt-2 flex flex-wrap -m-1">
+                  {tagsSearched &&
+                    tagsSearched.map((tag) => (
+                      <Tag key={tag.id} tagInitial={tag} />
+                    ))}
+                </div>
+              </Box>
+            </div>
+            <div className="flex-1">
+              <Box inline>
+                <p className="italic">Popular in general</p>
                 <div className="mt-2 flex flex-wrap -m-1">
                   {tagsSorted.map((tag) => (
                     <Tag key={tag.id} tagInitial={tag} />
@@ -327,7 +350,7 @@ export function PostPageWrapper({
             </div>
             <div className="flex-1">
               <Box inline>
-                <p>Popular for this category</p>
+                <p className="italic">Popular for this category</p>
                 <div className="mt-2 flex-1 flex flex-wrap -m-1">
                   {tagsSortedForCategory.map((tag) => (
                     <Tag key={tag.id} tagInitial={tag} />
