@@ -17,6 +17,7 @@ export interface PostPageProps {
 async function findTagsForPost(prisma: PrismaClient) {
   return await prisma.postTag.findMany({
     orderBy: { posts: { _count: 'desc' } },
+    take: 20,
   })
 }
 
@@ -27,6 +28,7 @@ async function findTagsForPostByCategory(
   return await prisma.postTag.findMany({
     where: { posts: { some: { postCategoryId: categoryId } } },
     orderBy: { posts: { _count: 'desc' } },
+    take: 20,
   })
 }
 

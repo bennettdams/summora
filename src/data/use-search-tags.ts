@@ -25,7 +25,11 @@ export function useSearchTags(searchInput: string) {
   const { data, isLoading, isError, isFetching } = useQuery<TagAPI[]>(
     `search-tags-${searchInput}`,
     () => fetchSearchTags(searchInput),
-    { enabled: !!searchInput && searchInput.length >= 2 }
+    {
+      enabled: !!searchInput && searchInput.length >= 2,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+    }
   )
 
   return {

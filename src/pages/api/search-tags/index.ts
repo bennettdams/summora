@@ -25,6 +25,7 @@ async function findSearchTags(searchInput: string) {
         ],
       },
       orderBy: { posts: { _count: 'desc' } },
+      take: 20,
     })
   } catch (error) {
     throw new Error(`Error while finding tags: ${error}`)

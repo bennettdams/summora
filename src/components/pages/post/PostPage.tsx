@@ -22,6 +22,7 @@ import { PostPageProps } from '../../../pages/post/[postId]'
 import { PostSegment } from './PostSegment'
 import { Tag } from './Tag'
 import { useSearchTags } from '../../../data/use-search-tags'
+import { TagAPI } from '../../../pages/api/search-tags'
 
 export function PostPageWrapper({
   post: postInitial,
@@ -140,9 +141,9 @@ export function PostPageWrapper({
     setIsTitleEditable(false)
   }
 
-  async function handleRemoveTag(tagIdToRemove: string): Promise<void> {
+  async function handleRemoveTag(tagToRemove: TagAPI): Promise<void> {
     const tagsNew: PostTag[] = post.tags.filter(
-      (tag) => tag.id !== tagIdToRemove
+      (tag) => tag.id !== tagToRemove.id
     )
 
     const postToUpdate: PostUpdate['postToUpdate'] = {
@@ -163,8 +164,40 @@ export function PostPageWrapper({
 
   const formId = 'formPost'
 
-  const [inputTagSearch, setInputTagSearch] = useState('dum')
+  const [inputTagSearch, setInputTagSearch] = useState('')
   const { tagsSearched, isFetching } = useSearchTags(inputTagSearch)
+
+  async function handleAddTag(tagToAdd: TagAPI): Promise<void> {
+    const alreadyIncluded = post.tags.some((tag) => tag.id === tagToAdd.id)
+
+    if (!alreadyIncluded) {
+      const tagsNew: PostTag[] = [...post.tags, tagToAdd]
+
+      const postToUpdate: PostUpdate['postToUpdate'] = {
+        title: post.title,
+        subtitle: post.subtitle,
+        categoryId: post.category.id,
+        tagIds: tagsNew.map((tag) => tag.id),
+      }
+      setTags(tagsNew)
+
+      const postUpdated = await updatePost({
+        postId: post.id,
+        postToUpdate,
+      })
+
+      setPost(postUpdated)
+    }
+  }
+
+  /**
+   * Removes tags which are already included in a post from a list of tags.
+   */
+  function filterTags(tagsToFilter: TagAPI[]): TagAPI[] {
+    return tagsToFilter.filter(
+      (tagToFilter) => !post.tags.some((tag) => tag.id === tagToFilter.id)
+    )
+  }
 
   return (
     <Page>
@@ -273,7 +306,7 @@ export function PostPageWrapper({
 
           <div className="w-1/3 text-center">
             {isLoading ? (
-              <LoadingAnimation />
+              <LoadingAnimation small />
             ) : showCategoryDropdown ? (
               <div className="inline-block w-full">
                 <DropdownSelect
@@ -297,11 +330,7 @@ export function PostPageWrapper({
       <PageSection>
         <div className="flex flex-wrap items-center -m-1">
           {tags.map((tag) => (
-            <Tag
-              key={tag.id}
-              tagInitial={tag}
-              onRemoveClick={handleRemoveTag}
-            />
+            <Tag key={tag.id} tagInitial={tag} onClick={handleRemoveTag} />
           ))}
         </div>
       </PageSection>
@@ -332,7 +361,7 @@ export function PostPageWrapper({
                 />
                 <div className="mt-2 flex flex-wrap -m-1">
                   {tagsSearched &&
-                    tagsSearched.map((tag) => (
+                    filterTags(tagsSearched).map((tag) => (
                       <Tag key={tag.id} tagInitial={tag} />
                     ))}
                 </div>
@@ -342,8 +371,8 @@ export function PostPageWrapper({
               <Box inline>
                 <p className="italic">Popular in general</p>
                 <div className="mt-2 flex flex-wrap -m-1">
-                  {tagsSorted.map((tag) => (
-                    <Tag key={tag.id} tagInitial={tag} />
+                  {filterTags(tagsSorted).map((tag) => (
+                    <Tag key={tag.id} tagInitial={tag} onClick={handleAddTag} />
                   ))}
                 </div>
               </Box>
@@ -352,8 +381,8 @@ export function PostPageWrapper({
               <Box inline>
                 <p className="italic">Popular for this category</p>
                 <div className="mt-2 flex-1 flex flex-wrap -m-1">
-                  {tagsSortedForCategory.map((tag) => (
-                    <Tag key={tag.id} tagInitial={tag} />
+                  {filterTags(tagsSortedForCategory).map((tag) => (
+                    <Tag key={tag.id} tagInitial={tag} onClick={handleAddTag} />
                   ))}
                 </div>
               </Box>
