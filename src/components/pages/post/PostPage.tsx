@@ -24,7 +24,7 @@ import { Tag } from './Tag'
 import { useSearchTags } from '../../../data/use-search-tags'
 import { TagAPI } from '../../../pages/api/search-tags'
 
-export function PostPageWrapper({
+export function PostPage({
   post: postInitial,
   postCategories,
   tagsSorted,

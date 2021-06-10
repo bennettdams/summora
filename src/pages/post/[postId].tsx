@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next'
 import { prisma } from '../../prisma/prisma'
 import { PostCategory, PrismaClient } from '.prisma/client'
-import { PostPageWrapper } from '../../components/pages/post/PostPage'
+import { PostPage } from '../../components/pages/post/PostPage'
 import { Prisma } from '@prisma/client'
 
 export interface PostPageProps {
@@ -85,7 +85,7 @@ const PostViewPage = ({
   tagsSortedForCategory,
 }: PostPageProps): JSX.Element => {
   return (
-    <PostPageWrapper
+    <PostPage
       post={post}
       postCategories={postCategories}
       tagsSorted={tagsSorted}
