@@ -35,8 +35,8 @@ export const getStaticProps: GetStaticProps<PageProps> = async () => {
       postCategories,
       noOfPostsCreatedLast24Hours,
     },
-    revalidate: 2, // seconds
-    // revalidate: 60 * 2, // seconds
+    // revalidate: 2, // seconds
+    revalidate: 60 * 2, // seconds
   }
 }
 
