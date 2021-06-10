@@ -97,7 +97,7 @@ export default async (
   }
 }
 
-const posts: Prisma.PostCreateWithoutCategoryInput[] = [...new Array(10)].map(
+const posts: Prisma.PostCreateWithoutCategoryInput[] = [...new Array(100)].map(
   (_, i) => {
     const post: Prisma.PostCreateWithoutCategoryInput = {
       title:

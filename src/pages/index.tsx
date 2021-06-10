@@ -1,43 +1,47 @@
 import Head from 'next/head'
 import { Page, PageSection } from '../components/Page'
 import ErrorPage from 'next/error'
-import { LoadingAnimation } from '../components/LoadingAnimation'
-import { usePosts } from '../data/post-helper'
 import { Link } from '../components/Link'
 import { Box } from '../components/Box'
-import { PostPostsAPI } from './api/posts'
 import { GetStaticProps } from 'next'
 import { prisma } from '../prisma/prisma'
-import { PostCategory } from '.prisma/client'
 import { Views } from '../components/Likes'
 import { Comments } from '../components/Comments'
+import { PostCategory, Prisma, PrismaClient } from '@prisma/client'
 
-export const getStaticProps: GetStaticProps = async () => {
+interface PageProps {
+  posts: Exclude<Prisma.PromiseReturnType<typeof findPosts>, null>
+  postCategories: PostCategory[]
+  noOfPostsCreatedLast24Hours: number
+}
+
+async function findPosts(prisma: PrismaClient) {
+  return await prisma.post.findMany({ take: 20, include: { category: true } })
+}
+
+export const getStaticProps: GetStaticProps<PageProps> = async () => {
+  const posts = await findPosts(prisma)
   const postCategories = await prisma.postCategory.findMany()
-  // const posts = await prisma.post.findMany({
-  //   orderBy: {
-  //     createdAt: 'desc',
-  //   },
-  //   take: 10,
-  // })
+
+  const now = new Date()
+  const nowYesterday = new Date(now.setHours(now.getHours() - 24))
+  const noOfPostsCreatedLast24Hours = await prisma.post.count({
+    where: { createdAt: { gte: nowYesterday } },
+  })
 
   return {
     props: {
-      // posts,
+      posts,
       postCategories,
+      noOfPostsCreatedLast24Hours,
     },
-    revalidate: 60 * 2, // seconds
+    revalidate: 2, // seconds
+    // revalidate: 60 * 2, // seconds
   }
 }
 
-export const Home = ({
-  // posts,
-  postCategories,
-}: {
-  // posts: Post[]
-  postCategories: PostCategory[]
-}): JSX.Element => {
-  const { posts, isLoading } = usePosts()
+export const Home = ({ posts, postCategories }: PageProps): JSX.Element => {
+  // const { posts, isLoading } = usePosts()
 
   return (
     <Page>
@@ -84,17 +88,7 @@ export const Home = ({
         </button>
       </PageSection> */}
 
-      {/* <PageSection>
-        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:gap-12">
-          {posts.map((post) => (
-            <PostItem key={post.id} post={post} />
-          ))}
-        </div>
-      </PageSection> */}
-
-      {isLoading ? (
-        <LoadingAnimation />
-      ) : !posts ? (
+      {!posts ? (
         <ErrorPage statusCode={404}>Error while fetching posts</ErrorPage>
       ) : (
         <>
@@ -113,7 +107,7 @@ export const Home = ({
 
 export default Home
 
-function PostItem({ post }: { post: PostPostsAPI }): JSX.Element {
+function PostItem({ post }: { post: PageProps['posts'][number] }): JSX.Element {
   return (
     <Link to={`/post/${post.id}`}>
       <Box smallPadding>
