@@ -26,89 +26,113 @@ export default async (
     await prisma.postTag.createMany({ data: postTags })
     const postTagsCreated = await prisma.postTag.findMany()
 
-    posts.forEach(async (post) => {
-      const now = new Date().getTime()
-      const step = 100
+    await prisma.post.createMany({
+      data: [...new Array(100)].map((_, i) => {
+        return {
+          title:
+            'Post title    This is a title that is a bit longer for testing purposes ' +
+            (i + 1),
+          subtitle:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
+            (i + 1),
+          postCategoryId: getRandom(postCategoriesCreated).id,
+        }
+      }),
+    })
 
-      await prisma.post.create({
+    const postsCreated = await prisma.post.findMany()
+    postsCreated.forEach(async (post) => {
+      await prisma.post.update({
         data: {
-          ...post,
-          category: {
-            connect: {
-              id: getRandom(postCategoriesCreated).id,
-            },
-          },
           tags: {
             connect: [...new Array(15)].map((_) => ({
               id: getRandom(postTagsCreated).id,
             })),
           },
           segments: {
-            create: [
-              {
-                createdAt: new Date(now + 1 * step),
-                title: 'Segment title 1',
-                subtitle: 'Subtitle 1',
-                // segmentNo: 1,
-                items: {
-                  create: [
-                    {
-                      createdAt: new Date(now + 2 * step),
-                      content: 'Item content 1',
-                      // itemNo: 1
-                    },
-                    {
-                      createdAt: new Date(now + 3 * step),
-                      content: 'Item content 2',
-                      // itemNo: 2
-                    },
-                  ],
-                },
-              },
-              {
-                createdAt: new Date(now + 4 * step),
-                title: 'Segment title 2',
-                subtitle: 'Subtitle 2',
-                // segmentNo: 2,
-                items: {
-                  create: [
-                    {
-                      createdAt: new Date(now + 5 * step),
-                      content: 'Item content 1',
-                      //  itemNo: 1
-                    },
-                    {
-                      createdAt: new Date(now + 6 * step),
-                      content: 'Item content 2',
-                      // itemNo: 2
-                    },
-                  ],
-                },
-              },
-            ],
+            create: createSegments(),
           },
         },
+        where: { id: post.id },
       })
     })
 
-    res.status(200).json(`seeded ${posts.length} posts`)
+    // const postsCreated = await posts.map(async (post) => {
+    //   return await prisma.post.create({
+    //     data: {
+    //       ...post,
+    // category: {
+    //   connect: {
+    //     id: getRandom(postCategoriesCreated).id,
+    //   },
+    // },
+    // tags: {
+    // connect: [...new Array(15)].map((_) => ({
+    //   id: getRandom(postTagsCreated).id,
+    // })),
+    // },
+    //     },
+    //   })
+    // })
+
+    // postsCreated.forEach(postTemp => {
+    //   await prisma.postSegment.createMany({ data: createSegments(postTemp.) })
+    // })
+
+    // segments: {
+    // createMany: {
+    //   data: createSegments(post.id),
+    // },
+    // },
+
+    const message = `seeded ${postsCreated.length} posts`
+    console.log(message)
+    res.status(200).json(message)
   } catch (err) {
     res.status(400).json({ message: 'Something went wrong!' + err })
   }
 }
 
-const posts: Prisma.PostCreateWithoutCategoryInput[] = [...new Array(100)].map(
-  (_, i) => {
-    const post: Prisma.PostCreateWithoutCategoryInput = {
-      title:
-        'Post title    This is a title that is a bit longer for testing purposes ' +
-        (i + 1),
-      subtitle:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' + (i + 1),
+// const posts: Prisma.PostCreateWithoutCategoryInput[] = [...new Array(100)].map(
+//   (_, i) => {
+//     const post: Prisma.PostCreateWithoutCategoryInput = {
+//       title:
+//         'Post title    This is a title that is a bit longer for testing purposes ' +
+//         (i + 1),
+//       subtitle:
+//         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' + (i + 1),
+//     }
+//     return post
+//   }
+// )
+
+// function createSegments(postId: string): Prisma.PostSegmentCreateManyInput[] {
+function createSegments(): Prisma.PostSegmentCreateManyPostInput[] {
+  return [...new Array(10)].map((_, index) => {
+    const now = new Date().getTime()
+    const step = 100
+
+    // const postSegment: Prisma.PostSegmentCreateManyPostInput = {}
+
+    return {
+      createdAt: new Date(now + 1 * step),
+      title: `Segment title ${index}`,
+      subtitle: `Subtitle ${index}`,
+      items: {
+        create: [
+          {
+            createdAt: new Date(now + 2 * step),
+            content: 'Item content 1',
+          },
+          {
+            createdAt: new Date(now + 3 * step),
+            content: 'Item content 2',
+          },
+        ],
+      },
     }
-    return post
-  }
-)
+  })
+}
 
 // for inline create
 // const segments: Prisma.PostSegmentCreateWithoutPostInput[] = [

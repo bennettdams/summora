@@ -6,12 +6,16 @@ import { Page, PageSection } from '../../Page'
 import { Link } from '../../Link'
 import { Views } from '../../Likes'
 import { Comments } from '../../Comments'
+import { Button } from '../../Button'
+import { useState } from 'react'
 
 export function PostsPage({
   posts,
   postCategories,
   noOfPostsCreatedLast24Hours,
 }: PostsPageProps): JSX.Element {
+  const [showLongPost, setShowLongPost] = useState(true)
+
   return (
     <Page>
       <Head>
@@ -52,24 +56,74 @@ export function PostsPage({
         </div>
       </PageSection>
 
+      <PageSection>
+        <Button onClick={() => setShowLongPost(true)}>Long</Button>
+        <Button onClick={() => setShowLongPost(false)}>Short</Button>
+      </PageSection>
+
       {!posts ? (
         <ErrorPage statusCode={404}>Error while fetching posts</ErrorPage>
       ) : (
-        <>
-          <PageSection>
-            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:gap-12">
+        <PageSection>
+          {showLongPost ? (
+            <div className="mt-10 flex flex-col space-y-10">
               {posts.map((post) => (
                 <PostItem key={post.id} post={post} />
               ))}
             </div>
-          </PageSection>
-        </>
+          ) : (
+            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:gap-12">
+              {posts.map((post) => (
+                <PostItemShort key={post.id} post={post} />
+              ))}
+            </div>
+          )}
+        </PageSection>
       )}
     </Page>
   )
 }
 
 function PostItem({
+  post,
+}: {
+  post: PostsPageProps['posts'][number]
+}): JSX.Element {
+  return (
+    <Link to={`/post/${post.id}`}>
+      <Box smallPadding>
+        <div className="w-full h-80 text-center relative">
+          <h2 className="tracking-widest text-xs font-medium text-gray-400">
+            {post.category.title}
+          </h2>
+          <h1 className="mt-1 sm:text-2xl text-xl font-medium">{post.title}</h1>
+          <p className="mt-3 leading-relaxed">{post.subtitle}</p>
+          <div className="flex py-4 flex-row flex-nowrap h-ful overflow-y-auto space-x-4">
+            {post.segments.map((segment) => {
+              return (
+                <div
+                  key={segment.id}
+                  className="flex-none grid place-items-center w-60 h-32 bg-blue-100"
+                >
+                  {segment.title}
+                </div>
+              )
+            })}
+          </div>
+          <div className="text-center mt-2 leading-none flex justify-center absolute bottom-0 w-full py-3 space-x-4">
+            <Views>1.2K</Views>
+            <Comments>6</Comments>
+            <span className="text-gray-400 inline-flex items-center leading-none text-sm">
+              {post.updatedAt.toLocaleDateString()}
+            </span>
+          </div>
+        </div>
+      </Box>
+    </Link>
+  )
+}
+
+function PostItemShort({
   post,
 }: {
   post: PostsPageProps['posts'][number]

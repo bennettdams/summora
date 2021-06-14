@@ -10,7 +10,10 @@ export interface PostsPageProps {
 }
 
 async function findPosts(prisma: PrismaClient) {
-  return await prisma.post.findMany({ take: 20, include: { category: true } })
+  return await prisma.post.findMany({
+    take: 20,
+    include: { category: true, segments: { orderBy: { createdAt: 'asc' } } },
+  })
 }
 
 export const getStaticProps: GetStaticProps<PostsPageProps> = async () => {

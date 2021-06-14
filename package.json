@@ -18,6 +18,7 @@
     "ps": "yarn p:studio",
     "p:reset": "npx prisma migrate reset --schema ./src/prisma/schema.prisma",
     "pr": "yarn p:reset",
+    "p:seed": "npx prisma db seed --schema ./src/prisma/schema.prisma --preview-feature",
     "p:generate": "npx prisma generate --schema ./src/prisma/schema.prisma",
     "p:format": "npx prisma format --schema ./src/prisma/schema.prisma",
     "format": "prettier --write .",
