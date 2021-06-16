@@ -1,12 +1,16 @@
 import { useQueryClient } from 'react-query'
 import { queryKeyPosts } from '../data/post-helper'
+import { useAuth } from '../services/auth-service'
+import { supabase } from '../services/supabase/supabaseClient'
 import { useRouteChange } from '../util/use-route-change'
+import { Button } from './Button'
 import { Link } from './Link'
 import { LoadingAnimation } from './LoadingAnimation'
 
 export function Header(): JSX.Element {
   const queryClient = useQueryClient()
   const isLoading = useRouteChange()
+  const { user } = useAuth()
 
   return (
     <header className="h-12 z-40 w-full flex items-center justify-center top-0 fixed text-white bg-lime-900">
@@ -18,10 +22,27 @@ export function Header(): JSX.Element {
             </span>
           </div>
         </Link>
+
         <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center">
           <a className="mr-5 hover:text-gray-900">Some link</a>
         </nav>
+
+        {user && (
+          <Link to={`/profile/${user.id}`}>
+            <p>Session: {user?.email}</p>
+          </Link>
+        )}
+
+        {user ? (
+          <Button onClick={() => supabase.auth.signOut()}>Sign out</Button>
+        ) : (
+          <Link to="/signin">
+            <Button onClick={() => supabase.auth.signOut()}>Sign in</Button>
+          </Link>
+        )}
+
         <div className="w-20">{isLoading && <LoadingAnimation />}</div>
+
         {process.env.NODE_ENV === 'development' && (
           <button
             className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0"
