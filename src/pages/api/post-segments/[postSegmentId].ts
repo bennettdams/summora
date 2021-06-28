@@ -65,9 +65,8 @@ export default async function handler(
   } else {
     switch (method) {
       case 'PUT': {
-        const { postId, postSegmentToUpdate }: PostSegmentUpdate = JSON.parse(
-          requestBody
-        )
+        const { postId, postSegmentToUpdate }: PostSegmentUpdate =
+          JSON.parse(requestBody)
 
         if (!postId) {
           res.status(404).end('No post ID!')

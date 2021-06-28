@@ -33,9 +33,10 @@ export function PostSegment({
   useEffect(() => setItems(segment.items), [segment.items])
 
   const [isSegmentEditable, setIsSegmentEditable] = useState(isEditableExternal)
-  useEffect(() => setIsSegmentEditable(isEditableExternal), [
-    isEditableExternal,
-  ])
+  useEffect(
+    () => setIsSegmentEditable(isEditableExternal),
+    [isEditableExternal]
+  )
   const [showItemInput, setShowItemInput] = useState(false)
 
   const [refSegmentTitle, isHovered] = useHover<HTMLDivElement>()
@@ -87,9 +88,10 @@ export function PostSegment({
   }
 
   async function handleCreate(inputValue: string): Promise<void> {
-    const postSegmentItemToCreate: PostSegmentItemCreate['postSegmentItemToCreate'] = {
-      content: inputValue,
-    }
+    const postSegmentItemToCreate: PostSegmentItemCreate['postSegmentItemToCreate'] =
+      {
+        content: inputValue,
+      }
     setItems((prevItems) => [
       ...prevItems,
       {

@@ -32,10 +32,11 @@ export function PostSegmentItem({
   useOnClickOutside(refEdit, () => setIsEditable(false))
 
   async function handleUpdate(inputValue: string): Promise<void> {
-    const postSegmentItemToUpdate: PostSegmentItemUpdate['postSegmentItemToUpdate'] = {
-      ...item,
-      content: inputValue,
-    }
+    const postSegmentItemToUpdate: PostSegmentItemUpdate['postSegmentItemToUpdate'] =
+      {
+        ...item,
+        content: inputValue,
+      }
 
     const content = postSegmentItemToUpdate.content
     if (typeof content === 'string') {

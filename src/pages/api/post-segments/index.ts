@@ -53,9 +53,8 @@ export default async function handler(
   console.log('API post segment ', method)
   switch (method) {
     case 'POST': {
-      const { postId, postSegmentToCreate }: PostSegmentCreate = JSON.parse(
-        requestBody
-      )
+      const { postId, postSegmentToCreate }: PostSegmentCreate =
+        JSON.parse(requestBody)
 
       if (!postId) {
         res.status(404).end('No post ID!')
