@@ -10,7 +10,7 @@ import { LoadingAnimation } from './LoadingAnimation'
 export function Header(): JSX.Element {
   const queryClient = useQueryClient()
   const isLoading = useRouteChange()
-  const { user } = useAuth()
+  const { user, isLoading: isLoadingAuth } = useAuth()
 
   return (
     <header className="h-12 z-40 w-full flex items-center justify-center top-0 fixed text-white bg-lime-900">
@@ -27,9 +27,10 @@ export function Header(): JSX.Element {
           <a className="mr-5 hover:text-gray-900">Some link</a>
         </nav>
 
+        {isLoadingAuth && <LoadingAnimation />}
         {user && (
           <Link to={`/profile/${user.id}`}>
-            <p>Session: {user?.email}</p>
+            <p>{user?.email}</p>
           </Link>
         )}
 

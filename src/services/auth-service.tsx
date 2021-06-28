@@ -10,6 +10,7 @@ import { SupabaseClient, Session, User } from '@supabase/supabase-js'
 export interface AuthState {
   user: User | null
   session: Session | null
+  isLoading: boolean
 }
 
 const AuthContext = createContext<AuthState | null>(null)
@@ -24,15 +25,16 @@ export function AuthContextProvider({
   const [authState, setAuthState] = useState<AuthState>({
     session: null,
     user: null,
+    isLoading: true,
   })
 
   useEffect(() => {
     const session = supabaseClient.auth.session()
-    setAuthState({ session, user: session?.user ?? null })
+    setAuthState({ session, user: session?.user ?? null, isLoading: false })
 
     const { data: authListener } = supabaseClient.auth.onAuthStateChange(
       async (event, session) => {
-        setAuthState({ session, user: session?.user ?? null })
+        setAuthState({ session, user: session?.user ?? null, isLoading: false })
 
         // this enables SSR
         fetch('/api/auth', {
@@ -47,10 +49,7 @@ export function AuthContextProvider({
     return () => {
       if (authListener) authListener.unsubscribe()
     }
-
-    // TODO Supabase safe dependency?
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [supabaseClient.auth])
 
   return (
     <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
