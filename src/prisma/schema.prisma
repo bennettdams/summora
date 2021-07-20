@@ -77,3 +77,10 @@ model PostTag {
   posts       Post[]
   //
 }
+
+model Profile {
+  userId    String   @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  username  String
+}
