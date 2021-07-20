@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { Footer } from '../components/Footer'
 import { Header } from '../components/Header'
 import { AuthContextProvider } from '../services/auth-service'
-import { supabase } from '../services/supabase/supabaseClient'
+import { supabase } from '../services/supabase/supabase-service'
 import '../styles/globals.css'
 
 const queryClient = new QueryClient()

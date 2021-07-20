@@ -1,7 +1,6 @@
 import { useQueryClient } from 'react-query'
 import { queryKeyPosts } from '../data/post-helper'
 import { useAuth } from '../services/auth-service'
-import { supabase } from '../services/supabase/supabaseClient'
 import { useRouteChange } from '../util/use-route-change'
 import { Button } from './Button'
 import { Link } from './Link'
@@ -10,7 +9,7 @@ import { LoadingAnimation } from './LoadingAnimation'
 export function Header(): JSX.Element {
   const queryClient = useQueryClient()
   const isLoading = useRouteChange()
-  const { user, isLoading: isLoadingAuth } = useAuth()
+  const { user, isLoading: isLoadingAuth, signOut } = useAuth()
 
   return (
     <header className="h-12 z-40 w-full flex items-center justify-center top-0 fixed text-white bg-lime-900">
@@ -35,10 +34,10 @@ export function Header(): JSX.Element {
         )}
 
         {user ? (
-          <Button onClick={() => supabase.auth.signOut()}>Sign out</Button>
+          <Button onClick={() => signOut()}>Sign out</Button>
         ) : (
           <Link to="/signin">
-            <Button onClick={() => supabase.auth.signOut()}>Sign in</Button>
+            <Button onClick={() => signOut()}>Sign in</Button>
           </Link>
         )}
 

@@ -1,36 +1,21 @@
-import { useState } from 'react'
-import { supabase } from '../../services/supabase/supabaseClient'
+import { MouseEvent, useState } from 'react'
+import { useAuth } from '../../services/auth-service'
 import { Page, PageSection } from '../Page'
 
 export function SignInPage(): JSX.Element {
+  const { signInWithEmailAndUsername, signUpWithEmailAndUsername } = useAuth()
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleSignIn = async (email: string, password: string) => {
-    try {
-      setLoading(true)
-      const { error } = await supabase.auth.signIn({ email, password })
-      if (error) throw error
-      console.log('signed in')
-    } catch (error) {
-      console.error(error.error_description || error.message)
-    } finally {
-      setLoading(false)
-    }
+  async function handleSignIn(e: MouseEvent<HTMLButtonElement>): Promise<void> {
+    // e.preventDefault()
+    signInWithEmailAndUsername(email, password)
   }
 
-  const handleSignUp = async (email: string, password: string) => {
-    try {
-      setLoading(true)
-      const { error } = await supabase.auth.signUp({ email, password })
-      if (error) throw error
-      console.log('signed up')
-    } catch (error) {
-      console.error(error.error_description || error.message)
-    } finally {
-      setLoading(false)
-    }
+  async function handleSignUp(e: MouseEvent<HTMLButtonElement>): Promise<void> {
+    // e.preventDefault()
+    await signUpWithEmailAndUsername(email, password)
   }
 
   return (
@@ -53,24 +38,12 @@ export function SignInPage(): JSX.Element {
           />
         </div>
         <div>
-          <button
-            onClick={(e) => {
-              e.preventDefault()
-              handleSignIn(email, password)
-            }}
-            disabled={loading}
-          >
+          <button onClick={handleSignIn} disabled={loading}>
             {loading ? <span>Loading</span> : <span>Sign in</span>}
           </button>
         </div>
         <div>
-          <button
-            onClick={(e) => {
-              e.preventDefault()
-              handleSignUp(email, password)
-            }}
-            disabled={loading}
-          >
+          <button onClick={handleSignUp} disabled={loading}>
             {loading ? <span>Loading</span> : <span>Sign up</span>}
           </button>
         </div>

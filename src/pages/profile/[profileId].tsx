@@ -1,7 +1,7 @@
-import { User } from '@supabase/supabase-js'
 import { GetServerSideProps } from 'next'
 import { ProfilePage } from '../../components/pages/ProfilePage'
-import { supabase } from '../../services/supabase/supabaseClient'
+import { getUserByCookie } from '../../services/supabase/supabase-service'
+import { User } from '../../types/User'
 
 export interface ProfilePageProps {
   user: User | null
@@ -12,7 +12,8 @@ export const getServerSideProps: GetServerSideProps = async ({
 }): Promise<
   { props: ProfilePageProps } | { props: { '404'?: null; '500'?: null } }
 > => {
-  const { user } = await supabase.auth.api.getUserByCookie(req)
+  const { user } = await getUserByCookie(req)
+
   return { props: { user } }
 }
 

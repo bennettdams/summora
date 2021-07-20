@@ -6,6 +6,11 @@ import {
   ReactNode,
 } from 'react'
 import { SupabaseClient, Session, User } from '@supabase/supabase-js'
+import {
+  signInSupabase,
+  signOutSupabase,
+  signUpSupabase,
+} from './supabase/supabase-service'
 
 export interface AuthState {
   user: User | null
@@ -56,7 +61,54 @@ export function AuthContextProvider({
   )
 }
 
-export function useAuth(): AuthState {
+export function useAuth() {
+  const authState = useAuthContext()
+
+  async function signInWithEmailAndUsername(
+    email: string,
+    password: string
+  ): Promise<void> {
+    try {
+      // setAuthState({ ...authState, isLoading: true })
+      const { error } = await signInSupabase(email, password)
+      if (error) {
+        console.error(error.message)
+      } else {
+        console.log('signed in')
+      }
+    } catch (error) {
+      console.error(error.error_description || error.message)
+    } finally {
+      // setAuthState({ ...authState, isLoading: false })
+    }
+  }
+
+  async function signUpWithEmailAndUsername(email: string, password: string) {
+    try {
+      // setLoading(true)
+      const { error } = await signUpSupabase(email, password)
+      if (error) throw error
+      console.log('signed up')
+    } catch (error) {
+      console.error(error.error_description || error.message)
+    } finally {
+      // setLoading(false)
+    }
+  }
+
+  async function signOut() {
+    await signOutSupabase()
+  }
+
+  return {
+    ...authState,
+    signInWithEmailAndUsername,
+    signUpWithEmailAndUsername,
+    signOut,
+  }
+}
+
+export function useAuthContext(): AuthState {
   const context = useContext(AuthContext)
   if (!context) {
     throw new Error(`useAuth must be used within the AuthContextProvider.`)
