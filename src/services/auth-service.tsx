@@ -5,12 +5,14 @@ import {
   useContext,
   ReactNode,
 } from 'react'
-import { SupabaseClient, Session, User } from '@supabase/supabase-js'
+import { SupabaseClient } from '@supabase/supabase-js'
 import {
   signInSupabase,
   signOutSupabase,
   signUpSupabase,
 } from './supabase/supabase-service'
+import { User } from '../types/User'
+import { Session } from '../types/Session'
 
 export interface AuthState {
   user: User | null
