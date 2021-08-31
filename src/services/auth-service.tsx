@@ -6,13 +6,10 @@ import {
   ReactNode,
 } from 'react'
 import { SupabaseClient } from '@supabase/supabase-js'
-import {
-  signInSupabase,
-  signOutSupabase,
-  signUpSupabase,
-} from './supabase/supabase-service'
+import { signInSupabase, signOutSupabase } from './supabase/supabase-service'
 import { User } from '../types/User'
 import { Session } from '../types/Session'
+import { apiUsersSignUp } from './api'
 
 export interface AuthState {
   user: User | null
@@ -88,11 +85,13 @@ export function useAuth(): Record<string, any> {
   async function signUpWithEmailAndUsername(email: string, password: string) {
     try {
       // setLoading(true)
-      const { error } = await signUpSupabase(email, password)
-      if (error) throw error
-      console.log('signed up')
+      const response = await apiUsersSignUp(email, password)
+      if (!response.ok) {
+        console.error('Error while sign up')
+      }
+      console.log('Signed up')
     } catch (error) {
-      console.error(error.error_description || error.message)
+      console.error('Something went wrong while signing up')
     } finally {
       // setLoading(false)
     }
