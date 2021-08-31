@@ -61,7 +61,7 @@ export function AuthContextProvider({
   )
 }
 
-export function useAuth() {
+export function useAuth(): Record<string, any> {
   const authState = useAuthContext()
 
   async function signInWithEmailAndUsername(
