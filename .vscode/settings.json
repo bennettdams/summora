@@ -1,1 +1,29 @@
-{}
+{
+  // GENERAL
+  "files.eol": "\n", // LF
+  "telemetry.enableTelemetry": false,
+  "workbench.settings.editor": "json",
+  "workbench.iconTheme": "vscode-icons",
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/coverage": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.build": true,
+    "**/.gh-pages": true,
+    "**/tailwind.css": true,
+    "**/package-lock.json": true
+  },
+  // LINTING & FORMATTING
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.configPath": ".prettierrc",
+  // TAILWIND
+  "tailwindCSS.emmetCompletions": true,
+  "tailwindCSS.lint.cssConflict": "warning",
+  "tailwindCSS.showPixelEquivalents": true
+}

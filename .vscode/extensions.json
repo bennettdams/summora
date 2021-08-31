@@ -1,0 +1,19 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "ms-azuretools.vscode-docker",
+    "davidanson.vscode-markdownlint",
+    "esbenp.prettier-vscode",
+    "visualstudioexptteam.vscodeintellicode",
+    "vscode-icons-team.vscode-icons",
+    "mhutchie.git-graph",
+    "atlassian.atlascode",
+    "mongodb.mongodb-vscode",
+    "christian-kohler.npm-intellisense",
+    "christian-kohler.path-intellisense",
+    "bradlc.vscode-tailwindcss",
+    "wix.vscode-import-cost",
+    "ivory-lab.jenkinsfile-support",
+    "redhat.vscode-xml"
+  ]
+}
