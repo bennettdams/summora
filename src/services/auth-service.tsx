@@ -82,19 +82,29 @@ export function useAuth(): Record<string, any> {
     }
   }
 
-  async function signUpWithEmailAndUsername(email: string, password: string) {
+  /**
+   * @returns true if sign up was sucessful
+   */
+  async function signUpWithEmailAndUsername(
+    email: string,
+    password: string
+  ): Promise<boolean> {
     try {
       // setLoading(true)
       const response = await apiUsersSignUp(email, password)
       if (!response.ok) {
         console.error('Error while sign up')
+        return false
+      } else {
+        console.log('Signed up')
+        return true
       }
-      console.log('Signed up')
     } catch (error) {
       console.error('Something went wrong while signing up')
     } finally {
       // setLoading(false)
     }
+    return false
   }
 
   async function signOut() {

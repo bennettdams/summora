@@ -12,7 +12,7 @@ export function Header(): JSX.Element {
   const { user, isLoading: isLoadingAuth, signOut } = useAuth()
 
   return (
-    <header className="h-12 z-40 w-full flex items-center justify-center top-0 fixed text-white bg-lime-900">
+    <header className="h-12 z-40 w-full flex items-center justify-center top-0 fixed text-white bg-gradient-to-r from-lime-500 to-lime-700">
       <div className="mx-auto w-full flex flex-wrap p-5 flex-col md:flex-row items-center">
         <Link to="/">
           <div className="text-left text-4xl font-extrabold leading-none tracking-tight">

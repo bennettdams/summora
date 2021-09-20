@@ -1,21 +1,29 @@
 import { MouseEvent, useState } from 'react'
 import { useAuth } from '../../services/auth-service'
+import { LoadingAnimation } from '../LoadingAnimation'
 import { Page, PageSection } from '../Page'
 
 export function SignInPage(): JSX.Element {
   const { signInWithEmailAndUsername, signUpWithEmailAndUsername } = useAuth()
-  const [loading, setLoading] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [email, setEmail] = useState('a@b.com')
+  const [password, setPassword] = useState('123456')
 
   async function handleSignIn(e: MouseEvent<HTMLButtonElement>): Promise<void> {
     // e.preventDefault()
+    setIsLoading(true)
     signInWithEmailAndUsername(email, password)
+    setIsLoading(false)
   }
 
   async function handleSignUp(e: MouseEvent<HTMLButtonElement>): Promise<void> {
     // e.preventDefault()
+    setIsLoading(true)
     await signUpWithEmailAndUsername(email, password)
+    setIsLoading(false)
+
+    // const isSuccessfulSignUp = await signUpWithEmailAndUsername(email, password)
+    // TODO go to some page
   }
 
   return (
@@ -38,13 +46,13 @@ export function SignInPage(): JSX.Element {
           />
         </div>
         <div>
-          <button onClick={handleSignIn} disabled={loading}>
-            {loading ? <span>Loading</span> : <span>Sign in</span>}
+          <button onClick={handleSignIn} disabled={isLoading}>
+            {isLoading ? <LoadingAnimation /> : <span>Sign in</span>}
           </button>
         </div>
         <div>
-          <button onClick={handleSignUp} disabled={loading}>
-            {loading ? <span>Loading</span> : <span>Sign up</span>}
+          <button onClick={handleSignUp} disabled={isLoading}>
+            {isLoading ? <LoadingAnimation /> : <span>Sign up</span>}
           </button>
         </div>
       </PageSection>

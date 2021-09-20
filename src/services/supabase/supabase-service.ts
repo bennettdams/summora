@@ -19,14 +19,22 @@ export async function getUserByCookie(
   return await supabase.auth.api.getUserByCookie(req)
 }
 
-export async function signInSupabase(email: string, password: string) {
+export async function signInSupabase(
+  email: string,
+  password: string
+): Promise<ReturnType<typeof supabase.auth.signIn>> {
   return await supabase.auth.signIn({ email, password })
 }
 
-export async function signUpSupabase(email: string, password: string) {
+export async function signUpSupabase(
+  email: string,
+  password: string
+): Promise<ReturnType<typeof supabase.auth.signUp>> {
   return await supabase.auth.signUp({ email, password })
 }
 
-export async function signOutSupabase() {
+export async function signOutSupabase(): Promise<
+  ReturnType<typeof supabase.auth.signOut>
+> {
   return await supabase.auth.signOut()
 }
