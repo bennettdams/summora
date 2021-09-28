@@ -25,17 +25,17 @@ async function findProfleByUserId(prisma: PrismaClient, userId: string) {
 
 export const getServerSideProps: GetServerSideProps<ProfilePageProps, Params> =
   async ({ params, res }) => {
-    console.log(
-      `[SSR] ${_Profile.name} page | ${
-        !params ? 'no profile ID' : params.profileId
-      }`
-    )
-
     if (!params) {
+      console.log(
+        `[SSR] ${_Profile.name} page | ${'no profile ID, redirecting'}`
+      )
+
       // TODO 404 redirect?
       res.statusCode = 404
       return { props: { profile: null } }
     } else {
+      console.log(`[SSR] ${_Profile.name} page | ${params.profileId}`)
+
       const profile = await findProfleByUserId(prisma, params.profileId)
 
       return { props: { profile } }
