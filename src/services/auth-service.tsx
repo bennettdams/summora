@@ -60,10 +60,10 @@ export function AuthContextProvider({
   )
 }
 
-export function useAuth(): Record<string, any> {
+export function useAuth() {
   const authState = useAuthContext()
 
-  async function signInWithEmailAndUsername(
+  async function signInWithEmailAndPassword(
     email: string,
     password: string
   ): Promise<void> {
@@ -85,13 +85,14 @@ export function useAuth(): Record<string, any> {
   /**
    * @returns true if sign up was sucessful
    */
-  async function signUpWithEmailAndUsername(
+  async function signUpWithEmailAndPassword(
+    username: string,
     email: string,
     password: string
   ): Promise<boolean> {
     try {
       // setLoading(true)
-      const response = await apiUsersSignUp(email, password)
+      const response = await apiUsersSignUp(username, email, password)
       if (!response.ok) {
         console.error('Error while sign up')
         return false
@@ -113,8 +114,8 @@ export function useAuth(): Record<string, any> {
 
   return {
     ...authState,
-    signInWithEmailAndUsername,
-    signUpWithEmailAndUsername,
+    signInWithEmailAndPassword,
+    signUpWithEmailAndPassword,
     signOut,
   }
 }

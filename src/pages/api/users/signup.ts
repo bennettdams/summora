@@ -1,10 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
-import { ReturnApiUsersSignUp, ROUTES_API } from '../../../services/api'
+import {
+  ApiUsersSignUpRequestBody,
+  ApiUsersSignUpReturn,
+  ROUTES_API,
+} from '../../../services/api'
 import { signUpSupabase } from '../../../services/supabase/supabase-service'
 
 interface Request extends NextApiRequest {
-  body: { email: string; password: string }
+  body: ApiUsersSignUpRequestBody
 }
 
 export default async function handler(
@@ -16,7 +20,7 @@ export default async function handler(
 
   switch (method) {
     case 'POST': {
-      const { email, password } = requestBody
+      const { username, email, password } = requestBody
 
       try {
         const { user, error } = await signUpSupabase(email, password)
@@ -24,16 +28,18 @@ export default async function handler(
           console.error('[API] Error while sign up (Supabase):', error)
           return res.status(401).json({ error })
         } else if (user) {
+          // TODO if profile creation fails, we have to also delete the user (Supabase)
           const profileCreated = await prisma.profile.create({
             data: {
               userId: user.id,
-              username: 'username fallback' + Math.random(),
+              username,
             },
           })
 
           console.log(`[API] signed up ${email}`)
 
-          const responseData: ReturnApiUsersSignUp = profileCreated
+          // using explicit type to make sure we're returning what we've promised in the API function (that called this API endpoint)
+          const responseData: ApiUsersSignUpReturn = profileCreated
           return res.status(200).json(responseData)
         }
       } catch (error) {

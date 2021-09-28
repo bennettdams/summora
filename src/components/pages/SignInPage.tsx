@@ -4,22 +4,29 @@ import { LoadingAnimation } from '../LoadingAnimation'
 import { Page, PageSection } from '../Page'
 
 export function SignInPage(): JSX.Element {
-  const { signInWithEmailAndUsername, signUpWithEmailAndUsername } = useAuth()
+  const { signInWithEmailAndPassword, signUpWithEmailAndPassword } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
-  const [email, setEmail] = useState('a@b.com')
-  const [password, setPassword] = useState('123456')
+  const [username, setUsername] = useState(
+    process.env.NEXT_PUBLIC_DEFAULT_USERNAME ?? ''
+  )
+  const [email, setEmail] = useState(
+    process.env.NEXT_PUBLIC_DEFAULT_EMAIL ?? ''
+  )
+  const [password, setPassword] = useState(
+    process.env.NEXT_PUBLIC_DEFAULT_PASSWORD ?? ''
+  )
 
   async function handleSignIn(e: MouseEvent<HTMLButtonElement>): Promise<void> {
     // e.preventDefault()
     setIsLoading(true)
-    signInWithEmailAndUsername(email, password)
+    signInWithEmailAndPassword(email, password)
     setIsLoading(false)
   }
 
   async function handleSignUp(e: MouseEvent<HTMLButtonElement>): Promise<void> {
     // e.preventDefault()
     setIsLoading(true)
-    await signUpWithEmailAndUsername(email, password)
+    await signUpWithEmailAndPassword(username, email, password)
     setIsLoading(false)
 
     // const isSuccessfulSignUp = await signUpWithEmailAndUsername(email, password)
@@ -35,6 +42,14 @@ export function SignInPage(): JSX.Element {
             placeholder="Your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div>
+          <input
+            type="text"
+            placeholder="Your username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </div>
         <div>
