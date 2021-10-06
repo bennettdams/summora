@@ -11,7 +11,7 @@ interface Request extends NextApiRequest {
   body: ApiUsersSignUpRequestBody
 }
 
-export default async function handler(
+export default async function _signUpAPI(
   req: Request,
   res: NextApiResponse
 ): Promise<void> {

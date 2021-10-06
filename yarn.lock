@@ -701,22 +701,22 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
-"@prisma/client@^3.1.1":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-3.1.1.tgz#f4012631528049c22d12b212846dcf503db33cfe"
-  integrity sha512-8ud8vVFMIg37yrkZ4wPpjKoMxFbCL0Pesq5eyLnag/s0LTKsVEN7ZBIQq9JzWW+AUqOzGKXr2Jt4Sl8xdGI99w==
+"@prisma/client@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-3.2.0.tgz#6aa79b2945ca7553d5a4c14bbe0067d9f975e061"
+  integrity sha512-YCS/N3DZWoaKXhyS8dHwgUvT/NKXvlLbB5fsy0FvYC305JgNtMLjNbxsx0HjIcNw82MEhP7zWEXNvOLpOgGCUg==
   dependencies:
-    "@prisma/engines-version" "3.1.0-24.c22652b7e418506fab23052d569b85d3aec4883f"
+    "@prisma/engines-version" "3.2.0-34.afdab2f10860244038c4e32458134112852d4dad"
 
-"@prisma/engines-version@3.1.0-24.c22652b7e418506fab23052d569b85d3aec4883f":
-  version "3.1.0-24.c22652b7e418506fab23052d569b85d3aec4883f"
-  resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-3.1.0-24.c22652b7e418506fab23052d569b85d3aec4883f.tgz#f9908eb7808f2a546634398063942eaecb2474ef"
-  integrity sha512-EuEMKLuwIcBO7uInZQHeG1yaywcfl32Tq8TDf5tgLvblk+ka70sej7S67lh3BV5gXMLTc3GdthSHPfDqZEK5uA==
+"@prisma/engines-version@3.2.0-34.afdab2f10860244038c4e32458134112852d4dad":
+  version "3.2.0-34.afdab2f10860244038c4e32458134112852d4dad"
+  resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-3.2.0-34.afdab2f10860244038c4e32458134112852d4dad.tgz#bd63ad4bbc32935ec43e93cb59220495893c844d"
+  integrity sha512-zYzFOmFvk5YzShqm6DuK7ULtjbJQpebAeD3gcpPfPjx6Uf9pug3bxeswp8/3sk2KKVUeKPUQg5p3TZLskyBNjA==
 
-"@prisma/engines@3.1.0-24.c22652b7e418506fab23052d569b85d3aec4883f":
-  version "3.1.0-24.c22652b7e418506fab23052d569b85d3aec4883f"
-  resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-3.1.0-24.c22652b7e418506fab23052d569b85d3aec4883f.tgz#7b45708e6a42523dc9bc2214e5c62781f608dc3a"
-  integrity sha512-6NEp0VlLho3hVtIvj2P4h0e19AYqQSXtFGts8gSIXDnV+l5pRFZaDMfGo2RiLMR0Kfrs8c3ZYxYX0sWmVL0tWw==
+"@prisma/engines@3.2.0-34.afdab2f10860244038c4e32458134112852d4dad":
+  version "3.2.0-34.afdab2f10860244038c4e32458134112852d4dad"
+  resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-3.2.0-34.afdab2f10860244038c4e32458134112852d4dad.tgz#d8e6ceaddae105f0c882ac9113873f8f1e89d64a"
+  integrity sha512-MiZORXXsGORXTF9RqqKIlN/2ohkaxAWTsS7qxDJTy5ThTYLrXSmzxTSohM4qN/AI616B+o5WV7XTBhjlPKSufg==
 
 "@rushstack/eslint-patch@^1.0.6":
   version "1.0.6"
@@ -737,17 +737,17 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@supabase/gotrue-js@^1.17.0":
-  version "1.17.0"
-  resolved "https://registry.yarnpkg.com/@supabase/gotrue-js/-/gotrue-js-1.17.0.tgz#0ff46f844ddd124543d2769da8eda58ab479b49b"
-  integrity sha512-c+GSSoW+PIT3/r7TnBdc4gPjtWDutO/2ROafSKUFl39Pb8aHIUbUvzK9sjuedaaLKH7bV8VefuRy2L8c0BUAzg==
+"@supabase/gotrue-js@^1.18.0":
+  version "1.18.0"
+  resolved "https://registry.yarnpkg.com/@supabase/gotrue-js/-/gotrue-js-1.18.0.tgz#1642c2605a24349b9bfbcd2ad83d19df3908371e"
+  integrity sha512-kGKy6EkMwait89yUYQF7umUDCeOsnNZD/rrfRTDH5jVDwuudvrF/5Dw0mBMHh8lQdZDFaF6Q8bVHlD3vXguGdw==
   dependencies:
     cross-fetch "^3.0.6"
 
-"@supabase/postgrest-js@^0.33.3":
-  version "0.33.3"
-  resolved "https://registry.yarnpkg.com/@supabase/postgrest-js/-/postgrest-js-0.33.3.tgz#ae2061d1aef3879582900f059b7069ac41dd51ff"
-  integrity sha512-OWybVcjjopdUIC9xltnjmNUfCpEV5TBN8BIq8GIL6pCdArXyHvYHlEQsDjPdumPEWIBF8Y8thVasJ5E8O2Gt5Q==
+"@supabase/postgrest-js@^0.34.0":
+  version "0.34.0"
+  resolved "https://registry.yarnpkg.com/@supabase/postgrest-js/-/postgrest-js-0.34.0.tgz#0bf86f21c373725285709c4c27038bea33488d73"
+  integrity sha512-5n0fljeojwNvRrvwCoZPcSYDADr3fEJtvpLW7T3f+g+Mxgg8C8gHmuXfhYg0vzC7Jm/ldEWoZY98bN/ZAQs4cA==
   dependencies:
     cross-fetch "^3.0.6"
 
@@ -766,13 +766,13 @@
   dependencies:
     cross-fetch "^3.1.0"
 
-"@supabase/supabase-js@^1.22.4":
-  version "1.22.4"
-  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-1.22.4.tgz#8770c2fa5b19aabbcdaa2a7ba38089dcbd5bae81"
-  integrity sha512-WVPqvhd7UT6iUIyPXtSGFZIxDoxqpcZMikwrYmqsBfV2zR25ppyMbdPpRUEQbjgoKm3ZhWTR9ma+/bKR2R9qog==
+"@supabase/supabase-js@^1.24.0":
+  version "1.24.0"
+  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-1.24.0.tgz#0a0e034b0d32dd239d73878c1195c506e4c6a067"
+  integrity sha512-/gM9+mSqmftHF8pzWzb+etQOvVSLT1cDrlvIL6LZSNrlv+ZRij8QAXnX9JGiUh0lNq046ZtrJThxys01P2TJSA==
   dependencies:
-    "@supabase/gotrue-js" "^1.17.0"
-    "@supabase/postgrest-js" "^0.33.3"
+    "@supabase/gotrue-js" "^1.18.0"
+    "@supabase/postgrest-js" "^0.34.0"
     "@supabase/realtime-js" "^1.1.3"
     "@supabase/storage-js" "^1.4.0"
 
@@ -5619,12 +5619,12 @@ pretty-hrtime@^1.0.3:
   resolved "https://registry.yarnpkg.com/pretty-hrtime/-/pretty-hrtime-1.0.3.tgz#b7e3ea42435a4c9b2759d99e0f201eb195802ee1"
   integrity sha1-t+PqQkNaTJsnWdmeDyAesZWALuE=
 
-prisma@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/prisma/-/prisma-3.1.1.tgz#4c13c35dd3a58af9134008c8ed0fdc21a632802c"
-  integrity sha512-+eZtWIL6hnOKUOvqq9WLBzSw2d/EbTmOx1Td1LI8/0XE40ctXMLG2N1p6NK5/+yivGaoNJ9PDpPsPL9lO4nJrQ==
+prisma@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/prisma/-/prisma-3.2.0.tgz#d4247114f1e4e4c67b9c70381c9aea4434882a38"
+  integrity sha512-o8+DH0RD5DbP8QTZej2dsY64yvjOwOG3TWOlJyoCHQ+8DH9m4tzxo38j6IF/PqpN4PmAGPpHuNi/nssG1cvYlQ==
   dependencies:
-    "@prisma/engines" "3.1.0-24.c22652b7e418506fab23052d569b85d3aec4883f"
+    "@prisma/engines" "3.2.0-34.afdab2f10860244038c4e32458134112852d4dad"
 
 process-nextick-args@~2.0.0:
   version "2.0.1"
