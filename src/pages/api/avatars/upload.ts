@@ -1,9 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiAvatarsUploadRequestBody, ROUTES_API } from '../../../services/api'
-import {
-  supabase,
-  uploadAvatarSupabase,
-} from '../../../services/supabase/supabase-service'
+import { getUserByCookie } from '../../../services/auth-service'
+import { uploadAvatarSupabase } from '../../../services/supabase/supabase-service'
 
 interface Request extends NextApiRequest {
   body: ApiAvatarsUploadRequestBody
@@ -16,12 +14,12 @@ export default async function _avatarsAPI(
   const { body: requestBody, method } = req
   console.log(`[API] ${ROUTES_API.AVATARS_UPLOAD}`)
 
-  const { data: user, error } = await supabase.auth.api.getUserByCookie(req)
+  const { data: user, error } = await getUserByCookie(req)
 
   if (error) {
     return res
       .status(401)
-      .json({ message: `Error while authenticating: ${error}` })
+      .json({ message: `Error while authenticating: ${error.message}` })
   } else if (!user) {
     return res
       .status(401)

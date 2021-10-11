@@ -93,7 +93,7 @@ export default async function handler(
       case 'GET': {
         const post = await findPost(postId)
         if (!post) {
-          res.status(404).json(`Cannot find post for id ${postId}`)
+          res.status(404).json({ message: `Cannot find post for id ${postId}` })
         } else {
           res.status(200).json(post)
         }

@@ -6,10 +6,15 @@ import {
   ReactNode,
 } from 'react'
 import { SupabaseClient } from '@supabase/supabase-js'
-import { signInSupabase, signOutSupabase } from './supabase/supabase-service'
+import {
+  getUserByCookieSupabase,
+  signInSupabase,
+  signOutSupabase,
+} from './supabase/supabase-service'
 import { User } from '../types/User'
 import { Session } from '../types/Session'
 import { apiUsersSignUp } from './api'
+import { GetServerSidePropsContextRequest } from '../types/GetServerSidePropsContextRequest = GetServerSidePropsContext'
 
 export interface AuthState {
   user: User | null
@@ -76,7 +81,7 @@ export function useAuth() {
         console.log('signed in')
       }
     } catch (error) {
-      console.error(error.error_description || error.message)
+      console.error(error)
     } finally {
       // setAuthState({ ...authState, isLoading: false })
     }
@@ -127,4 +132,10 @@ export function useAuthContext(): AuthState {
   }
 
   return context
+}
+
+export async function getUserByCookie(
+  req: GetServerSidePropsContextRequest
+): Promise<{ user: User | null; data: User | null; error: Error | null }> {
+  return await getUserByCookieSupabase(req)
 }

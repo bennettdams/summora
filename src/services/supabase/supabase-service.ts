@@ -13,7 +13,7 @@ export function setAuthCookie(req: NextApiRequest, res: NextApiResponse): void {
   return supabase.auth.api.setAuthCookie(req, res)
 }
 
-export async function getUserByCookie(
+export async function getUserByCookieSupabase(
   req: GetServerSidePropsContextRequest
 ): Promise<{ user: User | null; data: User | null; error: Error | null }> {
   return await supabase.auth.api.getUserByCookie(req)
