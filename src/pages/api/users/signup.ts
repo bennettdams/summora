@@ -3,9 +3,9 @@ import { prisma } from '../../../prisma/prisma'
 import {
   ApiUsersSignUpRequestBody,
   ApiUsersSignUpReturn,
-  logAPI,
 } from '../../../services/api'
 import { signUpSupabase } from '../../../services/supabase/supabase-service'
+import { logAPI } from '../../../util/logger'
 
 interface Request extends NextApiRequest {
   body: ApiUsersSignUpRequestBody

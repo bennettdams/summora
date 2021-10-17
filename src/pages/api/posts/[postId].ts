@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
 import { Prisma } from '@prisma/client'
-import { logAPI } from '../../../services/api'
+import { logAPI } from '../../../util/logger'
 
 export type PostPostAPI = Exclude<
   Prisma.PromiseReturnType<typeof findPost>,

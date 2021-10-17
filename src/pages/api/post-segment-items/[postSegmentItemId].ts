@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
-import { logAPI } from '../../../services/api'
+import { logAPI } from '../../../util/logger'
 
 // async function updatePostSegmentItem(
 //   postSegmentItemId: string,

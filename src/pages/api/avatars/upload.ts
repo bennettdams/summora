@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { ApiAvatarsUploadRequestBody, logAPI } from '../../../services/api'
+import { ApiAvatarsUploadRequestBody } from '../../../services/api'
 import { getUserByCookie } from '../../../services/auth-service'
 import { uploadAvatarSupabase } from '../../../services/supabase/supabase-service'
+import { logAPI } from '../../../util/logger'
 
 interface Request extends NextApiRequest {
   body: ApiAvatarsUploadRequestBody
