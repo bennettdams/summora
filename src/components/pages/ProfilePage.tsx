@@ -12,22 +12,15 @@ export function ProfilePage({ profile }: ProfilePageProps): JSX.Element {
       ) : (
         <>
           <PageSection>
-            <p>PROFILE</p>
-            <p>User ID {profile.userId}</p>
-            <p>Username {profile.username}</p>
-            <p>Created at {new Date(profile.createdAt).toISOString()}</p>
-            <p>Updated at {new Date(profile.updatedAt).toISOString()}</p>
+            <Box>
+              <p>PROFILE</p>
+              <p>User ID {profile.userId}</p>
+              <p>Username {profile.username}</p>
+              <p>Created at {new Date(profile.createdAt).toISOString()}</p>
+              <p>Updated at {new Date(profile.updatedAt).toISOString()}</p>
+            </Box>
           </PageSection>
-          {/* <PageSection>
-            <Avatar
-              url={avatar_url}
-              size={150}
-              onUpload={(url) => {
-                setAvatarUrl(url)
-                updateProfile({ username, website, avatar_url: url })
-              }}
-            />
-          </PageSection> */}
+
           <PageSection>
             <button
               onClick={async () => {
@@ -47,7 +40,7 @@ export function ProfilePage({ profile }: ProfilePageProps): JSX.Element {
           </PageSection>
 
           <div>
-            <button onClick={() => signOut()}>Sign Out</button>
+            <button onClick={signOut}>Sign Out</button>
           </div>
         </>
       )}
