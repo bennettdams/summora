@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
+import { logAPI } from '../../../services/api'
 
 export interface PostSegmentCreate {
   postId: string
@@ -44,13 +45,14 @@ async function createPostSegment({
   }
 }
 
-export default async function handler(
+export default async function _postSegmentsAPI(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
   const { body: requestBody, method } = req
 
-  console.log('API post segment ', method)
+  logAPI('POST_SEGMENTS', method)
+
   switch (method) {
     case 'POST': {
       const { postId, postSegmentToCreate }: PostSegmentCreate =

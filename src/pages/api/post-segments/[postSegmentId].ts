@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
+import { logAPI } from '../../../services/api'
 
 export interface PostSegmentUpdate {
   postId: string
@@ -47,7 +48,7 @@ async function updatePostSegment({
   }
 }
 
-export default async function handler(
+export default async function _postSegmentsPostSegmentIdAPI(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
@@ -57,7 +58,12 @@ export default async function handler(
     method,
   } = req
 
-  console.log('API post segment', method, postSegmentId)
+  logAPI(
+    'POST_SEGMENTS_POST_SEGMENT_ID',
+    method,
+    `Post Segment ID: ${postSegmentId}`
+  )
+
   if (!postSegmentId) {
     res.status(404).end('No post segment ID!')
   } else if (typeof postSegmentId !== 'string') {

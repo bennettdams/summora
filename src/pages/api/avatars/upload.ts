@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { ApiAvatarsUploadRequestBody, ROUTES_API } from '../../../services/api'
+import { ApiAvatarsUploadRequestBody, logAPI } from '../../../services/api'
 import { getUserByCookie } from '../../../services/auth-service'
 import { uploadAvatarSupabase } from '../../../services/supabase/supabase-service'
 
@@ -7,12 +7,13 @@ interface Request extends NextApiRequest {
   body: ApiAvatarsUploadRequestBody
 }
 
-export default async function _avatarsAPI(
+export default async function _avatarsUploadAPI(
   req: Request,
   res: NextApiResponse
 ): Promise<void> {
   const { body: requestBody, method } = req
-  console.log(`[API] ${ROUTES_API.AVATARS_UPLOAD}`)
+
+  logAPI('AVATARS_UPLOAD', method)
 
   const { data: user, error } = await getUserByCookie(req)
 

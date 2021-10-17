@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
+import { logAPI } from '../../../services/api'
 
 export type TagAPI = Exclude<
   Prisma.PromiseReturnType<typeof findSearchTags>,
@@ -32,13 +33,13 @@ async function findSearchTags(searchInput: string) {
   }
 }
 
-export default async function handler(
+export default async function _searchTagsAPI(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
   const { method, body: requestBody } = req
 
-  console.log('API search tags', method)
+  logAPI('SEARCH_TAGS', method)
 
   switch (method) {
     case 'POST': {

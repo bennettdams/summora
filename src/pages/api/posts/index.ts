@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { Prisma } from '@prisma/client'
 import { prisma } from '../../../prisma/prisma'
+import { logAPI } from '../../../services/api'
 
 export type PostPostsAPI = Exclude<
   Prisma.PromiseReturnType<typeof findPosts>,
@@ -21,13 +22,13 @@ async function findPosts() {
   }
 }
 
-export default async function handler(
+export default async function _postsAPI(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
   const { method, body: requestBody } = req
 
-  console.log('API posts', method)
+  logAPI('POSTS', method)
 
   switch (method) {
     case 'GET': {

@@ -3,7 +3,7 @@ import { prisma } from '../../../prisma/prisma'
 import {
   ApiUsersSignUpRequestBody,
   ApiUsersSignUpReturn,
-  ROUTES_API,
+  logAPI,
 } from '../../../services/api'
 import { signUpSupabase } from '../../../services/supabase/supabase-service'
 
@@ -11,12 +11,13 @@ interface Request extends NextApiRequest {
   body: ApiUsersSignUpRequestBody
 }
 
-export default async function _signUpAPI(
+export default async function _usersSignUpAPI(
   req: Request,
   res: NextApiResponse
 ): Promise<void> {
-  console.log(`[API] ${ROUTES_API.USERS_SIGN_UP}`)
   const { body: requestBody, method } = req
+
+  logAPI('USERS_SIGN_UP', method)
 
   switch (method) {
     case 'POST': {

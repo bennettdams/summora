@@ -4,7 +4,28 @@ import { HttpResponse, post } from '../util/http'
 export const ROUTES_API = {
   USERS_SIGN_UP: 'users/signup',
   AVATARS_UPLOAD: 'avatars/upload',
+  POSTS: 'posts',
+  POSTS_POST_ID: 'posts/:postId',
+  PROFILES_PROFILE_ID: 'profiles/:profileId',
+  SEARCH_TAGS: 'search-tags',
+  POST_SEGMENTS: 'post-segments',
+  POST_SEGMENTS_POST_SEGMENT_ID: 'post-segments/:postSegmentId',
+  POST_SEGMENT_ITEMS: 'post-segment-items',
+  POST_SEGMENT_ITEMS_POST_SEGMENT_ITEM_ID:
+    'post-segment-items/:postSegmentItemId',
 } as const
+
+export function logAPI(
+  route: keyof typeof ROUTES_API,
+  method: string | undefined,
+  additionalText?: string
+): void {
+  let log = `[API] ${ROUTES_API[route]} | method: ${method}`
+  if (additionalText) {
+    log += ` | ${additionalText}`
+  }
+  console.log(log)
+}
 
 export type ApiUsersSignUpRequestBody = {
   username: string

@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
 import { Prisma } from '@prisma/client'
+import { logAPI } from '../../../services/api'
 
 export type PostPostAPI = Exclude<
   Prisma.PromiseReturnType<typeof findPost>,
@@ -73,7 +74,7 @@ async function updatePost({ postId, postToUpdate }: PostUpdate) {
   }
 }
 
-export default async function handler(
+export default async function _postsPostIDAPI(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
@@ -83,7 +84,8 @@ export default async function handler(
     method,
   } = req
 
-  console.log('API post ', method, postId)
+  logAPI('POSTS_POST_ID', method, `Post ID: ${postId}`)
+
   if (!postId) {
     res.status(404).end('No post ID!')
   } else if (typeof postId !== 'string') {
