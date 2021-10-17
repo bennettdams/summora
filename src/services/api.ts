@@ -15,18 +15,6 @@ export const ROUTES_API = {
     'post-segment-items/:postSegmentItemId',
 } as const
 
-export function logAPI(
-  route: keyof typeof ROUTES_API,
-  method: string | undefined,
-  additionalText?: string
-): void {
-  let log = `[API] ${ROUTES_API[route]} | method: ${method}`
-  if (additionalText) {
-    log += ` | ${additionalText}`
-  }
-  console.log(log)
-}
-
 export type ApiUsersSignUpRequestBody = {
   username: string
   email: string
