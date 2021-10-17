@@ -21,14 +21,15 @@ export default async function _avatarsAPI(
       .status(401)
       .json({ message: `Error while authenticating: ${error.message}` })
   } else if (!user) {
-    return res
-      .status(401)
-      .json({ message: 'Error while authenticating. no user.' })
+    return res.status(401).json({
+      message:
+        'Error while authenticating: No user for that cookie in database.',
+    })
   } else {
     const profileId = user.id
 
     switch (method) {
-      case 'PUT': {
+      case 'POST': {
         const { filepath, avatarBlob } = requestBody
 
         try {
@@ -49,7 +50,7 @@ export default async function _avatarsAPI(
         }
       }
       default: {
-        res.setHeader('Allow', ['PUT'])
+        res.setHeader('Allow', ['POST'])
         res.status(405).end(`Method ${method} Not Allowed`)
         break
       }
