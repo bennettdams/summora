@@ -1,7 +1,8 @@
 import { ProfilePageProps } from '../../pages/profile/[profileId]'
 import { useAuth } from '../../services/auth-service'
 import { Page, PageSection } from '../Page'
-// import { Avatar } from '../Avatar'
+import { Avatar } from '../Avatar'
+import { Box } from '../Box'
 
 export function ProfilePage({ profile }: ProfilePageProps): JSX.Element {
   const { signOut } = useAuth()
@@ -21,27 +22,17 @@ export function ProfilePage({ profile }: ProfilePageProps): JSX.Element {
             </Box>
           </PageSection>
 
-          <PageSection>
-            <button
-              onClick={async () => {
-                await fetch(`/api/profiles/${profile.userId}`, {
-                  method: 'PUT',
-                  body: JSON.stringify({ profileId: profile.userId }),
-                })
-              }}
-            >
-              Update
-            </button>
-            {/* <p>Username {user.)}</p> */}
-            {/* <p>User ID {profile.id}</p>
-          <p>AUD {JSON.stringify(profile.aud)}</p>
-          <p>Mail {profile.email}</p>
-        <p>Meta {JSON.stringify(profile.user_metadata)}</p> */}
-          </PageSection>
-
           <div>
             <button onClick={signOut}>Sign Out</button>
           </div>
+
+          <PageSection>
+            <Box>
+              <p>avatar</p>
+              <Avatar profileId={profile.userId} size="small" />
+              <Avatar profileId={profile.userId} size="medium" />
+            </Box>
+          </PageSection>
         </>
       )}
     </Page>
