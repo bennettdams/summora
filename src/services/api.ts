@@ -40,16 +40,16 @@ export async function apiUsersSignUp(
 
 export type ApiAvatarsUploadRequestBody = {
   filepath: string
-  avatarBlob: Blob
+  avatarFile: File
 }
 
 export async function apiAvatarsUpload(
   filepath: string,
-  avatarBlob: Blob
+  avatarFile: File
 ): Promise<HttpResponse<void>> {
   const input: ApiAvatarsUploadRequestBody = {
     filepath,
-    avatarBlob,
+    avatarFile,
   }
   return await post<void>(ROUTES_API.AVATARS_UPLOAD, input)
 }

@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { apiAvatarsUpload } from './api'
-import { downloadFileSupabase } from './supabase/supabase-service'
+import { downloadAvatarSupabase } from './supabase/supabase-service'
 
 export function useCloudStorage() {
   const uploadAvatar = useCallback(
@@ -9,7 +9,7 @@ export function useCloudStorage() {
        * filename & extension, e.g. "example.png"
        */
       filepath: string,
-      picture: Blob
+      picture: File
     ) => {
       await apiAvatarsUpload(filepath, picture)
     },
@@ -23,7 +23,7 @@ export function useCloudStorage() {
        */
       filepath: string
     ) => {
-      return await downloadFileSupabase(filepath)
+      return await downloadAvatarSupabase(filepath)
     },
     []
   )

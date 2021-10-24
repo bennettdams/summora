@@ -48,7 +48,28 @@ export async function signOutSupabase(): Promise<
   return await supabase.auth.signOut()
 }
 
-export async function downloadFileSupabase(
+export async function uploadAvatarSupabase(
+  /**
+   * filename & extension, e.g. "example.png"
+   */
+  filepath: string,
+  picture: File
+): Promise<void> {
+  try {
+    const { error } = await supabase.storage
+      .from(STORAGE.AVATARS.bucket)
+      .upload(`${STORAGE.AVATARS.folder}/${filepath}`, picture, {
+        upsert: true,
+      })
+    if (error) throw error
+  } catch (error) {
+    throw new Error(
+      `Error while uploading avatar file: ${error.message || error}`
+    )
+  }
+}
+
+export async function downloadAvatarSupabase(
   /**
    * filename without extension, e.g. "example" for "example.png"
    */

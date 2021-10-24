@@ -32,10 +32,12 @@ export default async function _avatarsUploadAPI(
 
     switch (method) {
       case 'POST': {
-        const { filepath, avatarBlob } = requestBody
+        const { avatarFile } = requestBody
 
         try {
-          await uploadAvatarSupabase(filepath, avatarBlob)
+          // TODO validation?
+          // TODO file extension
+          await uploadAvatarSupabase(`${profileId}.jpg`, avatarFile)
 
           console.log(`[API] uploaded avatar for profile ${profileId}`)
 
