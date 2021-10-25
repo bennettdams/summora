@@ -1,19 +1,22 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useCloudStorage } from '../services/use-cloud-storage'
+import { ImageUpload } from './ImageUpload'
 
 const SIZES = {
   small: 40,
   medium: 100,
-  large: 250,
+  large: 180,
 } as const
 
 export function Avatar({
   profileId,
   size = 'medium',
+  isEditable = false,
 }: {
   profileId: string
   size: keyof typeof SIZES
+  isEditable?: boolean
 }): JSX.Element {
   const [sizePixels] = useState(SIZES[size])
   const { downloadAvatar } = useCloudStorage()
@@ -40,7 +43,15 @@ export function Avatar({
   }, [profileId, downloadAvatar])
 
   return (
-    <div>
+    <div className="relative grid place-items-center">
+      {isEditable && (
+        <div className="absolute z-30 group h-full w-full hover:cursor-pointer hover:bg-lime-200 rounded-full hover:bg-opacity-50">
+          <span className="h-full w-full grid place-items-center invisible group-hover:visible">
+            <ImageUpload />
+          </span>
+        </div>
+      )}
+
       {avatarObjectUrl ? (
         <Image
           src={avatarObjectUrl}
@@ -51,7 +62,7 @@ export function Avatar({
         />
       ) : (
         <div
-          className="bg-lime-100 rounded-full"
+          className="bg-lime-300 rounded-full"
           style={{ height: sizePixels, width: sizePixels }}
         >
           no image
