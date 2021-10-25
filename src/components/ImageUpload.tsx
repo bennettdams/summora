@@ -36,12 +36,23 @@ export function ImageUpload(): JSX.Element {
   }
 
   return (
-    <form className="w-full h-full" method="post" encType="multipart/form-data">
+    <form
+      className="group w-full h-full"
+      method="post"
+      encType="multipart/form-data"
+    >
       <label
         className="w-full h-full grid place-items-center cursor-pointer"
         htmlFor="file-upload"
       >
-        {isUploading ? <LoadingAnimation /> : <IconAdd size="huge" />}
+        {isUploading ? (
+          <LoadingAnimation />
+        ) : (
+          <IconAdd
+            className="rotate-45 transition duration-300 group-hover:rotate-90"
+            size="huge"
+          />
+        )}
       </label>
       <input
         type="file"

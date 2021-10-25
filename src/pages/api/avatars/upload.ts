@@ -37,7 +37,7 @@ export default async function _avatarsUploadAPI(
         try {
           // TODO validation?
           // TODO file extension
-          await uploadAvatarSupabase(`${profileId}.jpg`, avatarFile)
+          await uploadAvatarSupabase(`${profileId}.jpg`, avatarFile, req)
 
           console.log(`[API] uploaded avatar for profile ${profileId}`)
 

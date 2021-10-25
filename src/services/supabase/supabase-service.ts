@@ -14,9 +14,13 @@ const STORAGE = {
 
 const AVATAR_EXTENSION = 'jpg'
 
-if (!supabaseUrl || !supabaseAnonKey) throw new Error('Missing Supabase keys.')
+function createSupabaseClient() {
+  if (!supabaseUrl || !supabaseAnonKey)
+    throw new Error('Missing Supabase keys.')
+  return createClient(supabaseUrl, supabaseAnonKey)
+}
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createSupabaseClient()
 
 export function setAuthCookie(req: NextApiRequest, res: NextApiResponse): void {
   return supabase.auth.api.setAuthCookie(req, res)
@@ -48,18 +52,27 @@ export async function signOutSupabase(): Promise<
   return await supabase.auth.signOut()
 }
 
+function getJWTFromNextRequestCookies(req: NextApiRequest) {
+  return req.cookies['sb:token']
+}
+
 export async function uploadAvatarSupabase(
   /**
    * filename & extension, e.g. "example.png"
    */
   filepath: string,
-  picture: File
+  picture: File,
+  req: NextApiRequest
 ): Promise<void> {
   try {
-    const { error } = await supabase.storage
+    const supabaseServer = createSupabaseClient()
+    supabaseServer.auth.setAuth(getJWTFromNextRequestCookies(req))
+
+    const { error } = await supabaseServer.storage
       .from(STORAGE.AVATARS.bucket)
       .upload(`${STORAGE.AVATARS.folder}/${filepath}`, picture, {
         upsert: true,
+        contentType: 'image/jpg',
       })
     if (error) throw error
   } catch (error) {
