@@ -27,12 +27,6 @@
     "test-all": "yarn lint && yarn type-check && yarn test",
     "check-updates": "npx npm-check-updates -u"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "yarn run type-check"
-    }
-  },
   "lint-staged": {
     "*.@(ts|tsx)": [
       "yarn lint",
@@ -60,19 +54,17 @@
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.4",
     "@types/react": "^17.0.32",
-    "@typescript-eslint/eslint-plugin": "^5.1.0",
-    "@typescript-eslint/parser": "^5.1.0",
+    "@typescript-eslint/eslint-plugin": "^4.30.0",
+    "@typescript-eslint/parser": "^4.30.0",
     "autoprefixer": "^10.3.7",
     "babel-jest": "^27.3.1",
-    "eslint": "^7.3.2",
+    "eslint": "7.32.0",
     "eslint-config-next": "^11.1.2",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-react": "^7.26.1",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "husky": "^7.0.4",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.3.1",
-    "jest-watch-typeahead": "^1.0.0",
+    "jest-watch-typeahead": "^0.6.1",
     "lint-staged": "^11.2.4",
     "postcss": "^8.3.11",
     "prettier": "^2.4.1",
@@ -81,6 +73,7 @@
     "typescript": "^4.4.4"
   },
   "//devDependencies": [
-    "autoprefixer & postcss for Tailwind"
+    "autoprefixer & postcss for Tailwind",
+    "eslint-config-next contains eslint-plugin-react, eslint-plugin-react-hooks and eslint-plugin-next. https://nextjs.org/docs/basic-features/eslint#eslint-config"
   ]
 }
