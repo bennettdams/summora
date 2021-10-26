@@ -3,16 +3,59 @@ import { ApiAvatarsUploadRequestBody } from '../../../services/api'
 import { getUserByCookie } from '../../../services/auth-service'
 import { uploadAvatarSupabase } from '../../../services/supabase/supabase-service'
 import { logAPI } from '../../../util/logger'
+import { File, Files, IncomingForm } from 'formidable'
+import fs from 'fs'
+import { FORM_DATA_FILE_KEY } from '../../../util/http'
 
 interface Request extends NextApiRequest {
   body: ApiAvatarsUploadRequestBody
+}
+
+// need to disable Next.js' parser for parsing multipart/form-data
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+}
+
+/**
+ * Parse file form request payload.
+ * This only works for a single file in the form data.
+ */
+async function parseMultipartForm(req: NextApiRequest) {
+  try {
+    // parse form with a Promise wrapper
+    const files = await new Promise<Files>((resolve, reject) => {
+      const form = new IncomingForm({
+        multiples: false,
+        allowEmptyFiles: false,
+      })
+
+      form.parse(req, (err, _, files) => {
+        if (err) return reject(err)
+        resolve(files)
+      })
+    })
+
+    const fileParsed = files[FORM_DATA_FILE_KEY]
+
+    // FIXME not sure if isArray or checking for existence of "length"
+    if (Array.isArray(fileParsed)) {
+      throw new Error('Trying to parse more than one file.')
+    } else {
+      const fileContent = fs.readFileSync(fileParsed.path)
+      return fileContent
+    }
+  } catch (error) {
+    throw new Error('Error while parsing multipart form (for avatar): ' + error)
+  }
 }
 
 export default async function _avatarsUploadAPI(
   req: Request,
   res: NextApiResponse
 ): Promise<void> {
-  const { body: requestBody, method } = req
+  const { method } = req
 
   logAPI('AVATARS_UPLOAD', method)
 
@@ -32,12 +75,13 @@ export default async function _avatarsUploadAPI(
 
     switch (method) {
       case 'POST': {
-        const { avatarFile } = requestBody
-
         try {
+          const fileParsed = await parseMultipartForm(req)
+
           // TODO validation?
           // TODO file extension
-          await uploadAvatarSupabase(`${profileId}.jpg`, avatarFile, req)
+          // TODO convert png etc.
+          await uploadAvatarSupabase(`${profileId}.jpg`, fileParsed, req)
 
           console.log(`[API] uploaded avatar for profile ${profileId}`)
 

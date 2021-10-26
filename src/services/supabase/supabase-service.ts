@@ -52,8 +52,10 @@ export async function signOutSupabase(): Promise<
   return await supabase.auth.signOut()
 }
 
-function getJWTFromNextRequestCookies(req: NextApiRequest) {
-  return req.cookies['sb:token']
+function extractJWTFromNextRequestCookies(req: NextApiRequest): string {
+  const jwt = req.cookies['sb:token']
+  if (!jwt) throw new Error('No Supabase JWT found in Next.js request')
+  return jwt
 }
 
 export async function uploadAvatarSupabase(
@@ -61,24 +63,23 @@ export async function uploadAvatarSupabase(
    * filename & extension, e.g. "example.png"
    */
   filepath: string,
-  picture: File,
+  avatarFileParsed: Buffer,
   req: NextApiRequest
 ): Promise<void> {
   try {
     const supabaseServer = createSupabaseClient()
-    supabaseServer.auth.setAuth(getJWTFromNextRequestCookies(req))
+    supabaseServer.auth.setAuth(extractJWTFromNextRequestCookies(req))
 
     const { error } = await supabaseServer.storage
       .from(STORAGE.AVATARS.bucket)
-      .upload(`${STORAGE.AVATARS.folder}/${filepath}`, picture, {
+      .upload(`${STORAGE.AVATARS.folder}/${filepath}`, avatarFileParsed, {
         upsert: true,
         contentType: 'image/jpg',
       })
+
     if (error) throw error
   } catch (error) {
-    throw new Error(
-      `Error while uploading avatar file: ${error.message || error}`
-    )
+    throw new Error(`Error while uploading avatar file: ${error}`)
   }
 }
 

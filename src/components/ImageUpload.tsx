@@ -18,18 +18,17 @@ export function ImageUpload(): JSX.Element {
       } else {
         const file = event.target.files[0]
         const fileExtension = file.name.split('.').pop()
+
         if (!fileExtension || !ALLOWED_EXTENSIONS.includes(fileExtension)) {
           throw new Error(
             `You provided a ${fileExtension} file, but only ${ALLOWED_EXTENSIONS} are allowed.`
           )
         } else {
-          const filePath = `placeholder-name.${fileExtension}`
-
-          await uploadAvatar(filePath, file)
+          await uploadAvatar(file)
         }
       }
     } catch (error) {
-      throw new Error(`Error while uploading image: ${error.message}`)
+      throw new Error(`Error while uploading image: ${error}`)
     } finally {
       setIsUploading(false)
     }

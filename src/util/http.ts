@@ -21,12 +21,7 @@ function createRequest(path: RequestInfo, args: RequestInit | undefined) {
  * Executes an HTTP request.
  */
 async function http<T>(request: Request): Promise<HttpResponse<T>> {
-  const response: HttpResponse<T> = await fetch(request, {
-    headers: new Headers({
-      'Content-Type': 'application/json',
-      Accept: 'application/json', // used for proxy in dev: https://create-react-app.dev/docs/proxying-api-requests-in-development/
-    }),
-  })
+  const response: HttpResponse<T> = await fetch(request)
 
   if (!response.ok) {
     const message = `Response not OK! Status code: ${response.status}, status text: ${response.statusText}`
@@ -67,9 +62,31 @@ export async function get<T>(
  */
 export async function post<T>(
   path: string,
+  // TODO Record<string, unknown>?
   body: unknown,
   args: RequestInit = { method: 'post', body: JSON.stringify(body) }
 ): Promise<HttpResponse<T>> {
+  return await http<T>(createRequest(path, args))
+}
+
+/**
+ * Key used for multipart/form-data requests created via {@link postFile}.
+ */
+export const FORM_DATA_FILE_KEY = 'fileToUpload'
+/**
+ * HTTP POST request for files.
+ *
+ * @param path API endpoint identifier, e. g. "posts"
+ */
+export async function postFile<T>(
+  path: string,
+  file: File,
+  args: RequestInit = { method: 'post' }
+): Promise<HttpResponse<T>> {
+  const formData = new FormData()
+  formData.append(FORM_DATA_FILE_KEY, file)
+
+  args.body = formData
   return await http<T>(createRequest(path, args))
 }
 
@@ -80,6 +97,7 @@ export async function post<T>(
  */
 export async function put<T>(
   path: string,
+  // TODO Record<string, unknown>?
   body: unknown,
   args: RequestInit = { method: 'put', body: JSON.stringify(body) }
 ): Promise<HttpResponse<T>> {

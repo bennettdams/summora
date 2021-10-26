@@ -1,5 +1,5 @@
 import type { Profile } from '@prisma/client'
-import { HttpResponse, post } from '../util/http'
+import { HttpResponse, post, postFile } from '../util/http'
 
 export const ROUTES_API = {
   USERS_SIGN_UP: 'users/signup',
@@ -38,18 +38,10 @@ export async function apiUsersSignUp(
 
 // #########################################
 
-export type ApiAvatarsUploadRequestBody = {
-  filepath: string
-  avatarFile: File
-}
+export type ApiAvatarsUploadRequestBody = FormData
 
 export async function apiAvatarsUpload(
-  filepath: string,
   avatarFile: File
 ): Promise<HttpResponse<void>> {
-  const input: ApiAvatarsUploadRequestBody = {
-    filepath,
-    avatarFile,
-  }
-  return await post<void>(ROUTES_API.AVATARS_UPLOAD, input)
+  return await postFile<void>(ROUTES_API.AVATARS_UPLOAD, avatarFile)
 }
