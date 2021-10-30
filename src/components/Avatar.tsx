@@ -35,7 +35,7 @@ export function Avatar({
           setAvatarObjectUrl(url)
         }
       } catch (error) {
-        console.error('Error downloading image: ', error.message)
+        console.error('Error downloading image: ', error)
       }
     }
 

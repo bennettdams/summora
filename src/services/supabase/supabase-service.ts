@@ -66,20 +66,20 @@ export async function uploadAvatarSupabase(
   avatarFileParsed: Buffer,
   req: NextApiRequest
 ): Promise<void> {
-  try {
-    const supabaseServer = createSupabaseClient()
-    supabaseServer.auth.setAuth(extractJWTFromNextRequestCookies(req))
+  const supabaseServer = createSupabaseClient()
+  supabaseServer.auth.setAuth(extractJWTFromNextRequestCookies(req))
 
-    const { error } = await supabaseServer.storage
-      .from(STORAGE.AVATARS.bucket)
-      .upload(`${STORAGE.AVATARS.folder}/${filepath}`, avatarFileParsed, {
-        upsert: true,
-        contentType: 'image/jpg',
-      })
+  const { error } = await supabaseServer.storage
+    .from(STORAGE.AVATARS.bucket)
+    .upload(`${STORAGE.AVATARS.folder}/${filepath}`, avatarFileParsed, {
+      upsert: true,
+      contentType: 'image/jpg',
+    })
 
-    if (error) throw error
-  } catch (error) {
-    throw new Error(`Error while uploading avatar file: ${error}`)
+  if (error) {
+    throw new Error(
+      `Error while uploading avatar file (Supabase: ${error.message}`
+    )
   }
 }
 

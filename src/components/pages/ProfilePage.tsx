@@ -1,11 +1,9 @@
 import { ProfilePageProps } from '../../pages/profile/[profileId]'
-import { useAuth } from '../../services/auth-service'
 import { Page, PageSection } from '../Page'
 import { Avatar } from '../Avatar'
 import { Box } from '../Box'
 
 export function ProfilePage({ profile }: ProfilePageProps): JSX.Element {
-  const { signOut } = useAuth()
   return (
     <Page>
       {!profile ? (
@@ -28,10 +26,6 @@ export function ProfilePage({ profile }: ProfilePageProps): JSX.Element {
               </div>
             </Box>
           </PageSection>
-
-          <div>
-            <button onClick={signOut}>Sign Out</button>
-          </div>
 
           <PageSection>
             <Box>

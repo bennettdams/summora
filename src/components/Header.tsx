@@ -2,6 +2,7 @@ import { useQueryClient } from 'react-query'
 import { queryKeyPosts } from '../data/post-helper'
 import { useAuth } from '../services/auth-service'
 import { useRouteChange } from '../util/use-route-change'
+import { Avatar } from './Avatar'
 import { Button } from './Button'
 import { Link } from './Link'
 import { LoadingAnimation } from './LoadingAnimation'
@@ -12,7 +13,7 @@ export function Header(): JSX.Element {
   const { user, isLoading: isLoadingAuth, signOut } = useAuth()
 
   return (
-    <header className="h-12 z-40 w-full flex items-center justify-center top-0 fixed text-white bg-gradient-to-r from-lime-500 to-lime-700">
+    <header className="h-12 z-40 w-full flex items-center justify-center top-0 fixed">
       <div className="mx-auto w-full flex flex-wrap p-5 flex-col md:flex-row items-center">
         <Link to="/">
           <div className="text-left text-4xl font-extrabold leading-none tracking-tight">
@@ -29,7 +30,10 @@ export function Header(): JSX.Element {
         {isLoadingAuth && <LoadingAnimation />}
         {user && (
           <Link to={`/profile/${user.id}`}>
-            <p>{user?.email}</p>
+            <div className="flex flex-row items-center space-x-2">
+              <p>{user.email}</p>
+              <Avatar profileId={user.id} size="small" />
+            </div>
           </Link>
         )}
 
