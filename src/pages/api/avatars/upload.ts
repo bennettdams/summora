@@ -3,7 +3,7 @@ import { ApiAvatarsUploadRequestBody } from '../../../services/api'
 import { getUserByCookie } from '../../../services/auth-service'
 import { uploadAvatarSupabase } from '../../../services/supabase/supabase-service'
 import { logAPI } from '../../../util/logger'
-import { File, Files, IncomingForm } from 'formidable'
+import { Files, IncomingForm } from 'formidable'
 import fs from 'fs'
 import { FORM_DATA_FILE_KEY } from '../../../util/http'
 
@@ -18,6 +18,8 @@ export const config = {
   },
 }
 
+const validMimeTypes = ['image/jpeg']
+
 /**
  * Parse file form request payload.
  * This only works for a single file in the form data.
@@ -29,7 +31,22 @@ async function parseMultipartForm(req: NextApiRequest) {
       const form = new IncomingForm({
         multiples: false,
         allowEmptyFiles: false,
+        // 30 mb
+        maxFileSize: 30 * 1024 * 1024,
       })
+
+      form.onPart = function (part) {
+        const mimeType = part.mime
+
+        if (!mimeType) {
+          return reject(new Error('File has no MIME type.'))
+        } else if (!validMimeTypes.includes(mimeType)) {
+          return reject(new Error(`MIME type ${mimeType} is not supported.`))
+        } else {
+          // needed to actually use the part
+          form.handlePart(part)
+        }
+      }
 
       form.parse(req, (err, _, files) => {
         if (err) return reject(err)
