@@ -12,14 +12,14 @@ import {
   signOutSupabase,
   signUpSupabase,
 } from './supabase/supabase-service'
-import { User } from '../types/User'
+import { UserAuth } from '../types/UserAuth'
 import { Session } from '../types/Session'
 import { apiProfilesGet, apiUsersSignUp } from './api'
 import { GetServerSidePropsContextRequest } from '../types/GetServerSidePropsContextRequest = GetServerSidePropsContext'
 import { Profile } from '@prisma/client'
 
 export interface AuthState {
-  user: User | null
+  user: UserAuth | null
   session: Session | null
   isLoading: boolean
   profile: Profile | null
@@ -180,7 +180,11 @@ export function useAuthContext(): AuthState {
 
 export async function getUserByCookie(
   req: GetServerSidePropsContextRequest
-): Promise<{ user: User | null; data: User | null; error: Error | null }> {
+): Promise<{
+  user: UserAuth | null
+  data: UserAuth | null
+  error: Error | null
+}> {
   return await getUserByCookieSupabase(req)
 }
 
