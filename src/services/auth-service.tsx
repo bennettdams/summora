@@ -14,13 +14,15 @@ import {
 } from './supabase/supabase-service'
 import { User } from '../types/User'
 import { Session } from '../types/Session'
-import { apiUsersSignUp } from './api'
+import { apiProfilesGet, apiUsersSignUp } from './api'
 import { GetServerSidePropsContextRequest } from '../types/GetServerSidePropsContextRequest = GetServerSidePropsContext'
+import { Profile } from '@prisma/client'
 
 export interface AuthState {
   user: User | null
   session: Session | null
   isLoading: boolean
+  profile: Profile | null
 }
 
 const AuthContext = createContext<AuthState | null>(null)
@@ -36,23 +38,64 @@ export function AuthContextProvider({
     session: null,
     user: null,
     isLoading: true,
+    profile: null,
   })
+
+  /**
+   * Fill auth state based on session.
+   */
+  async function fillAuth(session: Session) {
+    const user = session.user
+    /*
+     * Already set the auth state here, because the session could already exist on initial
+     * page load (due to token), but the profile has to be fetched from the server.
+     */
+    setAuthState({
+      session,
+      user,
+      isLoading: false,
+      profile: null,
+    })
+    if (!user) {
+      throw new Error('Session exists, but user does not.')
+    } else {
+      const response = await apiProfilesGet(user.id)
+      setAuthState({
+        session,
+        user,
+        isLoading: false,
+        profile: response.result ?? null,
+      })
+    }
+  }
 
   useEffect(() => {
     const session = supabaseClient.auth.session()
-    setAuthState({ session, user: session?.user ?? null, isLoading: false })
 
+    // session for initial page load
+    if (session) {
+      fillAuth(session)
+    }
+
+    // Supabase will not execute this on the initial render when the session already exists
     const { data: authListener } = supabaseClient.auth.onAuthStateChange(
       async (event, session) => {
-        setAuthState({ session, user: session?.user ?? null, isLoading: false })
+        if (session) {
+          fillAuth(session)
 
-        // this enables SSR
-        fetch('/api/auth', {
-          method: 'POST',
-          headers: new Headers({ 'Content-Type': 'application/json' }),
-          credentials: 'same-origin',
-          body: JSON.stringify({ event, session }),
-        }).then((res) => res.json())
+          // this enables SSR with Supabase
+          // TODO need for initial render? right now only executed on auth change
+          const response = await fetch('/api/auth', {
+            method: 'POST',
+            headers: new Headers({ 'Content-Type': 'application/json' }),
+            credentials: 'same-origin',
+            body: JSON.stringify({ event, session }),
+          })
+
+          if (!response.ok) {
+            throw new Error('Cannot setup auth for SSR.')
+          }
+        }
       }
     )
 

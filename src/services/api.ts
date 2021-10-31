@@ -1,12 +1,12 @@
 import type { Profile } from '@prisma/client'
-import { HttpResponse, post, postFile } from '../util/http'
+import { get, HttpResponse, post, postFile } from '../util/http'
 
 export const ROUTES_API = {
   USERS_SIGN_UP: 'users/signup',
   AVATARS_UPLOAD: 'avatars/upload',
   POSTS: 'posts',
   POSTS_POST_ID: 'posts/:postId',
-  PROFILES_PROFILE_ID: 'profiles/:profileId',
+  PROFILES_PROFILE_ID: (profileId: string) => `profiles/${profileId}`,
   SEARCH_TAGS: 'search-tags',
   POST_SEGMENTS: 'post-segments',
   POST_SEGMENTS_POST_SEGMENT_ID: 'post-segments/:postSegmentId',
@@ -44,4 +44,14 @@ export async function apiAvatarsUpload(
   avatarFile: File
 ): Promise<HttpResponse<void>> {
   return await postFile<void>(ROUTES_API.AVATARS_UPLOAD, avatarFile)
+}
+
+// #########################################
+
+export type ApiProfilesProfileIdGetRequestBody = null
+
+export async function apiProfilesGet(
+  profileId: string
+): Promise<HttpResponse<Profile>> {
+  return await get<Profile>(ROUTES_API.PROFILES_PROFILE_ID(profileId))
 }
