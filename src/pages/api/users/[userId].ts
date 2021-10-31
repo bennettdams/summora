@@ -7,15 +7,15 @@ import { prisma } from '../../../prisma/prisma'
 //   profileToUpdate: Prisma.ProfileUpdateInput
 // }
 
-async function findProfile(profileId: string) {
+async function findUser(userId: string) {
   try {
-    return await prisma.profile.findUnique({
+    return await prisma.user.findUnique({
       where: {
-        userId: profileId,
+        userId,
       },
     })
   } catch (error) {
-    throw new Error(`Error while finding profile: ${error}`)
+    throw new Error(`Error while finding user: ${error}`)
   }
 }
 
@@ -40,31 +40,29 @@ async function findProfile(profileId: string) {
 //   }
 // }
 
-export default async function _profileAPI(
+export default async function _userAPI(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
   const {
-    query: { profileId },
+    query: { userId },
     method,
   } = req
 
-  console.log(
-    `[API] ${_profileAPI.name} | ${!profileId ? 'no profile ID' : profileId}`
-  )
+  console.log(`[API] ${_userAPI.name} | ${!userId ? 'no user ID' : userId}`)
 
-  if (!profileId) {
-    res.status(404).end('No profile ID!')
-  } else if (typeof profileId !== 'string') {
-    res.status(400).end('Profile ID wrong format!')
+  if (!userId) {
+    res.status(404).end('No user ID!')
+  } else if (typeof userId !== 'string') {
+    res.status(400).end('User ID wrong format!')
   } else {
     switch (method) {
       case 'GET': {
-        const profile = await findProfile(profileId)
-        if (!profile) {
-          res.status(404).json(`Cannot find profile for id ${profileId}`)
+        const user = await findUser(userId)
+        if (!user) {
+          res.status(404).json(`Cannot find user for id ${userId}`)
         } else {
-          res.status(200).json(profile)
+          res.status(200).json(user)
         }
         break
       }
@@ -86,7 +84,7 @@ export default async function _profileAPI(
       //   break
       // }
       default: {
-        res.setHeader('Allow', ['GET', 'PUT'])
+        res.setHeader('Allow', ['GET'])
         // res.status(405).json({ message: 'Method not allowed' })
         res.status(405).end(`Method ${method} Not Allowed`)
       }

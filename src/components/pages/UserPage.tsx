@@ -1,27 +1,27 @@
-import { ProfilePageProps } from '../../pages/profile/[profileId]'
+import { UserPageProps } from '../../pages/user/[userId]'
 import { Page, PageSection } from '../Page'
 import { Avatar } from '../Avatar'
 import { Box } from '../Box'
 
-export function ProfilePage({ profile }: ProfilePageProps): JSX.Element {
+export function UserPage({ user }: UserPageProps): JSX.Element {
   return (
     <Page>
-      {!profile ? (
-        <p>Profile does not exist.</p>
+      {!user ? (
+        <p>User does not exist.</p>
       ) : (
         <>
           <PageSection>
             <Box>
-              <p>PROFILE</p>
+              <p>USER</p>
               <div className="flex">
                 <div className="flex-grow">
-                  <p>User ID {profile.userId}</p>
-                  <p>Username {profile.username}</p>
-                  <p>Created at {new Date(profile.createdAt).toISOString()}</p>
-                  <p>Updated at {new Date(profile.updatedAt).toISOString()}</p>
+                  <p>User ID {user.userId}</p>
+                  <p>Username {user.username}</p>
+                  <p>Created at {new Date(user.createdAt).toISOString()}</p>
+                  <p>Updated at {new Date(user.updatedAt).toISOString()}</p>
                 </div>
                 <div>
-                  <Avatar isEditable profileId={profile.userId} size="large" />
+                  <Avatar isEditable userId={user.userId} size="large" />
                 </div>
               </div>
             </Box>
@@ -34,19 +34,19 @@ export function ProfilePage({ profile }: ProfilePageProps): JSX.Element {
               <div className="grid auto-rows-min grid-cols-3 text-center">
                 <div className="col-start-1">
                   <div className="h-full grid place-items-center">
-                    <Avatar profileId={profile.userId} size="small" />
+                    <Avatar userId={user.userId} size="small" />
                   </div>
                   <p>Small</p>
                 </div>
                 <div className="col-start-2">
                   <div className="h-full grid place-items-center">
-                    <Avatar profileId={profile.userId} size="medium" />
+                    <Avatar userId={user.userId} size="medium" />
                   </div>
                   <p>Medium</p>
                 </div>
                 <div className="col-start-3">
                   <div className="h-full grid place-items-center">
-                    <Avatar profileId={profile.userId} size="large" />
+                    <Avatar userId={user.userId} size="large" />
                   </div>
                   <p>Large</p>
                 </div>

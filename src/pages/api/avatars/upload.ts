@@ -88,7 +88,7 @@ export default async function _avatarsUploadAPI(
         'Error while authenticating: No user for that cookie in database.',
     })
   } else {
-    const profileId = user.id
+    const userId = user.id
 
     switch (method) {
       case 'POST': {
@@ -98,9 +98,9 @@ export default async function _avatarsUploadAPI(
           // TODO validation?
           // TODO file extension
           // TODO convert png etc.
-          await uploadAvatarSupabase(`${profileId}.jpg`, fileParsed, req)
+          await uploadAvatarSupabase(`${userId}.jpg`, fileParsed, req)
 
-          console.log(`[API] uploaded avatar for profile ${profileId}`)
+          console.log(`[API] uploaded avatar for user ${userId}`)
 
           /*
            * Using explicit type to make sure we're returning what we've promised in
@@ -108,7 +108,7 @@ export default async function _avatarsUploadAPI(
            */
           return res
             .status(200)
-            .json({ message: `Uploaded avatar for profile ${profileId}` })
+            .json({ message: `Uploaded avatar for user ${userId}` })
         } catch (error) {
           console.error('[API] Error while uploading avatar:', error)
           return res.status(401).json({ error })

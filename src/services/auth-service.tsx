@@ -14,15 +14,15 @@ import {
 } from './supabase/supabase-service'
 import { UserAuth } from '../types/UserAuth'
 import { Session } from '../types/Session'
-import { apiProfilesGet, apiUsersSignUp } from './api'
+import { apiUsersGet, apiUsersSignUp } from './api'
 import { GetServerSidePropsContextRequest } from '../types/GetServerSidePropsContextRequest = GetServerSidePropsContext'
-import { Profile } from '@prisma/client'
+import { User } from '@prisma/client'
 
 export interface AuthState {
-  user: UserAuth | null
+  userAuth: UserAuth | null
   session: Session | null
   isLoading: boolean
-  profile: Profile | null
+  user: User | null
 }
 
 const AuthContext = createContext<AuthState | null>(null)
@@ -36,35 +36,35 @@ export function AuthContextProvider({
 }): JSX.Element {
   const [authState, setAuthState] = useState<AuthState>({
     session: null,
-    user: null,
+    userAuth: null,
     isLoading: true,
-    profile: null,
+    user: null,
   })
 
   /**
    * Fill auth state based on session.
    */
   async function fillAuth(session: Session) {
-    const user = session.user
+    const userAuth = session.user
     /*
      * Already set the auth state here, because the session could already exist on initial
-     * page load (due to token), but the profile has to be fetched from the server.
+     * page load (due to token), but the user has to be fetched from the server.
      */
     setAuthState({
       session,
-      user,
+      userAuth,
       isLoading: false,
-      profile: null,
+      user: null,
     })
-    if (!user) {
-      throw new Error('Session exists, but user does not.')
+    if (!userAuth) {
+      throw new Error('Session exists, but user auth does not.')
     } else {
-      const response = await apiProfilesGet(user.id)
+      const response = await apiUsersGet(userAuth.id)
       setAuthState({
         session,
-        user,
+        userAuth,
         isLoading: false,
-        profile: response.result ?? null,
+        user: response.result ?? null,
       })
     }
   }
@@ -181,11 +181,12 @@ export function useAuthContext(): AuthState {
 export async function getUserByCookie(
   req: GetServerSidePropsContextRequest
 ): Promise<{
-  user: UserAuth | null
+  userAuth: UserAuth | null
   data: UserAuth | null
   error: Error | null
 }> {
-  return await getUserByCookieSupabase(req)
+  const res = await getUserByCookieSupabase(req)
+  return { ...res, userAuth: res.user }
 }
 
 export async function signUp(email: string, password: string) {

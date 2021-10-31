@@ -1,12 +1,12 @@
-import type { Profile } from '@prisma/client'
+import type { User } from '@prisma/client'
 import { get, HttpResponse, post, postFile } from '../util/http'
 
 export const ROUTES_API = {
   USERS_SIGN_UP: 'users/signup',
+  USERS_USER_ID: (userId: string) => `users/${userId}`,
   AVATARS_UPLOAD: 'avatars/upload',
   POSTS: 'posts',
   POSTS_POST_ID: 'posts/:postId',
-  PROFILES_PROFILE_ID: (profileId: string) => `profiles/${profileId}`,
   SEARCH_TAGS: 'search-tags',
   POST_SEGMENTS: 'post-segments',
   POST_SEGMENTS_POST_SEGMENT_ID: 'post-segments/:postSegmentId',
@@ -21,7 +21,7 @@ export type ApiUsersSignUpRequestBody = {
   password: string
 }
 
-export type ApiUsersSignUpReturn = Profile
+export type ApiUsersSignUpReturn = User
 
 export async function apiUsersSignUp(
   username: string,
@@ -48,10 +48,8 @@ export async function apiAvatarsUpload(
 
 // #########################################
 
-export type ApiProfilesProfileIdGetRequestBody = null
+export type ApiUsersUserIdGetRequestBody = null
 
-export async function apiProfilesGet(
-  profileId: string
-): Promise<HttpResponse<Profile>> {
-  return await get<Profile>(ROUTES_API.PROFILES_PROFILE_ID(profileId))
+export async function apiUsersGet(userId: string): Promise<HttpResponse<User>> {
+  return await get<User>(ROUTES_API.USERS_USER_ID(userId))
 }

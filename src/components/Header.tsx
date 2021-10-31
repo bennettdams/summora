@@ -10,7 +10,7 @@ import { LoadingAnimation } from './LoadingAnimation'
 export function Header(): JSX.Element {
   const queryClient = useQueryClient()
   const isLoading = useRouteChange()
-  const { user, profile, isLoading: isLoadingAuth, signOut } = useAuth()
+  const { userAuth, user, isLoading: isLoadingAuth, signOut } = useAuth()
 
   return (
     <header className="h-12 z-40 w-full flex items-center justify-center top-0 fixed">
@@ -28,17 +28,17 @@ export function Header(): JSX.Element {
         </nav>
 
         {isLoadingAuth && <LoadingAnimation />}
-        {user && (
-          <Link to={`/profile/${user.id}`}>
+        {userAuth && (
+          <Link to={`/user/${userAuth.id}`}>
             <div className="flex flex-row items-center space-x-2">
-              <p>{profile?.username}</p>
-              <Avatar profileId={user.id} size="small" />
+              <p>{user?.username}</p>
+              <Avatar userId={userAuth.id} size="small" />
             </div>
           </Link>
         )}
 
         <div className="ml-4">
-          {user ? (
+          {userAuth ? (
             <Button onClick={() => signOut()}>Sign out</Button>
           ) : (
             <Link to="/signin">

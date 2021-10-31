@@ -25,7 +25,7 @@ export default async function _usersSignUpAPI(
       const { username, email, password } = requestBody
 
       try {
-        const usernameAlreadyExists = await prisma.profile.findUnique({
+        const usernameAlreadyExists = await prisma.user.findUnique({
           where: { username },
         })
 
@@ -44,28 +44,28 @@ export default async function _usersSignUpAPI(
             return res.status(401).json({ error })
           } else if (user) {
             const userId = user.id
-            let profileCreated
+            let userCreated
 
             try {
-              profileCreated = await prisma.profile.create({
+              userCreated = await prisma.user.create({
                 data: {
                   userId,
                   username,
                 },
               })
             } catch (error) {
-              console.error('[API] Error while creating profile:', error)
+              console.error('[API] Error while creating user:', error)
 
               console.error(`[API] Deleting user ${userId}`)
               await deleteUser(userId)
 
-              throw new Error('[API] Error while creating profile (Prisma)')
+              throw new Error('[API] Error while creating user (Prisma)')
             }
 
             console.log(`[API] signed up ${username}`)
 
             // using explicit type to make sure we're returning what we've promised in the API function (that called this API endpoint)
-            const responseData: ApiUsersSignUpReturn = profileCreated
+            const responseData: ApiUsersSignUpReturn = userCreated
             return res.status(200).json(responseData)
           }
         }

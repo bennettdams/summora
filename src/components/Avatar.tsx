@@ -38,11 +38,11 @@ function AvatarPlaceholder({ size }: { size: AvatarSize }): JSX.Element {
 }
 
 export function Avatar({
-  profileId,
+  userId,
   size = 'medium',
   isEditable = false,
 }: {
-  profileId: string
+  userId: string
   size: AvatarSize
   isEditable?: boolean
 }): JSX.Element {
@@ -67,8 +67,8 @@ export function Avatar({
       }
     }
 
-    downloadAvatarImage(profileId)
-  }, [profileId, downloadAvatar])
+    downloadAvatarImage(userId)
+  }, [userId, downloadAvatar])
 
   return (
     <div className="relative grid place-items-center">

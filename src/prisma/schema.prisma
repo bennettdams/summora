@@ -77,7 +77,7 @@ model PostTag {
   //
 }
 
-model Profile {
+model User {
   userId    String   @id
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
