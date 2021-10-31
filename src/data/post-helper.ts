@@ -17,17 +17,17 @@ const urlPostSegmentItem = '/api/post-segment-items'
 const urlPostSegment = '/api/post-segments'
 export const queryKeyPosts = 'posts'
 
-function usePostsMutation() {
-  const queryClient = useQueryClient()
+// function usePostsMutation() {
+//   const queryClient = useQueryClient()
 
-  const createPostMutation = useMutation(createPost, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(queryKeyPosts)
-    },
-  })
+//   const createPostMutation = useMutation(createPost, {
+//     onSuccess: () => {
+//       queryClient.invalidateQueries(queryKeyPosts)
+//     },
+//   })
 
-  return { createPostMutation }
-}
+//   return { createPostMutation }
+// }
 
 function usePostMutation(postId: string) {
   const queryClient = useQueryClient()
@@ -71,20 +71,20 @@ function usePostMutation(postId: string) {
   }
 }
 
-export function usePosts() {
-  const { data, isLoading, isError } = useQuery<PostPostsAPI[]>(
-    queryKeyPosts,
-    fetchPosts
-  )
-  const { createPostMutation } = usePostsMutation()
+// export function usePosts() {
+//   const { data, isLoading, isError } = useQuery<PostPostsAPI[]>(
+//     queryKeyPosts,
+//     fetchPosts
+//   )
+//   const { createPostMutation } = usePostsMutation()
 
-  return {
-    posts: data || null,
-    isLoading,
-    isError,
-    createPost: createPostMutation.mutate,
-  }
-}
+//   return {
+//     posts: data || null,
+//     isLoading,
+//     isError,
+//     createPost: createPostMutation.mutate,
+//   }
+// }
 
 export function usePost(postId: string, enabled = true) {
   const { data, isLoading, isError } = useQuery<PostPostAPI>(
@@ -125,22 +125,22 @@ export function usePost(postId: string, enabled = true) {
   }
 }
 
-async function fetchPosts(): Promise<PostPostsAPI[]> {
-  const response = await fetch(`${urlPost}`, {
-    method: 'GET',
-  })
+// async function fetchPosts(): Promise<PostPostsAPI[]> {
+//   const response = await fetch(`${urlPost}`, {
+//     method: 'GET',
+//   })
 
-  if (!response.ok) {
-    throw new Error(response.statusText)
-  }
+//   if (!response.ok) {
+//     throw new Error(response.statusText)
+//   }
 
-  const postsJSON = await response.json()
-  const posts: PostPostsAPI[] = postsJSON.map((postJSON: PostPostsAPI) =>
-    transformPostPostsAPI(postJSON)
-  )
+//   const postsJSON = await response.json()
+//   const posts: PostPostsAPI[] = postsJSON.map((postJSON: PostPostsAPI) =>
+//     transformPostPostsAPI(postJSON)
+//   )
 
-  return posts
-}
+//   return posts
+// }
 
 async function fetchPost(postId: string): Promise<PostPostAPI> {
   const response = await fetch(`${urlPost}/${postId}`, {

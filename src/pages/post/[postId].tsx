@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next'
+import { GetStaticPaths, GetStaticProps } from 'next'
 import { prisma } from '../../prisma/prisma'
 import { PostCategory, PrismaClient } from '.prisma/client'
 import { PostPage } from '../../components/pages/post/PostPage'
@@ -38,6 +38,7 @@ async function findPost(prisma: PrismaClient, postId: string) {
     include: {
       category: true,
       tags: true,
+      author: true,
       segments: {
         orderBy: { createdAt: 'asc' },
         include: { items: { orderBy: { createdAt: 'asc' } } },
@@ -46,14 +47,21 @@ async function findPost(prisma: PrismaClient, postId: string) {
   })
 }
 
-export const getServerSideProps: GetServerSideProps = async ({
-  params,
-  res,
-}): Promise<
-  { props: PostPageProps } | { props: { '404'?: null; '500'?: null } }
-> => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [
+      // { params: { id: '1' } },
+      // { params: { id: '2' } }
+    ],
+    fallback: 'blocking',
+  }
+}
+
+const revalidateInSeconds = 10 * 60
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   if (!params || typeof params.postId !== 'string') {
-    res.statusCode = 404
+    // res.statusCode = 404
     return { props: { '404': null } }
   } else {
     const post = await findPost(prisma, params.postId)
@@ -74,24 +82,18 @@ export const getServerSideProps: GetServerSideProps = async ({
         tagsSorted,
         tagsSortedForCategory,
       },
+      revalidate: revalidateInSeconds,
     }
   }
 }
 
-const PostViewPage = ({
-  post,
-  postCategories,
-  tagsSorted,
-  tagsSortedForCategory,
-}: PostPageProps): JSX.Element => {
+export default function _PostPage(props: PostPageProps): JSX.Element {
   return (
     <PostPage
-      post={post}
-      postCategories={postCategories}
-      tagsSorted={tagsSorted}
-      tagsSortedForCategory={tagsSortedForCategory}
+      post={props.post}
+      postCategories={props.postCategories}
+      tagsSorted={props.tagsSorted}
+      tagsSortedForCategory={props.tagsSortedForCategory}
     />
   )
 }
-
-export default PostViewPage

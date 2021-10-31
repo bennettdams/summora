@@ -9,10 +9,10 @@ function getRandom<T>(arr: T[]) {
   return arr[Math.floor(Math.random() * (max - min) + min)]
 }
 
-export default async (
+export default async function _seedAPI(
   req: NextApiRequest,
   res: NextApiResponse
-): Promise<void> => {
+): Promise<void> {
   try {
     await prisma.postSegmentItem.deleteMany({})
     await prisma.postSegment.deleteMany({})
@@ -26,6 +26,8 @@ export default async (
     await prisma.postTag.createMany({ data: postTags })
     const postTagsCreated = await prisma.postTag.findMany()
 
+    const users = await prisma.user.findMany()
+
     await prisma.post.createMany({
       data: [...new Array(100)].map((_, i) => {
         return {
@@ -36,6 +38,7 @@ export default async (
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
             (i + 1),
           postCategoryId: getRandom(postCategoriesCreated).id,
+          authorId: getRandom(users).userId,
         }
       }),
     })
@@ -45,7 +48,7 @@ export default async (
       await prisma.post.update({
         data: {
           tags: {
-            connect: [...new Array(15)].map((_) => ({
+            connect: [...new Array(15)].map(() => ({
               id: getRandom(postTagsCreated).id,
             })),
           },

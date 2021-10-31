@@ -12,7 +12,11 @@ export interface PostsPageProps {
 async function findPosts(prisma: PrismaClient) {
   return await prisma.post.findMany({
     take: 20,
-    include: { category: true, segments: { orderBy: { createdAt: 'asc' } } },
+    include: {
+      author: true,
+      category: true,
+      segments: { orderBy: { createdAt: 'asc' } },
+    },
   })
 }
 
@@ -32,23 +36,16 @@ export const getStaticProps: GetStaticProps<PostsPageProps> = async () => {
       postCategories,
       noOfPostsCreatedLast24Hours,
     },
-    revalidate: 2, // seconds
-    // revalidate: 60 * 2, // seconds
+    revalidate: 10,
   }
 }
 
-const Home = ({
-  posts,
-  postCategories,
-  noOfPostsCreatedLast24Hours,
-}: PostsPageProps): JSX.Element => {
+export default function _HomePage(props: PostsPageProps): JSX.Element {
   return (
     <PostsPage
-      posts={posts}
-      postCategories={postCategories}
-      noOfPostsCreatedLast24Hours={noOfPostsCreatedLast24Hours}
+      posts={props.posts}
+      postCategories={props.postCategories}
+      noOfPostsCreatedLast24Hours={props.noOfPostsCreatedLast24Hours}
     />
   )
 }
-
-export default Home

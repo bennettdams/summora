@@ -8,6 +8,7 @@ import { Views } from '../../Likes'
 import { Comments } from '../../Comments'
 import { Button } from '../../Button'
 import { useState } from 'react'
+import { Avatar } from '../../Avatar'
 
 export function PostsPage({
   posts,
@@ -98,6 +99,7 @@ function PostItem({
           </h2>
           <h1 className="mt-1 sm:text-2xl text-xl font-medium">{post.title}</h1>
           <p className="mt-3 leading-relaxed">{post.subtitle}</p>
+
           <div className="flex py-4 flex-row flex-nowrap h-ful overflow-y-auto space-x-4">
             {post.segments.map((segment) => {
               return (
@@ -110,7 +112,12 @@ function PostItem({
               )
             })}
           </div>
+
           <div className="text-center mt-2 leading-none flex justify-center absolute bottom-0 w-full py-3 space-x-4">
+            <div className="flex flex-row items-center space-x-4">
+              <span>{post.author.username}</span>
+              <Avatar size="small" userId={post.authorId} />
+            </div>
             <Views>1.2K</Views>
             <Comments>6</Comments>
             <span className="text-gray-400 inline-flex items-center leading-none text-sm">

@@ -33,6 +33,10 @@ model Post {
   // tags
   tags           PostTag[]
   //
+  // user
+  author        User @relation(fields: [authorId], references: [userId])
+  authorId      String
+  //
 }
 
 model PostSegment {
@@ -83,4 +87,6 @@ model User {
   updatedAt DateTime @updatedAt
   username  String   @unique
   avatarURL String?
+  // posts
+  posts Post[]
 }

@@ -15,6 +15,7 @@ async function findPosts() {
       orderBy: { createdAt: 'asc' },
       include: {
         category: true,
+        author: true,
       },
     })
   } catch (error) {

@@ -23,6 +23,7 @@ import { PostSegment } from './PostSegment'
 import { Tag } from './Tag'
 import { useSearchTags } from '../../../data/use-search-tags'
 import { TagAPI } from '../../../pages/api/search-tags'
+import { Avatar } from '../../Avatar'
 
 export function PostPage({
   post: postInitial,
@@ -250,26 +251,13 @@ export function PostPage({
             <Box smallPadding>
               <div className="flex divide-gray-400 divide-x">
                 <div className="flex-1 flex flex-col items-center justify-center">
-                  <div className="w-12 h-12 text-center rounded-full inline-flex items-center justify-center bg-gray-200 text-gray-400">
-                    <svg
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="w-8 h-8"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                  </div>
+                  <Avatar size="medium" userId={post.authorId} />
 
                   <div className="w-12 h-1 my-2 bg-indigo-500 rounded"></div>
 
                   <div className="flex flex-col items-center text-center justify-center">
                     <h2 className="font-medium leading-none title-font text-gray-900 text-lg">
-                      Username
+                      {post.author.username}
                     </h2>
                   </div>
                 </div>

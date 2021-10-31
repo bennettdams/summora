@@ -75,6 +75,8 @@ export function AuthContextProvider({
     // session for initial page load
     if (session) {
       fillAuth(session)
+    } else {
+      setAuthState((prev) => ({ ...prev, isLoading: false }))
     }
 
     // Supabase will not execute this on the initial render when the session already exists
