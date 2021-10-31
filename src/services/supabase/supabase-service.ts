@@ -1,6 +1,7 @@
 import { createClient, User } from '@supabase/supabase-js'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { GetServerSidePropsContextRequest } from '../../types/GetServerSidePropsContextRequest = GetServerSidePropsContext'
+import { isServer } from '../../util/server/server-utils'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -14,10 +15,10 @@ const STORAGE = {
 
 const AVATAR_EXTENSION = 'jpg'
 
-function createSupabaseClient() {
-  if (!supabaseUrl || !supabaseAnonKey)
-    throw new Error('Missing Supabase keys.')
-  return createClient(supabaseUrl, supabaseAnonKey)
+function createSupabaseClient(supabaseKey = supabaseAnonKey) {
+  if (!supabaseUrl || !supabaseKey)
+    throw new Error('Missing Supabase URL or key.')
+  return createClient(supabaseUrl, supabaseKey)
 }
 
 export const supabase = createSupabaseClient()

@@ -25,24 +25,49 @@ export default async function _usersSignUpAPI(
       const { username, email, password } = requestBody
 
       try {
-        const { user, error } = await signUp(email, password)
-        if (error) {
-          console.error('[API] Error while sign up (Supabase):', error)
-          return res.status(401).json({ error })
-        } else if (user) {
-          // TODO if profile creation fails, we have to also delete the user (Supabase)
-          const profileCreated = await prisma.profile.create({
-            data: {
-              userId: user.id,
-              username,
-            },
-          })
+        const usernameAlreadyExists = await prisma.profile.findUnique({
+          where: { username },
+        })
 
-          console.log(`[API] signed up ${email}`)
+        /*
+         * This check is just an early exit, the real check for unique usernames
+         * is done via constraint in the database.
+         */
+        if (usernameAlreadyExists) {
+          const message = `[API] Username ${username} already exists, not trying to create a user.`
+          console.log(message)
+          return res.status(409).json({ message })
+        } else {
+          const { user, error } = await signUp(email, password)
+          if (error) {
+            console.error('[API] Error while sign up (Supabase):', error)
+            return res.status(401).json({ error })
+          } else if (user) {
+            const userId = user.id
+            let profileCreated
 
-          // using explicit type to make sure we're returning what we've promised in the API function (that called this API endpoint)
-          const responseData: ApiUsersSignUpReturn = profileCreated
-          return res.status(200).json(responseData)
+            try {
+              profileCreated = await prisma.profile.create({
+                data: {
+                  userId,
+                  username,
+                },
+              })
+            } catch (error) {
+              console.error('[API] Error while creating profile:', error)
+
+              console.error(`[API] Deleting user ${userId}`)
+              await deleteUser(userId)
+
+              throw new Error('[API] Error while creating profile (Prisma)')
+            }
+
+            console.log(`[API] signed up ${username}`)
+
+            // using explicit type to make sure we're returning what we've promised in the API function (that called this API endpoint)
+            const responseData: ApiUsersSignUpReturn = profileCreated
+            return res.status(200).json(responseData)
+          }
         }
       } catch (error) {
         console.error('[API] Error while sign up:', error)
