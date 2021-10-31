@@ -37,13 +37,15 @@ export function Header(): JSX.Element {
           </Link>
         )}
 
-        {user ? (
-          <Button onClick={() => signOut()}>Sign out</Button>
-        ) : (
-          <Link to="/signin">
-            <Button onClick={() => signOut()}>Sign in</Button>
-          </Link>
-        )}
+        <div className="ml-4">
+          {user ? (
+            <Button onClick={() => signOut()}>Sign out</Button>
+          ) : (
+            <Link to="/signin">
+              <Button onClick={() => signOut()}>Sign in</Button>
+            </Link>
+          )}
+        </div>
 
         <div className="w-20">{isLoading && <LoadingAnimation />}</div>
 

@@ -9,13 +9,41 @@ const SIZES = {
   large: 180,
 } as const
 
+type AvatarSize = keyof typeof SIZES
+
+function AvatarPlaceholder({ size }: { size: AvatarSize }): JSX.Element {
+  const [sizePixels] = useState(SIZES[size])
+  return (
+    <div
+      className="text-center rounded-full inline-flex items-center justify-center bg-gray-200 text-gray-400"
+      style={{ width: sizePixels, height: sizePixels }}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ width: sizePixels, height: sizePixels }}
+        fill="none"
+        viewBox="0 0 24 24"
+        transform="scale(0.8)"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+        />
+      </svg>
+    </div>
+  )
+}
+
 export function Avatar({
   profileId,
   size = 'medium',
   isEditable = false,
 }: {
   profileId: string
-  size: keyof typeof SIZES
+  size: AvatarSize
   isEditable?: boolean
 }): JSX.Element {
   const [sizePixels] = useState(SIZES[size])
@@ -61,12 +89,7 @@ export function Avatar({
           height={sizePixels}
         />
       ) : (
-        <div
-          className="bg-lime-300 rounded-full"
-          style={{ height: sizePixels, width: sizePixels }}
-        >
-          no image
-        </div>
+        <AvatarPlaceholder size={size} />
       )}
     </div>
   )
