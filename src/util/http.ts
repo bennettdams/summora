@@ -13,8 +13,21 @@ export const apiPrefix = '/api/'
  */
 const base = apiPrefix
 
-function createRequest(path: RequestInfo, args: RequestInit | undefined) {
-  return new Request(base + path, args)
+function createRequest(
+  path: RequestInfo,
+  args: RequestInit | undefined,
+  notJSON = false
+) {
+  if (notJSON) {
+    return new Request(base + path, args)
+  } else {
+    return new Request(base + path, {
+      ...args,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+  }
 }
 
 /**
@@ -87,7 +100,7 @@ export async function postFile<T>(
   formData.append(FORM_DATA_FILE_KEY, file)
 
   args.body = formData
-  return await http<T>(createRequest(path, args))
+  return await http<T>(createRequest(path, args, true))
 }
 
 /**
