@@ -10,6 +10,7 @@ import {
   getUserByCookieSupabase,
   signInSupabase,
   signOutSupabase,
+  signUpSupabase,
 } from './supabase/supabase-service'
 import { User } from '../types/User'
 import { Session } from '../types/Session'
@@ -138,4 +139,8 @@ export async function getUserByCookie(
   req: GetServerSidePropsContextRequest
 ): Promise<{ user: User | null; data: User | null; error: Error | null }> {
   return await getUserByCookieSupabase(req)
+}
+
+export async function signUp(email: string, password: string) {
+  return await signUpSupabase(email, password)
 }

@@ -4,7 +4,8 @@ import {
   ApiUsersSignUpRequestBody,
   ApiUsersSignUpReturn,
 } from '../../../services/api'
-import { signUpSupabase } from '../../../services/supabase/supabase-service'
+import { signUp } from '../../../services/auth-service'
+import { deleteUser } from '../../../services/user-service'
 import { logAPI } from '../../../util/logger'
 
 interface Request extends NextApiRequest {
@@ -24,7 +25,7 @@ export default async function _usersSignUpAPI(
       const { username, email, password } = requestBody
 
       try {
-        const { user, error } = await signUpSupabase(email, password)
+        const { user, error } = await signUp(email, password)
         if (error) {
           console.error('[API] Error while sign up (Supabase):', error)
           return res.status(401).json({ error })

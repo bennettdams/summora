@@ -39,10 +39,7 @@ export async function signInSupabase(
   return await supabase.auth.signIn({ email, password })
 }
 
-export async function signUpSupabase(
-  email: string,
-  password: string
-): Promise<ReturnType<typeof supabase.auth.signUp>> {
+export async function signUpSupabase(email: string, password: string) {
   return await supabase.auth.signUp({ email, password })
 }
 
@@ -50,6 +47,28 @@ export async function signOutSupabase(): Promise<
   ReturnType<typeof supabase.auth.signOut>
 > {
   return await supabase.auth.signOut()
+}
+
+export async function deleteUserSupabase(userId: string): Promise<void> {
+  if (!isServer()) {
+    throw new Error(
+      `${deleteUserSupabase.name} can only be used on the server.`
+    )
+  } else {
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY
+    if (!supabaseServiceKey) {
+      throw new Error('No Supabase service key.')
+    } else {
+      const supabaseServer = createSupabaseClient(supabaseServiceKey)
+      const { error } = await supabaseServer.auth.api.deleteUser(
+        userId,
+        supabaseServiceKey
+      )
+      if (error) {
+        throw new Error(`Error while deleting user: ${error.message}`)
+      }
+    }
+  }
 }
 
 function extractJWTFromNextRequestCookies(req: NextApiRequest): string {
