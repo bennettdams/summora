@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { apiAvatarsUpload } from './api'
+import { apiAvatarsUpload } from './api-service'
 import { downloadAvatarSupabase } from './supabase/supabase-service'
 
 export function useCloudStorage() {

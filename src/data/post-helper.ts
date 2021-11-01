@@ -11,6 +11,7 @@ import {
   PostSegmentPostAPI,
   PostUpdate,
 } from '../pages/api/posts/[postId]'
+import { apiFetchPost } from '../services/api-service'
 
 const urlPost = '/api/posts'
 const urlPostSegmentItem = '/api/post-segment-items'
@@ -87,9 +88,9 @@ function usePostMutation(postId: string) {
 // }
 
 export function usePost(postId: string, enabled = true) {
-  const { data, isLoading, isError } = useQuery<PostPostAPI>(
+  const { data, isLoading, isError } = useQuery<PostPostAPI | null>(
     [queryKeyPosts, postId],
-    () => fetchPost(postId),
+    async () => (await apiFetchPost(postId)).result ?? null,
     { enabled }
   )
 
@@ -102,7 +103,7 @@ export function usePost(postId: string, enabled = true) {
   } = usePostMutation(postId)
 
   return {
-    post: data || null,
+    post: data ?? null,
     isLoading:
       isLoading ||
       updatePostMutation.isLoading ||
@@ -141,22 +142,6 @@ export function usePost(postId: string, enabled = true) {
 
 //   return posts
 // }
-
-async function fetchPost(postId: string): Promise<PostPostAPI> {
-  const response = await fetch(`${urlPost}/${postId}`, {
-    method: 'GET',
-  })
-  // await new Promise((resolve) => setTimeout(resolve, 5000))
-
-  if (!response.ok) {
-    throw new Error(response.statusText)
-  }
-
-  const postJSON: PostPostAPI = await response.json()
-  const post: PostPostAPI = transformPostPostAPI(postJSON)
-
-  return post
-}
 
 async function createPost(post: Prisma.PostCreateInput): Promise<PostPostsAPI> {
   const response = await fetch(urlPost, {

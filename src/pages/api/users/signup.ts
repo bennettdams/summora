@@ -3,7 +3,7 @@ import { prisma } from '../../../prisma/prisma'
 import {
   ApiUsersSignUpRequestBody,
   ApiUsersSignUpReturn,
-} from '../../../services/api'
+} from '../../../services/api-service'
 import { signUp } from '../../../services/auth-service'
 import { deleteUser } from '../../../services/user-service'
 import { logAPI } from '../../../util/logger'

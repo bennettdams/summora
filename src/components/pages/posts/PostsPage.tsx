@@ -114,10 +114,12 @@ function PostItem({
           </div>
 
           <div className="text-center mt-2 leading-none flex justify-center absolute bottom-0 w-full py-3 space-x-4">
-            <div className="flex flex-row items-center space-x-4">
-              <span>{post.author.username}</span>
-              <Avatar size="small" userId={post.authorId} />
-            </div>
+            <Link to={`user/${post.authorId}`}>
+              <div className="flex flex-row items-center space-x-4 hover:bg-lime-300">
+                <span>{post.author.username}</span>
+                <Avatar size="small" userId={post.authorId} />
+              </div>
+            </Link>
             <Views>1.2K</Views>
             <Comments>6</Comments>
             <span className="text-gray-400 inline-flex items-center leading-none text-sm">

@@ -14,7 +14,7 @@ import {
 } from './supabase/supabase-service'
 import { UserAuth } from '../types/UserAuth'
 import { Session } from '../types/Session'
-import { apiUsersGet, apiUsersSignUp } from './api'
+import { apiFetchUser, apiUsersSignUp } from './api-service'
 import { GetServerSidePropsContextRequest } from '../types/GetServerSidePropsContextRequest = GetServerSidePropsContext'
 import { User } from '@prisma/client'
 
@@ -59,7 +59,7 @@ export function AuthContextProvider({
     if (!userAuth) {
       throw new Error('Session exists, but user auth does not.')
     } else {
-      const response = await apiUsersGet(userAuth.id)
+      const response = await apiFetchUser(userAuth.id)
       setAuthState({
         session,
         userAuth,

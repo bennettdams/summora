@@ -1,4 +1,4 @@
-import { ROUTES_API } from '../services/api'
+import { ROUTES_API } from '../services/api-service'
 
 /**
  * Logger for an API route.
