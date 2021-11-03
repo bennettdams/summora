@@ -1,15 +1,24 @@
+import { Prisma } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
-import {
-  ApiUsersSignUpRequestBody,
-  ApiUsersSignUpReturn,
-} from '../../../services/api-service'
+import { ApiUsersSignUpRequestBody } from '../../../services/api-service'
 import { signUp } from '../../../services/auth-service'
 import { deleteUser } from '../../../services/user-service'
 import { logAPI } from '../../../util/logger'
 
 interface Request extends NextApiRequest {
   body: ApiUsersSignUpRequestBody
+}
+
+export type ApiUsersSignUp = Prisma.PromiseReturnType<typeof createUser>
+
+async function createUser(userId: string, username: string) {
+  return await prisma.user.create({
+    data: {
+      userId,
+      username,
+    },
+  })
 }
 
 export default async function _usersSignUpAPI(
@@ -65,7 +74,7 @@ export default async function _usersSignUpAPI(
             console.log(`[API] signed up ${username}`)
 
             // using explicit type to make sure we're returning what we've promised in the API function (that called this API endpoint)
-            const responseData: ApiUsersSignUpReturn = userCreated
+            const responseData: ApiUsersSignUp = userCreated
             return res.status(200).json(responseData)
           }
         }

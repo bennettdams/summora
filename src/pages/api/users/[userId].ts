@@ -1,4 +1,4 @@
-// import type { Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
 
@@ -6,6 +6,8 @@ import { prisma } from '../../../prisma/prisma'
 //   profileId: string
 //   profileToUpdate: Prisma.ProfileUpdateInput
 // }
+
+export type ApiUsers = Prisma.PromiseReturnType<typeof findUser>
 
 async function findUser(userId: string) {
   try {

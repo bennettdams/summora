@@ -7,6 +7,8 @@ import { Files, IncomingForm } from 'formidable'
 import fs from 'fs'
 import { FORM_DATA_FILE_KEY } from '../../../util/http'
 
+export type ApiAvatarsUpload = void
+
 interface Request extends NextApiRequest {
   body: ApiAvatarsUploadRequestBody
 }

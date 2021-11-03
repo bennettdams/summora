@@ -3,20 +3,8 @@ import { prisma } from '../../../prisma/prisma'
 import { Prisma } from '@prisma/client'
 import { logAPI } from '../../../util/logger'
 
-export type PostPostAPI = Exclude<
-  Prisma.PromiseReturnType<typeof findPost>,
-  null
->
-export type PostSegmentPostAPI = PostPostAPI['segments'][number]
-export type PostSegmentItemPostAPI = PostSegmentPostAPI['items'][number]
-
-export interface PostUpdate {
-  postId: string
-  postToUpdate: Prisma.PostUpdateWithoutSegmentsInput & {
-    categoryId: string
-    tagIds: string[]
-  }
-}
+export type ApiPosts = Prisma.PromiseReturnType<typeof findPost>
+export type ApiPostsPostUpdate = Prisma.PromiseReturnType<typeof updatePost>
 
 async function findPost(postId: string) {
   try {

@@ -1,9 +1,8 @@
-import type { User } from '@prisma/client'
-import {
-  PostPostAPI,
-  PostSegmentItemPostAPI,
-  PostSegmentPostAPI,
-} from '../pages/api/posts/[postId]'
+import type { Prisma } from '@prisma/client'
+import { ApiAvatarsUpload } from '../pages/api/avatars/upload'
+import { ApiPosts } from '../pages/api/posts/[postId]'
+import { ApiUsersSignUp } from '../pages/api/users/signup'
+import { ApiUsers } from '../pages/api/users/[userId]'
 import { get, HttpResponse, post, postFile } from '../util/http'
 
 export const ROUTES_API = {
@@ -20,25 +19,25 @@ export const ROUTES_API = {
     'post-segment-items/:postSegmentItemId',
 } as const
 
+// #########################################
+
 export type ApiUsersSignUpRequestBody = {
   username: string
   email: string
   password: string
 }
 
-export type ApiUsersSignUpReturn = User
-
 export async function apiUsersSignUp(
   username: string,
   email: string,
   password: string
-): Promise<HttpResponse<ApiUsersSignUpReturn>> {
+): Promise<HttpResponse<ApiUsersSignUp>> {
   const input: ApiUsersSignUpRequestBody = {
     username,
     email,
     password,
   }
-  return await post<ApiUsersSignUpReturn>(ROUTES_API.USERS_SIGN_UP, input)
+  return await post<ApiUsersSignUp>(ROUTES_API.USERS_SIGN_UP, input)
 }
 
 // #########################################
@@ -47,53 +46,47 @@ export type ApiAvatarsUploadRequestBody = FormData
 
 export async function apiAvatarsUpload(
   avatarFile: File
-): Promise<HttpResponse<void>> {
-  return await postFile<void>(ROUTES_API.AVATARS_UPLOAD, avatarFile)
+): Promise<HttpResponse<ApiAvatarsUpload>> {
+  return await postFile<ApiAvatarsUpload>(ROUTES_API.AVATARS_UPLOAD, avatarFile)
 }
 
 // #########################################
-
-export type ApiUsersUserIdGetRequestBody = null
 
 export async function apiFetchUser(
   userId: string
-): Promise<HttpResponse<User>> {
-  return await get<User>(ROUTES_API.USERS_USER_ID(userId))
+): Promise<HttpResponse<ApiUsers>> {
+  return await get<ApiUsers>(ROUTES_API.USERS_USER_ID(userId))
 }
 
 // #########################################
 
-export type ApiPostsPostIdGetRequestBody = null
-
 export async function apiFetchPost(
   postId: string
-): Promise<HttpResponse<PostPostAPI>> {
-  const post = await get<PostPostAPI>(ROUTES_API.POSTS_POST_ID(postId))
+): Promise<HttpResponse<ApiPosts>> {
+  const post = await get<ApiPosts>(ROUTES_API.POSTS_POST_ID(postId))
   if (post.result) post.result = transformPostPostAPI(post.result)
   return post
 }
 
-function transformPostPostAPI(post: PostPostAPI): PostPostAPI {
+function transformPostPostAPI(post: NonNullable<ApiPosts>): ApiPosts {
   return {
     ...post,
     createdAt: new Date(post.createdAt),
     updatedAt: new Date(post.updatedAt),
-    segments: post.segments.map((segment) => {
-      const segmentTransformed: PostSegmentPostAPI = {
-        ...segment,
-        createdAt: new Date(segment.createdAt),
-        updatedAt: new Date(segment.updatedAt),
-        items: segment.items.map((item) => {
-          const itemTransformed: PostSegmentItemPostAPI = {
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-          }
-          return itemTransformed
-        }),
-      }
+    segments: post.segments.map((segment) => ({
+      ...segment,
+      createdAt: new Date(segment.createdAt),
+      updatedAt: new Date(segment.updatedAt),
+      items: segment.items.map((item) => ({
+        ...item,
+        createdAt: new Date(item.createdAt),
+        updatedAt: new Date(item.updatedAt),
+      })),
+    })),
+  }
+}
 
-      return segmentTransformed
-    }),
+// #########################################
+
   }
 }
