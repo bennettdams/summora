@@ -10,12 +10,6 @@ import { Page, PageSection } from '../../Page'
 import { usePost } from '../../../data/post-helper'
 import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
-import { PostSegmentCreate } from '../../../pages/api/post-segments'
-import {
-  PostPostAPI,
-  PostSegmentPostAPI,
-  PostUpdate,
-} from '../../../pages/api/posts/[postId]'
 import { Views } from '../../Likes'
 import { Comments } from '../../Comments'
 import { PostPageProps } from '../../../pages/post/[postId]'
@@ -25,13 +19,15 @@ import { useSearchTags } from '../../../data/use-search-tags'
 import { TagAPI } from '../../../pages/api/search-tags'
 import { Avatar } from '../../Avatar'
 
+type PostPostPage = PostPageProps['post']
+
 export function PostPage({
   post: postInitial,
   postCategories,
   tagsSorted,
   tagsSortedForCategory,
 }: PostPageProps): JSX.Element {
-  const [post, setPost] = useState<PostPageProps['post']>(postInitial)
+  const [post, setPost] = useState<PostPostPage>(postInitial)
   useEffect(() => setPost(postInitial), [postInitial])
 
   const { updatePost, createPostSegment, isLoading } = usePost(post.id, false)
@@ -43,10 +39,12 @@ export function PostPage({
   )
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
 
-  const [segments, setSegments] = useState<PostSegmentPostAPI[]>(post.segments)
+  const [segments, setSegments] = useState<PostPostPage['segments']>(
+    post.segments
+  )
   useEffect(() => setSegments(post.segments), [post.segments])
 
-  const [tags, setTags] = useState<PostPostAPI['tags']>(post.tags)
+  const [tags, setTags] = useState<PostPostPage['tags']>(post.tags)
   useEffect(() => setTags(post.tags), [post.tags])
 
   useOnClickOutside(refCategory, () => setShowCategoryDropdown(false))

@@ -10,7 +10,7 @@
     "start": "next start -p 3001",
     "prod": "yarn build && yarn start",
     "type-check": "tsc --pretty --noEmit",
-    "ts": "yarn type-check",
+    "tc": "yarn type-check",
     "p:dev": "npx prisma migrate dev --schema ./src/prisma/schema.prisma",
     "pd": "yarn p:dev",
     "p:create": "npx prisma migrate dev --create-only --schema ./src/prisma/schema.prisma",

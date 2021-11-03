@@ -5,12 +5,11 @@ import { PostPage } from '../../components/pages/post/PostPage'
 import { Prisma } from '@prisma/client'
 
 export interface PostPageProps {
-  post: Exclude<Prisma.PromiseReturnType<typeof findPost>, null>
+  post: Prisma.PromiseReturnType<typeof findPost>
   postCategories: PostCategory[]
-  tagsSorted: Exclude<Prisma.PromiseReturnType<typeof findTagsForPost>, null>
-  tagsSortedForCategory: Exclude<
-    Prisma.PromiseReturnType<typeof findTagsForPostByCategory>,
-    null
+  tagsSorted: Prisma.PromiseReturnType<typeof findTagsForPost>
+  tagsSortedForCategory: Prisma.PromiseReturnType<
+    typeof findTagsForPostByCategory
   >
 }
 
@@ -32,8 +31,11 @@ async function findTagsForPostByCategory(
   })
 }
 
+/**
+ * @throws if post is not found
+ */
 async function findPost(prisma: PrismaClient, postId: string) {
-  return await prisma.post.findUnique({
+  const post = await prisma.post.findUnique({
     where: { id: postId },
     include: {
       category: true,
@@ -45,6 +47,8 @@ async function findPost(prisma: PrismaClient, postId: string) {
       },
     },
   })
+  if (!post) throw new Error(`Post ${postId} not found.`)
+  return post
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -59,13 +63,22 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 const revalidateInSeconds = 10 * 60
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps<PostPageProps> = async ({
+  params,
+}) => {
   if (!params || typeof params.postId !== 'string') {
-    // res.statusCode = 404
-    return { props: { '404': null } }
+    // FIXME this is not really "not found", but rather a server error
+    return { notFound: true }
   } else {
-    const post = await findPost(prisma, params.postId)
-    if (!post) return { props: { '500': null } }
+    const postId = params.postId
+    let post
+
+    try {
+      post = await findPost(prisma, postId)
+    } catch (error) {
+      console.error(`Post ${postId} not found.`)
+      return { notFound: true }
+    }
 
     const postCategories = await prisma.postCategory.findMany()
 

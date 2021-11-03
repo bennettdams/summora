@@ -4,20 +4,24 @@ import { PostCategory, Prisma, PrismaClient } from '@prisma/client'
 import { PostsPage } from '../components/pages/posts/PostsPage'
 
 export interface PostsPageProps {
-  posts: Exclude<Prisma.PromiseReturnType<typeof findPosts>, null>
+  posts: Prisma.PromiseReturnType<typeof findPosts>
   postCategories: PostCategory[]
   noOfPostsCreatedLast24Hours: number
 }
 
 async function findPosts(prisma: PrismaClient) {
-  return await prisma.post.findMany({
-    take: 20,
-    include: {
-      author: true,
-      category: true,
-      segments: { orderBy: { createdAt: 'asc' } },
-    },
-  })
+  try {
+    return await prisma.post.findMany({
+      take: 20,
+      include: {
+        author: true,
+        category: true,
+        segments: { orderBy: { createdAt: 'asc' } },
+      },
+    })
+  } catch (error) {
+    throw new Error(`Error finding posts: ${error}`)
+  }
 }
 
 export const getStaticProps: GetStaticProps<PostsPageProps> = async () => {
