@@ -3,14 +3,11 @@ import { prisma } from '../../../prisma/prisma'
 import { Prisma } from '@prisma/client'
 import { logAPI } from '../../../util/logger'
 
-export type ApiPosts = Prisma.PromiseReturnType<typeof findPost>
-export type ApiPostsUpdate = Prisma.PromiseReturnType<typeof updatePost>
+export type ApiPost = Prisma.PromiseReturnType<typeof findPost>
+export type ApiPostUpdate = Prisma.PromiseReturnType<typeof updatePost>
 
-/**
- * @throws if post not found
- */
 async function findPost(postId: string) {
-  const post = await prisma.post.findUnique({
+  return await prisma.post.findUnique({
     where: { id: postId },
     include: {
       segments: {
@@ -22,10 +19,6 @@ async function findPost(postId: string) {
       tags: true,
     },
   })
-
-  if (!post) throw new Error(`Post ${postId} not found.`)
-
-  return post
 }
 
 async function updatePost({ postId, postToUpdate }: PostUpdate) {
@@ -86,17 +79,13 @@ export default async function _postsPostIDAPI(
   } else {
     switch (method) {
       case 'GET': {
-        let post
+        const post = await findPost(postId)
 
-        try {
-          post = await findPost(postId)
-        } catch (error) {
-          const message = `Post ${postId} not found.`
-          console.error(message)
-          res.status(404).json({ message })
+        if (!post) {
+          res.status(404).json({ message: `Post ${postId} not found.` })
+        } else {
+          res.status(200).json(post)
         }
-
-        res.status(200).json(post)
         break
       }
       case 'PUT': {

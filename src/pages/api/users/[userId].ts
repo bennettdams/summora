@@ -1,24 +1,21 @@
 import { Prisma } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
+import { logAPI } from '../../../util/logger'
 
 // export interface ProfileUpdate {
 //   profileId: string
 //   profileToUpdate: Prisma.ProfileUpdateInput
 // }
 
-export type ApiUsers = Prisma.PromiseReturnType<typeof findUser>
+export type ApiUser = Prisma.PromiseReturnType<typeof findUser>
 
 async function findUser(userId: string) {
-  try {
-    return await prisma.user.findUnique({
-      where: {
-        userId,
-      },
-    })
-  } catch (error) {
-    throw new Error(`Error while finding user: ${error}`)
-  }
+  return await prisma.user.findUnique({
+    where: {
+      userId,
+    },
+  })
 }
 
 // async function updateProfile({ profileId, profileToUpdate }: ProfileUpdate) {
@@ -50,13 +47,12 @@ export default async function _userAPI(
     query: { userId },
     method,
   } = req
-
-  console.log(`[API] ${_userAPI.name} | ${!userId ? 'no user ID' : userId}`)
+  logAPI('USERS_USER_ID', method, `${!userId ? 'no user ID' : userId}`)
 
   if (!userId) {
-    res.status(404).end('No user ID!')
+    res.status(500).end('No user ID!')
   } else if (typeof userId !== 'string') {
-    res.status(400).end('User ID wrong format!')
+    res.status(500).end('User ID wrong format!')
   } else {
     switch (method) {
       case 'GET': {

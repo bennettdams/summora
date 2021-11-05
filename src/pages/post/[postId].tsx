@@ -3,6 +3,7 @@ import { prisma } from '../../prisma/prisma'
 import { PostCategory, PrismaClient } from '.prisma/client'
 import { PostPage } from '../../components/pages/post/PostPage'
 import { Prisma } from '@prisma/client'
+import type { ParsedUrlQuery } from 'querystring'
 
 export interface PostPageProps {
   post: Prisma.PromiseReturnType<typeof findPost>
@@ -31,11 +32,8 @@ async function findTagsForPostByCategory(
   })
 }
 
-/**
- * @throws if post is not found
- */
 async function findPost(prisma: PrismaClient, postId: string) {
-  const post = await prisma.post.findUnique({
+  return await prisma.post.findUnique({
     where: { id: postId },
     include: {
       category: true,
@@ -47,8 +45,6 @@ async function findPost(prisma: PrismaClient, postId: string) {
       },
     },
   })
-  if (!post) throw new Error(`Post ${postId} not found.`)
-  return post
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -61,24 +57,21 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 }
 
+interface Params extends ParsedUrlQuery {
+  postId: string
+}
+
 const revalidateInSeconds = 10 * 60
 
-export const getStaticProps: GetStaticProps<PostPageProps> = async ({
+export const getStaticProps: GetStaticProps<PostPageProps, Params> = async ({
   params,
 }) => {
-  if (!params || typeof params.postId !== 'string') {
+  if (!params) {
     // FIXME this is not really "not found", but rather a server error
     return { notFound: true }
   } else {
     const postId = params.postId
-    let post
-
-    try {
-      post = await findPost(prisma, postId)
-    } catch (error) {
-      console.error(`Post ${postId} not found.`)
-      return { notFound: true }
-    }
+    const post = await findPost(prisma, postId)
 
     const postCategories = await prisma.postCategory.findMany()
 

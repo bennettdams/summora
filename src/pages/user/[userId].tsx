@@ -4,10 +4,8 @@ import type { ParsedUrlQuery } from 'querystring'
 import { UserPage } from '../../components/pages/UserPage'
 import { prisma } from '../../prisma/prisma'
 
-type User = Exclude<Prisma.PromiseReturnType<typeof findUserByUserId>, null>
-
 export interface UserPageProps {
-  user: User | null
+  user: Prisma.PromiseReturnType<typeof findUserByUserId>
 }
 
 interface Params extends ParsedUrlQuery {
@@ -41,7 +39,11 @@ export const getServerSideProps: GetServerSideProps<UserPageProps, Params> =
 
         const user = await findUserByUserId(prisma, userId)
 
-        return { props: { user } }
+        if (!user) {
+          return { notFound: true }
+        } else {
+          return { props: { user } }
+        }
       }
     }
   }

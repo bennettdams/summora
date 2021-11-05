@@ -4,10 +4,7 @@ import { Prisma } from '@prisma/client'
 import { prisma } from '../../../prisma/prisma'
 import { logAPI } from '../../../util/logger'
 
-export type PostPostsAPI = Exclude<
-  Prisma.PromiseReturnType<typeof findPosts>,
-  null
->[number]
+export type ApiPosts = Prisma.PromiseReturnType<typeof findPosts>
 
 async function findPosts() {
   try {

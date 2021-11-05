@@ -1,8 +1,9 @@
 import type { Prisma } from '@prisma/client'
 import { ApiAvatarsUpload } from '../pages/api/avatars/upload'
-import { ApiPosts } from '../pages/api/posts/[postId]'
+import { ApiPosts } from '../pages/api/posts'
+import { ApiPost } from '../pages/api/posts/[postId]'
 import { ApiUsersSignUp } from '../pages/api/users/signup'
-import { ApiUsers } from '../pages/api/users/[userId]'
+import { ApiUser } from '../pages/api/users/[userId]'
 import { get, HttpResponse, post, postFile } from '../util/http'
 
 export const ROUTES_API = {
@@ -54,21 +55,21 @@ export async function apiAvatarsUpload(
 
 export async function apiFetchUser(
   userId: string
-): Promise<HttpResponse<ApiUsers>> {
-  return await get<ApiUsers>(ROUTES_API.USERS_USER_ID(userId))
+): Promise<HttpResponse<ApiUser>> {
+  return await get<ApiUser>(ROUTES_API.USERS_USER_ID(userId))
 }
 
 // #########################################
 
 export async function apiFetchPost(
   postId: string
-): Promise<HttpResponse<ApiPosts>> {
-  const post = await get<ApiPosts>(ROUTES_API.POSTS_POST_ID(postId))
-  if (post.result) post.result = transformPostPostAPI(post.result)
-  return post
+): Promise<HttpResponse<ApiPost>> {
+  const response = await get<ApiPost>(ROUTES_API.POSTS_POST_ID(postId))
+  if (response.result) response.result = transformApiPost(response.result)
+  return response
 }
 
-function transformPostPostAPI(post: NonNullable<ApiPosts>): ApiPosts {
+function transformApiPost(post: NonNullable<ApiPost>): ApiPost {
   return {
     ...post,
     createdAt: new Date(post.createdAt),
@@ -84,6 +85,22 @@ function transformPostPostAPI(post: NonNullable<ApiPosts>): ApiPosts {
       })),
     })),
   }
+}
+
+// #########################################
+
+export async function apiFetchPosts(): Promise<HttpResponse<ApiPosts>> {
+  const response = await get<ApiPosts>(ROUTES_API.POSTS)
+  if (response.result) response.result = transformApiPosts(response.result)
+  return response
+}
+
+function transformApiPosts(posts: ApiPosts): ApiPosts {
+  return posts.map((post) => ({
+    ...post,
+    createdAt: new Date(post.createdAt),
+    updatedAt: new Date(post.updatedAt),
+  }))
 }
 
 // #########################################
