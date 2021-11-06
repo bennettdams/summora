@@ -1,22 +1,19 @@
-import { Prisma } from '@prisma/client'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { PostSegmentCreate } from '../pages/api/post-segments'
 import { PostSegmentItemCreate } from '../pages/api/post-segment-items'
 import { PostSegmentItemUpdate } from '../pages/api/post-segment-items/[postSegmentItemId]'
 import { PostSegmentUpdate } from '../pages/api/post-segments/[postSegmentId]'
-import { PostPostsAPI } from '../pages/api/posts'
-import {
-  PostPostAPI,
-  PostSegmentItemPostAPI,
-  PostSegmentPostAPI,
-  PostUpdate,
-} from '../pages/api/posts/[postId]'
-import { apiFetchPost } from '../services/api-service'
+import { apiFetchPost, apiUpdatePost } from '../services/api-service'
+import { ApiPost } from '../pages/api/posts/[postId]'
 
-const urlPost = '/api/posts'
+// const urlPost = '/api/posts'
 const urlPostSegmentItem = '/api/post-segment-items'
 const urlPostSegment = '/api/post-segments'
-export const queryKeyPosts = 'posts'
+const queryKeyPostBase = 'post'
+
+function createQueryKey(postId: string) {
+  return [queryKeyPostBase, postId]
+}
 
 // function usePostsMutation() {
 //   const queryClient = useQueryClient()
@@ -34,32 +31,32 @@ function usePostMutation(postId: string) {
   const queryClient = useQueryClient()
 
   const createPostSegmentItemMutation = useMutation(createPostSegmentItem, {
-    onSuccess: (data: PostPostAPI) => {
-      queryClient.setQueryData([queryKeyPosts, postId], data)
+    onSuccess: (data: ApiPost) => {
+      queryClient.setQueryData(createQueryKey(postId), data)
     },
   })
 
   const createPostSegmentMutation = useMutation(createPostSegment, {
-    onSuccess: (data: PostPostAPI) => {
-      queryClient.setQueryData([queryKeyPosts, postId], data)
+    onSuccess: (data: ApiPost) => {
+      queryClient.setQueryData(createQueryKey(postId), data)
     },
   })
 
-  const updatePostMutation = useMutation(updatePost, {
-    onSuccess: (data: PostPostAPI) => {
-      queryClient.setQueryData([queryKeyPosts, postId], data)
+  const updatePostMutation = useMutation(apiUpdatePost, {
+    onSuccess: (data) => {
+      queryClient.setQueryData(createQueryKey(postId), data)
     },
   })
 
   const updatePostSegmentMutation = useMutation(updatePostSegment, {
-    onSuccess: (data: PostPostAPI) => {
-      queryClient.setQueryData([queryKeyPosts, postId], data)
+    onSuccess: (data: ApiPost) => {
+      queryClient.setQueryData(createQueryKey(postId), data)
     },
   })
 
   const updatePostSegmentItemMutation = useMutation(updatePostSegmentItem, {
-    onSuccess: (data: PostPostAPI) => {
-      queryClient.setQueryData([queryKeyPosts, postId], data)
+    onSuccess: (data: ApiPost) => {
+      queryClient.setQueryData(createQueryKey(postId), data)
     },
   })
 
@@ -88,8 +85,8 @@ function usePostMutation(postId: string) {
 // }
 
 export function usePost(postId: string, enabled = true) {
-  const { data, isLoading, isError } = useQuery<PostPostAPI | null>(
-    [queryKeyPosts, postId],
+  const { data, isLoading, isError } = useQuery<ApiPost | null>(
+    createQueryKey(postId),
     async () => (await apiFetchPost(postId)).result ?? null,
     { enabled }
   )
@@ -126,38 +123,21 @@ export function usePost(postId: string, enabled = true) {
   }
 }
 
-// async function fetchPosts(): Promise<PostPostsAPI[]> {
-//   const response = await fetch(`${urlPost}`, {
-//     method: 'GET',
+// async function createPost(post: Prisma.PostCreateInput): Promise<PostPostsAPI> {
+//   const response = await fetch(urlPost, {
+//     method: 'POST',
+//     body: JSON.stringify(post),
 //   })
 
 //   if (!response.ok) {
 //     throw new Error(response.statusText)
 //   }
 
-//   const postsJSON = await response.json()
-//   const posts: PostPostsAPI[] = postsJSON.map((postJSON: PostPostsAPI) =>
-//     transformPostPostsAPI(postJSON)
-//   )
+//   const postJSON: PostPostsAPI = await response.json()
+//   const postCreated: PostPostsAPI = transformPostPostsAPI(postJSON)
 
-//   return posts
+//   return postCreated
 // }
-
-async function createPost(post: Prisma.PostCreateInput): Promise<PostPostsAPI> {
-  const response = await fetch(urlPost, {
-    method: 'POST',
-    body: JSON.stringify(post),
-  })
-
-  if (!response.ok) {
-    throw new Error(response.statusText)
-  }
-
-  const postJSON: PostPostsAPI = await response.json()
-  const postCreated: PostPostsAPI = transformPostPostsAPI(postJSON)
-
-  return postCreated
-}
 
 async function updatePostSegmentItem({
   postId,
@@ -185,38 +165,6 @@ async function updatePostSegmentItem({
       body: JSON.stringify(body),
     }
   )
-
-  if (!response.ok) {
-    throw new Error(response.statusText)
-  }
-
-  const postJSON: PostPostAPI = await response.json()
-  const postUpdated: PostPostAPI = transformPostPostAPI(postJSON)
-
-  return postUpdated
-}
-
-async function updatePost({
-  postId,
-  postToUpdate,
-}: PostUpdate): Promise<PostPostAPI> {
-  if (!postId) throw new Error('Cannot update post, no post ID!')
-
-  const body: PostUpdate = {
-    postId,
-    postToUpdate: {
-      id: postId,
-      title: postToUpdate.title,
-      subtitle: postToUpdate.subtitle,
-      categoryId: postToUpdate.categoryId,
-      tagIds: postToUpdate.tagIds,
-    },
-  }
-
-  const response = await fetch(`${urlPost}/${postId}`, {
-    method: 'PUT',
-    body: JSON.stringify(body),
-  })
 
   if (!response.ok) {
     throw new Error(response.statusText)
@@ -314,37 +262,4 @@ async function createPostSegment({
   const postUpdated: PostPostAPI = transformPostPostAPI(postJSON)
 
   return postUpdated
-}
-
-function transformPostPostAPI(post: PostPostAPI): PostPostAPI {
-  return {
-    ...post,
-    createdAt: new Date(post.createdAt),
-    updatedAt: new Date(post.updatedAt),
-    segments: post.segments.map((segment) => {
-      const segmentTransformed: PostSegmentPostAPI = {
-        ...segment,
-        createdAt: new Date(segment.createdAt),
-        updatedAt: new Date(segment.updatedAt),
-        items: segment.items.map((item) => {
-          const itemTransformed: PostSegmentItemPostAPI = {
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-          }
-          return itemTransformed
-        }),
-      }
-
-      return segmentTransformed
-    }),
-  }
-}
-
-function transformPostPostsAPI(post: PostPostsAPI): PostPostsAPI {
-  return {
-    ...post,
-    createdAt: new Date(post.createdAt),
-    updatedAt: new Date(post.updatedAt),
-  }
 }
