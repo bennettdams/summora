@@ -105,22 +105,24 @@ function transformApiPosts(posts: ApiPosts): ApiPosts {
 
 // #########################################
 
-export type ApiPostUpdateRequestBody = {
-  postId: string
-  postToUpdate: Prisma.PostUpdateInput & {
-    categoryId?: string
-    tagIds?: string[]
-  }
+export type ApiPostUpdateRequestBody = Prisma.PostUpdateInput & {
+  categoryId?: string
+  tagIds?: string[]
 }
 
 export async function apiUpdatePost({
   postId,
   postToUpdate,
-}: ApiPostUpdateRequestBody): Promise<HttpResponse<ApiPostUpdate>> {
-  const response = await put<ApiPostUpdate>(ROUTES_API.POST(postId), {
-    postId,
-    postToUpdate,
-  })
+}: {
+  postId: string
+  postToUpdate: ApiPostUpdateRequestBody
+}): Promise<HttpResponse<ApiPostUpdate>> {
+  const response = await put<ApiPostUpdate>(
+    ROUTES_API.POST(postId),
+    postToUpdate
+  )
   if (response.result) response.result = transformApiPost(response.result)
   return response
 }
+
+// #########################################

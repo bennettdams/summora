@@ -21,7 +21,7 @@ export default async function _userAPI(
     query: { userId },
     method,
   } = req
-  logAPI('USERS_USER_ID', method, `${!userId ? 'no user ID' : userId}`)
+  logAPI('USER', method, `${!userId ? 'no user ID' : userId}`)
 
   if (!userId) {
     res.status(500).end('No user ID!')

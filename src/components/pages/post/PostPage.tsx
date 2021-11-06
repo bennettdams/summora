@@ -86,26 +86,27 @@ export function PostPage({
   async function handleOnCategorySelect(newCategory: DropdownItem) {
     setShowCategoryDropdown(false)
 
-    const postNew = await updatePost({
-      postId: post.id,
-      postToUpdate: {
-        title: post.title,
-        subtitle: post.subtitle,
-        categoryId: newCategory.id,
-        tagIds: tags.map((tag) => tag.id),
-      },
-    })
+    const postToUpdate: ApiPostUpdateRequestBody = {
+      categoryId: newCategory.id,
+    }
 
-    setPost(postNew)
+    setPost((prePost) => ({ ...prePost, categoryId: newCategory.id }))
+
+    await updatePost({
+      postId: post.id,
+      postToUpdate,
+    })
   }
 
   async function handleUpdateTitle(inputValue: string): Promise<void> {
     if (inputValue) {
-      const postToUpdate: ApiPostUpdateRequestBody['postToUpdate'] = {
+      const postToUpdate: ApiPostUpdateRequestBody = {
         title: inputValue,
       }
 
       setPost((prePost) => ({ ...prePost, title: inputValue }))
+
+      setIsTitleEditable(false)
 
       await updatePost({
         postId: post.id,
@@ -117,24 +118,19 @@ export function PostPage({
   }
 
   async function handleUpdateSubitle(inputValue: string): Promise<void> {
-    const postToUpdate: PostUpdate['postToUpdate'] = {
-      title: post.title,
-      subtitle: inputValue,
-      categoryId: post.category.id,
-      tagIds: tags.map((tag) => tag.id),
-    }
+    if (inputValue) {
+      const postToUpdate: ApiPostUpdateRequestBody = {
+        subtitle: inputValue,
+      }
 
-    const subtitle = postToUpdate.subtitle
-    if (typeof subtitle === 'string') {
-      setPost((prePost) => ({ ...prePost, subtitle }))
+      setPost((prePost) => ({ ...prePost, subtitle: inputValue }))
+      setIsTitleEditable(false)
 
       await updatePost({
         postId: post.id,
         postToUpdate,
       })
     }
-
-    setIsTitleEditable(false)
   }
 
   async function handleRemoveTag(tagToRemove: TagAPI): Promise<void> {
@@ -142,20 +138,19 @@ export function PostPage({
       (tag) => tag.id !== tagToRemove.id
     )
 
-    const postToUpdate: PostUpdate['postToUpdate'] = {
-      title: post.title,
-      subtitle: post.subtitle,
-      categoryId: post.category.id,
+    const postToUpdate: ApiPostUpdateRequestBody = {
       tagIds: tagsNew.map((tag) => tag.id),
     }
+
+    // needed?
     setTags(tagsNew)
 
-    const postUpdated = await updatePost({
+    setPost((prePost) => ({ ...prePost, tags: tagsNew }))
+
+    await updatePost({
       postId: post.id,
       postToUpdate,
     })
-
-    setPost(postUpdated)
   }
 
   const formId = 'formPost'
@@ -169,20 +164,19 @@ export function PostPage({
     if (!alreadyIncluded) {
       const tagsNew: PostTag[] = [...post.tags, tagToAdd]
 
-      const postToUpdate: PostUpdate['postToUpdate'] = {
-        title: post.title,
-        subtitle: post.subtitle,
-        categoryId: post.category.id,
+      const postToUpdate: ApiPostUpdateRequestBody = {
         tagIds: tagsNew.map((tag) => tag.id),
       }
+
+      // needed?
       setTags(tagsNew)
 
-      const postUpdated = await updatePost({
+      setPost((prePost) => ({ ...prePost, tags: tagsNew }))
+
+      await updatePost({
         postId: post.id,
         postToUpdate,
       })
-
-      setPost(postUpdated)
     }
   }
 
@@ -229,7 +223,7 @@ export function PostPage({
               </div>
             ) : (
               <>
-                <p className="text-5xl text-white">
+                <p className="text-5xl text-lime-600">
                   {isHovered && (
                     <span className="mr-10">
                       <IconEdit className="inline" />

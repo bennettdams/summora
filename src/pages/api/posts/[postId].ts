@@ -22,7 +22,10 @@ async function findPost(postId: string) {
   })
 }
 
-async function updatePost({ postId, postToUpdate }: ApiPostUpdateRequestBody) {
+async function updatePost(
+  postId: string,
+  postToUpdate: ApiPostUpdateRequestBody
+) {
   const now = new Date()
 
   try {
@@ -70,12 +73,12 @@ export default async function _postAPI(
     method,
   } = req
 
-  logAPI('POSTS_POST_ID', method, `Post ID: ${postId}`)
+  logAPI('POST', method, `Post ID: ${postId}`)
 
   if (!postId) {
-    res.status(404).end('No post ID!')
+    res.status(500).end('No post ID!')
   } else if (typeof postId !== 'string') {
-    res.status(400).end('Post ID wrong format!')
+    res.status(500).end('Post ID wrong format!')
   } else {
     switch (method) {
       case 'GET': {
@@ -90,18 +93,14 @@ export default async function _postAPI(
       }
       case 'PUT': {
         // TODO parse needed?
-        const { postId, postToUpdate }: ApiPostUpdateRequestBody = requestBody
+        const postToUpdate: ApiPostUpdateRequestBody = requestBody
 
-        if (!postId) {
-          res.status(500).json({ message: 'No post ID!' })
-        } else {
-          const postUpdated: ApiPostUpdate = await updatePost({
-            postId,
-            postToUpdate,
-          })
+        const postUpdated: ApiPostUpdate = await updatePost(
+          postId,
+          postToUpdate
+        )
 
-          res.status(200).json(postUpdated)
-        }
+        res.status(200).json(postUpdated)
         break
       }
       default: {
