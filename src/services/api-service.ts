@@ -8,10 +8,10 @@ import { get, HttpResponse, post, postFile, put } from '../util/http'
 
 export const ROUTES_API = {
   USERS_SIGN_UP: 'users/signup',
-  USERS_USER_ID: (userId: string) => `users/${userId}`,
+  USER: (userId: string) => `users/${userId}`,
   AVATARS_UPLOAD: 'avatars/upload',
   POSTS: 'posts',
-  POSTS_POST_ID: (postId: string) => `posts/${postId}`,
+  POST: (postId: string) => `posts/${postId}`,
   SEARCH_TAGS: 'search-tags',
   POST_SEGMENTS: 'post-segments',
   POST_SEGMENTS_POST_SEGMENT_ID: 'post-segments/:postSegmentId',
@@ -56,7 +56,7 @@ export async function apiAvatarsUpload(
 export async function apiFetchUser(
   userId: string
 ): Promise<HttpResponse<ApiUser>> {
-  return await get<ApiUser>(ROUTES_API.USERS_USER_ID(userId))
+  return await get<ApiUser>(ROUTES_API.USER(userId))
 }
 
 // #########################################
@@ -64,7 +64,7 @@ export async function apiFetchUser(
 export async function apiFetchPost(
   postId: string
 ): Promise<HttpResponse<ApiPost>> {
-  const response = await get<ApiPost>(ROUTES_API.POSTS_POST_ID(postId))
+  const response = await get<ApiPost>(ROUTES_API.POST(postId))
   if (response.result) response.result = transformApiPost(response.result)
   return response
 }
@@ -117,7 +117,7 @@ export async function apiUpdatePost({
   postId,
   postToUpdate,
 }: ApiPostUpdateRequestBody): Promise<HttpResponse<ApiPostUpdate>> {
-  const response = await put<ApiPostUpdate>(ROUTES_API.POSTS_POST_ID(postId), {
+  const response = await put<ApiPostUpdate>(ROUTES_API.POST(postId), {
     postId,
     postToUpdate,
   })

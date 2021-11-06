@@ -105,7 +105,7 @@ function PostItem({
               return (
                 <div
                   key={segment.id}
-                  className="flex-none grid place-items-center w-60 h-32 bg-blue-100"
+                  className="flex-none grid place-items-center w-60 h-32 bg-blue-100 rounded-lg"
                 >
                   {segment.title}
                 </div>
