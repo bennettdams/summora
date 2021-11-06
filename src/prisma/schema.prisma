@@ -86,7 +86,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   username  String   @unique
-  avatarURL String?
+  hasAvatar Boolean  @default(false)
   // posts
   posts Post[]
 }

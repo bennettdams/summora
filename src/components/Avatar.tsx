@@ -41,9 +41,11 @@ export function Avatar({
   userId,
   size = 'medium',
   isEditable = false,
+  hasUserAvatar = false,
 }: {
   userId: string
   size: AvatarSize
+  hasUserAvatar: boolean
   isEditable?: boolean
 }): JSX.Element {
   const [sizePixels] = useState(SIZES[size])
@@ -67,8 +69,10 @@ export function Avatar({
       }
     }
 
-    downloadAvatarImage(userId)
-  }, [userId, downloadAvatar])
+    if (hasUserAvatar) {
+      downloadAvatarImage(userId)
+    }
+  }, [userId, downloadAvatar, hasUserAvatar])
 
   return (
     <div className="relative grid place-items-center">
@@ -80,7 +84,9 @@ export function Avatar({
         </div>
       )}
 
-      {avatarObjectUrl ? (
+      {!hasUserAvatar || !avatarObjectUrl ? (
+        <AvatarPlaceholder size={size} />
+      ) : (
         <Image
           src={avatarObjectUrl}
           alt="Avatar"
@@ -88,8 +94,6 @@ export function Avatar({
           width={sizePixels}
           height={sizePixels}
         />
-      ) : (
-        <AvatarPlaceholder size={size} />
       )}
     </div>
   )

@@ -21,7 +21,12 @@ export function UserPage({ user }: UserPageProps): JSX.Element {
                   <p>Updated at {new Date(user.updatedAt).toISOString()}</p>
                 </div>
                 <div>
-                  <Avatar isEditable userId={user.userId} size="large" />
+                  <Avatar
+                    hasUserAvatar={user?.hasAvatar ?? false}
+                    isEditable
+                    userId={user.userId}
+                    size="large"
+                  />
                 </div>
               </div>
             </Box>
@@ -34,19 +39,31 @@ export function UserPage({ user }: UserPageProps): JSX.Element {
               <div className="grid auto-rows-min grid-cols-3 text-center">
                 <div className="col-start-1">
                   <div className="h-full grid place-items-center">
-                    <Avatar userId={user.userId} size="small" />
+                    <Avatar
+                      hasUserAvatar={user?.hasAvatar ?? false}
+                      userId={user.userId}
+                      size="small"
+                    />
                   </div>
                   <p>Small</p>
                 </div>
                 <div className="col-start-2">
                   <div className="h-full grid place-items-center">
-                    <Avatar userId={user.userId} size="medium" />
+                    <Avatar
+                      hasUserAvatar={user?.hasAvatar ?? false}
+                      userId={user.userId}
+                      size="medium"
+                    />
                   </div>
                   <p>Medium</p>
                 </div>
                 <div className="col-start-3">
                   <div className="h-full grid place-items-center">
-                    <Avatar userId={user.userId} size="large" />
+                    <Avatar
+                      hasUserAvatar={user?.hasAvatar ?? false}
+                      userId={user.userId}
+                      size="large"
+                    />
                   </div>
                   <p>Large</p>
                 </div>

@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
 import { Prisma } from '@prisma/client'
 import { logAPI } from '../../../util/logger'
+import { ApiPostUpdateRequestBody } from '../../../services/api-service'
 
 export type ApiPost = Prisma.PromiseReturnType<typeof findPost>
 export type ApiPostUpdate = Prisma.PromiseReturnType<typeof updatePost>
@@ -21,11 +22,8 @@ async function findPost(postId: string) {
   })
 }
 
-async function updatePost({ postId, postToUpdate }: PostUpdate) {
+async function updatePost({ postId, postToUpdate }: ApiPostUpdateRequestBody) {
   const now = new Date()
-
-  if (typeof postId !== 'string')
-    throw new Error('Post ID is missing/in the wrong format!')
 
   try {
     return await prisma.post.update({
@@ -46,9 +44,7 @@ async function updatePost({ postId, postToUpdate }: PostUpdate) {
       include: {
         segments: {
           orderBy: { createdAt: 'asc' },
-          include: {
-            items: { orderBy: { createdAt: 'asc' } },
-          },
+          include: { items: { orderBy: { createdAt: 'asc' } } },
         },
         author: true,
         category: true,
@@ -92,9 +88,9 @@ export default async function _postsPostIDAPI(
         const { postId, postToUpdate }: PostUpdate = JSON.parse(requestBody)
 
         if (!postId) {
-          res.status(404).end('No post ID!')
+          res.status(500).json({ message: 'No post ID!' })
         } else {
-          const postUpdated = await updatePost({
+          const postUpdated: ApiPostUpdate = await updatePost({
             postId,
             postToUpdate,
           })

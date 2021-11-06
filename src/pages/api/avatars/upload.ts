@@ -102,12 +102,13 @@ export default async function _avatarsUploadAPI(
           // TODO convert png etc.
           await uploadAvatarSupabase(`${userId}.jpg`, fileParsed, req)
 
+          await prisma.user.update({
+            where: { userId },
+            data: { hasAvatar: true },
+          })
+
           console.log(`[API] uploaded avatar for user ${userId}`)
 
-          /*
-           * Using explicit type to make sure we're returning what we've promised in
-           * the API function (that called this API endpoint).
-           */
           return res
             .status(200)
             .json({ message: `Uploaded avatar for user ${userId}` })

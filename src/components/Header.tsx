@@ -1,5 +1,3 @@
-import { useQueryClient } from 'react-query'
-import { queryKeyPosts } from '../data/post-helper'
 import { useAuth } from '../services/auth-service'
 import { useRouteChange } from '../util/use-route-change'
 import { Avatar } from './Avatar'
@@ -8,7 +6,6 @@ import { Link } from './Link'
 import { LoadingAnimation } from './LoadingAnimation'
 
 export function Header(): JSX.Element {
-  const queryClient = useQueryClient()
   const isLoading = useRouteChange()
   const { userAuth, user, isLoading: isLoadingAuth, signOut } = useAuth()
 
@@ -32,7 +29,11 @@ export function Header(): JSX.Element {
           <Link to={`/user/${userAuth.id}`}>
             <div className="flex flex-row items-center space-x-2">
               <p>{user?.username}</p>
-              <Avatar userId={userAuth.id} size="small" />
+              <Avatar
+                hasUserAvatar={user?.hasAvatar ?? false}
+                userId={userAuth.id}
+                size="small"
+              />
             </div>
           </Link>
         )}
