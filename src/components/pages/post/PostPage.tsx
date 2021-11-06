@@ -246,7 +246,11 @@ export function PostPage({
             <Box smallPadding>
               <div className="flex divide-gray-400 divide-x">
                 <div className="flex-1 flex flex-col items-center justify-center">
-                  <Avatar size="medium" userId={post.authorId} />
+                  <Avatar
+                    hasUserAvatar={post.author.hasAvatar ?? false}
+                    size="medium"
+                    userId={post.authorId}
+                  />
 
                   <div className="w-12 h-1 my-2 bg-indigo-500 rounded"></div>
 
