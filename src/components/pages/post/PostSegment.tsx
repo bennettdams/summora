@@ -166,7 +166,6 @@ export function PostSegment({
             <PostSegmentItem
               itemExternal={item}
               postId={postId}
-              segmentId={segment.id}
               index={index}
             />
           </div>

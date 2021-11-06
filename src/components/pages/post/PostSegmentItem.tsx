@@ -6,24 +6,25 @@ import { LoadingAnimation } from '../../LoadingAnimation'
 import { usePost } from '../../../data/post-helper'
 import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
-import { PostSegmentItemUpdate } from '../../../pages/api/post-segment-items/[postSegmentItemId]'
-import { PostSegmentItemPostAPI } from '../../../pages/api/posts/[postId]'
+import { PostPageProps } from '../../../pages/post/[postId]'
+import { ApiPostSegmentItemUpdateRequestBody } from '../../../services/api-service'
+
+type PostSegmentItem =
+  PostPageProps['post']['segments'][number]['items'][number]
 
 export function PostSegmentItem({
   itemExternal,
   index,
   postId,
-  segmentId,
 }: {
-  itemExternal: PostSegmentItemPostAPI
+  itemExternal: PostSegmentItem
   index: number
   postId: string
-  segmentId: string
 }): JSX.Element {
   const { updatePostSegmentItem, isLoading } = usePost(postId, false)
   const [ref, isHovered] = useHover<HTMLDivElement>()
 
-  const [item, setItem] = useState<PostSegmentItemPostAPI>(itemExternal)
+  const [item, setItem] = useState<PostSegmentItem>(itemExternal)
   useEffect(() => setItem(itemExternal), [itemExternal])
 
   const [isEditable, setIsEditable] = useState(false)
@@ -32,23 +33,19 @@ export function PostSegmentItem({
   useOnClickOutside(refEdit, () => setIsEditable(false))
 
   async function handleUpdate(inputValue: string): Promise<void> {
-    const postSegmentItemToUpdate: PostSegmentItemUpdate['postSegmentItemToUpdate'] =
-      {
-        ...item,
+    if (inputValue) {
+      const postSegmentItemToUpdate: ApiPostSegmentItemUpdateRequestBody = {
         content: inputValue,
       }
 
-    const content = postSegmentItemToUpdate.content
-    if (typeof content === 'string') {
-      setItem((prevItem) => ({ ...prevItem, content }))
+      setItem((preItem) => ({ ...preItem, content: inputValue }))
+      setIsEditable(false)
 
       await updatePostSegmentItem({
-        postId,
-        postSegmentId: segmentId,
+        postSegmentItemId: item.id,
         postSegmentItemToUpdate,
       })
     }
-    setIsEditable(false)
   }
 
   const formId = `post-segment-item-${item.id}`

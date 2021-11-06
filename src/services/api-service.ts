@@ -1,5 +1,6 @@
 import type { Prisma } from '@prisma/client'
 import { ApiAvatarsUpload } from '../pages/api/avatars/upload'
+import { ApiPostSegmentItemUpdate } from '../pages/api/post-segment-items/[postSegmentItemId]'
 import { ApiPostSegmentUpdate } from '../pages/api/post-segments/[postSegmentId]'
 import { ApiPosts } from '../pages/api/posts'
 import { ApiPost, ApiPostUpdate } from '../pages/api/posts/[postId]'
@@ -17,8 +18,8 @@ export const ROUTES_API = {
   POST_SEGMENTS: 'post-segments',
   POST_SEGMENT: (postSegmentId: string) => `post-segments/${postSegmentId}`,
   POST_SEGMENT_ITEMS: 'post-segment-items',
-  POST_SEGMENT_ITEMS_POST_SEGMENT_ITEM_ID:
-    'post-segment-items/:postSegmentItemId',
+  POST_SEGMENT_ITEM: (postSegmentItemId: string) =>
+    `post-segment-items/${postSegmentItemId}`,
 } as const
 
 // #########################################
@@ -158,6 +159,37 @@ function transformApiPostSegment(
       createdAt: new Date(item.createdAt),
       updatedAt: new Date(item.updatedAt),
     })),
+  }
+}
+
+// #########################################
+
+export type ApiPostSegmentItemUpdateRequestBody =
+  Prisma.PostSegmentItemUpdateInput
+
+export async function apiUpdatePostSegmentItem({
+  postSegmentItemId,
+  postSegmentItemToUpdate,
+}: {
+  postSegmentItemId: string
+  postSegmentItemToUpdate: ApiPostSegmentItemUpdateRequestBody
+}): Promise<HttpResponse<ApiPostSegmentItemUpdate>> {
+  const response = await put<ApiPostSegmentItemUpdate>(
+    ROUTES_API.POST_SEGMENT_ITEM(postSegmentItemId),
+    postSegmentItemToUpdate
+  )
+  if (response.result)
+    response.result = transformApiPostSegmentItem(response.result)
+  return response
+}
+
+function transformApiPostSegmentItem(
+  postSegmentItem: NonNullable<ApiPostSegmentItemUpdate>
+): NonNullable<ApiPostSegmentItemUpdate> {
+  return {
+    ...postSegmentItem,
+    createdAt: new Date(postSegmentItem.createdAt),
+    updatedAt: new Date(postSegmentItem.updatedAt),
   }
 }
 

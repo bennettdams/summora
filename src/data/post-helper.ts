@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { PostSegmentCreate } from '../pages/api/post-segments'
 import { PostSegmentItemCreate } from '../pages/api/post-segment-items'
-import { PostSegmentItemUpdate } from '../pages/api/post-segment-items/[postSegmentItemId]'
 import {
   apiFetchPost,
   apiUpdatePost,
   apiUpdatePostSegment,
+  apiUpdatePostSegmentItem,
 } from '../services/api-service'
 import { ApiPost } from '../pages/api/posts/[postId]'
 
@@ -89,9 +89,28 @@ function usePostMutation(postId: string) {
     },
   })
 
-  const updatePostSegmentItemMutation = useMutation(updatePostSegmentItem, {
-    onSuccess: (data: ApiPost) => {
-      queryClient.setQueryData(createQueryKey(postId), data)
+  const updatePostSegmentItemMutation = useMutation(apiUpdatePostSegmentItem, {
+    onSuccess: (data) => {
+      if (data.result) {
+        const newItem = data.result
+        setQueryData((prevData) =>
+          !prevData
+            ? null
+            : {
+                ...prevData,
+                segments: prevData.segments.map((segment) =>
+                  segment.id !== newItem.postSegmentId
+                    ? segment
+                    : {
+                        ...segment,
+                        items: segment.items.map((item) =>
+                          item.id === newItem.id ? newItem : item
+                        ),
+                      }
+                ),
+              }
+        )
+      }
     },
   })
 
@@ -173,43 +192,6 @@ export function usePost(postId: string, enabled = true) {
 
 //   return postCreated
 // }
-
-async function updatePostSegmentItem({
-  postId,
-  postSegmentId,
-  postSegmentItemToUpdate,
-}: PostSegmentItemUpdate): Promise<PostPostAPI> {
-  if (!postId || !postSegmentId || !postSegmentItemToUpdate.id)
-    throw new Error(
-      'Cannot update post segment item, no post ID / post segment ID / post segment item ID!'
-    )
-
-  const body: PostSegmentItemUpdate = {
-    postId,
-    postSegmentId,
-    postSegmentItemToUpdate: {
-      id: postSegmentItemToUpdate.id,
-      content: postSegmentItemToUpdate.content,
-    },
-  }
-
-  const response = await fetch(
-    `${urlPostSegmentItem}/${postSegmentItemToUpdate.id}`,
-    {
-      method: 'PUT',
-      body: JSON.stringify(body),
-    }
-  )
-
-  if (!response.ok) {
-    throw new Error(response.statusText)
-  }
-
-  const postJSON: PostPostAPI = await response.json()
-  const postUpdated: PostPostAPI = transformPostPostAPI(postJSON)
-
-  return postUpdated
-}
 
 async function createPostSegmentItem({
   postId,
