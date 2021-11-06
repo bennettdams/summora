@@ -50,7 +50,7 @@ export default async function _usersSignUpAPI(
           const { user, error } = await signUp(email, password)
           if (error) {
             console.error('[API] Error while sign up (Supabase):', error)
-            return res.status(401).json({ error })
+            return res.status(500).json({ error })
           } else if (user) {
             const userId = user.id
             let userCreated
@@ -80,7 +80,7 @@ export default async function _usersSignUpAPI(
         }
       } catch (error) {
         console.error('[API] Error while sign up:', error)
-        return res.status(401).json({ error })
+        return res.status(500).json({ error })
       }
       break
     }

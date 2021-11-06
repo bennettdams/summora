@@ -5,10 +5,12 @@ import { IconCheck, IconX, IconEdit } from '../../Icon'
 import { usePost } from '../../../data/post-helper'
 import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
-import { PostSegmentItemCreate } from '../../../pages/api/post-segment-items'
 import { PostSegmentItem } from './PostSegmentItem'
 import { PostPageProps } from '../../../pages/post/[postId]'
-import { ApiPostSegmentUpdateRequestBody } from '../../../services/api-service'
+import {
+  ApiPostSegmentItemCreateRequestBody,
+  ApiPostSegmentUpdateRequestBody,
+} from '../../../services/api-service'
 
 type PostSegment = PostPageProps['post']['segments'][number]
 type PostSegmentItem =
@@ -86,7 +88,7 @@ export function PostSegment({
   }
 
   async function handleCreate(inputValue: string): Promise<void> {
-    const postSegmentItemToCreate: PostSegmentItemCreate['postSegmentItemToCreate'] =
+    const postSegmentItemToCreate: ApiPostSegmentItemCreateRequestBody['postSegmentItemToCreate'] =
       {
         content: inputValue,
       }
@@ -102,7 +104,6 @@ export function PostSegment({
     ])
 
     await createPostSegmentItem({
-      postId,
       postSegmentId: segment.id,
       postSegmentItemToCreate,
     })

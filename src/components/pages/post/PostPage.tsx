@@ -1,4 +1,3 @@
-import { PostTag } from '@prisma/client'
 import { useState, useEffect, useRef } from 'react'
 import { Box } from '../../Box'
 import { Button, ButtonAdd } from '../../Button'
@@ -16,7 +15,6 @@ import { PostPageProps } from '../../../pages/post/[postId]'
 import { PostSegment } from './PostSegment'
 import { Tag } from './Tag'
 import { useSearchTags } from '../../../data/use-search-tags'
-import { TagAPI } from '../../../pages/api/search-tags'
 import { Avatar } from '../../Avatar'
 import {
   ApiPostSegmentCreateRequestBody,
@@ -24,6 +22,8 @@ import {
 } from '../../../services/api-service'
 
 type PostPostPage = PostPageProps['post']
+type SegmentPostPage = PostPostPage['segments'][number]
+type TagPostPage = PostPostPage['tags'][number]
 
 export function PostPage({
   post: postInitial,
@@ -43,12 +43,10 @@ export function PostPage({
   )
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
 
-  const [segments, setSegments] = useState<PostPostPage['segments']>(
-    post.segments
-  )
+  const [segments, setSegments] = useState<SegmentPostPage[]>(post.segments)
   useEffect(() => setSegments(post.segments), [post.segments])
 
-  const [tags, setTags] = useState<PostPostPage['tags']>(post.tags)
+  const [tags, setTags] = useState<TagPostPage[]>(post.tags)
   useEffect(() => setTags(post.tags), [post.tags])
 
   useOnClickOutside(refCategory, () => setShowCategoryDropdown(false))
@@ -135,8 +133,8 @@ export function PostPage({
     }
   }
 
-  async function handleRemoveTag(tagToRemove: TagAPI): Promise<void> {
-    const tagsNew: PostTag[] = post.tags.filter(
+  async function handleRemoveTag(tagToRemove: TagPostPage): Promise<void> {
+    const tagsNew: TagPostPage[] = post.tags.filter(
       (tag) => tag.id !== tagToRemove.id
     )
 
@@ -160,11 +158,11 @@ export function PostPage({
   const [inputTagSearch, setInputTagSearch] = useState('')
   const { tagsSearched, isFetching } = useSearchTags(inputTagSearch)
 
-  async function handleAddTag(tagToAdd: TagAPI): Promise<void> {
+  async function handleAddTag(tagToAdd: TagPostPage): Promise<void> {
     const alreadyIncluded = post.tags.some((tag) => tag.id === tagToAdd.id)
 
     if (!alreadyIncluded) {
-      const tagsNew: PostTag[] = [...post.tags, tagToAdd]
+      const tagsNew: TagPostPage[] = [...post.tags, tagToAdd]
 
       const postToUpdate: ApiPostUpdateRequestBody = {
         tagIds: tagsNew.map((tag) => tag.id),
@@ -185,7 +183,7 @@ export function PostPage({
   /**
    * Removes tags which are already included in a post from a list of tags.
    */
-  function filterTags(tagsToFilter: TagAPI[]): TagAPI[] {
+  function filterTags(tagsToFilter: TagPostPage[]): TagPostPage[] {
     return tagsToFilter.filter(
       (tagToFilter) => !post.tags.some((tag) => tag.id === tagToFilter.id)
     )
