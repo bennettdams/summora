@@ -85,7 +85,8 @@ export default async function _postsPostIDAPI(
         break
       }
       case 'PUT': {
-        const { postId, postToUpdate }: PostUpdate = JSON.parse(requestBody)
+        // TODO parse needed?
+        const { postId, postToUpdate }: ApiPostUpdateRequestBody = requestBody
 
         if (!postId) {
           res.status(500).json({ message: 'No post ID!' })

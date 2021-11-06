@@ -1,10 +1,10 @@
 import type { Prisma } from '@prisma/client'
 import { ApiAvatarsUpload } from '../pages/api/avatars/upload'
 import { ApiPosts } from '../pages/api/posts'
-import { ApiPost } from '../pages/api/posts/[postId]'
+import { ApiPost, ApiPostUpdate } from '../pages/api/posts/[postId]'
 import { ApiUsersSignUp } from '../pages/api/users/signup'
 import { ApiUser } from '../pages/api/users/[userId]'
-import { get, HttpResponse, post, postFile } from '../util/http'
+import { get, HttpResponse, post, postFile, put } from '../util/http'
 
 export const ROUTES_API = {
   USERS_SIGN_UP: 'users/signup',
@@ -69,7 +69,7 @@ export async function apiFetchPost(
   return response
 }
 
-function transformApiPost(post: NonNullable<ApiPost>): ApiPost {
+function transformApiPost(post: NonNullable<ApiPost>): NonNullable<ApiPost> {
   return {
     ...post,
     createdAt: new Date(post.createdAt),
@@ -105,5 +105,22 @@ function transformApiPosts(posts: ApiPosts): ApiPosts {
 
 // #########################################
 
+export type ApiPostUpdateRequestBody = {
+  postId: string
+  postToUpdate: Prisma.PostUpdateWithoutSegmentsInput & {
+    categoryId: string
+    tagIds: string[]
   }
+}
+
+export async function apiUpdatePost({
+  postId,
+  postToUpdate,
+}: ApiPostUpdateRequestBody): Promise<HttpResponse<ApiPostUpdate>> {
+  const response = await put<ApiPostUpdate>(ROUTES_API.POSTS_POST_ID(postId), {
+    postId,
+    postToUpdate,
+  })
+  if (response.result) response.result = transformApiPost(response.result)
+  return response
 }
