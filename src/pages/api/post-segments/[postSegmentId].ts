@@ -1,43 +1,30 @@
 import { Prisma } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
+import { ApiPostSegmentUpdateRequestBody } from '../../../services/api-service'
 import { logAPI } from '../../../util/logger'
 
-export interface PostSegmentUpdate {
-  postId: string
-  postSegmentToUpdate: Prisma.PostSegmentUpdateWithoutItemsInput
-}
+export type ApiPostSegmentUpdate = Prisma.PromiseReturnType<
+  typeof updatePostSegment
+>
 
-async function updatePostSegment({
-  postId,
-  postSegmentToUpdate,
-}: PostSegmentUpdate) {
+async function updatePostSegment(
+  postSegmentId: string,
+  postSegmentToUpdate: ApiPostSegmentUpdateRequestBody
+) {
   const now = new Date()
 
-  const postSegmentId = postSegmentToUpdate.id
-  if (typeof postSegmentId !== 'string')
-    throw new Error('Post segment ID is missing/in the wrong format!')
-
   try {
-    return await prisma.post.update({
-      where: {
-        id: postId,
-      },
+    return await prisma.postSegment.update({
+      where: { id: postSegmentId },
       data: {
         updatedAt: now,
-        segments: {
-          update: {
-            where: { id: postSegmentId },
-            data: postSegmentToUpdate,
-          },
-        },
+        title: postSegmentToUpdate.title,
+        subtitle: postSegmentToUpdate.subtitle,
       },
       include: {
-        segments: {
+        items: {
           orderBy: { createdAt: 'asc' },
-          include: {
-            items: { orderBy: { createdAt: 'asc' } },
-          },
         },
       },
     })
@@ -48,7 +35,7 @@ async function updatePostSegment({
   }
 }
 
-export default async function _postSegmentsPostSegmentIdAPI(
+export default async function _postSegmentAPI(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
@@ -57,33 +44,22 @@ export default async function _postSegmentsPostSegmentIdAPI(
     body: requestBody,
     method,
   } = req
-
-  logAPI(
-    'POST_SEGMENTS_POST_SEGMENT_ID',
-    method,
-    `Post Segment ID: ${postSegmentId}`
-  )
+  logAPI('POST_SEGMENT', method, `Post segment ID: ${postSegmentId}`)
 
   if (!postSegmentId) {
-    res.status(404).end('No post segment ID!')
+    res.status(500).end('No post segment ID!')
   } else if (typeof postSegmentId !== 'string') {
-    res.status(400).end('Post segment ID wrong format!')
+    res.status(500).end('Post segment ID wrong format!')
   } else {
     switch (method) {
       case 'PUT': {
-        const { postId, postSegmentToUpdate }: PostSegmentUpdate =
-          JSON.parse(requestBody)
+        // TODO parse needed?
+        const postSegmentToUpdate: ApiPostSegmentUpdateRequestBody = requestBody
 
-        if (!postId) {
-          res.status(404).end('No post ID!')
-        } else {
-          const postWithUpdatedPostSegment = await updatePostSegment({
-            postId,
-            postSegmentToUpdate,
-          })
+        const postSegmentUpdated: ApiPostSegmentUpdate =
+          await updatePostSegment(postSegmentId, postSegmentToUpdate)
 
-          res.status(200).json(postWithUpdatedPostSegment)
-        }
+        res.status(200).json(postSegmentUpdated)
         break
       }
       default: {

@@ -105,19 +105,16 @@ export function PostPage({
       }
 
       setPost((prePost) => ({ ...prePost, title: inputValue }))
-
       setIsTitleEditable(false)
 
       await updatePost({
         postId: post.id,
         postToUpdate,
       })
-
-      setIsTitleEditable(false)
     }
   }
 
-  async function handleUpdateSubitle(inputValue: string): Promise<void> {
+  async function handleUpdateSubtitle(inputValue: string): Promise<void> {
     if (inputValue) {
       const postToUpdate: ApiPostUpdateRequestBody = {
         subtitle: inputValue,
@@ -216,7 +213,7 @@ export function PostPage({
                 <FormInput
                   placeholder="Subitle.."
                   initialValue={post.subtitle ?? ''}
-                  onSubmit={handleUpdateSubitle}
+                  onSubmit={handleUpdateSubtitle}
                   autoFocus={false}
                   formId={formId}
                 />

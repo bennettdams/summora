@@ -1,5 +1,6 @@
 import type { Prisma } from '@prisma/client'
 import { ApiAvatarsUpload } from '../pages/api/avatars/upload'
+import { ApiPostSegmentUpdate } from '../pages/api/post-segments/[postSegmentId]'
 import { ApiPosts } from '../pages/api/posts'
 import { ApiPost, ApiPostUpdate } from '../pages/api/posts/[postId]'
 import { ApiUsersSignUp } from '../pages/api/users/signup'
@@ -14,7 +15,7 @@ export const ROUTES_API = {
   POST: (postId: string) => `posts/${postId}`,
   SEARCH_TAGS: 'search-tags',
   POST_SEGMENTS: 'post-segments',
-  POST_SEGMENTS_POST_SEGMENT_ID: 'post-segments/:postSegmentId',
+  POST_SEGMENT: (postSegmentId: string) => `post-segments/${postSegmentId}`,
   POST_SEGMENT_ITEMS: 'post-segment-items',
   POST_SEGMENT_ITEMS_POST_SEGMENT_ITEM_ID:
     'post-segment-items/:postSegmentItemId',
@@ -123,6 +124,41 @@ export async function apiUpdatePost({
   )
   if (response.result) response.result = transformApiPost(response.result)
   return response
+}
+
+// #########################################
+
+export type ApiPostSegmentUpdateRequestBody = Prisma.PostSegmentUpdateInput
+
+export async function apiUpdatePostSegment({
+  postSegmentId,
+  postSegmentToUpdate,
+}: {
+  postSegmentId: string
+  postSegmentToUpdate: ApiPostSegmentUpdateRequestBody
+}): Promise<HttpResponse<ApiPostSegmentUpdate>> {
+  const response = await put<ApiPostSegmentUpdate>(
+    ROUTES_API.POST_SEGMENT(postSegmentId),
+    postSegmentToUpdate
+  )
+  if (response.result)
+    response.result = transformApiPostSegment(response.result)
+  return response
+}
+
+function transformApiPostSegment(
+  postSegment: NonNullable<ApiPostSegmentUpdate>
+): NonNullable<ApiPostSegmentUpdate> {
+  return {
+    ...postSegment,
+    createdAt: new Date(postSegment.createdAt),
+    updatedAt: new Date(postSegment.updatedAt),
+    items: postSegment.items.map((item) => ({
+      ...item,
+      createdAt: new Date(item.createdAt),
+      updatedAt: new Date(item.updatedAt),
+    })),
+  }
 }
 
 // #########################################

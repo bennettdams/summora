@@ -6,12 +6,13 @@ import { usePost } from '../../../data/post-helper'
 import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
 import { PostSegmentItemCreate } from '../../../pages/api/post-segment-items'
-import { PostSegmentUpdate } from '../../../pages/api/post-segments/[postSegmentId]'
-import {
-  PostSegmentPostAPI,
-  PostSegmentItemPostAPI,
-} from '../../../pages/api/posts/[postId]'
 import { PostSegmentItem } from './PostSegmentItem'
+import { PostPageProps } from '../../../pages/post/[postId]'
+import { ApiPostSegmentUpdateRequestBody } from '../../../services/api-service'
+
+type PostSegment = PostPageProps['post']['segments'][number]
+type PostSegmentItem =
+  PostPageProps['post']['segments'][number]['items'][number]
 
 export function PostSegment({
   segmentExternal,
@@ -20,16 +21,16 @@ export function PostSegment({
   isEditableExternal = false,
   onInitialEdit,
 }: {
-  segmentExternal: PostSegmentPostAPI
+  segmentExternal: PostSegment
   index: number
   postId: string
   isEditableExternal?: boolean
   onInitialEdit?: () => void
 }): JSX.Element {
   const { createPostSegmentItem, updatePostSegment } = usePost(postId, false)
-  const [segment, setSegment] = useState<PostSegmentPostAPI>(segmentExternal)
+  const [segment, setSegment] = useState<PostSegment>(segmentExternal)
   useEffect(() => setSegment(segmentExternal), [segmentExternal])
-  const [items, setItems] = useState<PostSegmentItemPostAPI[]>(segment.items)
+  const [items, setItems] = useState<PostSegmentItem[]>(segment.items)
   useEffect(() => setItems(segment.items), [segment.items])
 
   const [isSegmentEditable, setIsSegmentEditable] = useState(isEditableExternal)
@@ -49,42 +50,39 @@ export function PostSegment({
   useOnClickOutside(refEditItem, () => setShowItemInput(false))
 
   async function handleUpdateTitle(inputValue: string): Promise<void> {
-    const postSegmentToUpdate: PostSegmentUpdate['postSegmentToUpdate'] = {
-      ...segment,
-      title: inputValue,
-    }
+    if (inputValue) {
+      const postSegmentToUpdate: ApiPostSegmentUpdateRequestBody = {
+        title: inputValue,
+      }
 
-    const title = postSegmentToUpdate.title
-    if (typeof title === 'string') {
-      setSegment((prevSegment) => ({ ...prevSegment, title }))
+      setSegment((preSegment) => ({ ...preSegment, title: inputValue }))
+      setIsSegmentEditable(false)
 
       await updatePostSegment({
-        postId,
+        postSegmentId: segment.id,
         postSegmentToUpdate,
       })
     }
-    setIsSegmentEditable(false)
   }
 
   async function handleUpdateSubtitle(inputValue: string): Promise<void> {
-    const postSegmentToUpdate: PostSegmentUpdate['postSegmentToUpdate'] = {
-      ...segment,
-      subtitle: inputValue,
-    }
+    if (inputValue) {
+      const postSegmentToUpdate: ApiPostSegmentUpdateRequestBody = {
+        subtitle: inputValue,
+      }
 
-    const subtitle = postSegmentToUpdate.subtitle
-    if (typeof subtitle === 'string') {
-      setSegment((prevSegment) => ({ ...prevSegment, subtitle }))
+      setSegment((preSegment) => ({ ...preSegment, subtitle: inputValue }))
 
       // When creating a segment, the title is editable initially. This resets this.
       if (onInitialEdit) onInitialEdit()
 
+      setIsSegmentEditable(false)
+
       await updatePostSegment({
-        postId,
+        postSegmentId: segment.id,
         postSegmentToUpdate,
       })
     }
-    setIsSegmentEditable(false)
   }
 
   async function handleCreate(inputValue: string): Promise<void> {

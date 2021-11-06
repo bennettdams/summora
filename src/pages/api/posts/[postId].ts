@@ -33,6 +33,10 @@ async function updatePost(
       where: {
         id: postId,
       },
+      /*
+       * TODO maybe easier to just spread postToUpdate here, but not sure
+       * how Prisma would handle the fields that are non-primitive (like "author")
+       */
       data: {
         updatedAt: now,
         title: postToUpdate.title,

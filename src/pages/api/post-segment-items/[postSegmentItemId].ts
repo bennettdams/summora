@@ -3,24 +3,6 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
 import { logAPI } from '../../../util/logger'
 
-// async function updatePostSegmentItem(
-//   postSegmentItemId: string,
-//   postSegmentItem: Prisma.PostSegmentItemUpdateInput
-// ) {
-//   try {
-//     return await prisma.postSegmentItem.update({
-//       data: postSegmentItem,
-//       where: {
-//         id: postSegmentItemId,
-//       },
-//     })
-//   } catch (error) {
-//     throw new Error(
-//       `Error while updating post segment item with ID ${postSegmentItemId}: ${error}`
-//     )
-//   }
-// }
-
 export interface PostSegmentItemUpdate {
   postId: string
   postSegmentId: string

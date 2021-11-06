@@ -2,14 +2,18 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { PostSegmentCreate } from '../pages/api/post-segments'
 import { PostSegmentItemCreate } from '../pages/api/post-segment-items'
 import { PostSegmentItemUpdate } from '../pages/api/post-segment-items/[postSegmentItemId]'
-import { PostSegmentUpdate } from '../pages/api/post-segments/[postSegmentId]'
-import { apiFetchPost, apiUpdatePost } from '../services/api-service'
+import {
+  apiFetchPost,
+  apiUpdatePost,
+  apiUpdatePostSegment,
+} from '../services/api-service'
 import { ApiPost } from '../pages/api/posts/[postId]'
 
 // const urlPost = '/api/posts'
 const urlPostSegmentItem = '/api/post-segment-items'
 const urlPostSegment = '/api/post-segments'
 const queryKeyPostBase = 'post'
+type QueryData = ApiPost | null
 
 function createQueryKey(postId: string) {
   return [queryKeyPostBase, postId]
@@ -29,6 +33,23 @@ function createQueryKey(postId: string) {
 
 function usePostMutation(postId: string) {
   const queryClient = useQueryClient()
+  const queryKey = createQueryKey(postId)
+
+  function getQueryData(): QueryData {
+    return queryClient.getQueryData<QueryData>(queryKey) ?? null
+  }
+
+  function setQueryData(
+    dataOrCallback: QueryData | ((existingQueryData: QueryData) => QueryData)
+  ): void {
+    let newQueryData: QueryData
+    if (typeof dataOrCallback === 'function') {
+      newQueryData = dataOrCallback(getQueryData())
+    } else {
+      newQueryData = dataOrCallback
+    }
+    queryClient.setQueryData(queryKey, newQueryData)
+  }
 
   const createPostSegmentItemMutation = useMutation(createPostSegmentItem, {
     onSuccess: (data: ApiPost) => {
@@ -44,13 +65,27 @@ function usePostMutation(postId: string) {
 
   const updatePostMutation = useMutation(apiUpdatePost, {
     onSuccess: (data) => {
-      queryClient.setQueryData(createQueryKey(postId), data)
+      if (data.result) {
+        setQueryData(data.result)
+      }
     },
   })
 
-  const updatePostSegmentMutation = useMutation(updatePostSegment, {
-    onSuccess: (data: ApiPost) => {
-      queryClient.setQueryData(createQueryKey(postId), data)
+  const updatePostSegmentMutation = useMutation(apiUpdatePostSegment, {
+    onSuccess: (data) => {
+      if (data.result) {
+        const newSegment = data.result
+        setQueryData((prevData) =>
+          !prevData
+            ? null
+            : {
+                ...prevData,
+                segments: prevData.segments.map((segment) =>
+                  segment.id === newSegment.id ? newSegment : segment
+                ),
+              }
+        )
+      }
     },
   })
 
@@ -85,7 +120,7 @@ function usePostMutation(postId: string) {
 // }
 
 export function usePost(postId: string, enabled = true) {
-  const { data, isLoading, isError } = useQuery<ApiPost | null>(
+  const { data, isLoading, isError } = useQuery<QueryData>(
     createQueryKey(postId),
     async () => (await apiFetchPost(postId)).result ?? null,
     { enabled }
@@ -165,37 +200,6 @@ async function updatePostSegmentItem({
       body: JSON.stringify(body),
     }
   )
-
-  if (!response.ok) {
-    throw new Error(response.statusText)
-  }
-
-  const postJSON: PostPostAPI = await response.json()
-  const postUpdated: PostPostAPI = transformPostPostAPI(postJSON)
-
-  return postUpdated
-}
-
-async function updatePostSegment({
-  postId,
-  postSegmentToUpdate,
-}: PostSegmentUpdate): Promise<PostPostAPI> {
-  if (!postId || !postSegmentToUpdate.id)
-    throw new Error('Cannot update post segment, no post ID / post segment ID!')
-
-  const body: PostSegmentUpdate = {
-    postId,
-    postSegmentToUpdate: {
-      id: postSegmentToUpdate.id,
-      title: postSegmentToUpdate.title,
-      subtitle: postSegmentToUpdate.subtitle,
-    },
-  }
-
-  const response = await fetch(`${urlPostSegment}/${postSegmentToUpdate.id}`, {
-    method: 'PUT',
-    body: JSON.stringify(body),
-  })
 
   if (!response.ok) {
     throw new Error(response.statusText)
