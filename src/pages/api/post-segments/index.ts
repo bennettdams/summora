@@ -1,47 +1,35 @@
 import { Prisma } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
+import { ApiPostSegmentCreateRequestBody } from '../../../services/api-service'
 import { logAPI } from '../../../util/logger'
 
-export interface PostSegmentCreate {
-  postId: string
-  postSegmentToCreate: Prisma.PostSegmentCreateWithoutPostInput
-}
+export type ApiPostSegmentCreate = Prisma.PromiseReturnType<
+  typeof createPostSegment
+>
 
-async function createPostSegment({
-  postId,
-  postSegmentToCreate,
-}: PostSegmentCreate) {
-  const now = new Date()
-
+async function createPostSegment(
+  postId: string,
+  postSegmentToCreate: ApiPostSegmentCreateRequestBody['postSegmentToCreate']
+) {
   try {
-    return await prisma.post.update({
-      where: {
-        id: postId,
-      },
+    const now = new Date()
+
+    return await prisma.postSegment.create({
       data: {
+        postId,
         updatedAt: now,
-        segments: {
-          create: postSegmentToCreate,
-        },
+        title: postSegmentToCreate.title,
+        subtitle: postSegmentToCreate.subtitle,
       },
       include: {
-        segments: {
-          orderBy: {
-            createdAt: 'asc',
-          },
-          include: {
-            items: {
-              orderBy: {
-                createdAt: 'asc',
-              },
-            },
-          },
+        items: {
+          orderBy: { createdAt: 'asc' },
         },
       },
     })
   } catch (error) {
-    throw new Error(`Error while create post segment: ${error}`)
+    throw new Error(`Error while creating post segment: ${error}`)
   }
 }
 
@@ -50,29 +38,20 @@ export default async function _postSegmentsAPI(
   res: NextApiResponse
 ): Promise<void> {
   const { body: requestBody, method } = req
-
   logAPI('POST_SEGMENTS', method)
 
   switch (method) {
     case 'POST': {
-      const { postId, postSegmentToCreate }: PostSegmentCreate =
-        JSON.parse(requestBody)
+      // TODO parse needed?
+      const { postId, postSegmentToCreate }: ApiPostSegmentCreateRequestBody =
+        requestBody
 
-      if (!postId) {
-        res.status(404).end('No post ID!')
-      } else {
-        const postWithCreatedSegment = await createPostSegment({
-          postId,
-          postSegmentToCreate: {
-            ...postSegmentToCreate,
-            id: undefined,
-          },
-        })
+      const postSegmentCreated: ApiPostSegmentCreate = await createPostSegment(
+        postId,
+        postSegmentToCreate
+      )
 
-        // await new Promise((resolve) => setTimeout(resolve, 3000))
-
-        res.status(200).json(postWithCreatedSegment)
-      }
+      res.status(200).json(postSegmentCreated)
       break
     }
     default: {

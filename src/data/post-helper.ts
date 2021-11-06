@@ -1,17 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { PostSegmentCreate } from '../pages/api/post-segments'
 import { PostSegmentItemCreate } from '../pages/api/post-segment-items'
 import {
+  apiCreatePostSegment,
   apiFetchPost,
   apiUpdatePost,
   apiUpdatePostSegment,
   apiUpdatePostSegmentItem,
 } from '../services/api-service'
 import { ApiPost } from '../pages/api/posts/[postId]'
+import { useState } from 'react'
 
 // const urlPost = '/api/posts'
 const urlPostSegmentItem = '/api/post-segment-items'
-const urlPostSegment = '/api/post-segments'
 const queryKeyPostBase = 'post'
 type QueryData = ApiPost | null
 
@@ -33,40 +33,33 @@ function createQueryKey(postId: string) {
 
 function usePostMutation(postId: string) {
   const queryClient = useQueryClient()
-  const queryKey = createQueryKey(postId)
+  const [queryKey] = useState(createQueryKey(postId))
 
-  function getQueryData(): QueryData {
-    return queryClient.getQueryData<QueryData>(queryKey) ?? null
-  }
-
-  function setQueryData(
-    dataOrCallback: QueryData | ((existingQueryData: QueryData) => QueryData)
-  ): void {
-    let newQueryData: QueryData
-    if (typeof dataOrCallback === 'function') {
-      newQueryData = dataOrCallback(getQueryData())
-    } else {
-      newQueryData = dataOrCallback
-    }
-    queryClient.setQueryData(queryKey, newQueryData)
-  }
-
-  const createPostSegmentItemMutation = useMutation(createPostSegmentItem, {
-    onSuccess: (data: ApiPost) => {
-      queryClient.setQueryData(createQueryKey(postId), data)
+  // POST
+  const updatePostMutation = useMutation(apiUpdatePost, {
+    onSuccess: (data) => {
+      if (data.result) {
+        queryClient.setQueryData<QueryData>(queryKey, data.result)
+      }
     },
   })
 
-  const createPostSegmentMutation = useMutation(createPostSegment, {
-    onSuccess: (data: ApiPost) => {
-      queryClient.setQueryData(createQueryKey(postId), data)
-    },
-  })
+  // SEGMENT
+  const createPostSegmentMutation = useMutation(apiCreatePostSegment, {
+    // https://react-query.tanstack.com/guides/optimistic-updates
 
   const updatePostMutation = useMutation(apiUpdatePost, {
     onSuccess: (data) => {
       if (data.result) {
-        setQueryData(data.result)
+        const segmentNew = data.result
+        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
+          !prevData
+            ? null
+            : {
+                ...prevData,
+                segments: [...prevData.segments, segmentNew],
+              }
+        )
       }
     },
   })
@@ -74,14 +67,14 @@ function usePostMutation(postId: string) {
   const updatePostSegmentMutation = useMutation(apiUpdatePostSegment, {
     onSuccess: (data) => {
       if (data.result) {
-        const newSegment = data.result
-        setQueryData((prevData) =>
+        const segmentUpdated = data.result
+        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
           !prevData
             ? null
             : {
                 ...prevData,
                 segments: prevData.segments.map((segment) =>
-                  segment.id === newSegment.id ? newSegment : segment
+                  segment.id === segmentUpdated.id ? segmentUpdated : segment
                 ),
               }
         )
@@ -92,19 +85,21 @@ function usePostMutation(postId: string) {
   const updatePostSegmentItemMutation = useMutation(apiUpdatePostSegmentItem, {
     onSuccess: (data) => {
       if (data.result) {
-        const newItem = data.result
-        setQueryData((prevData) =>
+        const segmentItemUpdated = data.result
+        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
           !prevData
             ? null
             : {
                 ...prevData,
                 segments: prevData.segments.map((segment) =>
-                  segment.id !== newItem.postSegmentId
+                  segment.id !== segmentItemUpdated.postSegmentId
                     ? segment
                     : {
                         ...segment,
                         items: segment.items.map((item) =>
-                          item.id === newItem.id ? newItem : item
+                          item.id === segmentItemUpdated.id
+                            ? segmentItemUpdated
+                            : item
                         ),
                       }
                 ),
@@ -177,22 +172,6 @@ export function usePost(postId: string, enabled = true) {
   }
 }
 
-// async function createPost(post: Prisma.PostCreateInput): Promise<PostPostsAPI> {
-//   const response = await fetch(urlPost, {
-//     method: 'POST',
-//     body: JSON.stringify(post),
-//   })
-
-//   if (!response.ok) {
-//     throw new Error(response.statusText)
-//   }
-
-//   const postJSON: PostPostsAPI = await response.json()
-//   const postCreated: PostPostsAPI = transformPostPostsAPI(postJSON)
-
-//   return postCreated
-// }
-
 async function createPostSegmentItem({
   postId,
   postSegmentId,
@@ -210,32 +189,6 @@ async function createPostSegmentItem({
   }
 
   const response = await fetch(`${urlPostSegmentItem}`, {
-    method: 'POST',
-    body: JSON.stringify(body),
-  })
-
-  if (!response.ok) {
-    throw new Error(response.statusText)
-  }
-
-  const postJSON: PostPostAPI = await response.json()
-  const postUpdated: PostPostAPI = transformPostPostAPI(postJSON)
-
-  return postUpdated
-}
-
-async function createPostSegment({
-  postId,
-  postSegmentToCreate,
-}: PostSegmentCreate): Promise<PostPostAPI> {
-  if (!postId) throw new Error('Cannot create post segment, no post ID!')
-
-  const body: PostSegmentCreate = {
-    postId,
-    postSegmentToCreate,
-  }
-
-  const response = await fetch(`${urlPostSegment}`, {
     method: 'POST',
     body: JSON.stringify(body),
   })

@@ -18,7 +18,10 @@ import { Tag } from './Tag'
 import { useSearchTags } from '../../../data/use-search-tags'
 import { TagAPI } from '../../../pages/api/search-tags'
 import { Avatar } from '../../Avatar'
-import { ApiPostUpdateRequestBody } from '../../../services/api-service'
+import {
+  ApiPostSegmentCreateRequestBody,
+  ApiPostUpdateRequestBody,
+} from '../../../services/api-service'
 
 type PostPostPage = PostPageProps['post']
 
@@ -51,10 +54,12 @@ export function PostPage({
   useOnClickOutside(refCategory, () => setShowCategoryDropdown(false))
 
   async function handleCreate(): Promise<void> {
-    const postSegmentToCreate: PostSegmentCreate['postSegmentToCreate'] = {
-      title: '',
-      subtitle: '',
-    }
+    const postSegmentToCreate: ApiPostSegmentCreateRequestBody['postSegmentToCreate'] =
+      {
+        title: '',
+        subtitle: '',
+      }
+
     setSegments((prevSegments) => [
       ...prevSegments,
       {
