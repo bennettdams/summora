@@ -60,7 +60,7 @@ async function updatePost({ postId, postToUpdate }: ApiPostUpdateRequestBody) {
   }
 }
 
-export default async function _postsPostIDAPI(
+export default async function _postAPI(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {

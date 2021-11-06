@@ -14,7 +14,7 @@ async function findPosts(prisma: PrismaClient) {
     return await prisma.post.findMany({
       take: 20,
       include: {
-        author: true,
+        author: { select: { username: true, hasAvatar: true } },
         category: true,
         segments: { orderBy: { createdAt: 'asc' } },
       },

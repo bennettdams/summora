@@ -117,7 +117,11 @@ function PostItem({
             <Link to={`user/${post.authorId}`}>
               <div className="flex flex-row items-center space-x-4 hover:bg-lime-300">
                 <span>{post.author.username}</span>
-                <Avatar size="small" userId={post.authorId} />
+                <Avatar
+                  hasUserAvatar={post.author.hasAvatar ?? false}
+                  size="small"
+                  userId={post.authorId}
+                />
               </div>
             </Link>
             <Views>1.2K</Views>
