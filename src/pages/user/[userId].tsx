@@ -1,5 +1,5 @@
 import type { Prisma, PrismaClient } from '@prisma/client'
-import type { GetServerSideProps } from 'next'
+import type { GetStaticPaths, GetStaticProps } from 'next'
 import type { ParsedUrlQuery } from 'querystring'
 import { UserPage } from '../../components/pages/UserPage'
 import { prisma } from '../../prisma/prisma'
@@ -18,35 +18,41 @@ async function findUserByUserId(prisma: PrismaClient, userId: string) {
   })
 }
 
-export const getServerSideProps: GetServerSideProps<UserPageProps, Params> =
-  async ({ params, res }) => {
-    if (!params) {
-      console.log(`[SSR] ${_User.name} page | ${'404, no parms'}`)
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    // TODO most popular users
+    paths: [
+      // { params: { id: '1' } },
+      // { params: { id: '2' } }
+    ],
+    fallback: 'blocking',
+  }
+}
 
-      // TODO 404 redirect?
-      res.statusCode = 404
-      return { props: { user: null } }
+const revalidateInSeconds = 10 * 60
+
+export const getStaticProps: GetStaticProps<UserPageProps, Params> = async ({
+  params,
+}) => {
+  if (!params) {
+    // FIXME this is not really "not found", but rather a server error
+    return { notFound: true }
+  } else {
+    const userId = params.userId
+    const user = await findUserByUserId(prisma, userId)
+
+    if (!user) {
+      return { notFound: true }
     } else {
-      const userId = params.userId
-
-      if (!userId) {
-        console.log(`[SSR] ${_User.name} page | ${'404, no user ID'}`)
-
-        res.statusCode = 404
-        return { props: { user: null } }
-      } else {
-        console.log(`[SSR] ${_User.name} page | ${userId}`)
-
-        const user = await findUserByUserId(prisma, userId)
-
-        if (!user) {
-          return { notFound: true }
-        } else {
-          return { props: { user } }
-        }
+      return {
+        props: {
+          user,
+        },
+        revalidate: revalidateInSeconds,
       }
     }
   }
+}
 
 export default function _User(props: UserPageProps): JSX.Element {
   return <UserPage user={props.user} />

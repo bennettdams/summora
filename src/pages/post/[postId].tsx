@@ -39,7 +39,7 @@ async function findPost(prisma: PrismaClient, postId: string) {
     include: {
       category: true,
       tags: true,
-      author: true,
+      author: { select: { username: true, hasAvatar: true } },
       segments: {
         orderBy: { createdAt: 'asc' },
         include: { items: { orderBy: { createdAt: 'asc' } } },
