@@ -1,30 +1,18 @@
 import { useQuery } from 'react-query'
-import { RequestBodyTags, TagAPI } from '../pages/api/search-tags'
+import { ApiTagsSearch } from '../pages/api/tags/search'
+import { apiCreateTagsSearch } from '../services/api-service'
 
-const urlSearchTags = '/api/search-tags'
+const queryKeyPostBase = 'tags-search'
+type QueryData = ApiTagsSearch | null
 
-async function fetchSearchTags(searchInput: string): Promise<TagAPI[]> {
-  const body: RequestBodyTags = {
-    searchInput,
-  }
-  const response = await fetch(urlSearchTags, {
-    method: 'POST',
-    body: JSON.stringify(body),
-  })
-
-  if (!response.ok) {
-    throw new Error(response.statusText)
-  }
-
-  const tagsJSON: TagAPI[] = await response.json()
-
-  return tagsJSON
+function createQueryKey(searchInput: string) {
+  return [queryKeyPostBase, searchInput]
 }
 
 export function useSearchTags(searchInput: string) {
-  const { data, isLoading, isError, isFetching } = useQuery<TagAPI[]>(
-    `search-tags-${searchInput}`,
-    () => fetchSearchTags(searchInput),
+  const { data, isLoading, isError, isFetching } = useQuery<QueryData>(
+    createQueryKey(searchInput),
+    async () => (await apiCreateTagsSearch({ searchInput })).result ?? null,
     {
       enabled: !!searchInput && searchInput.length >= 2,
       keepPreviousData: true,
