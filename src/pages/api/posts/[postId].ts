@@ -34,12 +34,16 @@ async function updatePost({ postId, postToUpdate }: ApiPostUpdateRequestBody) {
         updatedAt: now,
         title: postToUpdate.title,
         subtitle: postToUpdate.subtitle,
-        category: {
-          connect: {
-            id: postToUpdate.categoryId,
-          },
-        },
-        tags: { set: postToUpdate.tagIds.map((tagId) => ({ id: tagId })) },
+        category: !postToUpdate.categoryId
+          ? undefined
+          : {
+              connect: {
+                id: postToUpdate.categoryId,
+              },
+            },
+        tags: !postToUpdate.tagIds
+          ? undefined
+          : { set: postToUpdate.tagIds.map((tagId) => ({ id: tagId })) },
       },
       include: {
         segments: {

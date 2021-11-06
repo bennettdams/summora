@@ -18,6 +18,7 @@ import { Tag } from './Tag'
 import { useSearchTags } from '../../../data/use-search-tags'
 import { TagAPI } from '../../../pages/api/search-tags'
 import { Avatar } from '../../Avatar'
+import { ApiPostUpdateRequestBody } from '../../../services/api-service'
 
 type PostPostPage = PostPageProps['post']
 
@@ -99,24 +100,20 @@ export function PostPage({
   }
 
   async function handleUpdateTitle(inputValue: string): Promise<void> {
-    const postToUpdate: PostUpdate['postToUpdate'] = {
-      title: inputValue,
-      subtitle: post.subtitle,
-      categoryId: post.category.id,
-      tagIds: tags.map((tag) => tag.id),
-    }
+    if (inputValue) {
+      const postToUpdate: ApiPostUpdateRequestBody['postToUpdate'] = {
+        title: inputValue,
+      }
 
-    const title = postToUpdate.title
-    if (typeof title === 'string') {
-      setPost((prePost) => ({ ...prePost, title }))
+      setPost((prePost) => ({ ...prePost, title: inputValue }))
 
       await updatePost({
         postId: post.id,
         postToUpdate,
       })
-    }
 
-    setIsTitleEditable(false)
+      setIsTitleEditable(false)
+    }
   }
 
   async function handleUpdateSubitle(inputValue: string): Promise<void> {

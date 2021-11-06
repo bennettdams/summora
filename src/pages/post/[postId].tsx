@@ -6,7 +6,8 @@ import { Prisma } from '@prisma/client'
 import type { ParsedUrlQuery } from 'querystring'
 
 export interface PostPageProps {
-  post: Prisma.PromiseReturnType<typeof findPost>
+  // exclude null, because the page will return "notFound" if post is null
+  post: Exclude<Prisma.PromiseReturnType<typeof findPost>, null>
   postCategories: PostCategory[]
   tagsSorted: Prisma.PromiseReturnType<typeof findTagsForPost>
   tagsSortedForCategory: Prisma.PromiseReturnType<
@@ -49,6 +50,7 @@ async function findPost(prisma: PrismaClient, postId: string) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
+    // TODO most popular posts
     paths: [
       // { params: { id: '1' } },
       // { params: { id: '2' } }
@@ -73,22 +75,26 @@ export const getStaticProps: GetStaticProps<PostPageProps, Params> = async ({
     const postId = params.postId
     const post = await findPost(prisma, postId)
 
-    const postCategories = await prisma.postCategory.findMany()
+    if (!post) {
+      return { notFound: true }
+    } else {
+      const postCategories = await prisma.postCategory.findMany()
 
-    const tagsSorted = await findTagsForPost(prisma)
-    const tagsSortedForCategory = await findTagsForPostByCategory(
-      prisma,
-      post.postCategoryId
-    )
+      const tagsSorted = await findTagsForPost(prisma)
+      const tagsSortedForCategory = await findTagsForPostByCategory(
+        prisma,
+        post.postCategoryId
+      )
 
-    return {
-      props: {
-        post,
-        postCategories,
-        tagsSorted,
-        tagsSortedForCategory,
-      },
-      revalidate: revalidateInSeconds,
+      return {
+        props: {
+          post,
+          postCategories,
+          tagsSorted,
+          tagsSortedForCategory,
+        },
+        revalidate: revalidateInSeconds,
+      }
     }
   }
 }

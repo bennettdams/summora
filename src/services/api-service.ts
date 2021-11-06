@@ -107,9 +107,9 @@ function transformApiPosts(posts: ApiPosts): ApiPosts {
 
 export type ApiPostUpdateRequestBody = {
   postId: string
-  postToUpdate: Prisma.PostUpdateWithoutSegmentsInput & {
-    categoryId: string
-    tagIds: string[]
+  postToUpdate: Prisma.PostUpdateInput & {
+    categoryId?: string
+    tagIds?: string[]
   }
 }
 
