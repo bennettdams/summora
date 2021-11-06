@@ -1,5 +1,6 @@
 import type { Prisma } from '@prisma/client'
 import { ApiAvatarsUpload } from '../pages/api/avatars/upload'
+import { ApiPostSegmentItemCreate } from '../pages/api/post-segment-items'
 import { ApiPostSegmentItemUpdate } from '../pages/api/post-segment-items/[postSegmentItemId]'
 import { ApiPostSegmentCreate } from '../pages/api/post-segments'
 import { ApiPostSegmentUpdate } from '../pages/api/post-segments/[postSegmentId]'
@@ -210,6 +211,25 @@ export async function apiCreatePostSegment(
   )
   if (response.result)
     response.result = transformApiPostSegment(response.result)
+  return response
+}
+
+// #########################################
+
+export type ApiPostSegmentItemCreateRequestBody = {
+  postSegmentId: string
+  postSegmentItemToCreate: Prisma.PostSegmentItemCreateWithoutPostSegmentInput
+}
+
+export async function apiCreatePostSegmentItem(
+  input: ApiPostSegmentItemCreateRequestBody
+): Promise<HttpResponse<ApiPostSegmentItemCreate>> {
+  const response = await post<ApiPostSegmentItemCreate>(
+    ROUTES_API.POST_SEGMENT_ITEMS,
+    input
+  )
+  if (response.result)
+    response.result = transformApiPostSegmentItem(response.result)
   return response
 }
 

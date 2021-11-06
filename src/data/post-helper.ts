@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { PostSegmentItemCreate } from '../pages/api/post-segment-items'
 import {
   apiCreatePostSegment,
+  apiCreatePostSegmentItem,
   apiFetchPost,
   apiUpdatePost,
   apiUpdatePostSegment,
@@ -10,8 +10,6 @@ import {
 import { ApiPost } from '../pages/api/posts/[postId]'
 import { useState } from 'react'
 
-// const urlPost = '/api/posts'
-const urlPostSegmentItem = '/api/post-segment-items'
 const queryKeyPostBase = 'post'
 type QueryData = ApiPost | null
 
@@ -75,6 +73,27 @@ function usePostMutation(postId: string) {
                 ...prevData,
                 segments: prevData.segments.map((segment) =>
                   segment.id === segmentUpdated.id ? segmentUpdated : segment
+                ),
+              }
+        )
+      }
+    },
+  })
+
+  // ITEM
+  const createPostSegmentItemMutation = useMutation(apiCreatePostSegmentItem, {
+    onSuccess: (data) => {
+      if (data.result) {
+        const segmentItemNew = data.result
+        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
+          !prevData
+            ? null
+            : {
+                ...prevData,
+                segments: prevData.segments.map((segment) =>
+                  segment.id !== segmentItemNew.postSegmentId
+                    ? segment
+                    : { ...segment, items: [...segment.items, segmentItemNew] }
                 ),
               }
         )
@@ -170,35 +189,4 @@ export function usePost(postId: string, enabled = true) {
     updatePostSegmentItem: updatePostSegmentItemMutation.mutateAsync,
     updatePostSegment: updatePostSegmentMutation.mutateAsync,
   }
-}
-
-async function createPostSegmentItem({
-  postId,
-  postSegmentId,
-  postSegmentItemToCreate,
-}: PostSegmentItemCreate): Promise<PostPostAPI> {
-  if (!postId || !postSegmentId)
-    throw new Error(
-      'Cannot create post segment item, no post ID / post segment ID!'
-    )
-
-  const body: PostSegmentItemCreate = {
-    postId,
-    postSegmentId,
-    postSegmentItemToCreate,
-  }
-
-  const response = await fetch(`${urlPostSegmentItem}`, {
-    method: 'POST',
-    body: JSON.stringify(body),
-  })
-
-  if (!response.ok) {
-    throw new Error(response.statusText)
-  }
-
-  const postJSON: PostPostAPI = await response.json()
-  const postUpdated: PostPostAPI = transformPostPostAPI(postJSON)
-
-  return postUpdated
 }
