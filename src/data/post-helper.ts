@@ -44,9 +44,6 @@ function usePostMutation(postId: string) {
 
   // SEGMENT
   const createPostSegmentMutation = useMutation(apiCreatePostSegment, {
-    // https://react-query.tanstack.com/guides/optimistic-updates
-
-  const updatePostMutation = useMutation(apiUpdatePost, {
     onSuccess: (data) => {
       if (data.result) {
         const segmentNew = data.result
