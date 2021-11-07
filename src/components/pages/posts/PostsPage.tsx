@@ -13,30 +13,38 @@ import { Avatar } from '../../Avatar'
 export function PostsPage({
   posts,
   postCategories,
+  noOfPosts,
   noOfPostsCreatedLast24Hours,
 }: PostsPageProps): JSX.Element {
   const [showLongPost, setShowLongPost] = useState(true)
 
   return (
-    <Page>
+    <Page
+      pageHeader={
+        <div className="h-96 grid place-items-center bg-gradient-to-tr from-amber-300 to-lime-600 text-center">
+          <div>
+            <p className="uppercase text-7xl text-white font-extrabold leading-none tracking-tight">
+              Condun
+            </p>
+            <p className="italic text-4xl text-lime-700">
+              Everything, but summarized
+            </p>
+          </div>
+        </div>
+      }
+    >
       <Head>
         <title>Condun</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="text-center text-7xl font-extrabold leading-none tracking-tight">
-        <span className="uppercase decoration-clone bg-clip-text text-transparent bg-gradient-to-b from-amber-400 to-orange-800">
-          Condun
-        </span>
-      </div>
-
       <PageSection>
         <div className="flex flex-row space-x-10">
           <div className="flex-1">
-            <Box>No. of posts {noOfPostsCreatedLast24Hours}</Box>
+            <Box>No. of posts {noOfPosts}</Box>
           </div>
           <div className="flex-1">
-            <Box>{noOfPostsCreatedLast24Hours}</Box>
+            <Box>No. of posts last 24 hours{noOfPostsCreatedLast24Hours}</Box>
           </div>
           <div className="flex-1">
             <Box>{noOfPostsCreatedLast24Hours}</Box>

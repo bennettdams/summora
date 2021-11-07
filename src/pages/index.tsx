@@ -6,6 +6,7 @@ import { PostsPage } from '../components/pages/posts/PostsPage'
 export interface PostsPageProps {
   posts: Prisma.PromiseReturnType<typeof findPosts>
   postCategories: PostCategory[]
+  noOfPosts: number
   noOfPostsCreatedLast24Hours: number
 }
 
@@ -30,6 +31,7 @@ export const getStaticProps: GetStaticProps<PostsPageProps> = async () => {
 
   const now = new Date()
   const nowYesterday = new Date(now.setHours(now.getHours() - 24))
+  const noOfPosts = await prisma.post.count()
   const noOfPostsCreatedLast24Hours = await prisma.post.count({
     where: { createdAt: { gte: nowYesterday } },
   })
@@ -38,6 +40,7 @@ export const getStaticProps: GetStaticProps<PostsPageProps> = async () => {
     props: {
       posts,
       postCategories,
+      noOfPosts,
       noOfPostsCreatedLast24Hours,
     },
     revalidate: 10,
@@ -49,6 +52,7 @@ export default function _HomePage(props: PostsPageProps): JSX.Element {
     <PostsPage
       posts={props.posts}
       postCategories={props.postCategories}
+      noOfPosts={props.noOfPosts}
       noOfPostsCreatedLast24Hours={props.noOfPostsCreatedLast24Hours}
     />
   )

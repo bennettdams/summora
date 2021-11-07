@@ -1,10 +1,17 @@
 import { ReactNode } from 'react'
 
-export function Page({ children }: { children: ReactNode }): JSX.Element {
+export function Page({
+  children,
+  pageHeader,
+}: {
+  children: ReactNode
+  pageHeader?: ReactNode
+}): JSX.Element {
   return (
-    <main className="page container flex-1 w-full flex flex-col mt-20 pb-32">
-      {children}
-    </main>
+    <div className="page w-full mt-16 pb-32">
+      {pageHeader && pageHeader}
+      <main className="container w-full mx-auto mt-20 pb-32">{children}</main>
+    </div>
   )
 }
 
