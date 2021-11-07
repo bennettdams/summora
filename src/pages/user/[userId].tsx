@@ -5,7 +5,8 @@ import { UserPage } from '../../components/pages/UserPage'
 import { prisma } from '../../prisma/prisma'
 
 export interface UserPageProps {
-  user: Prisma.PromiseReturnType<typeof findUserByUserId>
+  // exclude null, because the page will return "notFound" if user is null
+  user: Exclude<Prisma.PromiseReturnType<typeof findUserByUserId>, null>
 }
 
 interface Params extends ParsedUrlQuery {
