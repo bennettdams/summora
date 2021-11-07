@@ -1,7 +1,6 @@
 import { Prisma } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
-import { logAPI } from '../../../util/logger'
 
 export type ApiUser = Prisma.PromiseReturnType<typeof findUser>
 
@@ -21,7 +20,6 @@ export default async function _userAPI(
     query: { userId },
     method,
   } = req
-  logAPI('USER', method, `${!userId ? 'no user ID' : userId}`)
 
   if (!userId) {
     res.status(500).end('No user ID!')

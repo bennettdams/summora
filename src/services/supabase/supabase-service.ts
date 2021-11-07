@@ -119,3 +119,22 @@ export async function downloadAvatarSupabase(
     return data
   }
 }
+
+export function getPublicURLAvatarSupabase(
+  /**
+   * filename without extension, e.g. "example" for "example.png"
+   */
+  filepath: string
+): string | null {
+  const { publicURL, error } = supabase.storage
+    .from(STORAGE.AVATARS.bucket)
+    .getPublicUrl(`${STORAGE.AVATARS.folder}/${filepath}.${AVATAR_EXTENSION}`)
+
+  if (error) {
+    throw new Error(
+      `Error while getting public URL for avatar: ${error.message}`
+    )
+  } else {
+    return publicURL
+  }
+}

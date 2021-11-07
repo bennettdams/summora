@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { useCloudStorage } from '../services/use-cloud-storage'
 import { ImageUpload } from './ImageUpload'
+import { useState } from 'react'
+import { useQuery } from 'react-query'
+import { useCloudStorage } from '../services/use-cloud-storage'
 
 const SIZES = {
   small: 40,
@@ -9,10 +10,55 @@ const SIZES = {
   large: 180,
 } as const
 
-type AvatarSize = keyof typeof SIZES
+export type AvatarSize = keyof typeof SIZES
 
-function AvatarPlaceholder({ size }: { size: AvatarSize }): JSX.Element {
+const queryKeyPostBase = 'avatar-image'
+type QueryData = string | null
+
+function createQueryKey(userId: string) {
+  return [queryKeyPostBase, userId]
+}
+
+function useAvatar(userId: string, size: AvatarSize, hasUserAvatar: boolean) {
+  const { data, isLoading, isError, isFetching } = useQuery<QueryData>(
+    createQueryKey(userId),
+    async () => {
+      const avatarFile = await downloadAvatar(userId)
+      if (!avatarFile) {
+        throw Error('Avatar file is null')
+      } else {
+        // FIXME revoke URL to prevent memory leak?
+        const url = URL.createObjectURL(avatarFile)
+
+        return url
+      }
+    },
+    {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+      enabled: hasUserAvatar,
+    }
+  )
+
   const [sizePixels] = useState(SIZES[size])
+  const { downloadAvatar, getPublicURLAvatar } = useCloudStorage()
+  const [publicURL] = useState(getPublicURLAvatar(userId))
+
+  return {
+    avatarObjectUrl: data || null,
+    sizePixels,
+    publicURL,
+    isLoading,
+    isError,
+    isFetching,
+  }
+}
+
+function AvatarPlaceholder({
+  sizePixels,
+}: {
+  sizePixels: number
+}): JSX.Element {
   return (
     <div
       className="text-center rounded-full inline-flex items-center justify-center bg-gray-200 text-gray-400"
@@ -48,32 +94,11 @@ export function Avatar({
   hasUserAvatar: boolean
   isEditable?: boolean
 }): JSX.Element {
-  const [sizePixels] = useState(SIZES[size])
-  const { downloadAvatar } = useCloudStorage()
-  const [avatarObjectUrl, setAvatarObjectUrl] = useState<string | null>(null)
-
-  useEffect(() => {
-    async function downloadAvatarImage(path: string) {
-      try {
-        const avatarFile = await downloadAvatar(path)
-        if (!avatarFile) {
-          throw Error('Avatar file is null')
-        } else {
-          // FIXME revoke URL to prevent memory leak?
-          const url = URL.createObjectURL(avatarFile)
-
-          setAvatarObjectUrl(url)
-        }
-      } catch (error) {
-        console.error('Error downloading image: ', error)
-      }
-    }
-
-    if (hasUserAvatar) {
-      downloadAvatarImage(userId)
-    }
-  }, [userId, downloadAvatar, hasUserAvatar])
-
+  const { avatarObjectUrl, publicURL, sizePixels } = useAvatar(
+    userId,
+    size,
+    hasUserAvatar
+  )
   return (
     <div className="relative grid place-items-center">
       {isEditable && (
