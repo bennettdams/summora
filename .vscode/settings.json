@@ -23,6 +23,10 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.configPath": ".prettierrc",
+  // PRISMA
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
   // TAILWIND
   "tailwindCSS.emmetCompletions": true,
   "tailwindCSS.lint.cssConflict": "warning",
