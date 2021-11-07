@@ -1,37 +1,23 @@
 {
-  "name": "condu",
+  "name": "condun",
+  "private": true,
   "author": "@bennettdams",
-  "license": "MIT",
-  "version": "0.0.1",
   "scripts": {
     "dev": "next dev -p 3000",
-    "d": "yarn dev",
     "build": "next build",
     "start": "next start -p 3001",
-    "prod": "yarn build && yarn start",
+    "lint": "next lint",
+    "lint2": "eslint . --ext ts --ext tsx --ext js",
     "type-check": "tsc --pretty --noEmit",
-    "tc": "yarn type-check",
+    "tc": "npm run type-check",
+    "format": "prettier --write .",
+    "check-updates": "npx npm-check-updates -u",
     "p:dev": "npx prisma migrate dev --schema ./src/prisma/schema.prisma",
-    "pd": "yarn p:dev",
     "p:create": "npx prisma migrate dev --create-only --schema ./src/prisma/schema.prisma",
     "p:studio": "npx prisma studio --schema ./src/prisma/schema.prisma",
-    "ps": "yarn p:studio",
     "p:reset": "npx prisma migrate reset --schema ./src/prisma/schema.prisma",
-    "pr": "yarn p:reset",
-    "p:seed": "npx prisma db seed --schema ./src/prisma/schema.prisma --preview-feature",
     "p:generate": "npx prisma generate --schema ./src/prisma/schema.prisma",
-    "p:format": "npx prisma format --schema ./src/prisma/schema.prisma",
-    "format": "prettier --write .",
-    "lint": "eslint . --ext ts --ext tsx --ext js",
-    "test": "jest",
-    "test-all": "yarn lint && yarn type-check && yarn test",
-    "check-updates": "npx npm-check-updates -u"
-  },
-  "lint-staged": {
-    "*.@(ts|tsx)": [
-      "yarn lint",
-      "yarn format"
-    ]
+    "p:format": "npx prisma format --schema ./src/prisma/schema.prisma"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.1",
@@ -41,9 +27,9 @@
     "@tailwindcss/forms": "^0.3.4",
     "babel-plugin-superjson-next": "^0.4.2",
     "formidable": "^1.2.2",
-    "next": "^11.1.2",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "next": "12.0.3",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
     "react-query": "^3.32.1",
     "superjson": "^1.8.0"
   },
@@ -51,28 +37,20 @@
     "superjson and babel-plugin-superjson-next for serializing dates with Prisma & Next.js. In .babelrc: plugins: [ 'superjson-next' ] "
   ],
   "devDependencies": {
-    "@testing-library/react": "^12.1.2",
     "@types/formidable": "^1.2.4",
-    "@types/jest": "^27.0.2",
-    "@types/node": "^16.11.4",
-    "@types/react": "^17.0.32",
+    "@types/node": "16.11.6",
+    "@types/react": "17.0.34",
     "@typescript-eslint/eslint-plugin": "^4.30.0",
     "@typescript-eslint/parser": "^4.30.0",
     "autoprefixer": "^10.3.7",
-    "babel-jest": "^27.3.1",
     "eslint": "7.32.0",
-    "eslint-config-next": "^11.1.2",
+    "eslint-config-next": "12.0.3",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-react-hooks": "^4.2.0",
-    "identity-obj-proxy": "^3.0.0",
-    "jest": "^27.3.1",
-    "jest-watch-typeahead": "^0.6.1",
-    "lint-staged": "^11.2.4",
     "postcss": "^8.3.11",
     "prettier": "^2.4.1",
     "prisma": "^3.4.1",
     "tailwindcss": "^2.2.19",
-    "typescript": "^4.4.4"
+    "typescript": "4.4.4"
   },
   "//devDependencies": [
     "autoprefixer & postcss for Tailwind",
