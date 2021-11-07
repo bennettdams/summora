@@ -1,4 +1,4 @@
-import { createClient, User } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { GetServerSidePropsContextRequest } from '../../types/GetServerSidePropsContextRequest = GetServerSidePropsContext'
 import { isServer } from '../../util/server/server-utils'
@@ -29,7 +29,7 @@ export function setAuthCookie(req: NextApiRequest, res: NextApiResponse): void {
 
 export async function getUserByCookieSupabase(
   req: GetServerSidePropsContextRequest
-): Promise<{ user: User | null; data: User | null; error: Error | null }> {
+) {
   return await supabase.auth.api.getUserByCookie(req)
 }
 

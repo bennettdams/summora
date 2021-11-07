@@ -187,13 +187,7 @@ export function useAuthContext(): AuthState {
   return context
 }
 
-export async function getUserByCookie(
-  req: GetServerSidePropsContextRequest
-): Promise<{
-  userAuth: UserAuth | null
-  data: UserAuth | null
-  error: Error | null
-}> {
+export async function getUserByCookie(req: GetServerSidePropsContextRequest) {
   const res = await getUserByCookieSupabase(req)
   return { ...res, userAuth: res.user }
 }
