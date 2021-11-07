@@ -82,7 +82,14 @@ export function AuthContextProvider({
     // Supabase will not execute this on the initial render when the session already exists
     const { data: authListener } = supabaseClient.auth.onAuthStateChange(
       async (event, session) => {
-        if (session) {
+        if (event === 'SIGNED_OUT') {
+          setAuthState({
+            isLoading: false,
+            session: null,
+            user: null,
+            userAuth: null,
+          })
+        } else if (session) {
           fillAuth(session)
 
           // this enables SSR with Supabase

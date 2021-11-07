@@ -110,7 +110,9 @@ export function Avatar({
       )}
 
       {!hasUserAvatar || !avatarObjectUrl ? (
-        <AvatarPlaceholder size={size} />
+        <AvatarPlaceholder sizePixels={sizePixels} />
+      ) : !publicURL ? (
+        <span>No URL</span>
       ) : (
         <Image
           src={avatarObjectUrl}
@@ -118,6 +120,11 @@ export function Avatar({
           className="rounded-full"
           width={sizePixels}
           height={sizePixels}
+          // Next.js image optimization does not work with Supabase Storage right now
+          // https://github.com/supabase/supabase/issues/3821
+          // src={publicURL}
+          // width={400}
+          // height={400}
         />
       )}
     </div>
