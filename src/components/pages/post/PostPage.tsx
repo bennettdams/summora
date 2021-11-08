@@ -343,7 +343,11 @@ export function PostPage({
                 <div className="mt-2 flex flex-wrap -m-1">
                   {tagsSearched &&
                     filterTags(tagsSearched).map((tag) => (
-                      <Tag key={tag.id} tagInitial={tag} />
+                      <Tag
+                        key={tag.id}
+                        tagInitial={tag}
+                        onClick={handleAddTag}
+                      />
                     ))}
                 </div>
               </Box>
