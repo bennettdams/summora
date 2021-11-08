@@ -10,6 +10,8 @@ export interface PostsPageProps {
   noOfPostsCreatedLast24Hours: number
 }
 
+const revalidateInSeconds = 5 * 60
+
 async function findPosts(prisma: PrismaClient) {
   try {
     return await prisma.post.findMany({
@@ -43,7 +45,7 @@ export const getStaticProps: GetStaticProps<PostsPageProps> = async () => {
       noOfPosts,
       noOfPostsCreatedLast24Hours,
     },
-    revalidate: 10,
+    revalidate: revalidateInSeconds,
   }
 }
 

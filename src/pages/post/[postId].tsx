@@ -63,7 +63,7 @@ interface Params extends ParsedUrlQuery {
   postId: string
 }
 
-const revalidateInSeconds = 10 * 60
+const revalidateInSeconds = 5 * 60
 
 export const getStaticProps: GetStaticProps<PostPageProps, Params> = async ({
   params,

@@ -30,7 +30,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 }
 
-const revalidateInSeconds = 10 * 60
+const revalidateInSeconds = 5 * 60
 
 export const getStaticProps: GetStaticProps<UserPageProps, Params> = async ({
   params,
