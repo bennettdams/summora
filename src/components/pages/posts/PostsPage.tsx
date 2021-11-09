@@ -27,7 +27,7 @@ export function PostsPage({
             <p className="uppercase text-7xl text-white font-extrabold leading-none tracking-tight">
               Condun
             </p>
-            <p className="italic text-4xl text-lime-700">
+            <p className="mt-2 text-3xl text-lime-100 leading-8 font-extrabold tracking-tight sm:text-4xl">
               Everything, but summarized
             </p>
           </div>

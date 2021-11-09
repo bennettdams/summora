@@ -5,7 +5,11 @@ import { LoadingAnimation } from '../components/LoadingAnimation'
 
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png']
 
-export function ImageUpload(): JSX.Element {
+export function ImageUpload({
+  onUpload,
+}: {
+  onUpload?: () => void
+}): JSX.Element {
   const { uploadAvatar } = useCloudStorage()
   const [isUploading, setIsUploading] = useState(false)
 
@@ -25,6 +29,7 @@ export function ImageUpload(): JSX.Element {
           )
         } else {
           await uploadAvatar(file)
+          onUpload?.()
         }
       }
     } catch (error) {

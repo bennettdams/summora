@@ -19,7 +19,7 @@ function createQueryKey(userId: string) {
   return [queryKeyPostBase, userId]
 }
 
-function useAvatar(userId: string, size: AvatarSize, hasUserAvatar: boolean) {
+function useAvatar(isEnabled = false, userId: string, size: AvatarSize) {
   const { data, isLoading, isError, isFetching } = useQuery<QueryData>(
     createQueryKey(userId),
     async () => {
@@ -36,7 +36,8 @@ function useAvatar(userId: string, size: AvatarSize, hasUserAvatar: boolean) {
     {
       keepPreviousData: true,
       refetchOnWindowFocus: false,
-      enabled: hasUserAvatar,
+      refetchInterval: false,
+      enabled: isEnabled,
     }
   )
 
@@ -94,38 +95,40 @@ export function Avatar({
   hasUserAvatar: boolean
   isEditable?: boolean
 }): JSX.Element {
-  const { avatarObjectUrl, publicURL, sizePixels } = useAvatar(
+  const [shouldFetchLocal, setShouldFetchLocal] = useState(false)
+  const { publicURL, sizePixels, avatarObjectUrl } = useAvatar(
+    shouldFetchLocal,
     userId,
-    size,
-    hasUserAvatar
+    size
   )
   return (
     <div className="relative grid place-items-center">
       {isEditable && (
         <div className="absolute z-30 group h-full w-full hover:cursor-pointer hover:bg-lime-200 rounded-full hover:bg-opacity-50">
           <span className="h-full w-full grid place-items-center invisible group-hover:visible">
-            <ImageUpload />
+            <ImageUpload onUpload={() => setShouldFetchLocal(true)} />
           </span>
         </div>
       )}
 
-      {!hasUserAvatar || !avatarObjectUrl ? (
-        <AvatarPlaceholder sizePixels={sizePixels} />
-      ) : !publicURL ? (
-        <span>No URL</span>
-      ) : (
+      {isEditable && shouldFetchLocal && avatarObjectUrl ? (
         <Image
           src={avatarObjectUrl}
           alt="Avatar"
           className="rounded-full"
           width={sizePixels}
           height={sizePixels}
-          // Next.js image optimization does not work with Supabase Storage right now
-          // https://github.com/supabase/supabase/issues/3821
-          // src={publicURL}
-          // width={400}
-          // height={400}
         />
+      ) : hasUserAvatar && publicURL ? (
+        <Image
+          src={publicURL}
+          alt="Avatar"
+          className="rounded-full"
+          width={sizePixels}
+          height={sizePixels}
+        />
+      ) : (
+        <AvatarPlaceholder sizePixels={sizePixels} />
       )}
     </div>
   )
