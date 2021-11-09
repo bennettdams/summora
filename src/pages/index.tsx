@@ -1,10 +1,12 @@
 import { GetStaticProps } from 'next'
 import { prisma } from '../prisma/prisma'
-import { PostCategory, Prisma, PrismaClient } from '@prisma/client'
+import { PostCategory, PrismaClient } from '@prisma/client'
 import { PostsPage } from '../components/pages/posts/PostsPage'
+import { hydrationHandler, prefillServer } from '../data/use-posts'
+import { Hydrate } from 'react-query'
+import { ServerPageProps } from '../types/PageProps'
 
-export interface PostsPageProps {
-  posts: Prisma.PromiseReturnType<typeof findPosts>
+export type PostsPageProps = {
   postCategories: PostCategory[]
   noOfPosts: number
   noOfPostsCreatedLast24Hours: number
@@ -16,6 +18,7 @@ async function findPosts(prisma: PrismaClient) {
   try {
     return await prisma.post.findMany({
       take: 20,
+      orderBy: { createdAt: 'asc' },
       include: {
         author: { select: { username: true, hasAvatar: true } },
         category: true,
@@ -27,35 +30,43 @@ async function findPosts(prisma: PrismaClient) {
   }
 }
 
-export const getStaticProps: GetStaticProps<PostsPageProps> = async () => {
-  const posts = await findPosts(prisma)
-  const postCategories = await prisma.postCategory.findMany()
+export const getStaticProps: GetStaticProps<PostsPageProps & ServerPageProps> =
+  async () => {
+    const posts = await findPosts(prisma)
 
-  const now = new Date()
-  const nowYesterday = new Date(now.setHours(now.getHours() - 24))
-  const noOfPosts = await prisma.post.count()
-  const noOfPostsCreatedLast24Hours = await prisma.post.count({
-    where: { createdAt: { gte: nowYesterday } },
-  })
+    const client = hydrationHandler.createClient()
+    prefillServer(client, posts)
 
-  return {
-    props: {
-      posts,
-      postCategories,
-      noOfPosts,
-      noOfPostsCreatedLast24Hours,
-    },
-    revalidate: revalidateInSeconds,
+    const postCategories = await prisma.postCategory.findMany()
+
+    const now = new Date()
+    const nowYesterday = new Date(now.setHours(now.getHours() - 24))
+    const noOfPosts = await prisma.post.count()
+    const noOfPostsCreatedLast24Hours = await prisma.post.count({
+      where: { createdAt: { gte: nowYesterday } },
+    })
+
+    return {
+      props: {
+        dehydratedState: hydrationHandler.dehydrate(client),
+        postCategories,
+        noOfPosts,
+        noOfPostsCreatedLast24Hours,
+      },
+      revalidate: revalidateInSeconds,
+    }
   }
-}
 
-export default function _HomePage(props: PostsPageProps): JSX.Element {
+export default function _HomePage(
+  props: PostsPageProps & ServerPageProps
+): JSX.Element {
   return (
-    <PostsPage
-      posts={props.posts}
-      postCategories={props.postCategories}
-      noOfPosts={props.noOfPosts}
-      noOfPostsCreatedLast24Hours={props.noOfPostsCreatedLast24Hours}
-    />
+    <Hydrate state={hydrationHandler.deserialize(props.dehydratedState)}>
+      <PostsPage
+        postCategories={props.postCategories}
+        noOfPosts={props.noOfPosts}
+        noOfPostsCreatedLast24Hours={props.noOfPostsCreatedLast24Hours}
+      />
+    </Hydrate>
   )
 }

@@ -10,14 +10,16 @@ import { Button } from '../../Button'
 import { useState } from 'react'
 import { Avatar } from '../../Avatar'
 import { LightningBoltIcon } from '@heroicons/react/outline'
+import { usePosts } from '../../../data/use-posts'
+import { ApiPosts } from '../../../pages/api/posts'
 
 export function PostsPage({
-  posts,
   postCategories,
   noOfPosts,
   noOfPostsCreatedLast24Hours,
 }: PostsPageProps): JSX.Element {
   const [showLongPost, setShowLongPost] = useState(true)
+  const { posts } = usePosts()
 
   return (
     <Page
@@ -177,11 +179,7 @@ export function PostsPage({
   )
 }
 
-function PostItem({
-  post,
-}: {
-  post: PostsPageProps['posts'][number]
-}): JSX.Element {
+function PostItem({ post }: { post: ApiPosts[number] }): JSX.Element {
   return (
     <Link to={`/post/${post.id}`}>
       <Box smallPadding>
@@ -228,11 +226,7 @@ function PostItem({
   )
 }
 
-function PostItemShort({
-  post,
-}: {
-  post: PostsPageProps['posts'][number]
-}): JSX.Element {
+function PostItemShort({ post }: { post: ApiPosts[number] }): JSX.Element {
   return (
     <Link to={`/post/${post.id}`}>
       <Box smallPadding>

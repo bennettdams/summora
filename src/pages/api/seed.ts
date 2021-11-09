@@ -89,7 +89,7 @@ export default async function _seedAPI(
     // },
 
     const message = `seeded ${postsCreated.length} posts`
-    console.log(message)
+    console.info(message)
     res.status(200).json(message)
   } catch (err) {
     res.status(400).json({ message: 'Something went wrong!' + err })

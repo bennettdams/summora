@@ -131,7 +131,7 @@ export function useAuth() {
       if (error) {
         console.error(error.message)
       } else {
-        console.log('signed in')
+        console.info('signed in')
       }
     } catch (error) {
       console.error(error)
@@ -155,7 +155,7 @@ export function useAuth() {
         console.error('Error while sign up')
         return false
       } else {
-        console.log('Signed up')
+        console.info('Signed up')
         return true
       }
     } catch (error) {

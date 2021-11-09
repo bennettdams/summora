@@ -9,14 +9,16 @@ export type ApiPosts = Prisma.PromiseReturnType<typeof findPosts>
 async function findPosts() {
   try {
     return await prisma.post.findMany({
+      take: 20,
       orderBy: { createdAt: 'asc' },
       include: {
+        author: { select: { username: true, hasAvatar: true } },
         category: true,
-        author: true,
+        segments: { orderBy: { createdAt: 'asc' } },
       },
     })
   } catch (error) {
-    throw new Error(`Error while finding posts: ${error}`)
+    throw new Error(`Error finding posts: ${error}`)
   }
 }
 

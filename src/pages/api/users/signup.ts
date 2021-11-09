@@ -44,7 +44,7 @@ export default async function _usersSignUpAPI(
          */
         if (usernameAlreadyExists) {
           const message = `[API] Username ${username} already exists, not trying to create a user.`
-          console.log(message)
+          console.warn(message)
           return res.status(409).json({ message })
         } else {
           const { user, error } = await signUp(email, password)
@@ -71,7 +71,7 @@ export default async function _usersSignUpAPI(
               throw new Error('[API] Error while creating user (Prisma)')
             }
 
-            console.log(`[API] signed up ${username}`)
+            console.info(`[API] signed up ${username}`)
 
             // using explicit type to make sure we're returning what we've promised in the API function (that called this API endpoint)
             const responseData: ApiUsersSignUp = userCreated

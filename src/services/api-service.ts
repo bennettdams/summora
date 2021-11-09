@@ -100,7 +100,7 @@ export async function apiFetchPosts(): Promise<HttpResponse<ApiPosts>> {
   return response
 }
 
-function transformApiPosts(posts: ApiPosts): ApiPosts {
+export function transformApiPosts(posts: ApiPosts): ApiPosts {
   return posts.map((post) => ({
     ...post,
     createdAt: new Date(post.createdAt),

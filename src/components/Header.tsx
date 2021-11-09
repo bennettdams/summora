@@ -34,7 +34,7 @@ function UserNavbar() {
             <LoadingAnimation />
           ) : (
             <Link to="/signin">
-              <Button onClick={() => console.log('here')}>Sign in</Button>
+              <Button onClick={() => console.info('here')}>Sign in</Button>
             </Link>
           )
         ) : (

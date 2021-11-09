@@ -13,5 +13,5 @@ export function logAPI(
   if (additionalText) {
     log += ` | ${additionalText}`
   }
-  console.log(log)
+  console.info(log)
 }

@@ -107,7 +107,7 @@ export default async function _avatarsUploadAPI(
             data: { hasAvatar: true },
           })
 
-          console.log(`[API] uploaded avatar for user ${userId}`)
+          console.info(`[API] uploaded avatar for user ${userId}`)
 
           return res
             .status(200)
