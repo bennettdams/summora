@@ -4,10 +4,12 @@ import { PostCategory, PrismaClient } from '.prisma/client'
 import { PostPage } from '../../components/pages/post/PostPage'
 import { Prisma } from '@prisma/client'
 import type { ParsedUrlQuery } from 'querystring'
+import { ServerPageProps } from '../../types/PageProps'
+import { Hydrate } from 'react-query'
+import { hydrationHandler, prefillServer } from '../../data/post-helper'
 
 export interface PostPageProps {
-  // exclude null, because the page will return "notFound" if post is null
-  post: Exclude<Prisma.PromiseReturnType<typeof findPost>, null>
+  postId: string
   postCategories: PostCategory[]
   tagsSorted: Prisma.PromiseReturnType<typeof findTagsForPost>
   tagsSortedForCategory: Prisma.PromiseReturnType<
@@ -17,6 +19,11 @@ export interface PostPageProps {
 
 async function findTagsForPost(prisma: PrismaClient) {
   return await prisma.postTag.findMany({
+    select: {
+      id: true,
+      title: true,
+      description: true,
+    },
     orderBy: { posts: { _count: 'desc' } },
     take: 20,
   })
@@ -27,6 +34,11 @@ async function findTagsForPostByCategory(
   categoryId: string
 ) {
   return await prisma.postTag.findMany({
+    select: {
+      id: true,
+      title: true,
+      description: true,
+    },
     where: { posts: { some: { postCategoryId: categoryId } } },
     orderBy: { posts: { _count: 'desc' } },
     take: 20,
@@ -38,7 +50,13 @@ async function findPost(prisma: PrismaClient, postId: string) {
     where: { id: postId },
     include: {
       category: true,
-      tags: true,
+      tags: {
+        select: {
+          id: true,
+          title: true,
+          description: true,
+        },
+      },
       author: { select: { username: true, hasAvatar: true } },
       segments: {
         orderBy: { createdAt: 'asc' },
@@ -65,9 +83,10 @@ interface Params extends ParsedUrlQuery {
 
 const revalidateInSeconds = 5 * 60
 
-export const getStaticProps: GetStaticProps<PostPageProps, Params> = async ({
-  params,
-}) => {
+export const getStaticProps: GetStaticProps<
+  PostPageProps & ServerPageProps,
+  Params
+> = async ({ params }) => {
   if (!params) {
     // FIXME this is not really "not found", but rather a server error
     return { notFound: true }
@@ -78,6 +97,9 @@ export const getStaticProps: GetStaticProps<PostPageProps, Params> = async ({
     if (!post) {
       return { notFound: true }
     } else {
+      const client = hydrationHandler.createClient()
+      prefillServer(client, postId, post)
+
       const postCategories = await prisma.postCategory.findMany()
 
       const tagsSorted = await findTagsForPost(prisma)
@@ -88,7 +110,8 @@ export const getStaticProps: GetStaticProps<PostPageProps, Params> = async ({
 
       return {
         props: {
-          post,
+          dehydratedState: hydrationHandler.dehydrate(client),
+          postId,
           postCategories,
           tagsSorted,
           tagsSortedForCategory,
@@ -99,13 +122,17 @@ export const getStaticProps: GetStaticProps<PostPageProps, Params> = async ({
   }
 }
 
-export default function _PostPage(props: PostPageProps): JSX.Element {
+export default function _PostPage(
+  props: PostPageProps & ServerPageProps
+): JSX.Element {
   return (
-    <PostPage
-      post={props.post}
-      postCategories={props.postCategories}
-      tagsSorted={props.tagsSorted}
-      tagsSortedForCategory={props.tagsSortedForCategory}
-    />
+    <Hydrate state={hydrationHandler.deserialize(props.dehydratedState)}>
+      <PostPage
+        postId={props.postId}
+        postCategories={props.postCategories}
+        tagsSorted={props.tagsSorted}
+        tagsSortedForCategory={props.tagsSortedForCategory}
+      />
+    </Hydrate>
   )
 }

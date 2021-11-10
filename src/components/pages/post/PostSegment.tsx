@@ -6,15 +6,11 @@ import { usePost } from '../../../data/post-helper'
 import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
 import { PostSegmentItem } from './PostSegmentItem'
-import { PostPageProps } from '../../../pages/post/[postId]'
 import {
   ApiPostSegmentItemCreateRequestBody,
   ApiPostSegmentUpdateRequestBody,
 } from '../../../services/api-service'
-
-type PostSegment = PostPageProps['post']['segments'][number]
-type PostSegmentItem =
-  PostPageProps['post']['segments'][number]['items'][number]
+import { SegmentItemPostPage, SegmentPostPage } from './PostPage'
 
 export function PostSegment({
   segmentExternal,
@@ -23,16 +19,16 @@ export function PostSegment({
   isEditableExternal = false,
   onInitialEdit,
 }: {
-  segmentExternal: PostSegment
+  segmentExternal: SegmentPostPage
   index: number
   postId: string
   isEditableExternal?: boolean
   onInitialEdit?: () => void
 }): JSX.Element {
-  const { createPostSegmentItem, updatePostSegment } = usePost(postId, false)
-  const [segment, setSegment] = useState<PostSegment>(segmentExternal)
+  const { createPostSegmentItem, updatePostSegment } = usePost(postId)
+  const [segment, setSegment] = useState<SegmentPostPage>(segmentExternal)
   useEffect(() => setSegment(segmentExternal), [segmentExternal])
-  const [items, setItems] = useState<PostSegmentItem[]>(segment.items)
+  const [items, setItems] = useState<SegmentItemPostPage[]>(segment.items)
   useEffect(() => setItems(segment.items), [segment.items])
 
   const [isSegmentEditable, setIsSegmentEditable] = useState(isEditableExternal)

@@ -74,7 +74,9 @@ export async function apiFetchPost(
   return response
 }
 
-function transformApiPost(post: NonNullable<ApiPost>): NonNullable<ApiPost> {
+export function transformApiPost(
+  post: NonNullable<ApiPost>
+): NonNullable<ApiPost> {
   return {
     ...post,
     createdAt: new Date(post.createdAt),

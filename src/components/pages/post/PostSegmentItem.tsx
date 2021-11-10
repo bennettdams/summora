@@ -6,25 +6,22 @@ import { LoadingAnimation } from '../../LoadingAnimation'
 import { usePost } from '../../../data/post-helper'
 import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
-import { PostPageProps } from '../../../pages/post/[postId]'
 import { ApiPostSegmentItemUpdateRequestBody } from '../../../services/api-service'
-
-type PostSegmentItem =
-  PostPageProps['post']['segments'][number]['items'][number]
+import { SegmentItemPostPage } from './PostPage'
 
 export function PostSegmentItem({
   itemExternal,
   index,
   postId,
 }: {
-  itemExternal: PostSegmentItem
+  itemExternal: SegmentItemPostPage
   index: number
   postId: string
 }): JSX.Element {
-  const { updatePostSegmentItem, isLoading } = usePost(postId, false)
+  const { updatePostSegmentItem, isLoading } = usePost(postId)
   const [ref, isHovered] = useHover<HTMLDivElement>()
 
-  const [item, setItem] = useState<PostSegmentItem>(itemExternal)
+  const [item, setItem] = useState<SegmentItemPostPage>(itemExternal)
   useEffect(() => setItem(itemExternal), [itemExternal])
 
   const [isEditable, setIsEditable] = useState(false)

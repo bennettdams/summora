@@ -21,20 +21,36 @@ import {
   ApiPostUpdateRequestBody,
 } from '../../../services/api-service'
 
-type PostPostPage = PostPageProps['post']
-type SegmentPostPage = PostPostPage['segments'][number]
-type TagPostPage = PostPostPage['tags'][number]
+type QueryReturn = ReturnType<typeof usePost>
+// exclude null, because the page will return "notFound" if post is null
+type PostPostPage = Exclude<QueryReturn['post'], null>
+export type SegmentPostPage = PostPostPage['segments'][number]
+export type SegmentItemPostPage = SegmentPostPage['items'][number]
+export type TagPostPage = PostPostPage['tags'][number]
 
-export function PostPage({
-  post: postInitial,
+export function PostPage(props: PostPageProps): JSX.Element {
+  const { post } = usePost(props.postId)
+  return !post ? (
+    <p>no post</p>
+  ) : (
+    <PostPageInternal
+      post={post}
+      postId={props.postId}
+      postCategories={props.postCategories}
+      tagsSorted={props.tagsSorted}
+      tagsSortedForCategory={props.tagsSortedForCategory}
+    />
+  )
+}
+
+function PostPageInternal({
+  postId,
+  post,
   postCategories,
   tagsSorted,
   tagsSortedForCategory,
-}: PostPageProps): JSX.Element {
-  const [post, setPost] = useState<PostPostPage>(postInitial)
-  useEffect(() => setPost(postInitial), [postInitial])
-
-  const { updatePost, createPostSegment, isLoading } = usePost(post.id, false)
+}: PostPageProps & { post: PostPostPage }): JSX.Element {
+  const { updatePost, createPostSegment, isLoading } = usePost(postId)
   const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
   const newSegmentId = 'new-segment-id'
 

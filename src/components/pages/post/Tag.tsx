@@ -1,12 +1,12 @@
-import { PostTag } from '.prisma/client'
 import { useState } from 'react'
+import { TagPostPage } from './PostPage'
 
 export function Tag({
   tagInitial,
   onClick,
 }: {
-  tagInitial: PostTag
-  onClick?: (tag: PostTag) => void
+  tagInitial: TagPostPage
+  onClick?: (tag: TagPostPage) => void
 }): JSX.Element {
   const [tag] = useState(tagInitial)
 

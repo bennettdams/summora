@@ -11,7 +11,7 @@ export const hydrationHandler =
   createHydrationHandler<QueryData>(transformApiPosts)
 
 export function prefillServer(queryClient: QueryClient, posts: ApiPosts): void {
-  const postsSerialized = !posts ? [] : hydrationHandler.serialize(posts)
+  const postsSerialized = hydrationHandler.serialize(posts)
   queryClient.setQueryData([queryKey], postsSerialized)
 }
 

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { QueryClient, useMutation, useQuery, useQueryClient } from 'react-query'
 import {
   apiCreatePostSegment,
   apiCreatePostSegmentItem,
@@ -6,28 +6,31 @@ import {
   apiUpdatePost,
   apiUpdatePostSegment,
   apiUpdatePostSegmentItem,
+  transformApiPost,
 } from '../services/api-service'
 import { ApiPost } from '../pages/api/posts/[postId]'
 import { useState } from 'react'
+import { createHydrationHandler } from '../services/hydration-service'
 
 const queryKeyPostBase = 'post'
-type QueryData = ApiPost | null
+type QueryData = ApiPost
 
 function createQueryKey(postId: string) {
   return [queryKeyPostBase, postId]
 }
 
-// function usePostsMutation() {
-//   const queryClient = useQueryClient()
+export const hydrationHandler = createHydrationHandler<QueryData>((data) =>
+  !data ? null : transformApiPost(data)
+)
 
-//   const createPostMutation = useMutation(createPost, {
-//     onSuccess: () => {
-//       queryClient.invalidateQueries(queryKeyPosts)
-//     },
-//   })
-
-//   return { createPostMutation }
-// }
+export function prefillServer(
+  queryClient: QueryClient,
+  postId: string,
+  post: ApiPost
+): void {
+  const postSerialized = !post ? null : hydrationHandler.serialize(post)
+  queryClient.setQueryData(createQueryKey(postId), postSerialized)
+}
 
 function usePostMutation(postId: string) {
   const queryClient = useQueryClient()
@@ -134,26 +137,15 @@ function usePostMutation(postId: string) {
   }
 }
 
-// export function usePosts() {
-//   const { data, isLoading, isError } = useQuery<PostPostsAPI[]>(
-//     queryKeyPosts,
-//     fetchPosts
-//   )
-//   const { createPostMutation } = usePostsMutation()
-
-//   return {
-//     posts: data || null,
-//     isLoading,
-//     isError,
-//     createPost: createPostMutation.mutate,
-//   }
-// }
-
-export function usePost(postId: string, enabled = true) {
+export function usePost(postId: string) {
   const { data, isLoading, isError } = useQuery<QueryData>(
     createQueryKey(postId),
     async () => (await apiFetchPost(postId)).result ?? null,
-    { enabled }
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchInterval: false,
+    }
   )
 
   const {

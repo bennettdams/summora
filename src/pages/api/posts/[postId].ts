@@ -11,13 +11,19 @@ async function findPost(postId: string) {
   return await prisma.post.findUnique({
     where: { id: postId },
     include: {
+      category: true,
+      tags: {
+        select: {
+          id: true,
+          title: true,
+          description: true,
+        },
+      },
+      author: { select: { username: true, hasAvatar: true } },
       segments: {
         orderBy: { createdAt: 'asc' },
         include: { items: { orderBy: { createdAt: 'asc' } } },
       },
-      author: true,
-      category: true,
-      tags: true,
     },
   })
 }
@@ -53,13 +59,19 @@ async function updatePost(
           : { set: postToUpdate.tagIds.map((tagId) => ({ id: tagId })) },
       },
       include: {
+        category: true,
+        tags: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+          },
+        },
+        author: { select: { username: true, hasAvatar: true } },
         segments: {
           orderBy: { createdAt: 'asc' },
           include: { items: { orderBy: { createdAt: 'asc' } } },
         },
-        author: true,
-        category: true,
-        tags: true,
       },
     })
   } catch (error) {
