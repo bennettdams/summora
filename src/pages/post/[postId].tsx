@@ -6,7 +6,7 @@ import { Prisma } from '@prisma/client'
 import type { ParsedUrlQuery } from 'querystring'
 import { ServerPageProps } from '../../types/PageProps'
 import { Hydrate } from 'react-query'
-import { hydrationHandler, prefillServer } from '../../data/post-helper'
+import { hydrationHandler, prefillServer } from '../../data/use-post'
 
 export interface PostPageProps {
   postId: string
