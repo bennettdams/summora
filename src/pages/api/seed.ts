@@ -45,6 +45,7 @@ export default async function _seedAPI(
 
     const postsCreated = await prisma.post.findMany()
     postsCreated.forEach(async (post) => {
+      await new Promise((r) => setTimeout(r, 10))
       await prisma.post.update({
         data: {
           tags: {

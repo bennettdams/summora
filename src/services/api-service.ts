@@ -64,6 +64,16 @@ export async function apiFetchUser(
   return await get<ApiUser>(ROUTES_API.USER(userId))
 }
 
+export function transformApiUser(
+  user: NonNullable<ApiUser>
+): NonNullable<ApiUser> {
+  return {
+    ...user,
+    createdAt: new Date(user.createdAt),
+    updatedAt: new Date(user.updatedAt),
+  }
+}
+
 // #########################################
 
 export async function apiFetchPost(

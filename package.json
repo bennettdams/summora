@@ -25,17 +25,12 @@
     "@prisma/client": "^3.4.1",
     "@supabase/supabase-js": "^1.25.2",
     "@tailwindcss/forms": "^0.3.4",
-    "babel-plugin-superjson-next": "^0.4.2",
     "formidable": "^1.2.2",
     "next": "12.0.3",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-query": "^3.32.1",
-    "superjson": "^1.8.0"
+    "react-query": "^3.32.1"
   },
-  "//dependencies": [
-    "superjson and babel-plugin-superjson-next for serializing dates with Prisma & Next.js. In .babelrc: plugins: [ 'superjson-next' ] "
-  ],
   "devDependencies": {
     "@types/formidable": "^1.2.4",
     "@types/node": "16.11.6",

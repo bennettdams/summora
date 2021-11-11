@@ -2,8 +2,25 @@ import { UserPageProps } from '../../pages/user/[userId]'
 import { Page, PageSection } from '../Page'
 import { Avatar } from '../Avatar'
 import { Box } from '../Box'
+import { useUser } from '../../data/use-user'
 
-export function UserPage({ user }: UserPageProps): JSX.Element {
+type QueryReturn = ReturnType<typeof useUser>
+// exclude null, because the page will return "notFound" if post is null
+type UserUserPage = Exclude<QueryReturn['user'], null>
+
+export function UserPage(props: UserPageProps): JSX.Element {
+  const { user } = useUser(props.userId)
+  return !user ? (
+    <p>no user</p>
+  ) : (
+    <UserPageInternal user={user} userId={props.userId} />
+  )
+}
+
+function UserPageInternal({
+  user,
+  userId,
+}: UserPageProps & { user: UserUserPage }): JSX.Element {
   return (
     <Page>
       <PageSection>
@@ -11,7 +28,7 @@ export function UserPage({ user }: UserPageProps): JSX.Element {
           <p>USER</p>
           <div className="flex">
             <div className="flex-grow">
-              <p>User ID {user.userId}</p>
+              <p>User ID {userId}</p>
               <p>Username {user.username}</p>
               <p>Created at {new Date(user.createdAt).toISOString()}</p>
               <p>Updated at {new Date(user.updatedAt).toISOString()}</p>
@@ -20,7 +37,7 @@ export function UserPage({ user }: UserPageProps): JSX.Element {
               <Avatar
                 hasUserAvatar={user.hasAvatar ?? false}
                 isEditable
-                userId={user.userId}
+                userId={userId}
                 size="large"
               />
             </div>
@@ -37,7 +54,7 @@ export function UserPage({ user }: UserPageProps): JSX.Element {
               <div className="h-full grid place-items-center">
                 <Avatar
                   hasUserAvatar={user.hasAvatar ?? false}
-                  userId={user.userId}
+                  userId={userId}
                   size="small"
                 />
               </div>
@@ -47,7 +64,7 @@ export function UserPage({ user }: UserPageProps): JSX.Element {
               <div className="h-full grid place-items-center">
                 <Avatar
                   hasUserAvatar={user.hasAvatar ?? false}
-                  userId={user.userId}
+                  userId={userId}
                   size="medium"
                 />
               </div>
@@ -57,7 +74,7 @@ export function UserPage({ user }: UserPageProps): JSX.Element {
               <div className="h-full grid place-items-center">
                 <Avatar
                   hasUserAvatar={user.hasAvatar ?? false}
-                  userId={user.userId}
+                  userId={userId}
                   size="large"
                 />
               </div>

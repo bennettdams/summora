@@ -1,12 +1,14 @@
-import type { Prisma, PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '@prisma/client'
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import type { ParsedUrlQuery } from 'querystring'
+import { Hydrate } from 'react-query'
 import { UserPage } from '../../components/pages/UserPage'
+import { hydrationHandler, prefillServer } from '../../data/use-user'
 import { prisma } from '../../prisma/prisma'
+import { ServerPageProps } from '../../types/PageProps'
 
 export interface UserPageProps {
-  // exclude null, because the page will return "notFound" if user is null
-  user: Exclude<Prisma.PromiseReturnType<typeof findUserByUserId>, null>
+  userId: string
 }
 
 interface Params extends ParsedUrlQuery {
@@ -32,9 +34,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 const revalidateInSeconds = 5 * 60
 
-export const getStaticProps: GetStaticProps<UserPageProps, Params> = async ({
-  params,
-}) => {
+export const getStaticProps: GetStaticProps<
+  UserPageProps & ServerPageProps,
+  Params
+> = async ({ params }) => {
   if (!params) {
     // FIXME this is not really "not found", but rather a server error
     return { notFound: true }
@@ -45,9 +48,13 @@ export const getStaticProps: GetStaticProps<UserPageProps, Params> = async ({
     if (!user) {
       return { notFound: true }
     } else {
+      const client = hydrationHandler.createClient()
+      prefillServer(client, userId, user)
+
       return {
         props: {
-          user,
+          dehydratedState: hydrationHandler.dehydrate(client),
+          userId,
         },
         revalidate: revalidateInSeconds,
       }
@@ -55,6 +62,12 @@ export const getStaticProps: GetStaticProps<UserPageProps, Params> = async ({
   }
 }
 
-export default function _User(props: UserPageProps): JSX.Element {
-  return <UserPage user={props.user} />
+export default function _User(
+  props: UserPageProps & ServerPageProps
+): JSX.Element {
+  return (
+    <Hydrate state={hydrationHandler.deserialize(props.dehydratedState)}>
+      <UserPage userId={props.userId} />
+    </Hydrate>
+  )
 }
