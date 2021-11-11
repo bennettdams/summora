@@ -10,26 +10,22 @@ import {
   ApiPostSegmentItemCreateRequestBody,
   ApiPostSegmentUpdateRequestBody,
 } from '../../../services/api-service'
-import { SegmentItemPostPage, SegmentPostPage } from './PostPage'
+import { SegmentPostPage } from './PostPage'
 
 export function PostSegment({
-  segmentExternal,
+  segment,
   index,
   postId,
   isEditableExternal = false,
   onInitialEdit,
 }: {
-  segmentExternal: SegmentPostPage
+  segment: SegmentPostPage
   index: number
   postId: string
   isEditableExternal?: boolean
   onInitialEdit?: () => void
 }): JSX.Element {
   const { createPostSegmentItem, updatePostSegment } = usePost(postId)
-  const [segment, setSegment] = useState<SegmentPostPage>(segmentExternal)
-  useEffect(() => setSegment(segmentExternal), [segmentExternal])
-  const [items, setItems] = useState<SegmentItemPostPage[]>(segment.items)
-  useEffect(() => setItems(segment.items), [segment.items])
 
   const [isSegmentEditable, setIsSegmentEditable] = useState(isEditableExternal)
   useEffect(
@@ -53,7 +49,6 @@ export function PostSegment({
         title: inputValue,
       }
 
-      setSegment((preSegment) => ({ ...preSegment, title: inputValue }))
       setIsSegmentEditable(false)
 
       await updatePostSegment({
@@ -68,8 +63,6 @@ export function PostSegment({
       const postSegmentToUpdate: ApiPostSegmentUpdateRequestBody = {
         subtitle: inputValue,
       }
-
-      setSegment((preSegment) => ({ ...preSegment, subtitle: inputValue }))
 
       // When creating a segment, the title is editable initially. This resets this.
       if (onInitialEdit) onInitialEdit()
@@ -158,13 +151,9 @@ export function PostSegment({
       </div>
 
       <div className="mt-2 space-y-2">
-        {items.map((item, index) => (
+        {segment.items.map((item, index) => (
           <div className="w-full" key={item.id}>
-            <PostSegmentItem
-              itemExternal={item}
-              postId={postId}
-              index={index}
-            />
+            <PostSegmentItem item={item} postId={postId} index={index} />
           </div>
         ))}
       </div>

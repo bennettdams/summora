@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { Box } from '../../Box'
 import { Button, ButtonAdd } from '../../Button'
 import { DropdownItem, DropdownSelect } from '../../DropdownSelect'
@@ -59,12 +59,6 @@ function PostPageInternal({
   )
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
 
-  const [segments, setSegments] = useState<SegmentPostPage[]>(post.segments)
-  useEffect(() => setSegments(post.segments), [post.segments])
-
-  const [tags, setTags] = useState<TagPostPage[]>(post.tags)
-  useEffect(() => setTags(post.tags), [post.tags])
-
   useOnClickOutside(refCategory, () => setShowCategoryDropdown(false))
 
   async function handleCreate(): Promise<void> {
@@ -109,8 +103,6 @@ function PostPageInternal({
       categoryId: newCategory.id,
     }
 
-    setPost((prePost) => ({ ...prePost, categoryId: newCategory.id }))
-
     await updatePost({
       postId: post.id,
       postToUpdate,
@@ -123,7 +115,6 @@ function PostPageInternal({
         title: inputValue,
       }
 
-      setPost((prePost) => ({ ...prePost, title: inputValue }))
       setIsTitleEditable(false)
 
       await updatePost({
@@ -139,7 +130,6 @@ function PostPageInternal({
         subtitle: inputValue,
       }
 
-      setPost((prePost) => ({ ...prePost, subtitle: inputValue }))
       setIsTitleEditable(false)
 
       await updatePost({
@@ -157,11 +147,6 @@ function PostPageInternal({
     const postToUpdate: ApiPostUpdateRequestBody = {
       tagIds: tagsNew.map((tag) => tag.id),
     }
-
-    // needed?
-    setTags(tagsNew)
-
-    setPost((prePost) => ({ ...prePost, tags: tagsNew }))
 
     await updatePost({
       postId: post.id,
@@ -183,11 +168,6 @@ function PostPageInternal({
       const postToUpdate: ApiPostUpdateRequestBody = {
         tagIds: tagsNew.map((tag) => tag.id),
       }
-
-      // needed?
-      setTags(tagsNew)
-
-      setPost((prePost) => ({ ...prePost, tags: tagsNew }))
 
       await updatePost({
         postId: post.id,
@@ -326,7 +306,7 @@ function PostPageInternal({
 
       <PageSection>
         <div className="flex flex-wrap items-center -m-1">
-          {tags.map((tag) => (
+          {post.tags.map((tag) => (
             <Tag key={tag.id} tagInitial={tag} onClick={handleRemoveTag} />
           ))}
         </div>
@@ -394,14 +374,14 @@ function PostPageInternal({
 
       <PageSection>
         <div className="space-y-16">
-          {segments.map((segment, index) => (
+          {post.segments.map((segment, index) => (
             <PostSegment
               index={index + 1}
               postId={post.id}
               key={segment.id}
-              segmentExternal={segment}
+              segment={segment}
               isEditableExternal={
-                !hasNewSegmentBeenEdited && index === segments.length - 1
+                !hasNewSegmentBeenEdited && index === post.segments.length - 1
               }
               onInitialEdit={() => setHasNewSegmentBeenEdited(true)}
             />

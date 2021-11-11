@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { Box } from '../../Box'
 import { FormInput } from '../../FormInput'
 import { IconCheck, IconX, IconTrash, IconEdit } from '../../Icon'
@@ -10,19 +10,16 @@ import { ApiPostSegmentItemUpdateRequestBody } from '../../../services/api-servi
 import { SegmentItemPostPage } from './PostPage'
 
 export function PostSegmentItem({
-  itemExternal,
+  item,
   index,
   postId,
 }: {
-  itemExternal: SegmentItemPostPage
+  item: SegmentItemPostPage
   index: number
   postId: string
 }): JSX.Element {
   const { updatePostSegmentItem, isLoading } = usePost(postId)
   const [ref, isHovered] = useHover<HTMLDivElement>()
-
-  const [item, setItem] = useState<SegmentItemPostPage>(itemExternal)
-  useEffect(() => setItem(itemExternal), [itemExternal])
 
   const [isEditable, setIsEditable] = useState(false)
 
@@ -35,7 +32,6 @@ export function PostSegmentItem({
         content: inputValue,
       }
 
-      setItem((preItem) => ({ ...preItem, content: inputValue }))
       setIsEditable(false)
 
       await updatePostSegmentItem({
