@@ -32,6 +32,49 @@ export function prefillServer(
   queryClient.setQueryData(createQueryKey(postId), postSerialized)
 }
 
+export function usePost(postId: string) {
+  const { data, isLoading, isError } = useQuery<QueryData>(
+    createQueryKey(postId),
+    async () => (await apiFetchPost(postId)).result ?? null,
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchInterval: false,
+    }
+  )
+
+  const {
+    updatePostMutation,
+    createPostSegmentItemMutation,
+    updatePostSegmentItemMutation,
+    createPostSegmentMutation,
+    updatePostSegmentMutation,
+  } = usePostMutation(postId)
+
+  return {
+    post: data ?? null,
+    isLoading:
+      isLoading ||
+      updatePostMutation.isLoading ||
+      createPostSegmentItemMutation.isLoading ||
+      updatePostSegmentItemMutation.isLoading ||
+      createPostSegmentMutation.isLoading ||
+      updatePostSegmentMutation.isLoading,
+    isError:
+      isError ||
+      updatePostMutation.isError ||
+      createPostSegmentItemMutation.isError ||
+      updatePostSegmentItemMutation.isError ||
+      createPostSegmentMutation.isError ||
+      updatePostSegmentMutation.isError,
+    updatePost: updatePostMutation.mutateAsync,
+    createPostSegmentItem: createPostSegmentItemMutation.mutateAsync,
+    createPostSegment: createPostSegmentMutation.mutateAsync,
+    updatePostSegmentItem: updatePostSegmentItemMutation.mutateAsync,
+    updatePostSegment: updatePostSegmentMutation.mutateAsync,
+  }
+}
+
 function usePostMutation(postId: string) {
   const queryClient = useQueryClient()
   const [queryKey] = useState(createQueryKey(postId))
@@ -134,48 +177,5 @@ function usePostMutation(postId: string) {
     updatePostSegmentItemMutation,
     createPostSegmentMutation,
     updatePostSegmentMutation,
-  }
-}
-
-export function usePost(postId: string) {
-  const { data, isLoading, isError } = useQuery<QueryData>(
-    createQueryKey(postId),
-    async () => (await apiFetchPost(postId)).result ?? null,
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchInterval: false,
-    }
-  )
-
-  const {
-    updatePostMutation,
-    createPostSegmentItemMutation,
-    updatePostSegmentItemMutation,
-    createPostSegmentMutation,
-    updatePostSegmentMutation,
-  } = usePostMutation(postId)
-
-  return {
-    post: data ?? null,
-    isLoading:
-      isLoading ||
-      updatePostMutation.isLoading ||
-      createPostSegmentItemMutation.isLoading ||
-      updatePostSegmentItemMutation.isLoading ||
-      createPostSegmentMutation.isLoading ||
-      updatePostSegmentMutation.isLoading,
-    isError:
-      isError ||
-      updatePostMutation.isError ||
-      createPostSegmentItemMutation.isError ||
-      updatePostSegmentItemMutation.isError ||
-      createPostSegmentMutation.isError ||
-      updatePostSegmentMutation.isError,
-    updatePost: updatePostMutation.mutateAsync,
-    createPostSegmentItem: createPostSegmentItemMutation.mutateAsync,
-    createPostSegment: createPostSegmentMutation.mutateAsync,
-    updatePostSegmentItem: updatePostSegmentItemMutation.mutateAsync,
-    updatePostSegment: updatePostSegmentMutation.mutateAsync,
   }
 }

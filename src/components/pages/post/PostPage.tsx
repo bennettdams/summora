@@ -61,7 +61,7 @@ function PostPageInternal({
 
   useOnClickOutside(refCategory, () => setShowCategoryDropdown(false))
 
-  async function handleCreate(): Promise<void> {
+  async function handleCreateSegment(): Promise<void> {
     const postSegmentToCreate: ApiPostSegmentCreateRequestBody['postSegmentToCreate'] =
       {
         title: '',
@@ -390,7 +390,10 @@ function PostPageInternal({
       </PageSection>
 
       <PageSection>
-        <Button onClick={handleCreate} disabled={!hasNewSegmentBeenEdited}>
+        <Button
+          onClick={handleCreateSegment}
+          disabled={!hasNewSegmentBeenEdited}
+        >
           Add step
         </Button>
         {isLoading && <LoadingAnimation />}
