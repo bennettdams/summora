@@ -87,7 +87,6 @@ function usePostMutation(postId: string) {
       }
     },
     onMutate: async (postForMutation) => {
-      const queryKey = createQueryKey(postForMutation.postId)
       const postToUpdate = postForMutation.postToUpdate
 
       // cancel any outgoing refetches (so they don't overwrite our optimistic update)

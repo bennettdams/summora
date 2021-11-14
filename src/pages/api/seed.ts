@@ -3,10 +3,13 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { Prisma } from '@prisma/client'
 import { prisma } from '../../prisma/prisma'
 
-function getRandom<T>(arr: T[]) {
-  const min = 0
-  const max = Math.floor(arr.length)
-  return arr[Math.floor(Math.random() * (max - min) + min)]
+function getRandomNumberForRange(min: number, max: number): number {
+  // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+function getRandomElementOfArray<T>(arr: T[]) {
+  return arr[Math.floor(Math.random() * arr.length)]
 }
 
 export default async function _seedAPI(
@@ -30,15 +33,16 @@ export default async function _seedAPI(
 
     await prisma.post.createMany({
       data: [...new Array(100)].map((_, i) => {
+        const category = getRandomElementOfArray(postCategoriesCreated)
         return {
-          title:
-            'Post title    This is a title that is a bit longer for testing purposes ' +
-            (i + 1),
-          subtitle:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
-            (i + 1),
-          postCategoryId: getRandom(postCategoriesCreated).id,
-          authorId: getRandom(users).userId,
+          title: `${
+            category.title
+          } This is a title that is a bit longer for testing purposes ${i + 1}`,
+          subtitle: `Subtitle - Lorem ipsum dolor sit amet, consectetur adipiscing elit. ${
+            i + 1
+          }`,
+          postCategoryId: category.id,
+          authorId: getRandomElementOfArray(users).userId,
         }
       }),
     })
@@ -49,8 +53,8 @@ export default async function _seedAPI(
       await prisma.post.update({
         data: {
           tags: {
-            connect: [...new Array(15)].map(() => ({
-              id: getRandom(postTagsCreated).id,
+            connect: [...new Array(getRandomNumberForRange(1, 15))].map(() => ({
+              id: getRandomElementOfArray(postTagsCreated).id,
             })),
           },
           segments: {
@@ -112,7 +116,7 @@ export default async function _seedAPI(
 
 // function createSegments(postId: string): Prisma.PostSegmentCreateManyInput[] {
 function createSegments(): Prisma.PostSegmentCreateManyPostInput[] {
-  return [...new Array(10)].map((_, index) => {
+  return [...new Array(getRandomNumberForRange(1, 10))].map((_, index) => {
     const now = new Date().getTime()
     const step = 100
 
@@ -123,16 +127,12 @@ function createSegments(): Prisma.PostSegmentCreateManyPostInput[] {
       title: `Segment title ${index}`,
       subtitle: `Subtitle ${index}`,
       items: {
-        create: [
-          {
-            createdAt: new Date(now + 2 * step),
-            content: 'Item content 1',
-          },
-          {
-            createdAt: new Date(now + 3 * step),
-            content: 'Item content 2',
-          },
-        ],
+        create: Array.from({ length: getRandomNumberForRange(1, 10) }).map(
+          (_, index) => ({
+            createdAt: new Date(now + 1 * step),
+            content: `Item content ${index}`,
+          })
+        ),
       },
     }
   })
