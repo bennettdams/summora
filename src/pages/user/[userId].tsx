@@ -1,14 +1,19 @@
-import type { PrismaClient } from '@prisma/client'
+import type { Prisma, PrismaClient } from '@prisma/client'
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import type { ParsedUrlQuery } from 'querystring'
 import { Hydrate } from 'react-query'
 import { UserPage } from '../../components/pages/UserPage'
 import { hydrationHandler, prefillServer } from '../../data/use-user'
 import { prisma } from '../../prisma/prisma'
+import {
+  deserializeUserPosts,
+  serialize,
+} from '../../services/serialize-service'
 import { ServerPageProps } from '../../types/PageProps'
 
 export interface UserPageProps {
   userId: string
+  posts: Prisma.PromiseReturnType<typeof findUserPosts>
 }
 
 interface Params extends ParsedUrlQuery {
@@ -19,6 +24,27 @@ async function findUserByUserId(prisma: PrismaClient, userId: string) {
   return await prisma.user.findUnique({
     where: { userId },
   })
+}
+
+// TODO rather go posts -> user than user -> posts?
+async function findUserPosts(prisma: PrismaClient, userId: string) {
+  const userPosts = await prisma.user.findUnique({
+    where: { userId },
+    select: {
+      posts: {
+        take: 10,
+        orderBy: { createdAt: 'desc' },
+        // include: { category: { select: { id: true } } },
+        include: {
+          author: { select: { username: true, hasAvatar: true } },
+          category: { select: { title: true } },
+          segments: { orderBy: { createdAt: 'asc' } },
+        },
+      },
+    },
+  })
+
+  return userPosts?.posts ?? null
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -51,10 +77,13 @@ export const getStaticProps: GetStaticProps<
       const client = hydrationHandler.createClient()
       prefillServer(client, userId, user)
 
+      const userPosts = await findUserPosts(prisma, userId)
+
       return {
         props: {
           dehydratedState: hydrationHandler.dehydrate(client),
           userId,
+          posts: serialize(userPosts),
         },
         revalidate: revalidateInSeconds,
       }
@@ -67,7 +96,10 @@ export default function _User(
 ): JSX.Element {
   return (
     <Hydrate state={hydrationHandler.deserialize(props.dehydratedState)}>
-      <UserPage userId={props.userId} />
+      <UserPage
+        userId={props.userId}
+        posts={deserializeUserPosts(props.posts)}
+      />
     </Hydrate>
   )
 }

@@ -1,5 +1,6 @@
 import { ServerPageProps } from '../types/PageProps'
 import { dehydrate as dehydrateReactQuery, QueryClient } from 'react-query'
+import { serialize } from './serialize-service'
 
 type DehydratedState = ServerPageProps['dehydratedState']
 type QueryData = null | Record<string, unknown> | Record<string, unknown>[]
@@ -28,12 +29,9 @@ export function createHydrationHandler<TData extends QueryData>(
     createClient,
     dehydrate,
     serialize,
-    deserialize: (dehydratedState) => deserialize(dehydratedState, transformCb),
+    deserialize: (dehydratedState) =>
+      deserializeQueryData(dehydratedState, transformCb),
   }
-}
-
-function serialize<TDataSerialize>(data: TDataSerialize): TDataSerialize {
-  return JSON.parse(JSON.stringify(data))
 }
 
 function createClient(): QueryClient {
@@ -50,7 +48,7 @@ function dehydrate(client: QueryClient): DehydratedState {
  *
  * Is used in the hydration process.
  */
-function deserialize<TDataDeserialize extends QueryData>(
+function deserializeQueryData<TDataDeserialize extends QueryData>(
   dehydratedState: DehydratedState,
   transformCb: TransformCallbackFn<TDataDeserialize>
 ): DehydratedState {

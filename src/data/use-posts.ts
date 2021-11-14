@@ -5,10 +5,10 @@ import { createHydrationHandler } from '../services/hydration-service'
 
 const queryKey = 'posts'
 
-export type PostsQueryData = ApiPosts
+type QueryData = ApiPosts
 
 export const hydrationHandler =
-  createHydrationHandler<PostsQueryData>(transformApiPosts)
+  createHydrationHandler<QueryData>(transformApiPosts)
 
 export function prefillServer(queryClient: QueryClient, posts: ApiPosts): void {
   const postsSerialized = hydrationHandler.serialize(posts)
@@ -23,7 +23,7 @@ export function usePosts(): {
   isFetching: boolean
   posts: ApiPosts
 } {
-  const { isLoading, isFetching, data } = useQuery<PostsQueryData>(
+  const { isLoading, isFetching, data } = useQuery<QueryData>(
     [queryKey],
     async () => (await apiFetchPosts()).result ?? [],
     {

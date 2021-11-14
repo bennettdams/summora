@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { PostsQueryData } from '../data/use-posts'
 import { Link } from './Link'
 import { Views } from './Likes'
 import { Comments } from './Comments'
@@ -7,9 +6,25 @@ import { Box } from './Box'
 import { Avatar } from './Avatar'
 import { Button } from './Button'
 
-type PostPostsList = PostsQueryData[number]
+type PostsPostsList =
+  | null
+  | {
+      id: string
+      title: string
+      subtitle: string | null
+      categoryTitle: string
+      segments: { id: string; title: string }[]
+      updatedAt: Date
+      author: {
+        id: string
+        username: string
+        hasAvatar: boolean
+      }
+    }[]
 
-export function PostsList({ posts }: { posts: PostPostsList[] }): JSX.Element {
+type PostPostsList = NonNullable<PostsPostsList>[number]
+
+export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
   const [showLongPost, setShowLongPost] = useState(true)
 
   return (
@@ -17,7 +32,11 @@ export function PostsList({ posts }: { posts: PostPostsList[] }): JSX.Element {
       <Button onClick={() => setShowLongPost(true)}>long</Button>
       <Button onClick={() => setShowLongPost(false)}>short</Button>
 
-      {showLongPost ? (
+      {!posts ? (
+        <div>no posts :(</div>
+      ) : posts.length === 0 ? (
+        <div>This user has not created a post yet.</div>
+      ) : showLongPost ? (
         <div className="mt-10 flex flex-col space-y-10">
           {posts.map((post) => (
             <PostItem key={post.id} post={post} />
@@ -40,7 +59,7 @@ function PostItem({ post }: { post: PostPostsList }): JSX.Element {
       <Box smallPadding>
         <div className="w-full h-80 text-center relative">
           <h2 className="tracking-widest text-xs font-medium text-gray-400">
-            {post.category.title}
+            {post.categoryTitle}
           </h2>
           <h1 className="mt-1 sm:text-2xl text-xl font-medium">{post.title}</h1>
           <p className="mt-3 leading-relaxed">{post.subtitle}</p>
@@ -59,13 +78,13 @@ function PostItem({ post }: { post: PostPostsList }): JSX.Element {
           </div>
 
           <div className="text-center mt-2 leading-none flex justify-center absolute bottom-0 w-full py-3 space-x-4">
-            <Link to={`user/${post.authorId}`}>
+            <Link to={`user/${post.author.id}`}>
               <div className="flex flex-row items-center space-x-4 hover:bg-lime-300">
                 <span>{post.author.username}</span>
                 <Avatar
                   hasUserAvatar={post.author.hasAvatar ?? false}
                   size="small"
-                  userId={post.authorId}
+                  userId={post.author.id}
                 />
               </div>
             </Link>
@@ -87,7 +106,7 @@ function PostItemShort({ post }: { post: PostPostsList }): JSX.Element {
       <Box smallPadding>
         <div className="w-full h-60 text-center relative">
           <h2 className="tracking-widest text-xs font-medium text-gray-400">
-            {post.category.title}
+            {post.categoryTitle}
           </h2>
           <h1 className="mt-1 sm:text-2xl text-xl font-medium">{post.title}</h1>
           <p className="mt-3 leading-relaxed">{post.subtitle}</p>

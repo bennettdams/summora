@@ -3,6 +3,7 @@ import { Page, PageSection } from '../Page'
 import { Avatar } from '../Avatar'
 import { Box } from '../Box'
 import { useUser } from '../../data/use-user'
+import { PostsList } from '../post'
 
 type QueryReturn = ReturnType<typeof useUser>
 // exclude null, because the page will return "notFound" if post is null
@@ -13,17 +14,18 @@ export function UserPage(props: UserPageProps): JSX.Element {
   return !user ? (
     <p>no user</p>
   ) : (
-    <UserPageInternal user={user} userId={props.userId} />
+    <UserPageInternal user={user} userId={props.userId} posts={props.posts} />
   )
 }
 
 function UserPageInternal({
   user,
   userId,
+  posts,
 }: UserPageProps & { user: UserUserPage }): JSX.Element {
   return (
     <Page>
-      <PageSection>
+      <PageSection title="Profile">
         <Box>
           <p>USER</p>
           <div className="flex">
@@ -43,6 +45,28 @@ function UserPageInternal({
             </div>
           </div>
         </Box>
+      </PageSection>
+
+      <PageSection title="Posts">
+        <PostsList
+          posts={
+            !posts
+              ? null
+              : posts.map((post) => ({
+                  id: post.id,
+                  categoryTitle: post.category.title,
+                  title: post.title,
+                  subtitle: post.subtitle,
+                  updatedAt: post.updatedAt,
+                  author: {
+                    id: post.authorId,
+                    username: post.author.username,
+                    hasAvatar: post.author.hasAvatar,
+                  },
+                  segments: post.segments,
+                }))
+          }
+        />
       </PageSection>
 
       <PageSection>
