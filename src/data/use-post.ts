@@ -86,6 +86,57 @@ function usePostMutation(postId: string) {
         queryClient.setQueryData<QueryData>(queryKey, data.result)
       }
     },
+    onMutate: async (postForMutation) => {
+      const queryKey = createQueryKey(postForMutation.postId)
+      const postToUpdate = postForMutation.postToUpdate
+
+      // cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries(queryKey)
+
+      // snapshot the previous value
+      const postBeforeMutation = queryClient.getQueryData<QueryData>(queryKey)
+
+      // optimistically update to the new value
+      if (postBeforeMutation) {
+        const postForOptimisticUpdate: QueryData = {
+          ...postBeforeMutation,
+        }
+        /*
+         * TODO include other fields like category & tags.
+         * Right now, this does not work because the update object only has their IDs
+         * (like categoryId), but the post state expects an object (e.g. category including title).
+         */
+        if (postToUpdate.title && typeof postToUpdate.title === 'string')
+          postForOptimisticUpdate.title = postToUpdate.title
+        if (postToUpdate.subtitle && typeof postToUpdate.subtitle === 'string')
+          postForOptimisticUpdate.subtitle = postToUpdate.subtitle
+
+        queryClient.setQueryData<QueryData>(queryKey, postForOptimisticUpdate)
+      }
+
+      /*
+       * This return will be used in `onError` as `context`.
+       * We put the post before the mutation here, so it can be used to reset
+       * the state when an error occurs.
+       */
+      return { postBeforeMutation }
+    },
+    onError: (err, _, contextUntyped) => {
+      // TODO check if there's a type-safe way
+      const context = contextUntyped as
+        | null
+        | undefined
+        | {
+            postBeforeMutation: QueryData
+          }
+      const postBeforeMutation: QueryData | null =
+        context?.postBeforeMutation ?? null
+      if (postBeforeMutation) {
+        const queryKey = createQueryKey(postBeforeMutation.id)
+        queryClient.setQueryData<QueryData>(queryKey, postBeforeMutation)
+      }
+      console.error('Error while updating post:', err)
+    },
   })
 
   // SEGMENT

@@ -108,7 +108,6 @@ export default async function _postAPI(
         break
       }
       case 'PUT': {
-        // TODO parse needed?
         const postToUpdate: ApiPostUpdateRequestBody = requestBody
 
         const postUpdated: ApiPostUpdate = await updatePost(
