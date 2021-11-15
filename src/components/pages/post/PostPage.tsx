@@ -242,9 +242,9 @@ function PostPageInternal({
                     userId={post.authorId}
                   />
 
-                  <div className="w-12 h-1 my-2 bg-indigo-500 rounded"></div>
+                  {/* <div className="w-12 h-1 my-2 bg-indigo-500 rounded"></div> */}
 
-                  <div className="flex flex-col items-center text-center justify-center">
+                  <div className="mt-4 flex flex-col items-center text-center justify-center">
                     <h2 className="font-medium leading-none title-font text-gray-900 text-lg">
                       {post.author.username}
                     </h2>
@@ -285,7 +285,7 @@ function PostPageInternal({
             {isLoading ? (
               <LoadingAnimation small />
             ) : showCategoryDropdown ? (
-              <div className="inline-block w-full">
+              <div className="inline-block py-2 w-full">
                 <DropdownSelect
                   onChange={handleOnCategorySelect}
                   items={postCategories.map((cat) => ({
@@ -296,7 +296,7 @@ function PostPageInternal({
                 />
               </div>
             ) : (
-              <p className="uppercase inline-block text-xl italic font-medium tracking-widest">
+              <p className="uppercase py-3 inline-block text-2xl italic font-medium tracking-widest">
                 {post.category.title}
               </p>
             )}
@@ -309,21 +309,21 @@ function PostPageInternal({
           {post.tags.map((tag) => (
             <Tag key={tag.id} tagInitial={tag} onClick={handleRemoveTag} />
           ))}
+          {!isShownTagSelection && (
+            <div className="flex flex-row items-center justify-center">
+              <span className="ml-2">
+                <ButtonAdd
+                  size="big"
+                  onClick={() => setIsShownTagSelection(true)}
+                />
+              </span>
+            </div>
+          )}
         </div>
       </PageSection>
 
       <PageSection>
-        {!isShownTagSelection ? (
-          <div className="flex flex-row items-center justify-center">
-            <span>Add tag</span>
-            <span className="ml-2">
-              <ButtonAdd
-                size="big"
-                onClick={() => setIsShownTagSelection(true)}
-              />
-            </span>
-          </div>
-        ) : (
+        {isShownTagSelection && (
           <div className="flex space-x-10">
             <div className="flex-1">
               <Box inline>

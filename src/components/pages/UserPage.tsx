@@ -25,13 +25,12 @@ function UserPageInternal({
 }: UserPageProps & { user: UserUserPage }): JSX.Element {
   return (
     <Page>
-      <PageSection title="Profile">
+      <PageSection>
         <Box>
-          <p>USER</p>
           <div className="flex">
             <div className="flex-grow">
+              <h2 className="text-3xl">{user.username}</h2>
               <p>User ID {userId}</p>
-              <p>Username {user.username}</p>
               <p>Created at {new Date(user.createdAt).toISOString()}</p>
               <p>Updated at {new Date(user.updatedAt).toISOString()}</p>
             </div>
