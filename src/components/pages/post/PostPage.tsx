@@ -13,14 +13,13 @@ import { Views } from '../../Likes'
 import { Comments } from '../../Comments'
 import { PostPageProps } from '../../../pages/post/[postId]'
 import { PostSegment } from './PostSegment'
-import { Tag } from './Tag'
 import { useSearchTags } from '../../../data/use-search-tags'
 import { Avatar } from '../../Avatar'
 import {
   ApiPostSegmentCreateRequestBody,
   ApiPostUpdateRequestBody,
 } from '../../../services/api-service'
-import { TagsList } from '../../tag'
+import { Tag, TagsList } from '../../tag'
 
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
@@ -160,14 +159,12 @@ function PostPageInternal({
   const [inputTagSearch, setInputTagSearch] = useState('')
   const { tagsSearched, isFetching } = useSearchTags(inputTagSearch)
 
-  async function handleAddTag(tagToAdd: TagPostPage): Promise<void> {
-    const alreadyIncluded = post.tags.some((tag) => tag.id === tagToAdd.id)
+  async function handleAddTag(tagId: string): Promise<void> {
+    const alreadyIncluded = post.tags.some((tag) => tag.id === tagId)
 
     if (!alreadyIncluded) {
-      const tagsNew: TagPostPage[] = [...post.tags, tagToAdd]
-
       const postToUpdate: ApiPostUpdateRequestBody = {
-        tagIds: tagsNew.map((tag) => tag.id),
+        tagIds: [...post.tags.map((tag) => tag.id), tagId],
       }
 
       await updatePost({
@@ -333,11 +330,7 @@ function PostPageInternal({
                 <div className="mt-2 flex flex-wrap -m-1">
                   {tagsSearched &&
                     filterTags(tagsSearched).map((tag) => (
-                      <Tag
-                        key={tag.id}
-                        tagInitial={tag}
-                        onClick={handleAddTag}
-                      />
+                      <Tag key={tag.id} tag={tag} onClick={handleAddTag} />
                     ))}
                 </div>
               </Box>
@@ -347,7 +340,7 @@ function PostPageInternal({
                 <p className="italic">Popular in general</p>
                 <div className="mt-2 flex flex-wrap -m-1">
                   {filterTags(tagsSorted).map((tag) => (
-                    <Tag key={tag.id} tagInitial={tag} onClick={handleAddTag} />
+                    <Tag key={tag.id} tag={tag} onClick={handleAddTag} />
                   ))}
                 </div>
               </Box>
@@ -357,7 +350,7 @@ function PostPageInternal({
                 <p className="italic">Popular for this category</p>
                 <div className="mt-2 flex-1 flex flex-wrap -m-1">
                   {filterTags(tagsSortedForCategory).map((tag) => (
-                    <Tag key={tag.id} tagInitial={tag} onClick={handleAddTag} />
+                    <Tag key={tag.id} tag={tag} onClick={handleAddTag} />
                   ))}
                 </div>
               </Box>
