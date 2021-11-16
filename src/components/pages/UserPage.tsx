@@ -63,6 +63,7 @@ function UserPageInternal({
                     hasAvatar: post.author.hasAvatar,
                   },
                   segments: post.segments,
+                  tags: post.tags,
                 }))
           }
         />

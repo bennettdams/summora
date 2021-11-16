@@ -23,6 +23,7 @@ async function findPosts(prisma: PrismaClient) {
         author: { select: { username: true, hasAvatar: true } },
         category: true,
         segments: { orderBy: { createdAt: 'asc' } },
+        tags: { select: { id: true, title: true } },
       },
     })
   } catch (error) {

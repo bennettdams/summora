@@ -15,6 +15,7 @@ async function findPosts() {
         author: { select: { username: true, hasAvatar: true } },
         category: true,
         segments: { orderBy: { createdAt: 'asc' } },
+        tags: { select: { id: true, title: true } },
       },
     })
   } catch (error) {

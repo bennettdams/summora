@@ -12,16 +12,16 @@ export function TagsList({
   onRemoveClick,
 }: {
   tags: TagTagslist[]
-  showAddButton: boolean
-  onAddClick: () => void
-  onRemoveClick: (tagIdToRemove: string) => void
+  showAddButton?: boolean
+  onAddClick?: () => void
+  onRemoveClick?: (tagIdToRemove: string) => void
 }): JSX.Element {
   return (
     <div className="flex flex-wrap items-center">
       {tags.map((tag) => (
         <Tag key={tag.id} tag={tag} onClick={onRemoveClick} />
       ))}
-      {showAddButton && (
+      {showAddButton && onAddClick && (
         <div className="flex flex-row items-center justify-center">
           <span className="ml-2">
             <ButtonAdd size="big" onClick={onAddClick} />

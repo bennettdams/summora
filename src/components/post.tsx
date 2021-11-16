@@ -5,6 +5,7 @@ import { Comments } from './Comments'
 import { Box } from './Box'
 import { Avatar } from './Avatar'
 import { Button } from './Button'
+import { TagsList } from './tag'
 
 type PostsPostsList =
   | null
@@ -20,6 +21,7 @@ type PostsPostsList =
         username: string
         hasAvatar: boolean
       }
+      tags: { id: string; title: string }[]
     }[]
 
 type PostPostsList = NonNullable<PostsPostsList>[number]
@@ -79,7 +81,7 @@ function PostItem({ post }: { post: PostPostsList }): JSX.Element {
 
           <div className="text-center flex">
             <div className="w-1/3">
-              <div>Tags</div>
+              <TagsList tags={post.tags} />
             </div>
 
             <div className="w-2/3 leading-none flex justify-end space-x-4">
