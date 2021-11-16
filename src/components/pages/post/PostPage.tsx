@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { Box } from '../../Box'
-import { Button, ButtonAdd } from '../../Button'
+import { Button } from '../../Button'
 import { DropdownItem, DropdownSelect } from '../../DropdownSelect'
 import { FormInput } from '../../FormInput'
 import { IconCheck, IconX, IconEdit } from '../../Icon'
@@ -20,6 +20,7 @@ import {
   ApiPostSegmentCreateRequestBody,
   ApiPostUpdateRequestBody,
 } from '../../../services/api-service'
+import { TagsList } from '../../tag'
 
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
@@ -139,9 +140,9 @@ function PostPageInternal({
     }
   }
 
-  async function handleRemoveTag(tagToRemove: TagPostPage): Promise<void> {
+  async function handleRemoveTag(tagIdToRemove: string): Promise<void> {
     const tagsNew: TagPostPage[] = post.tags.filter(
-      (tag) => tag.id !== tagToRemove.id
+      (tag) => tag.id !== tagIdToRemove
     )
 
     const postToUpdate: ApiPostUpdateRequestBody = {
@@ -283,7 +284,9 @@ function PostPageInternal({
 
           <div className="w-1/3 text-center">
             {isLoading ? (
-              <LoadingAnimation small />
+              <div className="inline-block py-2 w-full">
+                <LoadingAnimation />
+              </div>
             ) : showCategoryDropdown ? (
               <div className="inline-block py-2 w-full">
                 <DropdownSelect
@@ -305,21 +308,12 @@ function PostPageInternal({
       </PageSection>
 
       <PageSection>
-        <div className="flex flex-wrap items-center -m-1">
-          {post.tags.map((tag) => (
-            <Tag key={tag.id} tagInitial={tag} onClick={handleRemoveTag} />
-          ))}
-          {!isShownTagSelection && (
-            <div className="flex flex-row items-center justify-center">
-              <span className="ml-2">
-                <ButtonAdd
-                  size="big"
-                  onClick={() => setIsShownTagSelection(true)}
-                />
-              </span>
-            </div>
-          )}
-        </div>
+        <TagsList
+          tags={post.tags.map((tag) => ({ id: tag.id, title: tag.title }))}
+          onAddClick={() => setIsShownTagSelection(true)}
+          onRemoveClick={(tagIdToRemove) => handleRemoveTag(tagIdToRemove)}
+          showAddButton={!isShownTagSelection}
+        />
       </PageSection>
 
       <PageSection>
