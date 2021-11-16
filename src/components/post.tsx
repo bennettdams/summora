@@ -57,9 +57,9 @@ export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
 
 function PostItem({ post }: { post: PostPostsList }): JSX.Element {
   return (
-    <Link to={`/post/${post.id}`}>
-      <Box smallPadding>
-        <div className="w-full text-center">
+    <Box smallPadding>
+      <div className="w-full text-center">
+        <Link to={`/post/${post.id}`}>
           <h2 className="tracking-widest text-xs font-medium text-gray-400">
             {post.categoryTitle}
           </h2>
@@ -78,33 +78,44 @@ function PostItem({ post }: { post: PostPostsList }): JSX.Element {
               )
             })}
           </div>
+        </Link>
 
-          <div className="text-center flex">
-            <div className="w-1/3">
-              <TagsList tags={post.tags} />
+        <div className="text-center h-16 flex">
+          <div className="w-1/2 overflow-y-hidden">
+            <TagsList tags={post.tags} />
+          </div>
+
+          <div className="w-1/2 h-full leading-none flex justify-end space-x-4">
+            <div className="w-1/2 h-full flex flex-col">
+              <div className="flex-1 space-x-5">
+                <Views>1.2K</Views>
+                <Comments>6</Comments>
+              </div>
+              <div className="flex-1">
+                <span className="text-gray-400 inline-flex items-center leading-none text-sm">
+                  {post.updatedAt.toLocaleDateString()}
+                </span>
+              </div>
             </div>
 
-            <div className="w-2/3 leading-none flex justify-end space-x-4">
-              <Link to={`user/${post.author.id}`}>
-                <div className="flex flex-row p-4 rounded-lg items-center space-x-4 hover:bg-lime-200">
-                  <span>{post.author.username}</span>
-                  <Avatar
-                    hasUserAvatar={post.author.hasAvatar ?? false}
-                    size="small"
-                    userId={post.author.id}
-                  />
-                </div>
-              </Link>
-              <Views>1.2K</Views>
-              <Comments>6</Comments>
-              <span className="text-gray-400 inline-flex items-center leading-none text-sm">
-                {post.updatedAt.toLocaleDateString()}
-              </span>
+            <div className="w-1/2 h-full">
+              <div className="flex h-full px-2 rounded-lg justify-end hover:bg-lime-200">
+                <Link to={`user/${post.author.id}`}>
+                  <div className="flex h-full items-center space-x-4">
+                    <span>{post.author.username}</span>
+                    <Avatar
+                      hasUserAvatar={post.author.hasAvatar ?? false}
+                      size="small"
+                      userId={post.author.id}
+                    />
+                  </div>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
-      </Box>
-    </Link>
+      </div>
+    </Box>
   )
 }
 

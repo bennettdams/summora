@@ -1,4 +1,4 @@
-import { MouseEvent, useState } from 'react'
+import { useState } from 'react'
 import { useAuth } from '../../services/auth-service'
 import { LoadingAnimation } from '../LoadingAnimation'
 import { Page, PageSection } from '../Page'
@@ -16,14 +16,16 @@ export function SignInPage(): JSX.Element {
     process.env.NEXT_PUBLIC_DEFAULT_PASSWORD ?? ''
   )
 
-  async function handleSignIn(e: MouseEvent<HTMLButtonElement>): Promise<void> {
+  // async function handleSignIn(e: MouseEvent<HTMLButtonElement>): Promise<void> {
+  async function handleSignIn(): Promise<void> {
     // e.preventDefault()
     setIsLoading(true)
     signInWithEmailAndPassword(email, password)
     setIsLoading(false)
   }
 
-  async function handleSignUp(e: MouseEvent<HTMLButtonElement>): Promise<void> {
+  // async function handleSignUp(e: MouseEvent<HTMLButtonElement>): Promise<void> {
+  async function handleSignUp(): Promise<void> {
     // e.preventDefault()
     setIsLoading(true)
     await signUpWithEmailAndPassword(username, email, password)
