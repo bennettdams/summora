@@ -99,9 +99,9 @@ function PostItem({ post }: { post: PostPostsList }): JSX.Element {
             </div>
 
             <div className="w-1/2 h-full">
-              <div className="flex h-full px-2 rounded-lg justify-end hover:bg-lime-200">
+              <div className="flex h-full justify-end">
                 <Link to={`user/${post.author.id}`}>
-                  <div className="flex h-full items-center space-x-4">
+                  <div className="flex h-full items-center space-x-4 px-4 rounded-lg hover:bg-lime-200">
                     <span>{post.author.username}</span>
                     <Avatar
                       hasUserAvatar={post.author.hasAvatar ?? false}
