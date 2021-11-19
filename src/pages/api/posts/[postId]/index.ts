@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '../../../prisma/prisma'
+import { prisma } from '../../../../prisma/prisma'
 import { Prisma } from '@prisma/client'
-import { logAPI } from '../../../util/logger'
-import { ApiPostUpdateRequestBody } from '../../../services/api-service'
+import { logAPI } from '../../../../util/logger'
+import { ApiPostUpdateRequestBody } from '../../../../services/api-service'
 
 export type ApiPost = Prisma.PromiseReturnType<typeof findPost>
 export type ApiPostUpdate = Prisma.PromiseReturnType<typeof updatePost>

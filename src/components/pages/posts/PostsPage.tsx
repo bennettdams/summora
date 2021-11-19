@@ -162,6 +162,7 @@ export function PostsPage({
                       username: post.author.username,
                       hasAvatar: post.author.hasAvatar,
                     },
+                    views: post.views,
                     segments: post.segments,
                     tags: post.tags,
                   }))

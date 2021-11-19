@@ -1,3 +1,5 @@
+import { isServer } from './server/server-utils'
+
 export interface HttpResponse<T> extends Response {
   result?: T
 }
@@ -11,7 +13,7 @@ export const apiPrefix = '/api/'
  * Base path for all requests.
  * Fetching on the server needs an absolute path.
  */
-const base = apiPrefix
+const base = `${isServer() ? process.env.NEXT_PUBLIC_BASE_URL : ''}${apiPrefix}`
 
 function createRequest(
   path: RequestInfo,

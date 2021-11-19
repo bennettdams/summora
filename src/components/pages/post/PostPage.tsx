@@ -251,7 +251,7 @@ function PostPageInternal({
 
                 <div className="flex-1 text-center">
                   <div>
-                    <Views>1.2K</Views>
+                    <Views>{post.views}</Views>
                     <span className="ml-2">
                       <Comments>6</Comments>
                     </span>

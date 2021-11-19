@@ -7,6 +7,8 @@ import type { ParsedUrlQuery } from 'querystring'
 import { ServerPageProps } from '../../types/PageProps'
 import { Hydrate } from 'react-query'
 import { hydrationHandler, prefillServer } from '../../data/use-post'
+import { isServer } from '../../util/server/server-utils'
+import { apiIncrementPostViews } from '../../services/api-service'
 
 export interface PostPageProps {
   postId: string
@@ -125,6 +127,8 @@ export const getStaticProps: GetStaticProps<
 export default function _PostPage(
   props: PostPageProps & ServerPageProps
 ): JSX.Element {
+  if (isServer()) apiIncrementPostViews(props.postId)
+
   return (
     <Hydrate state={hydrationHandler.deserialize(props.dehydratedState)}>
       <PostPage

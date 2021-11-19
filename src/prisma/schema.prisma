@@ -16,6 +16,7 @@ model Post {
   updatedAt      DateTime      @updatedAt
   title          String
   subtitle       String?
+  views          Int           @default(0)
   // segments
   segments       PostSegment[]
   // category

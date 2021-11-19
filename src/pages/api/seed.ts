@@ -22,7 +22,6 @@ export default async function _seedAPI(
     await prisma.postSegmentItem.deleteMany({})
     await prisma.postCategory.deleteMany({})
     await prisma.postTag.deleteMany({})
-    await prisma.user.deleteMany({})
 
     await prisma.postCategory.createMany({ data: postCategories })
     const postCategoriesCreated = await prisma.postCategory.findMany()

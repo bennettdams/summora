@@ -6,6 +6,7 @@ import { ApiPostSegmentCreate } from '../pages/api/post-segments'
 import { ApiPostSegmentUpdate } from '../pages/api/post-segments/[postSegmentId]'
 import { ApiPosts } from '../pages/api/posts'
 import { ApiPost, ApiPostUpdate } from '../pages/api/posts/[postId]'
+import { ApiPostIncrementViews } from '../pages/api/posts/[postId]/increment-views'
 import { ApiTagsSearch } from '../pages/api/tags/search'
 import { ApiUsersSignUp } from '../pages/api/users/signup'
 import { ApiUser } from '../pages/api/users/[userId]'
@@ -17,6 +18,7 @@ export const ROUTES_API = {
   AVATARS_UPLOAD: 'avatars/upload',
   POSTS: 'posts',
   POST: (postId: string) => `posts/${postId}`,
+  POST_INCREMENT_VIEWS: (postId: string) => `posts/${postId}/increment-views`,
   TAGS_SEARCH: 'tags/search',
   POST_SEGMENTS: 'post-segments',
   POST_SEGMENT: (postSegmentId: string) => `post-segments/${postSegmentId}`,
@@ -139,6 +141,20 @@ export async function apiUpdatePost({
     postToUpdate
   )
   if (response.result) response.result = transformApiPost(response.result)
+  return response
+}
+
+// #########################################
+
+export type ApiPostIncrementViewsRequestBody = null
+
+export async function apiIncrementPostViews(
+  postId: string
+): Promise<HttpResponse<ApiPostIncrementViews>> {
+  const response = await put<ApiPostIncrementViews>(
+    ROUTES_API.POST_INCREMENT_VIEWS(postId),
+    null
+  )
   return response
 }
 
