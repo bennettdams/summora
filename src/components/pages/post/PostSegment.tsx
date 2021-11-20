@@ -16,29 +16,28 @@ export function PostSegment({
   segment,
   index,
   postId,
-  isEditableExternal = false,
+  isEditableInitial = false,
+  isPostEditMode = false,
   onInitialEdit,
 }: {
   segment: SegmentPostPage
   index: number
   postId: string
-  isEditableExternal?: boolean
-  onInitialEdit?: () => void
+  isEditableInitial: boolean
+  isPostEditMode: boolean
+  onInitialEdit: () => void
 }): JSX.Element {
   const { createPostSegmentItem, updatePostSegment } = usePost(postId)
 
-  const [isSegmentEditable, setIsSegmentEditable] = useState(isEditableExternal)
-  useEffect(
-    () => setIsSegmentEditable(isEditableExternal),
-    [isEditableExternal]
-  )
+  const [isSegmentEditable, setIsSegmentEditable] = useState(isEditableInitial)
+  useEffect(() => setIsSegmentEditable(isEditableInitial), [isEditableInitial])
   const [showItemInput, setShowItemInput] = useState(false)
 
   const [refSegmentTitle, isHovered] = useHover<HTMLDivElement>()
 
   const refSegmentEdit = useRef<HTMLDivElement>(null)
   useOnClickOutside(refSegmentEdit, () =>
-    setIsSegmentEditable(isEditableExternal)
+    setIsSegmentEditable(isEditableInitial)
   )
   const refEditItem = useRef<HTMLDivElement>(null)
   useOnClickOutside(refEditItem, () => setShowItemInput(false))
@@ -106,7 +105,7 @@ export function PostSegment({
         <div className="w-20 text-left">
           <span className="text-4xl italic">{index}</span>
         </div>
-        {isSegmentEditable ? (
+        {isPostEditMode && isSegmentEditable ? (
           <div className="flex-grow" ref={refSegmentEdit}>
             <FormInput
               placeholder="Title.."
@@ -122,11 +121,13 @@ export function PostSegment({
           </div>
         ) : (
           <div
-            className="flex-grow flex cursor-pointer hover:text-orange-700"
+            className={`flex-grow flex hover:text-orange-700 ${
+              isPostEditMode && 'cursor-pointer'
+            }`}
             onClick={() => setIsSegmentEditable(true)}
             ref={refSegmentTitle}
           >
-            {isHovered && (
+            {isPostEditMode && isHovered && (
               <div className="grid place-items-center">
                 <IconEdit />
               </div>
@@ -153,31 +154,38 @@ export function PostSegment({
       <div className="mt-2 space-y-2">
         {segment.items.map((item, index) => (
           <div className="w-full" key={item.id}>
-            <PostSegmentItem item={item} postId={postId} index={index} />
+            <PostSegmentItem
+              item={item}
+              postId={postId}
+              index={index}
+              isPostEditMode={isPostEditMode}
+            />
           </div>
         ))}
       </div>
 
-      <div className="h-20 flex items-center" ref={refEditItem}>
-        {showItemInput ? (
-          <>
-            <button className="inline" form={formIdNew} type="submit">
-              <IconCheck />
-            </button>
-            <IconX onClick={() => setShowItemInput(false)} className="ml-4" />
-            <div className="ml-4 w-full">
-              <FormInput
-                placeholder="New item"
-                formId={formIdNew}
-                resetOnSubmit
-                onSubmit={handleCreate}
-              />
-            </div>
-          </>
-        ) : (
-          <ButtonAdd size="huge" onClick={() => setShowItemInput(true)} />
-        )}
-      </div>
+      {isPostEditMode && (
+        <div className="h-20 flex items-center" ref={refEditItem}>
+          {showItemInput ? (
+            <>
+              <button className="inline" form={formIdNew} type="submit">
+                <IconCheck />
+              </button>
+              <IconX onClick={() => setShowItemInput(false)} className="ml-4" />
+              <div className="ml-4 w-full">
+                <FormInput
+                  placeholder="New item"
+                  formId={formIdNew}
+                  resetOnSubmit
+                  onSubmit={handleCreate}
+                />
+              </div>
+            </>
+          ) : (
+            <ButtonAdd size="huge" onClick={() => setShowItemInput(true)} />
+          )}
+        </div>
+      )}
     </div>
   )
 }

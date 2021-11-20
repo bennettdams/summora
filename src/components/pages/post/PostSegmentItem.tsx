@@ -13,10 +13,12 @@ export function PostSegmentItem({
   item,
   index,
   postId,
+  isPostEditMode = false,
 }: {
   item: SegmentItemPostPage
   index: number
   postId: string
+  isPostEditMode: boolean
 }): JSX.Element {
   const { updatePostSegmentItem, isLoading } = usePost(postId)
   const [ref, isHovered] = useHover<HTMLDivElement>()
@@ -46,7 +48,7 @@ export function PostSegmentItem({
   return (
     <Box
       key={item.id}
-      onClick={() => setIsEditable(true)}
+      onClick={!isPostEditMode ? undefined : () => setIsEditable(true)}
       refExternal={refEdit}
       smallPadding
       isHighlighted={isEditable}
@@ -54,7 +56,9 @@ export function PostSegmentItem({
     >
       <div ref={ref} className="space-x-2 flex items-center">
         <div className="inline-flex italic w-20 items-center">
-          {isLoading ? (
+          {!isPostEditMode ? (
+            <span>{index + 1}</span>
+          ) : isLoading ? (
             <LoadingAnimation />
           ) : isEditable ? (
             <>
@@ -71,6 +75,7 @@ export function PostSegmentItem({
             <span>{index + 1}</span>
           )}
         </div>
+
         {isEditable ? (
           <>
             <FormInput
@@ -84,8 +89,6 @@ export function PostSegmentItem({
         ) : (
           <span>{item.content}</span>
         )}
-        {/* <span className="text-xs inline-block w-64">{item.id}</span> */}
-        <span>{item.updatedAt.toISOString()}</span>
       </div>
     </Box>
   )

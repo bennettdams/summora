@@ -20,6 +20,7 @@ import {
   ApiPostUpdateRequestBody,
 } from '../../../services/api-service'
 import { Tag, TagsList } from '../../tag'
+import { useAuth } from '../../../services/auth-service'
 
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
@@ -30,6 +31,8 @@ export type TagPostPage = PostPostPage['tags'][number]
 
 export function PostPage(props: PostPageProps): JSX.Element {
   const { post } = usePost(props.postId)
+  const { user } = useAuth()
+
   return !post ? (
     <p>no post</p>
   ) : (
@@ -39,17 +42,25 @@ export function PostPage(props: PostPageProps): JSX.Element {
       postCategories={props.postCategories}
       tagsSorted={props.tagsSorted}
       tagsSortedForCategory={props.tagsSortedForCategory}
+      isPostEditMode={user?.userId === post.authorId}
     />
   )
 }
 
+/*
+ * TODO split up into one component for editing & one for viewing
+ */
 function PostPageInternal({
   postId,
   post,
   postCategories,
   tagsSorted,
   tagsSortedForCategory,
-}: PostPageProps & { post: PostPostPage }): JSX.Element {
+  isPostEditMode = false,
+}: PostPageProps & {
+  post: PostPostPage
+  isPostEditMode: boolean
+}): JSX.Element {
   const { updatePost, createPostSegment, isLoading } = usePost(postId)
   const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
   const newSegmentId = 'new-segment-id'
@@ -95,6 +106,8 @@ function PostPageInternal({
   useOnClickOutside(refTitleEdit, () => setIsTitleEditable(false))
 
   const [isShownTagSelection, setIsShownTagSelection] = useState(false)
+  const refTagSelection = useRef<HTMLDivElement>(null)
+  useOnClickOutside(refTagSelection, () => setIsShownTagSelection(false))
 
   async function handleOnCategorySelect(newCategory: DropdownItem) {
     setShowCategoryDropdown(false)
@@ -190,35 +203,42 @@ function PostPageInternal({
           <div
             className="w-full md:w-2/3"
             ref={refTitle}
-            onClick={() => setIsTitleEditable(true)}
+            onClick={() => isPostEditMode && setIsTitleEditable(true)}
           >
             {isTitleEditable ? (
               <div className="h-40 mr-10" ref={refTitleEdit}>
-                <button className="inline" form={formId} type="submit">
-                  <IconCheck />
-                </button>
-                <IconX
-                  onClick={() => setIsTitleEditable(false)}
-                  className="ml-4"
-                />
-                <FormInput
-                  placeholder="Title.."
-                  initialValue={post.title}
-                  onSubmit={handleUpdateTitle}
-                  formId={formId}
-                />
-                <FormInput
-                  placeholder="Subitle.."
-                  initialValue={post.subtitle ?? ''}
-                  onSubmit={handleUpdateSubtitle}
-                  autoFocus={false}
-                  formId={formId}
-                />
+                <div className="flex space-x-8">
+                  <button className="inline" form={formId} type="submit">
+                    <IconCheck size="big" />
+                  </button>
+                  <IconX size="big" onClick={() => setIsTitleEditable(false)} />
+                </div>
+
+                <div className="mt-4 space-y-2">
+                  <FormInput
+                    placeholder="Title.."
+                    initialValue={post.title}
+                    onSubmit={handleUpdateTitle}
+                    formId={formId}
+                  >
+                    Title
+                  </FormInput>
+
+                  <FormInput
+                    placeholder="Subitle.."
+                    initialValue={post.subtitle ?? ''}
+                    onSubmit={handleUpdateSubtitle}
+                    autoFocus={false}
+                    formId={formId}
+                  >
+                    Subtitle
+                  </FormInput>
+                </div>
               </div>
             ) : (
               <>
                 <p className="text-5xl text-lime-600">
-                  {isHovered && (
+                  {isPostEditMode && isHovered && (
                     <span className="mr-10">
                       <IconEdit className="inline" />
                     </span>
@@ -284,7 +304,7 @@ function PostPageInternal({
               <div className="inline-block py-2 w-full">
                 <LoadingAnimation />
               </div>
-            ) : showCategoryDropdown ? (
+            ) : isPostEditMode && showCategoryDropdown ? (
               <div className="inline-block py-2 w-full">
                 <DropdownSelect
                   onChange={handleOnCategorySelect}
@@ -309,13 +329,13 @@ function PostPageInternal({
           tags={post.tags.map((tag) => ({ id: tag.id, title: tag.title }))}
           onAddClick={() => setIsShownTagSelection(true)}
           onRemoveClick={(tagIdToRemove) => handleRemoveTag(tagIdToRemove)}
-          showAddButton={!isShownTagSelection}
+          showAddButton={isPostEditMode && !isShownTagSelection}
         />
       </PageSection>
 
       <PageSection>
         {isShownTagSelection && (
-          <div className="flex space-x-10">
+          <div className="flex space-x-10" ref={refTagSelection}>
             <div className="flex-1">
               <Box inline>
                 <div className="w-full flex items-center space-x-3">
@@ -367,7 +387,8 @@ function PostPageInternal({
               postId={post.id}
               key={segment.id}
               segment={segment}
-              isEditableExternal={
+              isPostEditMode={isPostEditMode}
+              isEditableInitial={
                 !hasNewSegmentBeenEdited && index === post.segments.length - 1
               }
               onInitialEdit={() => setHasNewSegmentBeenEdited(true)}
@@ -376,15 +397,17 @@ function PostPageInternal({
         </div>
       </PageSection>
 
-      <PageSection>
-        <Button
-          onClick={handleCreateSegment}
-          disabled={!hasNewSegmentBeenEdited}
-        >
-          Add step
-        </Button>
-        {isLoading && <LoadingAnimation />}
-      </PageSection>
+      {isPostEditMode && (
+        <PageSection>
+          <Button
+            onClick={handleCreateSegment}
+            disabled={!hasNewSegmentBeenEdited}
+          >
+            Add step
+          </Button>
+          {isLoading && <LoadingAnimation />}
+        </PageSection>
+      )}
     </Page>
   )
 }

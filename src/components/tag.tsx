@@ -5,6 +5,9 @@ type TagTagslist = {
   title: string
 }
 
+/**
+ * TODO "onLinkClick" or something that leads to /explore with prefilter
+ */
 export function TagsList({
   tags,
   showAddButton = false,

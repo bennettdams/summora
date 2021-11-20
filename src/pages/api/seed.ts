@@ -17,9 +17,9 @@ export default async function _seedAPI(
   res: NextApiResponse
 ): Promise<void> {
   try {
-    await prisma.post.deleteMany({})
-    await prisma.postSegment.deleteMany({})
     await prisma.postSegmentItem.deleteMany({})
+    await prisma.postSegment.deleteMany({})
+    await prisma.post.deleteMany({})
     await prisma.postCategory.deleteMany({})
     await prisma.postTag.deleteMany({})
 
