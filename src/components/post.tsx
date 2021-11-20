@@ -81,7 +81,7 @@ function PostItem({ post }: { post: PostPostsList }): JSX.Element {
           </div>
         </Link>
 
-        <div className="text-center h-16 flex">
+        <div className="text-center h-14 flex">
           <div className="w-1/2 overflow-y-hidden">
             <TagsList tags={post.tags} />
           </div>

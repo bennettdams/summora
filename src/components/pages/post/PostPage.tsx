@@ -316,6 +316,7 @@ function PostPageInternal({
                 />
               </div>
             ) : (
+              // TODO jump to explore
               <p className="uppercase py-3 inline-block text-2xl italic font-medium tracking-widest">
                 {post.category.title}
               </p>
@@ -327,7 +328,7 @@ function PostPageInternal({
       <PageSection>
         <TagsList
           tags={post.tags.map((tag) => ({ id: tag.id, title: tag.title }))}
-          onAddClick={() => setIsShownTagSelection(true)}
+          onAddButtonClick={() => setIsShownTagSelection(true)}
           onRemoveClick={(tagIdToRemove) => handleRemoveTag(tagIdToRemove)}
           showAddButton={isPostEditMode && !isShownTagSelection}
         />
