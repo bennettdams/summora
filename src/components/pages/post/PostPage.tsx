@@ -21,6 +21,7 @@ import {
 } from '../../../services/api-service'
 import { Tag, TagsList } from '../../tag'
 import { useAuth } from '../../../services/auth-service'
+import { StepList } from '../../StepList'
 
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
@@ -337,8 +338,8 @@ function PostPageInternal({
       <PageSection>
         {isShownTagSelection && (
           <div className="flex space-x-10" ref={refTagSelection}>
-            <div className="flex-1">
-              <Box inline>
+            <div className="flex-1 w-full">
+              <Box>
                 <div className="w-full flex items-center space-x-3">
                   <span className="italic">Search</span>
                   <span className="font-bold">{inputTagSearch}</span>
@@ -381,34 +382,49 @@ function PostPageInternal({
       </PageSection>
 
       <PageSection>
-        <div className="space-y-16">
-          {post.segments.map((segment, index) => (
-            <PostSegment
-              index={index + 1}
-              postId={post.id}
-              key={segment.id}
-              segment={segment}
-              isPostEditMode={isPostEditMode}
-              isEditableInitial={
-                !hasNewSegmentBeenEdited && index === post.segments.length - 1
-              }
-              onInitialEdit={() => setHasNewSegmentBeenEdited(true)}
+        {/* "items-start" to make "sticky" work. Without it, the sticky div has the full height of the flex container. */}
+        <div className="md:flex w-full items-start">
+          <div className="md:w-1/4 md:sticky top-40">
+            <StepList
+              steps={post.segments.map((segment, index) => ({
+                no: index,
+                title: segment.title,
+                subtitle: segment.subtitle,
+              }))}
             />
-          ))}
+          </div>
+
+          <div className="md:w-3/4">
+            <div className="space-y-16">
+              {post.segments.map((segment, index) => (
+                <PostSegment
+                  index={index + 1}
+                  postId={post.id}
+                  key={segment.id}
+                  segment={segment}
+                  isPostEditMode={isPostEditMode}
+                  isEditableInitial={
+                    !hasNewSegmentBeenEdited &&
+                    index === post.segments.length - 1
+                  }
+                  onInitialEdit={() => setHasNewSegmentBeenEdited(true)}
+                />
+              ))}
+            </div>
+            {isPostEditMode && (
+              <div className="mt-20">
+                <Button
+                  onClick={handleCreateSegment}
+                  disabled={!hasNewSegmentBeenEdited}
+                >
+                  Add segment
+                </Button>
+                {isLoading && <LoadingAnimation />}
+              </div>
+            )}
+          </div>
         </div>
       </PageSection>
-
-      {isPostEditMode && (
-        <PageSection>
-          <Button
-            onClick={handleCreateSegment}
-            disabled={!hasNewSegmentBeenEdited}
-          >
-            Add step
-          </Button>
-          {isLoading && <LoadingAnimation />}
-        </PageSection>
-      )}
     </Page>
   )
 }
