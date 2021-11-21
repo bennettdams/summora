@@ -50,12 +50,12 @@ export function PostSegmentItem({
       key={item.id}
       onClick={!isPostEditMode ? undefined : () => setIsEditable(true)}
       refExternal={refEdit}
-      smallPadding
+      noPadding
       isHighlighted={isEditable}
       inline
     >
-      <div ref={ref} className="space-x-2 flex items-center">
-        <div className="inline-flex italic w-20 items-center">
+      <div ref={ref} className="space-x-2 p-2 flex items-center">
+        <div className="inline-flex italic ml-2 w-10 items-center">
           {!isPostEditMode ? (
             <span>{index + 1}</span>
           ) : isLoading ? (

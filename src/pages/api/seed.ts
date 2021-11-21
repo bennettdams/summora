@@ -122,15 +122,20 @@ function createSegments(): Prisma.PostSegmentCreateManyPostInput[] {
 
     // const postSegment: Prisma.PostSegmentCreateManyPostInput = {}
 
+    const itemContent =
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+
     return {
       createdAt: new Date(now + 1 * step),
       title: `Segment title ${index}`,
       subtitle: `Subtitle ${index}`,
       items: {
         create: Array.from({ length: getRandomNumberForRange(1, 10) }).map(
-          (_, index) => ({
+          () => ({
             createdAt: new Date(now + 1 * step),
-            content: `Item content ${index}`,
+            content: itemContent.substring(
+              getRandomNumberForRange(0, itemContent.length)
+            ),
           })
         ),
       },

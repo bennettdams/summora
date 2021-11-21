@@ -101,8 +101,8 @@ export function PostSegment({
 
   return (
     <div className="w-full p-10 rounded-xl bg-gradient-to-br from-green-100 to-indigo-100">
-      <div className="w-full h-20 text-xl flex flex-row items-center">
-        <div className="w-20 text-left">
+      <div className="w-full h-20 text-xl flex flex-row">
+        <div className="w-20 h-full text-left">
           <span className="text-4xl italic">{index}</span>
         </div>
         {isPostEditMode && isSegmentEditable ? (
@@ -133,7 +133,7 @@ export function PostSegment({
               </div>
             )}
 
-            <div className="ml-6 flex flex-col hover:text-orange-700">
+            <div className="ml-2 flex flex-col hover:text-orange-700">
               <div className="flex-1">
                 <span>{segment.title}</span> <span>{segment.id}</span>
                 <span className="float-right">

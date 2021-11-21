@@ -4,7 +4,7 @@ export function StepList({
   steps: { no: number; title: string; subtitle: string | null }[]
 }): JSX.Element {
   return (
-    <div className="flex flex-wrap w-full">
+    <div className="flex flex-col w-full">
       {/* <div className="lg:w-2/5 md:w-1/2 md:pr-10 md:py-6"> */}
       {steps.map((step, index) => (
         <div key={step.no} className="flex relative pb-12">
