@@ -24,6 +24,7 @@ async function findPost(postId: string) {
         orderBy: { createdAt: 'asc' },
         include: { items: { orderBy: { createdAt: 'asc' } } },
       },
+      comments: { orderBy: { createdAt: 'asc' } },
     },
   })
 }
@@ -72,6 +73,7 @@ async function updatePost(
           orderBy: { createdAt: 'asc' },
           include: { items: { orderBy: { createdAt: 'asc' } } },
         },
+        comments: true,
       },
     })
   } catch (error) {

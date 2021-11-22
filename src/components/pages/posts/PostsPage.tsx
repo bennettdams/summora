@@ -165,6 +165,7 @@ export function PostsPage({
                     views: post.views,
                     segments: post.segments,
                     tags: post.tags,
+                    noOfComments: post._count?.comments ?? 0,
                   }))
             }
           />

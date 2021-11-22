@@ -17,6 +17,7 @@ export default async function _seedAPI(
   res: NextApiResponse
 ): Promise<void> {
   try {
+    await prisma.postComment.deleteMany({})
     await prisma.postSegmentItem.deleteMany({})
     await prisma.postSegment.deleteMany({})
     await prisma.post.deleteMany({})
@@ -60,9 +61,81 @@ export default async function _seedAPI(
           segments: {
             create: createSegments(),
           },
+          // comments: {
+          //   create: {
+          //     text: 'comm 1',
+          //     commentChilds: {
+          //       createMany: {
+          //         data: [
+          //           { postId: post.id, text: 'comm 1-1' },
+          //           { postId: post.id, text: 'comm 1-2' },
+          //         ],
+          //       },
+          //     },
+          //   },
+          // },
         },
         where: { id: post.id },
       })
+
+      // root comments
+      const text = 'comm '
+      Array.from({ length: getRandomNumberForRange(1, 3) }).map(
+        async (_, i1) => {
+          const in1 = i1 + 1
+          const text1 = text + in1
+          const com1 = await prisma.postComment.create({
+            data: { text: text1, postId: post.id },
+          })
+          await new Promise((r) => setTimeout(r, 30))
+
+          Array.from({ length: getRandomNumberForRange(1, 3) }).map(
+            async (_, i2) => {
+              const in2 = i2 + 1
+              const text2 = text + in1 + '-' + in2
+              const com2 = await prisma.postComment.create({
+                data: {
+                  text: text2,
+                  postId: post.id,
+                  commentParentId: com1.commentId,
+                },
+              })
+              await new Promise((r) => setTimeout(r, 30))
+
+              Array.from({ length: getRandomNumberForRange(1, 3) }).map(
+                async (_, i3) => {
+                  const in3 = i3 + 1
+                  const text3 = text + in1 + '-' + in2 + '-' + in3
+                  const com3 = await prisma.postComment.create({
+                    data: {
+                      text: text3,
+                      postId: post.id,
+                      commentParentId: com2.commentId,
+                    },
+                  })
+                  await new Promise((r) => setTimeout(r, 30))
+
+                  Array.from({ length: getRandomNumberForRange(1, 3) }).map(
+                    async (_, i4) => {
+                      const in4 = i4 + 1
+                      const text4 =
+                        text + in1 + '-' + in2 + '-' + in3 + '-' + in4
+                      await prisma.postComment.create({
+                        data: {
+                          text: text4,
+                          postId: post.id,
+                          commentParentId: com3.commentId,
+                        },
+                      })
+                      await new Promise((r) => setTimeout(r, 30))
+                    }
+                  )
+                }
+              )
+            }
+          )
+        }
+      )
     })
 
     // const postsCreated = await posts.map(async (post) => {

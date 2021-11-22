@@ -24,6 +24,7 @@ async function findPosts(prisma: PrismaClient) {
         category: true,
         segments: { orderBy: { createdAt: 'asc' } },
         tags: { select: { id: true, title: true } },
+        _count: { select: { comments: true } },
       },
     })
   } catch (error) {

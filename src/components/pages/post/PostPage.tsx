@@ -22,6 +22,7 @@ import {
 import { Tag, TagsList } from '../../tag'
 import { useAuth } from '../../../services/auth-service'
 import { StepList } from '../../StepList'
+import { PostComments } from '../../post'
 
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
@@ -274,7 +275,7 @@ function PostPageInternal({
                   <div>
                     <Views>{post.views}</Views>
                     <span className="ml-2">
-                      <Comments>6</Comments>
+                      <Comments>{post.comments.length}</Comments>
                     </span>
                   </div>
                   <p>
@@ -335,8 +336,8 @@ function PostPageInternal({
         />
       </PageSection>
 
-      <PageSection>
-        {isShownTagSelection && (
+      {isShownTagSelection && (
+        <PageSection>
           <div className="flex space-x-10" ref={refTagSelection}>
             <div className="flex-1 w-full">
               <Box>
@@ -378,7 +379,17 @@ function PostPageInternal({
               </Box>
             </div>
           </div>
-        )}
+        </PageSection>
+      )}
+
+      <PageSection>
+        <PostComments
+          comments={post.comments.map((comment) => ({
+            commentId: comment.commentId,
+            commentParentId: comment.commentParentId,
+            text: comment.text,
+          }))}
+        />
       </PageSection>
 
       <PageSection>

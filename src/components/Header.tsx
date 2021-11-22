@@ -5,8 +5,7 @@ import { Button } from './Button'
 import { Link } from './Link'
 import { LoadingAnimation } from './LoadingAnimation'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { BellIcon } from '@heroicons/react/solid'
-import { MenuIcon, XIcon } from '@heroicons/react/outline'
+import { MenuIcon, XIcon, BellIcon } from '@heroicons/react/outline'
 
 /**
  * FROM https://tailwindui.com/components/application-ui/navigation/navbars
