@@ -521,7 +521,14 @@ function Comment({
           <span className="ml-2">{comment.text}</span>
         </div>
       </div>
-      <div className="leading-none space-x-2 text-gray-400 text-sm">
+      <div className="leading-none flex items-center space-x-2 text-gray-400 text-sm">
+        <span>
+          <Avatar
+            size="tiny"
+            userId={comment.authorId}
+            hasUserAvatar={comment.authorUsername === 'bennett' ? true : false}
+          />
+        </span>
         <span>{comment.authorUsername}</span>
       </div>
 

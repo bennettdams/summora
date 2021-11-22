@@ -5,6 +5,7 @@ import { useQuery } from 'react-query'
 import { useCloudStorage } from '../services/use-cloud-storage'
 
 const SIZES = {
+  tiny: 30,
   small: 40,
   medium: 100,
   large: 180,
@@ -102,7 +103,7 @@ export function Avatar({
     size
   )
   return (
-    <div className="relative grid place-items-center">
+    <div className="relative inline-grid place-items-center">
       {isEditable && (
         <div className="absolute z-30 group h-full w-full hover:cursor-pointer hover:bg-lime-200 rounded-full hover:bg-opacity-50">
           <span className="h-full w-full grid place-items-center invisible group-hover:visible">

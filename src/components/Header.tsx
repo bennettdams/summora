@@ -37,10 +37,10 @@ function UserNavbar() {
             </Link>
           )
         ) : (
-          <Menu.Button className="bg-gray-800d flex text-sm rounded-full focus:outline-none hover:bg-lime-200 focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+          <Menu.Button className="flex text-sm rounded-full focus:outline-none hover:bg-lime-200 focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
             <div className="flex flex-row items-center text-white hover:text-lime-700">
               <p className="px-2 hidden sm:block">{user?.username}</p>
-              <div className="sm:ml-2 inline">
+              <div className="sm:ml-2 flex items-center">
                 <Avatar
                   hasUserAvatar={user?.hasAvatar ?? false}
                   userId={userAuth.id}
