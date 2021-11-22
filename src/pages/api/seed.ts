@@ -61,19 +61,6 @@ export default async function _seedAPI(
           segments: {
             create: createSegments(),
           },
-          // comments: {
-          //   create: {
-          //     text: 'comm 1',
-          //     commentChilds: {
-          //       createMany: {
-          //         data: [
-          //           { postId: post.id, text: 'comm 1-1' },
-          //           { postId: post.id, text: 'comm 1-2' },
-          //         ],
-          //       },
-          //     },
-          //   },
-          // },
         },
         where: { id: post.id },
       })
@@ -87,7 +74,7 @@ export default async function _seedAPI(
           const com1 = await prisma.postComment.create({
             data: { text: text1, postId: post.id },
           })
-          await new Promise((r) => setTimeout(r, 30))
+          await new Promise((r) => setTimeout(r, 300))
 
           Array.from({ length: getRandomNumberForRange(1, 3) }).map(
             async (_, i2) => {
@@ -100,7 +87,7 @@ export default async function _seedAPI(
                   commentParentId: com1.commentId,
                 },
               })
-              await new Promise((r) => setTimeout(r, 30))
+              await new Promise((r) => setTimeout(r, 300))
 
               Array.from({ length: getRandomNumberForRange(1, 3) }).map(
                 async (_, i3) => {
@@ -113,7 +100,7 @@ export default async function _seedAPI(
                       commentParentId: com2.commentId,
                     },
                   })
-                  await new Promise((r) => setTimeout(r, 30))
+                  await new Promise((r) => setTimeout(r, 300))
 
                   Array.from({ length: getRandomNumberForRange(1, 3) }).map(
                     async (_, i4) => {
@@ -127,7 +114,7 @@ export default async function _seedAPI(
                           commentParentId: com3.commentId,
                         },
                       })
-                      await new Promise((r) => setTimeout(r, 30))
+                      await new Promise((r) => setTimeout(r, 300))
                     }
                   )
                 }
@@ -207,7 +194,8 @@ function createSegments(): Prisma.PostSegmentCreateManyPostInput[] {
           () => ({
             createdAt: new Date(now + 1 * step),
             content: itemContent.substring(
-              getRandomNumberForRange(0, itemContent.length)
+              0,
+              getRandomNumberForRange(5, itemContent.length)
             ),
           })
         ),

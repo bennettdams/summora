@@ -184,7 +184,7 @@ function Comment({
   isRoot: boolean
 }) {
   return (
-    <div className={`ml-10 space-y-2 ${isRoot && 'bg-lime-100'}`}>
+    <div className={`space-y-2 ${isRoot ? 'bg-lime-100' : 'ml-10'}`}>
       <div>{comment.text}</div>
 
       {comment.commentChilds.map((comment) => (

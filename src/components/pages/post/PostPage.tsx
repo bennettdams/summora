@@ -23,6 +23,12 @@ import { Tag, TagsList } from '../../tag'
 import { useAuth } from '../../../services/auth-service'
 import { StepList } from '../../StepList'
 import { PostComments } from '../../post'
+import {
+  CalendarIcon,
+  CurrencyDollarIcon,
+  LocationMarkerIcon,
+} from '@heroicons/react/solid'
+import { BookmarkAltIcon } from '@heroicons/react/outline'
 
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
@@ -67,12 +73,15 @@ function PostPageInternal({
   const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
   const newSegmentId = 'new-segment-id'
 
-  const [refCategory] = useHover<HTMLDivElement>(() =>
-    setShowCategoryDropdown(true)
-  )
-  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
-
-  useOnClickOutside(refCategory, () => setShowCategoryDropdown(false))
+  const [isShownCategoryDropdown, setIsShownCategoryDropdown] = useState(false)
+  const [refCategory] = useHover<HTMLDivElement>(() => {
+    console.log(
+      new Date().toISOString().split('.')[0].replace('T', '  '),
+      'here'
+    )
+    setIsShownCategoryDropdown(true)
+  })
+  useOnClickOutside(refCategory, () => setIsShownCategoryDropdown(false))
 
   async function handleCreateSegment(): Promise<void> {
     const postSegmentToCreate: ApiPostSegmentCreateRequestBody['postSegmentToCreate'] =
@@ -112,7 +121,7 @@ function PostPageInternal({
   useOnClickOutside(refTagSelection, () => setIsShownTagSelection(false))
 
   async function handleOnCategorySelect(newCategory: DropdownItem) {
-    setShowCategoryDropdown(false)
+    setIsShownCategoryDropdown(false)
 
     const postToUpdate: ApiPostUpdateRequestBody = {
       categoryId: newCategory.id,
@@ -202,11 +211,7 @@ function PostPageInternal({
     <Page>
       <PageSection hideTopMargin>
         <div className="flex flex-col md:flex-row">
-          <div
-            className="w-full md:w-2/3"
-            ref={refTitle}
-            onClick={() => isPostEditMode && setIsTitleEditable(true)}
-          >
+          <div className="w-full md:w-4/5">
             {isTitleEditable ? (
               <div className="h-40 mr-10" ref={refTitleEdit}>
                 <div className="flex space-x-8">
@@ -238,91 +243,110 @@ function PostPageInternal({
                 </div>
               </div>
             ) : (
-              <>
-                <p className="text-5xl text-lime-600">
-                  {isPostEditMode && isHovered && (
-                    <span className="mr-10">
-                      <IconEdit className="inline" />
-                    </span>
+              <div className="lg:flex lg:flex-col lg:items-start lg:justify-between">
+                <div
+                  ref={refTitle}
+                  onClick={() => isPostEditMode && setIsTitleEditable(true)}
+                  className="flex-1 min-w-0"
+                >
+                  <h2 className="text-2xl font-bold leading-7 sm:text-3xl">
+                    {isPostEditMode && isHovered && (
+                      <span className="mr-10">
+                        <IconEdit className="inline" />
+                      </span>
+                    )}
+
+                    <span>{post.title}</span>
+                  </h2>
+                </div>
+
+                <div className="flex-1 mt-4">
+                  {!isTitleEditable && (
+                    <span className="italic">{post.subtitle}</span>
                   )}
-
-                  <span>{post.title}</span>
-                </p>
-              </>
-            )}
-          </div>
-
-          <div className="w-full md:w-1/3">
-            <Box smallPadding>
-              <div className="flex divide-gray-400 divide-x">
-                <div className="flex-1 flex flex-col items-center justify-center">
-                  <Avatar
-                    hasUserAvatar={post.author.hasAvatar ?? false}
-                    size="medium"
-                    userId={post.authorId}
-                  />
-
-                  {/* <div className="w-12 h-1 my-2 bg-indigo-500 rounded"></div> */}
-
-                  <div className="mt-4 flex flex-col items-center text-center justify-center">
-                    <h2 className="font-medium leading-none title-font text-gray-900 text-lg">
-                      {post.author.username}
-                    </h2>
-                  </div>
                 </div>
 
-                <div className="flex-1 text-center">
-                  <div>
-                    <Views>{post.views}</Views>
-                    <span className="ml-2">
+                <div className="flex-1 mt-4">
+                  <div className="flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
+                    <div
+                      className="mt-2 flex items-center text-sm text-gray-500"
+                      ref={refCategory}
+                    >
+                      {isPostEditMode && isShownCategoryDropdown ? (
+                        <div className="inline-block w-full">
+                          <DropdownSelect
+                            onChange={handleOnCategorySelect}
+                            items={postCategories.map((cat) => ({
+                              id: cat.id,
+                              title: cat.title,
+                            }))}
+                            initialItem={post.category}
+                          />
+                        </div>
+                      ) : (
+                        // TODO jump to explore
+                        <p className="inline py-4">
+                          <BookmarkAltIcon className="inline w-5 h-5" />
+                          <span className="ml-2 py-1.5 uppercase tracking-wider">
+                            {post.category.title}
+                          </span>
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="mt-2 flex items-center text-sm text-gray-500">
+                      <Views>{post.views}</Views>
+                    </div>
+
+                    <div className="mt-2 flex items-center text-sm text-gray-500">
                       <Comments>{post.comments.length}</Comments>
-                    </span>
+                    </div>
+
+                    <div className="mt-2 flex items-center text-sm text-gray-500">
+                      <LocationMarkerIcon
+                        className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                      Remote
+                    </div>
+
+                    <div className="mt-2 flex items-center text-sm text-gray-500">
+                      <CurrencyDollarIcon
+                        className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                      $120k &ndash; $140k
+                    </div>
+
+                    <div className="mt-2 flex items-center text-sm text-gray-500">
+                      <CalendarIcon
+                        className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                      Closing on January 9, 2020
+                    </div>
                   </div>
-                  <p>
-                    Created at: {post.createdAt.getUTCMonth()}-
-                    {post.createdAt.getUTCDate()}
-                  </p>
-                  <p>
-                    Updated at: {post.updatedAt.getUTCMonth()}-
-                    {post.updatedAt.getUTCDate()}
-                  </p>
                 </div>
               </div>
-            </Box>
-          </div>
-        </div>
-      </PageSection>
-
-      <PageSection hideTopMargin>
-        <div className="inlined mt-2 flex w-full" ref={refCategory}>
-          <div className="flex-grow">
-            {!isTitleEditable && (
-              <span className="italic ml-2">{post.subtitle}</span>
             )}
           </div>
 
-          <div className="w-1/3 text-center">
-            {isLoading ? (
-              <div className="inline-block py-2 w-full">
-                <LoadingAnimation />
-              </div>
-            ) : isPostEditMode && showCategoryDropdown ? (
-              <div className="inline-block py-2 w-full">
-                <DropdownSelect
-                  onChange={handleOnCategorySelect}
-                  items={postCategories.map((cat) => ({
-                    id: cat.id,
-                    title: cat.title,
-                  }))}
-                  initialItem={post.category}
+          <div className="w-full md:w-1/5">
+            <div className="flex divide-gray-400 divide-x">
+              <div className="flex-1 flex flex-col items-center justify-center">
+                <Avatar
+                  hasUserAvatar={post.author.hasAvatar ?? false}
+                  size="medium"
+                  userId={post.authorId}
                 />
+
+                <div className="mt-4 flex flex-col items-center text-center justify-center">
+                  <h2 className="font-medium leading-none title-font text-gray-900 text-lg">
+                    {post.author.username}
+                  </h2>
+                </div>
               </div>
-            ) : (
-              // TODO jump to explore
-              <p className="uppercase py-3 inline-block text-2xl italic font-medium tracking-widest">
-                {post.category.title}
-              </p>
-            )}
+            </div>
           </div>
         </div>
       </PageSection>
