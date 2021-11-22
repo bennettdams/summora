@@ -22,7 +22,6 @@ import {
 import { Tag, TagsList } from '../../tag'
 import { useAuth } from '../../../services/auth-service'
 import { StepList } from '../../StepList'
-import { PostComments } from '../../post'
 import {
   CalendarIcon,
   CurrencyDollarIcon,
@@ -412,6 +411,8 @@ function PostPageInternal({
             commentId: comment.commentId,
             commentParentId: comment.commentParentId,
             text: comment.text,
+            authorId: comment.authorId,
+            authorUsername: comment.author.username,
           }))}
         />
       </PageSection>
@@ -461,5 +462,90 @@ function PostPageInternal({
         </div>
       </PageSection>
     </Page>
+  )
+}
+
+/**
+ * Creates a comment tree from a flat array.
+ * For root level comments, use "null" as "commentId".
+ *
+ * input:
+ * [1 | 1.1 | 2 | 3 | 3.1 | 3.2]
+ *
+ * output:
+ * [1 [1.1] | 2 | 3 [3.1, 3.2] ]
+ */
+function createCommentTree(
+  comments: PostCommentTreeComment[],
+  commentId: string | null
+): PostCommentTreeComment[] {
+  return comments
+    .filter((comment) => comment.commentParentId === commentId)
+    .map((comment) => ({
+      ...comment,
+      commentChilds: createCommentTree(comments, comment.commentId),
+    }))
+}
+
+type PostComment = {
+  commentId: string
+  commentParentId: string | null
+  text: string
+  authorId: string
+  authorUsername: string
+}
+
+type PostCommentTreeComment = PostComment & {
+  commentChilds: PostCommentTreeComment[]
+}
+
+function Comment({
+  comment,
+  isRoot = false,
+}: {
+  comment: PostCommentTreeComment
+  isRoot: boolean
+}) {
+  return (
+    <div
+      className={`space-y-2 ${
+        isRoot ? 'bg-lime-100 rounded-xl p-10' : 'ml-10'
+      }`}
+    >
+      <div className="w-full flex">
+        <div className="w-10 flex flex-col text-center bold items-start leading-none">
+          <span>+</span>
+          <span>-</span>
+        </div>
+        <div className="flex-grow">
+          <span className="ml-2">{comment.text}</span>
+        </div>
+      </div>
+      <div className="leading-none space-x-2 text-gray-400 text-sm">
+        <span>{comment.authorUsername}</span>
+      </div>
+
+      {comment.commentChilds.map((comment) => (
+        <Comment key={comment.commentId} isRoot={false} comment={comment} />
+      ))}
+    </div>
+  )
+}
+
+export function PostComments({
+  comments,
+}: {
+  comments: PostComment[]
+}): JSX.Element {
+  const [commentsForTree] = useState<PostCommentTreeComment[]>(
+    comments.map((comm) => ({ ...comm, commentChilds: [] }))
+  )
+  return (
+    <div className="w-full space-y-12">
+      {/* For the root level tree, we use "true" as comment ID. See "createCommentTree" docs. */}
+      {createCommentTree(commentsForTree, null).map((comm) => (
+        <Comment key={comm.commentId} isRoot={true} comment={comm} />
+      ))}
+    </div>
   )
 }

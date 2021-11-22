@@ -24,7 +24,12 @@ async function findPost(postId: string) {
         orderBy: { createdAt: 'asc' },
         include: { items: { orderBy: { createdAt: 'asc' } } },
       },
-      comments: { orderBy: { createdAt: 'asc' } },
+      comments: {
+        include: {
+          author: { select: { username: true } },
+        },
+        orderBy: { createdAt: 'asc' },
+      },
     },
   })
 }
@@ -73,7 +78,12 @@ async function updatePost(
           orderBy: { createdAt: 'asc' },
           include: { items: { orderBy: { createdAt: 'asc' } } },
         },
-        comments: true,
+        comments: {
+          include: {
+            author: { select: { username: true } },
+          },
+          orderBy: { createdAt: 'asc' },
+        },
       },
     })
   } catch (error) {

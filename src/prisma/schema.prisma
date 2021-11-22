@@ -47,6 +47,9 @@ model PostComment {
   commentParentId String?
   commentParent   PostComment?  @relation("CommentParent", fields: [commentParentId], references: [commentId])
   commentChilds   PostComment[] @relation("CommentParent")
+  // author
+  author          User          @relation("PostCommentAuthor", fields: [authorId], references: [userId])
+  authorId        String
 }
 
 model PostSegment {
@@ -92,11 +95,12 @@ model PostTag {
 }
 
 model User {
-  userId    String   @id
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  username  String   @unique
-  hasAvatar Boolean  @default(false)
+  userId      String        @id
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  username    String        @unique
+  hasAvatar   Boolean       @default(false)
   // posts
-  posts     Post[]   @relation("AuthorPost")
+  posts       Post[]        @relation("AuthorPost")
+  PostComment PostComment[] @relation("PostCommentAuthor")
 }

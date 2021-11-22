@@ -64,7 +64,12 @@ async function findPost(prisma: PrismaClient, postId: string) {
         orderBy: { createdAt: 'asc' },
         include: { items: { orderBy: { createdAt: 'asc' } } },
       },
-      comments: { orderBy: { createdAt: 'asc' } },
+      comments: {
+        include: {
+          author: { select: { username: true } },
+        },
+        orderBy: { createdAt: 'asc' },
+      },
     },
   })
 }
