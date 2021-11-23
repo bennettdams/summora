@@ -1,5 +1,6 @@
 import { QueryClient, useMutation, useQuery, useQueryClient } from 'react-query'
 import {
+  apiCreatePostComment,
   apiCreatePostSegment,
   apiCreatePostSegmentItem,
   apiFetchPost,
@@ -49,6 +50,7 @@ export function usePost(postId: string) {
     updatePostSegmentItemMutation,
     createPostSegmentMutation,
     updatePostSegmentMutation,
+    createPostCommentMutation,
   } = usePostMutation(postId)
 
   return {
@@ -59,19 +61,22 @@ export function usePost(postId: string) {
       createPostSegmentItemMutation.isLoading ||
       updatePostSegmentItemMutation.isLoading ||
       createPostSegmentMutation.isLoading ||
-      updatePostSegmentMutation.isLoading,
+      updatePostSegmentMutation.isLoading ||
+      createPostCommentMutation.isLoading,
     isError:
       isError ||
       updatePostMutation.isError ||
       createPostSegmentItemMutation.isError ||
       updatePostSegmentItemMutation.isError ||
       createPostSegmentMutation.isError ||
-      updatePostSegmentMutation.isError,
+      updatePostSegmentMutation.isError ||
+      createPostCommentMutation.isError,
     updatePost: updatePostMutation.mutateAsync,
     createPostSegmentItem: createPostSegmentItemMutation.mutateAsync,
     createPostSegment: createPostSegmentMutation.mutateAsync,
     updatePostSegmentItem: updatePostSegmentItemMutation.mutateAsync,
     updatePostSegment: updatePostSegmentMutation.mutateAsync,
+    createPostComment: createPostCommentMutation.mutateAsync,
   }
 }
 
@@ -221,11 +226,29 @@ function usePostMutation(postId: string) {
     },
   })
 
+  // COMMENT
+  const createPostCommentMutation = useMutation(apiCreatePostComment, {
+    onSuccess: (data) => {
+      if (data.result) {
+        const commentNew = data.result
+        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
+          !prevData
+            ? null
+            : {
+                ...prevData,
+                comments: [...prevData.comments, commentNew],
+              }
+        )
+      }
+    },
+  })
+
   return {
     updatePostMutation,
     createPostSegmentItemMutation,
     updatePostSegmentItemMutation,
     createPostSegmentMutation,
     updatePostSegmentMutation,
+    createPostCommentMutation,
   }
 }

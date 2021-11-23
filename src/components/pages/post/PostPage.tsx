@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Box } from '../../Box'
 import { Button } from '../../Button'
 import { DropdownItem, DropdownSelect } from '../../DropdownSelect'
@@ -68,7 +68,8 @@ function PostPageInternal({
   post: PostPostPage
   isPostEditMode: boolean
 }): JSX.Element {
-  const { updatePost, createPostSegment, isLoading } = usePost(postId)
+  const { updatePost, createPostSegment, createPostComment, isLoading } =
+    usePost(postId)
   const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
   const newSegmentId = 'new-segment-id'
 
@@ -534,19 +535,25 @@ function Comment({
   )
 }
 
+function createRootComments(comments: PostComment[]): PostCommentTreeComment[] {
+  return comments.map((comm) => ({ ...comm, commentChilds: [] }))
+}
+
 export function PostComments({
   comments,
 }: {
   comments: PostComment[]
 }): JSX.Element {
-  const [commentsForTree] = useState<PostCommentTreeComment[]>(
-    comments.map((comm) => ({ ...comm, commentChilds: [] }))
+  const [rootComments, setRootComments] = useState<PostCommentTreeComment[]>(
+    createRootComments(comments)
   )
+  useEffect(() => setRootComments(createRootComments(comments)), [comments])
+
   return (
     <div className="w-full space-y-12">
-      {/* For the root level tree, we use "true" as comment ID. See "createCommentTree" docs. */}
-      {createCommentTree(commentsForTree, null).map((comm) => (
-        <Comment key={comm.commentId} isRoot={true} comment={comm} />
+      {/* For the root level tree, we use "null" as comment ID. See "createCommentTree" docs. */}
+      {createCommentTree(rootComments, null).map((comment) => (
+        <Comment key={comment.commentId} isRoot={true} comment={comment} />
       ))}
     </div>
   )

@@ -1,5 +1,6 @@
 import type { Prisma } from '@prisma/client'
 import { ApiAvatarsUpload } from '../pages/api/avatars/upload'
+import { ApiPostCommentCreate } from '../pages/api/post-comments'
 import { ApiPostSegmentItemCreate } from '../pages/api/post-segment-items'
 import { ApiPostSegmentItemUpdate } from '../pages/api/post-segment-items/[postSegmentItemId]'
 import { ApiPostSegmentCreate } from '../pages/api/post-segments'
@@ -10,6 +11,7 @@ import { ApiPostIncrementViews } from '../pages/api/posts/[postId]/increment-vie
 import { ApiTagsSearch } from '../pages/api/tags/search'
 import { ApiUsersSignUp } from '../pages/api/users/signup'
 import { ApiUser } from '../pages/api/users/[userId]'
+import { OmitStrict } from '../types/util-types'
 import { get, HttpResponse, post, postFile, put } from '../util/http'
 
 export const ROUTES_API = {
@@ -25,6 +27,7 @@ export const ROUTES_API = {
   POST_SEGMENT_ITEMS: 'post-segment-items',
   POST_SEGMENT_ITEM: (postSegmentItemId: string) =>
     `post-segment-items/${postSegmentItemId}`,
+  POST_COMMENTS: 'post-comments',
 } as const
 
 // #########################################
@@ -264,6 +267,44 @@ export async function apiCreatePostSegmentItem(
   if (response.result)
     response.result = transformApiPostSegmentItem(response.result)
   return response
+}
+
+// #########################################
+
+export type ApiPostCommentCreateRequestBody = {
+  postId: string
+  /**
+   * Null for root level comments.
+   */
+  commentParentId: string | null
+  /**
+   * Exclude author, as this is added server-sided via the request.
+   */
+  postCommentToCreate: OmitStrict<
+    Prisma.PostCommentCreateWithoutPostInput,
+    'author'
+  >
+}
+
+export async function apiCreatePostComment(
+  input: ApiPostCommentCreateRequestBody
+): Promise<HttpResponse<ApiPostCommentCreate>> {
+  const response = await post<ApiPostCommentCreate>(
+    ROUTES_API.POST_COMMENTS,
+    input
+  )
+  if (response.result)
+    response.result = transformApiPostComment(response.result)
+  return response
+}
+
+function transformApiPostComment(
+  comment: NonNullable<ApiPostCommentCreate>
+): NonNullable<ApiPostCommentCreate> {
+  return {
+    ...comment,
+    createdAt: new Date(comment.createdAt),
+  }
 }
 
 // #########################################
