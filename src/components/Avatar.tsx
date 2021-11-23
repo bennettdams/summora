@@ -5,7 +5,7 @@ import { useQuery } from 'react-query'
 import { useCloudStorage } from '../services/use-cloud-storage'
 
 const SIZES = {
-  tiny: 30,
+  tiny: 25,
   small: 40,
   medium: 100,
   large: 180,

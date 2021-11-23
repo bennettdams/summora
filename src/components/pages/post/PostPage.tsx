@@ -22,12 +22,12 @@ import {
 import { Tag, TagsList } from '../../tag'
 import { useAuth } from '../../../services/auth-service'
 import { StepList } from '../../StepList'
+import { CalendarIcon } from '@heroicons/react/solid'
 import {
-  CalendarIcon,
-  CurrencyDollarIcon,
-  LocationMarkerIcon,
-} from '@heroicons/react/solid'
-import { BookmarkAltIcon } from '@heroicons/react/outline'
+  BookmarkAltIcon,
+  PlusCircleIcon,
+  MinusCircleIcon,
+} from '@heroicons/react/outline'
 
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
@@ -268,7 +268,7 @@ function PostPageInternal({
                 <div className="flex-1 mt-4">
                   <div className="flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
                     <div
-                      className="mt-2 flex items-center text-sm text-gray-500"
+                      className="flex items-center text-sm text-gray-400"
                       ref={refCategory}
                     >
                       {isPostEditMode && isShownCategoryDropdown ? (
@@ -284,8 +284,8 @@ function PostPageInternal({
                         </div>
                       ) : (
                         // TODO jump to explore
-                        <p className="inline py-4">
-                          <BookmarkAltIcon className="inline w-5 h-5" />
+                        <p className="inline py-3">
+                          <BookmarkAltIcon className="inline w-4 h-4" />
                           <span className="ml-2 py-1.5 uppercase tracking-wider">
                             {post.category.title}
                           </span>
@@ -293,36 +293,19 @@ function PostPageInternal({
                       )}
                     </div>
 
-                    <div className="mt-2 flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-gray-400">
                       <Views>{post.views}</Views>
                     </div>
 
-                    <div className="mt-2 flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-gray-400">
                       <Comments>{post.comments.length}</Comments>
                     </div>
 
-                    <div className="mt-2 flex items-center text-sm text-gray-500">
-                      <LocationMarkerIcon
-                        className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                      Remote
-                    </div>
-
-                    <div className="mt-2 flex items-center text-sm text-gray-500">
-                      <CurrencyDollarIcon
-                        className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                      $120k &ndash; $140k
-                    </div>
-
-                    <div className="mt-2 flex items-center text-sm text-gray-500">
-                      <CalendarIcon
-                        className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                      Closing on January 9, 2020
+                    <div className="flex items-center text-sm text-gray-400">
+                      <CalendarIcon className="inline w-4 h-4" />
+                      <span className="ml-2 py-1.5">
+                        {post.createdAt.toISOString()}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -406,18 +389,6 @@ function PostPageInternal({
       )}
 
       <PageSection>
-        <PostComments
-          comments={post.comments.map((comment) => ({
-            commentId: comment.commentId,
-            commentParentId: comment.commentParentId,
-            text: comment.text,
-            authorId: comment.authorId,
-            authorUsername: comment.author.username,
-          }))}
-        />
-      </PageSection>
-
-      <PageSection>
         {/* "items-start" to make "sticky" work. Without it, the sticky div has the full height of the flex container. */}
         <div className="md:flex w-full items-start">
           <div className="md:w-1/4 md:sticky top-40">
@@ -460,6 +431,18 @@ function PostPageInternal({
             )}
           </div>
         </div>
+      </PageSection>
+
+      <PageSection>
+        <PostComments
+          comments={post.comments.map((comment) => ({
+            commentId: comment.commentId,
+            commentParentId: comment.commentParentId,
+            text: comment.text,
+            authorId: comment.authorId,
+            authorUsername: comment.author.username,
+          }))}
+        />
       </PageSection>
     </Page>
   )
@@ -509,27 +492,30 @@ function Comment({
   return (
     <div
       className={`space-y-2 ${
-        isRoot ? 'bg-lime-100 rounded-xl p-10' : 'ml-10'
+        isRoot ? 'bg-lime-100 rounded-xl p-10' : 'ml-14'
       }`}
     >
       <div className="w-full flex">
-        <div className="w-10 flex flex-col text-center bold items-start leading-none">
-          <span>+</span>
-          <span>-</span>
+        <div className="w-10 flex flex-row text-center text-lime-400 bold justify-center leading-none">
+          <PlusCircleIcon />
+          <MinusCircleIcon />
         </div>
-        <div className="flex-grow">
-          <span className="ml-2">{comment.text}</span>
+        <div className="flex-grow ml-2">
+          <span>{comment.text}</span>
         </div>
       </div>
-      <div className="leading-none flex items-center space-x-2 text-gray-400 text-sm">
-        <span>
+
+      <div className="w-full flex">
+        <div className="w-10 flex flex-col text-center bold items-center leading-none">
           <Avatar
             size="tiny"
             userId={comment.authorId}
             hasUserAvatar={comment.authorUsername === 'bennett' ? true : false}
           />
-        </span>
-        <span>{comment.authorUsername}</span>
+        </div>
+        <div className="leading-none flex items-center space-x-2 text-gray-400 text-sm">
+          <span className="ml-2">{comment.authorUsername}</span>
+        </div>
       </div>
 
       {comment.commentChilds.map((comment) => (

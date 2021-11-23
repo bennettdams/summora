@@ -12,6 +12,11 @@ function getRandomElementOfArray<T>(arr: T[]) {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
+function loremRandom() {
+  const lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+  return lorem.substring(0, getRandomNumberForRange(5, lorem.length))
+}
+
 export default async function _seedAPI(
   req: NextApiRequest,
   res: NextApiResponse
@@ -53,12 +58,8 @@ async function fill() {
     data: [...new Array(100)].map((_, i) => {
       const category = getRandomElementOfArray(postCategoriesCreated)
       return {
-        title: `${
-          category.title
-        } This is a title that is a bit longer for testing purposes ${i + 1}`,
-        subtitle: `Subtitle - Lorem ipsum dolor sit amet, consectetur adipiscing elit. ${
-          i + 1
-        }`,
+        title: `${category.title} ${loremRandom()} ${i + 1}`,
+        subtitle: `Subtitle - ${loremRandom()} ${i + 1}`,
         postCategoryId: category.id,
         authorId: getRandomElementOfArray(users).userId,
       }
@@ -83,10 +84,9 @@ async function fill() {
     })
 
     // root comments
-    const text = 'comm '
     Array.from({ length: getRandomNumberForRange(1, 3) }).map(async (_, i1) => {
       const in1 = i1 + 1
-      const text1 = text + in1
+      const text1 = loremRandom() + in1
       const com1 = await prisma.postComment.create({
         data: {
           text: text1,
@@ -99,7 +99,7 @@ async function fill() {
       Array.from({ length: getRandomNumberForRange(1, 3) }).map(
         async (_, i2) => {
           const in2 = i2 + 1
-          const text2 = text + in1 + '-' + in2
+          const text2 = loremRandom() + in1 + '-' + in2
           const com2 = await prisma.postComment.create({
             data: {
               text: text2,
@@ -113,7 +113,7 @@ async function fill() {
           Array.from({ length: getRandomNumberForRange(1, 3) }).map(
             async (_, i3) => {
               const in3 = i3 + 1
-              const text3 = text + in1 + '-' + in2 + '-' + in3
+              const text3 = loremRandom() + in1 + '-' + in2 + '-' + in3
               const com3 = await prisma.postComment.create({
                 data: {
                   text: text3,
@@ -127,7 +127,8 @@ async function fill() {
               Array.from({ length: getRandomNumberForRange(1, 3) }).map(
                 async (_, i4) => {
                   const in4 = i4 + 1
-                  const text4 = text + in1 + '-' + in2 + '-' + in3 + '-' + in4
+                  const text4 =
+                    loremRandom() + in1 + '-' + in2 + '-' + in3 + '-' + in4
                   await prisma.postComment.create({
                     data: {
                       text: text4,
@@ -170,9 +171,6 @@ function createSegments(): Prisma.PostSegmentCreateManyPostInput[] {
 
     // const postSegment: Prisma.PostSegmentCreateManyPostInput = {}
 
-    const itemContent =
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-
     return {
       createdAt: new Date(now + 1 * step),
       title: `Segment title ${index}`,
@@ -181,10 +179,7 @@ function createSegments(): Prisma.PostSegmentCreateManyPostInput[] {
         create: Array.from({ length: getRandomNumberForRange(1, 10) }).map(
           () => ({
             createdAt: new Date(now + 1 * step),
-            content: itemContent.substring(
-              0,
-              getRandomNumberForRange(5, itemContent.length)
-            ),
+            content: loremRandom(),
           })
         ),
       },
