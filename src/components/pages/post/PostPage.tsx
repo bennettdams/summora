@@ -439,6 +439,7 @@ function PostPageInternal({
             commentId: comment.commentId,
             commentParentId: comment.commentParentId,
             text: comment.text,
+            createdAt: comment.createdAt,
             authorId: comment.authorId,
             authorUsername: comment.author.username,
             authorHasAvatar: comment.author.hasAvatar,
@@ -475,6 +476,7 @@ type PostComment = {
   commentId: string
   commentParentId: string | null
   text: string
+  createdAt: Date
   authorId: string
   authorUsername: string
   authorHasAvatar: boolean
@@ -507,7 +509,7 @@ function Comment({
         </div>
       </div>
 
-      <div className="w-full flex m-0">
+      <div className="w-full flex m-0 text-xs text-gray-400">
         <div className="w-10 flex flex-col text-center bold items-center leading-none">
           <Avatar
             size="tiny"
@@ -515,8 +517,13 @@ function Comment({
             hasUserAvatar={comment.authorHasAvatar}
           />
         </div>
-        <div className="leading-none flex items-center space-x-2 text-gray-400 text-sm">
+
+        <div className="leading-none flex items-center space-x-2">
           <span className="ml-2">{comment.authorUsername}</span>
+        </div>
+
+        <div className="leading-none flex items-center space-x-2">
+          <span className="ml-2">{comment.createdAt.toISOString()}</span>
         </div>
       </div>
 
