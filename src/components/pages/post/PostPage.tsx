@@ -391,7 +391,7 @@ function PostPageInternal({
       <PageSection>
         {/* "items-start" to make "sticky" work. Without it, the sticky div has the full height of the flex container. */}
         <div className="md:flex w-full items-start">
-          <div className="md:w-1/4 md:sticky top-40">
+          <div className="md:w-1/4 md:sticky top-40 pr-10">
             <StepList
               steps={post.segments.map((segment, index) => ({
                 no: index,
@@ -441,6 +441,7 @@ function PostPageInternal({
             text: comment.text,
             authorId: comment.authorId,
             authorUsername: comment.author.username,
+            authorHasAvatar: comment.author.hasAvatar,
           }))}
         />
       </PageSection>
@@ -476,6 +477,7 @@ type PostComment = {
   text: string
   authorId: string
   authorUsername: string
+  authorHasAvatar: boolean
 }
 
 type PostCommentTreeComment = PostComment & {
@@ -491,26 +493,26 @@ function Comment({
 }) {
   return (
     <div
-      className={`space-y-2 ${
+      className={`space-y-1 ${
         isRoot ? 'bg-lime-100 rounded-xl p-10' : 'ml-14'
       }`}
     >
       <div className="w-full flex">
-        <div className="w-10 flex flex-row text-center text-lime-400 bold justify-center leading-none">
-          <PlusCircleIcon />
-          <MinusCircleIcon />
+        <div className="w-10 flex flex-row items-center justify-center text-center text-lime-400 bold leading-none">
+          <PlusCircleIcon className="h-4 w-4" />
+          <MinusCircleIcon className="h-4 w-4" />
         </div>
         <div className="flex-grow ml-2">
           <span>{comment.text}</span>
         </div>
       </div>
 
-      <div className="w-full flex">
+      <div className="w-full flex m-0">
         <div className="w-10 flex flex-col text-center bold items-center leading-none">
           <Avatar
             size="tiny"
             userId={comment.authorId}
-            hasUserAvatar={comment.authorUsername === 'bennett' ? true : false}
+            hasUserAvatar={comment.authorHasAvatar}
           />
         </div>
         <div className="leading-none flex items-center space-x-2 text-gray-400 text-sm">

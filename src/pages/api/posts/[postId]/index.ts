@@ -26,7 +26,7 @@ async function findPost(postId: string) {
       },
       comments: {
         include: {
-          author: { select: { username: true } },
+          author: { select: { username: true, hasAvatar: true } },
         },
         orderBy: { createdAt: 'asc' },
       },
@@ -80,7 +80,7 @@ async function updatePost(
         },
         comments: {
           include: {
-            author: { select: { username: true } },
+            author: { select: { username: true, hasAvatar: true } },
           },
           orderBy: { createdAt: 'asc' },
         },

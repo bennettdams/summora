@@ -86,7 +86,7 @@ async function fill() {
     // root comments
     Array.from({ length: getRandomNumberForRange(1, 3) }).map(async (_, i1) => {
       const in1 = i1 + 1
-      const text1 = loremRandom() + in1
+      const text1 = loremRandom() + ' ' + in1
       const com1 = await prisma.postComment.create({
         data: {
           text: text1,
@@ -99,7 +99,7 @@ async function fill() {
       Array.from({ length: getRandomNumberForRange(1, 3) }).map(
         async (_, i2) => {
           const in2 = i2 + 1
-          const text2 = loremRandom() + in1 + '-' + in2
+          const text2 = loremRandom() + ' ' + in1 + '-' + in2
           const com2 = await prisma.postComment.create({
             data: {
               text: text2,
@@ -113,7 +113,7 @@ async function fill() {
           Array.from({ length: getRandomNumberForRange(1, 3) }).map(
             async (_, i3) => {
               const in3 = i3 + 1
-              const text3 = loremRandom() + in1 + '-' + in2 + '-' + in3
+              const text3 = loremRandom() + ' ' + in1 + '-' + in2 + '-' + in3
               const com3 = await prisma.postComment.create({
                 data: {
                   text: text3,
@@ -128,7 +128,15 @@ async function fill() {
                 async (_, i4) => {
                   const in4 = i4 + 1
                   const text4 =
-                    loremRandom() + in1 + '-' + in2 + '-' + in3 + '-' + in4
+                    loremRandom() +
+                    ' ' +
+                    in1 +
+                    '-' +
+                    in2 +
+                    '-' +
+                    in3 +
+                    '-' +
+                    in4
                   await prisma.postComment.create({
                     data: {
                       text: text4,
@@ -173,8 +181,8 @@ function createSegments(): Prisma.PostSegmentCreateManyPostInput[] {
 
     return {
       createdAt: new Date(now + 1 * step),
-      title: `Segment title ${index}`,
-      subtitle: `Subtitle ${index}`,
+      title: `Segment title ${loremRandom()} ${index}`,
+      subtitle: `Subtitle ${loremRandom()} ${index}`,
       items: {
         create: Array.from({ length: getRandomNumberForRange(1, 10) }).map(
           () => ({
