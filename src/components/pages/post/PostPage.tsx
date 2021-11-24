@@ -198,6 +198,8 @@ function PostPageInternal({
     }
   }
 
+  const [inputRootComment, setInputRootComment] = useState('')
+
   /**
    * Removes tags which are already included in a post from a list of tags.
    */
@@ -205,6 +207,22 @@ function PostPageInternal({
     return tagsToFilter.filter(
       (tagToFilter) => !post.tags.some((tag) => tag.id === tagToFilter.id)
     )
+  }
+
+  async function addComment(
+    /**
+     * `null` for root comments
+     */
+    commentParentId: string | null,
+    text: string
+  ) {
+    await createPostComment({
+      postId,
+      commentParentId,
+      postCommentToCreate: {
+        text: text,
+      },
+    })
   }
 
   return (
@@ -390,6 +408,41 @@ function PostPageInternal({
       )}
 
       <PageSection>
+        <PostComments
+          comments={post.comments.map((comment) => ({
+            commentId: comment.commentId,
+            commentParentId: comment.commentParentId,
+            text: comment.text,
+            createdAt: comment.createdAt,
+            authorId: comment.authorId,
+            authorUsername: comment.author.username,
+            authorHasAvatar: comment.author.hasAvatar,
+          }))}
+        />
+      </PageSection>
+
+      <PageSection>
+        <form
+          className="md:w-2/3"
+          onSubmit={async (e) => {
+            e.preventDefault()
+            addComment(null, inputRootComment)
+          }}
+        >
+          <input
+            className="h-16 p-8 w-full bg-transparent border-b outline-none border-orange-500 focus:rounded-lg focus:ring-orange-300 focus:border-orange-300"
+            name="rootCommentInput"
+            placeholder="Leave a comment.."
+            id="rootCommentInput"
+            value={inputRootComment}
+            required
+            onChange={(e) => setInputRootComment(e.target.value)}
+            onKeyDown={(e) => e.key === 'Escape' && setInputRootComment('')}
+          />
+        </form>
+      </PageSection>
+
+      <PageSection>
         {/* "items-start" to make "sticky" work. Without it, the sticky div has the full height of the flex container. */}
         <div className="md:flex w-full items-start">
           <div className="md:w-1/4 md:sticky top-40 pr-10">
@@ -432,20 +485,6 @@ function PostPageInternal({
             )}
           </div>
         </div>
-      </PageSection>
-
-      <PageSection>
-        <PostComments
-          comments={post.comments.map((comment) => ({
-            commentId: comment.commentId,
-            commentParentId: comment.commentParentId,
-            text: comment.text,
-            createdAt: comment.createdAt,
-            authorId: comment.authorId,
-            authorUsername: comment.author.username,
-            authorHasAvatar: comment.author.hasAvatar,
-          }))}
-        />
       </PageSection>
     </Page>
   )
