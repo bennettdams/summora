@@ -120,7 +120,7 @@ export async function put<T>(
 }
 
 /**
- * HTTP PUT request.
+ * HTTP DELETE request.
  *
  * @param path API endpoint identifier, e. g. "posts"
  */

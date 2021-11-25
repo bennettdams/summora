@@ -1,40 +1,26 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-
 import { Prisma } from '@prisma/client'
-import { prisma } from '../../prisma/prisma'
+import { prisma } from '../prisma/prisma'
 
-function getRandomNumberForRange(min: number, max: number): number {
-  // min and max included
-  return Math.floor(Math.random() * (max - min + 1) + min)
-}
+async function main() {
+  await drop()
 
-function getRandomElementOfArray<T>(arr: T[]) {
-  return arr[Math.floor(Math.random() * arr.length)]
-}
-
-function loremRandom() {
-  const lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-  return lorem.substring(0, getRandomNumberForRange(5, lorem.length))
-}
-
-export default async function _seedAPI(
-  req: NextApiRequest,
-  res: NextApiResponse
-): Promise<void> {
-  try {
-    await drop()
-    let noOfPostsCreated = 0
-
-    noOfPostsCreated = 0
+  let noOfPostsCreated = 0
+  if ((await prisma.post.count()) === 0) {
     noOfPostsCreated = await fill()
-
-    const message = `seeded ${noOfPostsCreated} posts`
-    console.info(message)
-    res.status(200).json(message)
-  } catch (err) {
-    res.status(400).json({ message: 'Something went wrong!' + err })
   }
+
+  const message = `seeded ${noOfPostsCreated} posts`
+  console.info(message)
 }
+
+main()
+  .catch((e) => {
+    console.error('Error while seeding database: ', e)
+    process.exit(1)
+  })
+  .finally(async () => {
+    await prisma.$disconnect()
+  })
 
 async function drop() {
   await prisma.postComment.deleteMany({})
@@ -158,75 +144,6 @@ async function fill() {
   return postsCreated.length
 }
 
-// const posts: Prisma.PostCreateWithoutCategoryInput[] = [...new Array(100)].map(
-//   (_, i) => {
-//     const post: Prisma.PostCreateWithoutCategoryInput = {
-//       title:
-//         'Post title    This is a title that is a bit longer for testing purposes ' +
-//         (i + 1),
-//       subtitle:
-//         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' + (i + 1),
-//     }
-//     return post
-//   }
-// )
-
-// function createSegments(postId: string): Prisma.PostSegmentCreateManyInput[] {
-function createSegments(): Prisma.PostSegmentCreateManyPostInput[] {
-  return [...new Array(getRandomNumberForRange(1, 10))].map((_, index) => {
-    const now = new Date().getTime()
-    const step = 100
-
-    // const postSegment: Prisma.PostSegmentCreateManyPostInput = {}
-
-    return {
-      createdAt: new Date(now + 1 * step),
-      title: `Segment title ${loremRandom()} ${index}`,
-      subtitle: `Subtitle ${loremRandom()} ${index}`,
-      items: {
-        create: Array.from({ length: getRandomNumberForRange(1, 10) }).map(
-          () => ({
-            createdAt: new Date(now + 1 * step),
-            content: loremRandom(),
-          })
-        ),
-      },
-    }
-  })
-}
-
-// for inline create
-// const segments: Prisma.PostSegmentCreateWithoutPostInput[] = [
-//   ...new Array(2),
-// ].map((_, i) => {
-//   const segment: Prisma.PostSegmentCreateWithoutPostInput = {
-//     title: 'Segment title ' + (i + 1),
-//     subtitle:
-//       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' + (i + 1),
-//   }
-//   return segment
-// })
-
-// const postIdsCreated: string[] = []
-// posts.forEach(async (post) => {
-//   const postCreated = await prisma.post.create({
-//     data: {
-//       ...post,
-//     },
-//   })
-//   postIdsCreated.push(postCreated.id)
-// })
-
-// const postSegmentIdsCreated: string[] = []
-// segments.forEach(async (segment) => {
-//   const postSegmentCreated = await prisma.postSegment.create({
-//     data: {
-//       ...segment,
-//     },
-//   })
-//   postSegmentIdsCreated.push(postSegmentCreated.id)
-// })
-
 export const postCategories: Prisma.PostCategoryCreateInput[] = [
   { id: 'books', title: 'Books', description: '..' },
   { id: 'movies', title: 'Movies', description: '..' },
@@ -261,3 +178,40 @@ export const postTags: Prisma.PostTagCreateWithoutPostsInput[] = [
   { title: 'For dummies' + i, description: '..' },
   { title: 'History' + i, description: '..' },
 ])
+
+function createSegments(): Prisma.PostSegmentCreateManyPostInput[] {
+  return [...new Array(getRandomNumberForRange(1, 10))].map((_, index) => {
+    const now = new Date().getTime()
+    const step = 100
+
+    // const postSegment: Prisma.PostSegmentCreateManyPostInput = {}
+
+    return {
+      createdAt: new Date(now + 1 * step),
+      title: `Segment title ${loremRandom()} ${index}`,
+      subtitle: `Subtitle ${loremRandom()} ${index}`,
+      items: {
+        create: Array.from({ length: getRandomNumberForRange(1, 10) }).map(
+          () => ({
+            createdAt: new Date(now + 1 * step),
+            content: loremRandom(),
+          })
+        ),
+      },
+    }
+  })
+}
+
+function getRandomNumberForRange(min: number, max: number): number {
+  // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+function getRandomElementOfArray<T>(arr: T[]) {
+  return arr[Math.floor(Math.random() * arr.length)]
+}
+
+function loremRandom() {
+  const lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+  return lorem.substring(0, getRandomNumberForRange(5, lorem.length))
+}
