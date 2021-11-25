@@ -3,6 +3,7 @@ import {
   apiCreatePostComment,
   apiCreatePostSegment,
   apiCreatePostSegmentItem,
+  apiDeletePostComment,
   apiFetchPost,
   apiUpdatePost,
   apiUpdatePostSegment,
@@ -51,6 +52,7 @@ export function usePost(postId: string) {
     createPostSegmentMutation,
     updatePostSegmentMutation,
     createPostCommentMutation,
+    deletePostCommentMutation,
   } = usePostMutation(postId)
 
   return {
@@ -62,7 +64,8 @@ export function usePost(postId: string) {
       updatePostSegmentItemMutation.isLoading ||
       createPostSegmentMutation.isLoading ||
       updatePostSegmentMutation.isLoading ||
-      createPostCommentMutation.isLoading,
+      createPostCommentMutation.isLoading ||
+      deletePostCommentMutation.isLoading,
     isError:
       isError ||
       updatePostMutation.isError ||
@@ -70,13 +73,15 @@ export function usePost(postId: string) {
       updatePostSegmentItemMutation.isError ||
       createPostSegmentMutation.isError ||
       updatePostSegmentMutation.isError ||
-      createPostCommentMutation.isError,
+      createPostCommentMutation.isError ||
+      deletePostCommentMutation.isError,
     updatePost: updatePostMutation.mutateAsync,
     createPostSegmentItem: createPostSegmentItemMutation.mutateAsync,
     createPostSegment: createPostSegmentMutation.mutateAsync,
     updatePostSegmentItem: updatePostSegmentItemMutation.mutateAsync,
     updatePostSegment: updatePostSegmentMutation.mutateAsync,
     createPostComment: createPostCommentMutation.mutateAsync,
+    deletePostComment: deletePostCommentMutation.mutateAsync,
   }
 }
 
@@ -243,6 +248,24 @@ function usePostMutation(postId: string) {
     },
   })
 
+  const deletePostCommentMutation = useMutation(apiDeletePostComment, {
+    onSuccess: (data, deletedCommentCommendId) => {
+      // true = comment was deleted
+      if (data.result === true) {
+        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
+          !prevData
+            ? null
+            : {
+                ...prevData,
+                comments: prevData.comments.filter(
+                  (comment) => comment.commentId !== deletedCommentCommendId
+                ),
+              }
+        )
+      }
+    },
+  })
+
   return {
     updatePostMutation,
     createPostSegmentItemMutation,
@@ -250,5 +273,6 @@ function usePostMutation(postId: string) {
     createPostSegmentMutation,
     updatePostSegmentMutation,
     createPostCommentMutation,
+    deletePostCommentMutation,
   }
 }

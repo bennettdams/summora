@@ -80,16 +80,6 @@ export function PostSegment({
       {
         content: inputValue,
       }
-    setItems((prevItems) => [
-      ...prevItems,
-      {
-        id: 'new' + Math.random(),
-        content: postSegmentItemToCreate.content,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        postSegmentId: segment.id,
-      },
-    ])
 
     await createPostSegmentItem({
       postSegmentId: segment.id,

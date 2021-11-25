@@ -52,7 +52,7 @@ export function Tag({
    */
   handleRemoving?: boolean
 }): JSX.Element {
-  const [showRemove, setShowRemove] = useState(false)
+  const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
 
   return (
     <div
@@ -63,9 +63,9 @@ export function Tag({
       // Don't execute on click when this tag is supposed to handle removing - this happens further down then.
       onClick={() => !handleRemoving && onClick?.(tag.id)}
     >
-      {!handleRemoving || !showRemove ? (
+      {!handleRemoving || !showRemoveConfirmation ? (
         <span
-          onClick={() => !!handleRemoving && setShowRemove(true)}
+          onClick={() => !!handleRemoving && setShowRemoveConfirmation(true)}
           className="uppercase inline-block text-xs font-medium tracking-widest"
         >
           {tag.title}

@@ -1,6 +1,7 @@
 import type { Prisma } from '@prisma/client'
 import { ApiAvatarsUpload } from '../pages/api/avatars/upload'
 import { ApiPostCommentCreate } from '../pages/api/post-comments'
+import { ApiPostCommentDelete } from '../pages/api/post-comments/[commentId]'
 import { ApiPostSegmentItemCreate } from '../pages/api/post-segment-items'
 import { ApiPostSegmentItemUpdate } from '../pages/api/post-segment-items/[postSegmentItemId]'
 import { ApiPostSegmentCreate } from '../pages/api/post-segments'
@@ -12,7 +13,14 @@ import { ApiTagsSearch } from '../pages/api/tags/search'
 import { ApiUsersSignUp } from '../pages/api/users/signup'
 import { ApiUser } from '../pages/api/users/[userId]'
 import { OmitStrict } from '../types/util-types'
-import { get, HttpResponse, post, postFile, put } from '../util/http'
+import {
+  deleteHTTP,
+  get,
+  HttpResponse,
+  post,
+  postFile,
+  put,
+} from '../util/http'
 
 export const ROUTES_API = {
   USERS_SIGN_UP: 'users/signup',
@@ -28,6 +36,7 @@ export const ROUTES_API = {
   POST_SEGMENT_ITEM: (postSegmentItemId: string) =>
     `post-segment-items/${postSegmentItemId}`,
   POST_COMMENTS: 'post-comments',
+  POST_COMMENT: (commentId: string) => `post-comments/${commentId}`,
 } as const
 
 // #########################################
@@ -332,3 +341,12 @@ function transformApiTagsSearch(
 }
 
 // #########################################
+
+export async function apiDeletePostComment(
+  commentId: string
+): Promise<HttpResponse<ApiPostCommentDelete>> {
+  const response = await deleteHTTP<ApiPostCommentDelete>(
+    ROUTES_API.POST_COMMENT(commentId)
+  )
+  return response
+}

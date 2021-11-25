@@ -3,7 +3,7 @@ import { Box } from '../../Box'
 import { Button } from '../../Button'
 import { DropdownItem, DropdownSelect } from '../../DropdownSelect'
 import { FormInput } from '../../FormInput'
-import { IconCheck, IconX, IconEdit } from '../../Icon'
+import { IconCheck, IconX, IconEdit, IconTrash } from '../../Icon'
 import { LoadingAnimation } from '../../LoadingAnimation'
 import { Page, PageSection } from '../../Page'
 import { usePost } from '../../../data/use-post'
@@ -50,6 +50,7 @@ export function PostPage(props: PostPageProps): JSX.Element {
       tagsSorted={props.tagsSorted}
       tagsSortedForCategory={props.tagsSortedForCategory}
       isPostEditMode={user?.userId === post.authorId}
+      userId={user?.userId ?? null}
     />
   )
 }
@@ -64,14 +65,20 @@ function PostPageInternal({
   tagsSorted,
   tagsSortedForCategory,
   isPostEditMode = false,
+  userId,
 }: PostPageProps & {
   post: PostPostPage
   isPostEditMode: boolean
+  userId: string | null
 }): JSX.Element {
-  const { updatePost, createPostSegment, createPostComment, isLoading } =
-    usePost(postId)
+  const {
+    updatePost,
+    createPostSegment,
+    createPostComment,
+    deletePostComment,
+    isLoading,
+  } = usePost(postId)
   const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
-  const newSegmentId = 'new-segment-id'
 
   const [isShownCategoryDropdown, setIsShownCategoryDropdown] = useState(false)
   const [refCategory] = useHover<HTMLDivElement>(() => {
@@ -89,19 +96,6 @@ function PostPageInternal({
         title: '',
         subtitle: '',
       }
-
-    setSegments((prevSegments) => [
-      ...prevSegments,
-      {
-        postId: post.id,
-        id: newSegmentId + Math.random(),
-        title: postSegmentToCreate.title ?? '',
-        subtitle: postSegmentToCreate.subtitle ?? '',
-        items: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ])
 
     setHasNewSegmentBeenEdited(false)
 
@@ -223,6 +217,10 @@ function PostPageInternal({
         text: text,
       },
     })
+  }
+
+  async function removeComment(commentId: string) {
+    await deletePostComment(commentId)
   }
 
   return (
@@ -409,6 +407,8 @@ function PostPageInternal({
 
       <PageSection>
         <PostComments
+          userId={userId}
+          onDelete={removeComment}
           comments={post.comments.map((comment) => ({
             commentId: comment.commentId,
             commentParentId: comment.commentParentId,
@@ -529,10 +529,16 @@ type PostCommentTreeComment = PostComment & {
 function Comment({
   comment,
   isRoot = false,
+  userId,
+  onDelete,
 }: {
   comment: PostCommentTreeComment
   isRoot: boolean
+  userId: string | null
+  onDelete: (commentId: string) => void
 }) {
+  const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
+
   return (
     <div
       className={`space-y-1 ${
@@ -565,10 +571,45 @@ function Comment({
         <div className="leading-none flex items-center space-x-2">
           <span className="ml-2">{comment.createdAt.toISOString()}</span>
         </div>
+
+        {!!userId && comment.authorId === userId && (
+          <div
+            className="ml-4 px-2 flex items-center rounded hover:bg-white hover:cursor-pointer"
+            onClick={() => setShowRemoveConfirmation(true)}
+          >
+            {!showRemoveConfirmation ? (
+              <div
+                className="flex items-center"
+                onClick={() => setShowRemoveConfirmation(true)}
+              >
+                <IconTrash size="small" />
+                <span className="uppercase text-orange-400 inline-block text-xs font-medium tracking-widest">
+                  Remove
+                </span>
+              </div>
+            ) : (
+              <div
+                className="flex items-center"
+                onClick={() => onDelete(comment.commentId)}
+              >
+                <IconTrash size="small" />
+                <span className="uppercase text-orange-400 inline-block text-xs font-medium tracking-widest">
+                  Confirm
+                </span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {comment.commentChilds.map((comment) => (
-        <Comment key={comment.commentId} isRoot={false} comment={comment} />
+        <Comment
+          key={comment.commentId}
+          isRoot={false}
+          comment={comment}
+          userId={userId}
+          onDelete={onDelete}
+        />
       ))}
     </div>
   )
@@ -579,9 +620,13 @@ function createRootComments(comments: PostComment[]): PostCommentTreeComment[] {
 }
 
 export function PostComments({
+  userId,
   comments,
+  onDelete,
 }: {
+  userId: string | null
   comments: PostComment[]
+  onDelete: (commentId: string) => void
 }): JSX.Element {
   const [rootComments, setRootComments] = useState<PostCommentTreeComment[]>(
     createRootComments(comments)
@@ -592,7 +637,13 @@ export function PostComments({
     <div className="w-full space-y-12">
       {/* For the root level tree, we use "null" as comment ID. See "createCommentTree" docs. */}
       {createCommentTree(rootComments, null).map((comment) => (
-        <Comment key={comment.commentId} isRoot={true} comment={comment} />
+        <Comment
+          key={comment.commentId}
+          isRoot={true}
+          comment={comment}
+          userId={userId}
+          onDelete={onDelete}
+        />
       ))}
     </div>
   )
