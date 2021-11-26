@@ -4,7 +4,10 @@ import {
   XIcon,
   TrashIcon,
   PlusIcon,
+  ReplyIcon,
+  CalendarIcon,
 } from '@heroicons/react/solid'
+import { BookmarkAltIcon } from '@heroicons/react/outline'
 import { MouseEvent } from 'react'
 
 const sizes = {
@@ -25,7 +28,8 @@ const style =
 
 export interface IconProps {
   size?: keyof typeof sizes
-  className?: string
+  // based on the prop type of Heroicons
+  className?: Parameters<typeof PlusIcon>[0]['className']
   onClick?: () => void
 }
 
@@ -107,6 +111,60 @@ export function IconTrash({
   return (
     <TrashIcon
       className={`${style} ${sizes[size]} ${className} ${
+        onClick && 'cursor-pointer'
+      }`}
+      onClick={(event: MouseEvent) => {
+        event.stopPropagation()
+        onClick && onClick()
+      }}
+    />
+  )
+}
+
+export function IconReply({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <ReplyIcon
+      className={`${style} ${sizes[size]} ${className} ${
+        onClick && 'cursor-pointer'
+      }`}
+      onClick={(event: MouseEvent) => {
+        event.stopPropagation()
+        onClick && onClick()
+      }}
+    />
+  )
+}
+
+export function IconCategory({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <BookmarkAltIcon
+      className={`${style} ${sizes[size]} ${className} ${
+        onClick && 'cursor-pointer'
+      }`}
+      onClick={(event: MouseEvent) => {
+        event.stopPropagation()
+        onClick && onClick()
+      }}
+    />
+  )
+}
+
+export function IconDate({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <CalendarIcon
+      className={` ${style} ${className} ${sizes[size]} ${
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {

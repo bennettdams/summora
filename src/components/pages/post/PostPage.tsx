@@ -3,7 +3,15 @@ import { Box } from '../../Box'
 import { Button } from '../../Button'
 import { DropdownItem, DropdownSelect } from '../../DropdownSelect'
 import { FormInput } from '../../FormInput'
-import { IconCheck, IconX, IconEdit, IconTrash } from '../../Icon'
+import {
+  IconCheck,
+  IconX,
+  IconEdit,
+  IconTrash,
+  IconReply,
+  IconCategory,
+  IconDate,
+} from '../../Icon'
 import { LoadingAnimation } from '../../LoadingAnimation'
 import { Page, PageSection } from '../../Page'
 import { usePost } from '../../../data/use-post'
@@ -22,12 +30,7 @@ import {
 import { Tag, TagsList } from '../../tag'
 import { useAuth } from '../../../services/auth-service'
 import { StepList } from '../../StepList'
-import { CalendarIcon } from '@heroicons/react/solid'
-import {
-  BookmarkAltIcon,
-  PlusCircleIcon,
-  MinusCircleIcon,
-} from '@heroicons/react/outline'
+import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/react/outline'
 
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
@@ -301,12 +304,12 @@ function PostPageInternal({
                         </div>
                       ) : (
                         // TODO jump to explore
-                        <p className="inline py-3">
-                          <BookmarkAltIcon className="inline w-4 h-4" />
-                          <span className="ml-2 py-1.5 uppercase tracking-wider">
+                        <div className="flex items-center text-sm text-gray-400">
+                          <IconCategory />
+                          <span className="ml-2 py-1.5">
                             {post.category.title}
                           </span>
-                        </p>
+                        </div>
                       )}
                     </div>
 
@@ -319,7 +322,7 @@ function PostPageInternal({
                     </div>
 
                     <div className="flex items-center text-sm text-gray-400">
-                      <CalendarIcon className="inline w-4 h-4" />
+                      <IconDate size="small" className="text-gray-400" />
                       <span className="ml-2 py-1.5">
                         {post.createdAt.toISOString()}
                       </span>
@@ -406,27 +409,12 @@ function PostPageInternal({
       )}
 
       <PageSection>
-        <PostComments
-          userId={userId}
-          onDelete={removeComment}
-          comments={post.comments.map((comment) => ({
-            commentId: comment.commentId,
-            commentParentId: comment.commentParentId,
-            text: comment.text,
-            createdAt: comment.createdAt,
-            authorId: comment.authorId,
-            authorUsername: comment.author.username,
-            authorHasAvatar: comment.author.hasAvatar,
-          }))}
-        />
-      </PageSection>
-
-      <PageSection>
         <form
           className="md:w-2/3"
           onSubmit={async (e) => {
             e.preventDefault()
             addComment(null, inputRootComment)
+            setInputRootComment('')
           }}
         >
           <input
@@ -440,6 +428,23 @@ function PostPageInternal({
             onKeyDown={(e) => e.key === 'Escape' && setInputRootComment('')}
           />
         </form>
+      </PageSection>
+
+      <PageSection>
+        <PostComments
+          userId={userId}
+          onAddComment={addComment}
+          onRemoveComment={removeComment}
+          comments={post.comments.map((comment) => ({
+            commentId: comment.commentId,
+            commentParentId: comment.commentParentId,
+            text: comment.text,
+            createdAt: comment.createdAt,
+            authorId: comment.authorId,
+            authorUsername: comment.author.username,
+            authorHasAvatar: comment.author.hasAvatar,
+          }))}
+        />
       </PageSection>
 
       <PageSection>
@@ -530,14 +535,18 @@ function Comment({
   comment,
   isRoot = false,
   userId,
-  onDelete,
+  onAdd,
+  onRemove,
 }: {
   comment: PostCommentTreeComment
   isRoot: boolean
   userId: string | null
-  onDelete: (commentId: string) => void
+  onAdd: (commentParentId: string, text: string) => void
+  onRemove: (commentId: string) => void
 }) {
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
+  const [showCommentInput, setShowCommentInput] = useState(false)
+  const [inputComment, setInputComment] = useState('')
 
   return (
     <div
@@ -572,6 +581,44 @@ function Comment({
           <span className="ml-2">{comment.createdAt.toISOString()}</span>
         </div>
 
+        <div
+          className="ml-4 px-2 flex items-center rounded hover:bg-white hover:cursor-pointer"
+          onClick={() => setShowRemoveConfirmation(true)}
+        >
+          {!showCommentInput ? (
+            <div
+              className="flex items-center"
+              onClick={() => setShowCommentInput(true)}
+            >
+              <IconReply size="small" />
+              <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs font-medium tracking-widest">
+                Reply
+              </span>
+            </div>
+          ) : (
+            <form
+              className="md:w-2/3"
+              onSubmit={async (e) => {
+                e.preventDefault()
+                onAdd(comment.commentId, inputComment)
+                setInputComment('')
+                setShowCommentInput(false)
+              }}
+            >
+              <input
+                className="h-16 p-8 w-full bg-transparent border-b outline-none border-orange-500 focus:rounded-lg focus:ring-orange-300 focus:border-orange-300"
+                name="commentInput"
+                placeholder="Leave a reply.."
+                id="commentInput"
+                value={inputComment}
+                required
+                onChange={(e) => setInputComment(e.target.value)}
+                onKeyDown={(e) => e.key === 'Escape' && setInputComment('')}
+              />
+            </form>
+          )}
+        </div>
+
         {!!userId && comment.authorId === userId && (
           <div
             className="ml-4 px-2 flex items-center rounded hover:bg-white hover:cursor-pointer"
@@ -583,17 +630,17 @@ function Comment({
                 onClick={() => setShowRemoveConfirmation(true)}
               >
                 <IconTrash size="small" />
-                <span className="uppercase text-orange-400 inline-block text-xs font-medium tracking-widest">
+                <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs font-medium tracking-widest">
                   Remove
                 </span>
               </div>
             ) : (
               <div
                 className="flex items-center"
-                onClick={() => onDelete(comment.commentId)}
+                onClick={() => onRemove(comment.commentId)}
               >
                 <IconTrash size="small" />
-                <span className="uppercase text-orange-400 inline-block text-xs font-medium tracking-widest">
+                <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs font-medium tracking-widest">
                   Confirm
                 </span>
               </div>
@@ -608,7 +655,8 @@ function Comment({
           isRoot={false}
           comment={comment}
           userId={userId}
-          onDelete={onDelete}
+          onAdd={onAdd}
+          onRemove={onRemove}
         />
       ))}
     </div>
@@ -622,11 +670,13 @@ function createRootComments(comments: PostComment[]): PostCommentTreeComment[] {
 export function PostComments({
   userId,
   comments,
-  onDelete,
+  onAddComment,
+  onRemoveComment,
 }: {
   userId: string | null
   comments: PostComment[]
-  onDelete: (commentId: string) => void
+  onAddComment: (commentParentId: string, text: string) => void
+  onRemoveComment: (commentId: string) => void
 }): JSX.Element {
   const [rootComments, setRootComments] = useState<PostCommentTreeComment[]>(
     createRootComments(comments)
@@ -642,7 +692,8 @@ export function PostComments({
           isRoot={true}
           comment={comment}
           userId={userId}
-          onDelete={onDelete}
+          onAdd={onAddComment}
+          onRemove={onRemoveComment}
         />
       ))}
     </div>
