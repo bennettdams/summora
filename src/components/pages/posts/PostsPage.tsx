@@ -60,7 +60,7 @@ export function PostsPage({
                         aria-hidden="true"
                       />
                     </div>
-                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900">
+                    <p className="ml-16 text-lg leading-6 font-semibold text-gray-900">
                       Feature 1
                     </p>
                   </dt>
@@ -75,7 +75,7 @@ export function PostsPage({
                         aria-hidden="true"
                       />
                     </div>
-                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900">
+                    <p className="ml-16 text-lg leading-6 font-semibold text-gray-900">
                       Feature 2
                     </p>
                   </dt>
@@ -90,7 +90,7 @@ export function PostsPage({
                         aria-hidden="true"
                       />
                     </div>
-                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900">
+                    <p className="ml-16 text-lg leading-6 font-semibold text-gray-900">
                       Feature 3
                     </p>
                   </dt>
@@ -105,7 +105,7 @@ export function PostsPage({
                         aria-hidden="true"
                       />
                     </div>
-                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900">
+                    <p className="ml-16 text-lg leading-6 font-semibold text-gray-900">
                       Feature 4
                     </p>
                   </dt>
@@ -157,7 +157,7 @@ export function PostsPage({
             <div className="inline-flex rounded-md shadow">
               <a
                 href="#"
-                className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-semibold rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
               >
                 Sign Up
               </a>
@@ -165,7 +165,7 @@ export function PostsPage({
             {/* <div className="ml-3 inline-flex rounded-md shadow">
               <a
                 href="#"
-                className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50"
+                className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-semibold rounded-md text-indigo-600 bg-white hover:bg-indigo-50"
               >
                 Learn more
               </a>

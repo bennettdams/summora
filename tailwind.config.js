@@ -17,6 +17,11 @@ module.exports = {
         sans: ['Nunito', ...defaultTheme.fontFamily.sans],
       },
     },
+    fontWeight: {
+      normal: 400,
+      semibold: 600,
+      extrabold: 800,
+    },
   },
   variants: {
     extend: {},

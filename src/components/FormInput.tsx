@@ -42,10 +42,7 @@ export function FormInput({
 
   return (
     <form id={formId} onSubmit={handleSubmit} className="w-full inline-block">
-      <label
-        htmlFor={`inputId ${id}`}
-        className="block text-sm font-medium text-gray-700"
-      >
+      <label htmlFor={`inputId ${id}`} className="block text-sm font-semibold">
         {children}
       </label>
 

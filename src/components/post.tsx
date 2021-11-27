@@ -43,7 +43,7 @@ export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
       ) : showLongPost ? (
         <div className="mt-10 flex flex-col space-y-10">
           {posts.map((post) => (
-            <PostItem key={post.id} post={post} />
+            <PostListItem key={post.id} post={post} />
           ))}
         </div>
       ) : (
@@ -57,15 +57,17 @@ export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
   )
 }
 
-function PostItem({ post }: { post: PostPostsList }): JSX.Element {
+function PostListItem({ post }: { post: PostPostsList }): JSX.Element {
   return (
     <Box smallPadding>
       <div className="w-full text-center">
         <Link to={`/post/${post.id}`}>
-          <h2 className="tracking-widest text-xs font-medium text-gray-400">
+          <h2 className="tracking-widest text-xs font-semibold text-gray-400">
             {post.categoryTitle}
           </h2>
-          <h1 className="mt-1 sm:text-2xl text-xl font-medium">{post.title}</h1>
+          <h1 className="mt-1 sm:text-2xl text-xl font-semibold">
+            {post.title}
+          </h1>
           <p className="mt-3 leading-relaxed">{post.subtitle}</p>
 
           <div className="flex my-4 py-4 flex-row flex-nowrap overflow-y-hidden space-x-4">
@@ -126,10 +128,12 @@ function PostItemShort({ post }: { post: PostPostsList }): JSX.Element {
     <Link to={`/post/${post.id}`}>
       <Box smallPadding>
         <div className="w-full h-60 text-center relative">
-          <h2 className="tracking-widest text-xs font-medium text-gray-400">
+          <h2 className="tracking-widest text-xs font-semibold text-gray-400">
             {post.categoryTitle}
           </h2>
-          <h1 className="mt-1 sm:text-2xl text-xl font-medium">{post.title}</h1>
+          <h1 className="mt-1 sm:text-2xl text-xl font-semibold">
+            {post.title}
+          </h1>
           <p className="mt-3 leading-relaxed">{post.subtitle}</p>
           <div className="text-center mt-2 leading-none flex justify-center absolute bottom-0 w-full py-3 space-x-4">
             <Views>{post.views}</Views>

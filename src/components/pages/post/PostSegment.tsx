@@ -90,7 +90,7 @@ export function PostSegment({
   const formIdNew = `post-segment-item-new-${segment.id}`
 
   return (
-    <div className="w-full p-10 rounded-xl bg-gradient-to-br from-green-100 to-indigo-100">
+    <div className="w-full p-10 rounded-xl bg-gradient-to-br from-green-50 to-indigo-50">
       <div className="w-full h-20 text-xl flex flex-row">
         <div className="w-20 h-full text-left">
           <span className="text-4xl italic">{index}</span>

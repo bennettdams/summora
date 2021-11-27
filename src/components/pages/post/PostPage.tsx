@@ -84,13 +84,9 @@ function PostPageInternal({
   const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
 
   const [isShownCategoryDropdown, setIsShownCategoryDropdown] = useState(false)
-  const [refCategory] = useHover<HTMLDivElement>(() => {
-    console.log(
-      new Date().toISOString().split('.')[0].replace('T', '  '),
-      'here'
-    )
+  const [refCategory] = useHover<HTMLDivElement>(() =>
     setIsShownCategoryDropdown(true)
-  })
+  )
   useOnClickOutside(refCategory, () => setIsShownCategoryDropdown(false))
 
   async function handleCreateSegment(): Promise<void> {
@@ -343,7 +339,7 @@ function PostPageInternal({
                 />
 
                 <div className="mt-4 flex flex-col items-center text-center justify-center">
-                  <h2 className="font-medium leading-none title-font text-gray-900 text-lg">
+                  <h2 className="font-semibold leading-none text-lg">
                     {post.author.username}
                   </h2>
                 </div>
@@ -552,7 +548,9 @@ function Comment({
     <>
       <div
         className={`space-y-1 ${
-          isRoot ? 'bg-lime-100 rounded-xl p-10' : 'ml-14'
+          isRoot
+            ? 'rounded-xl p-10 bg-gradient-to-br from-green-50 to-indigo-50'
+            : 'ml-14'
         }`}
       >
         <div className="w-full flex">
@@ -592,7 +590,7 @@ function Comment({
                 onClick={() => setShowCommentInput(true)}
               >
                 <IconReply size="small" />
-                <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs font-medium tracking-widest">
+                <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs tracking-widest">
                   Reply
                 </span>
               </div>
@@ -610,7 +608,7 @@ function Comment({
                   onClick={() => setShowRemoveConfirmation(true)}
                 >
                   <IconTrash size="small" />
-                  <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs font-medium tracking-widest">
+                  <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs tracking-widest">
                     Remove
                   </span>
                 </div>
@@ -620,7 +618,7 @@ function Comment({
                   onClick={() => onRemove(comment.commentId)}
                 >
                   <IconTrash size="small" />
-                  <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs font-medium tracking-widest">
+                  <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs tracking-widest">
                     Confirm
                   </span>
                 </div>

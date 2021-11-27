@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { useOnClickOutside } from '../util/use-on-click-outside'
 import { ButtonAdd } from './Button'
 import { IconTrash } from './Icon'
 
@@ -53,9 +54,12 @@ export function Tag({
   handleRemoving?: boolean
 }): JSX.Element {
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
+  const tagRef = useRef<HTMLDivElement>(null)
+  useOnClickOutside(tagRef, () => setShowRemoveConfirmation(false))
 
   return (
     <div
+      ref={tagRef}
       className={`inline m-1 py-0.5 px-1.5 leading-none rounded bg-orange-100 hover:bg-orange-200 text-orange-800 ${
         onClick && 'cursor-pointer'
       }`}
@@ -66,7 +70,7 @@ export function Tag({
       {!handleRemoving || !showRemoveConfirmation ? (
         <span
           onClick={() => !!handleRemoving && setShowRemoveConfirmation(true)}
-          className="uppercase inline-block text-xs font-medium tracking-widest"
+          className="uppercase inline-block text-xs tracking-widest"
         >
           {tag.title}
         </span>
@@ -76,7 +80,7 @@ export function Tag({
           onClick={() => !!handleRemoving && onClick?.(tag.id)}
         >
           <IconTrash size="small" />
-          <span className="uppercase inline-block text-xs font-medium tracking-widest">
+          <span className="uppercase inline-block text-xs font-semibold tracking-widest">
             Confirm
           </span>
         </div>

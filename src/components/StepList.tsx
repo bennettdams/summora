@@ -18,7 +18,7 @@ export function StepList({
           </div>
           <div className="flex-grow pl-4">
             <p>{step.title}</p>
-            <h2 className="font-medium title-font text-sm mb-1 tracking-wider">
+            <h2 className="font-semibold text-sm mb-1 tracking-wider">
               {step.subtitle}
             </h2>
           </div>
