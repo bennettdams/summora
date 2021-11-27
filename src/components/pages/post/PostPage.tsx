@@ -409,45 +409,6 @@ function PostPageInternal({
       )}
 
       <PageSection>
-        <form
-          className="md:w-2/3"
-          onSubmit={async (e) => {
-            e.preventDefault()
-            addComment(null, inputRootComment)
-            setInputRootComment('')
-          }}
-        >
-          <input
-            className="h-16 p-8 w-full bg-transparent border-b outline-none border-orange-500 focus:ring-orange-300 focus:border-orange-300"
-            name="rootCommentInput"
-            placeholder="Leave a comment.."
-            id="rootCommentInput"
-            value={inputRootComment}
-            required
-            onChange={(e) => setInputRootComment(e.target.value)}
-            onKeyDown={(e) => e.key === 'Escape' && setInputRootComment('')}
-          />
-        </form>
-      </PageSection>
-
-      <PageSection>
-        <PostComments
-          userId={userId}
-          onAddComment={addComment}
-          onRemoveComment={removeComment}
-          comments={post.comments.map((comment) => ({
-            commentId: comment.commentId,
-            commentParentId: comment.commentParentId,
-            text: comment.text,
-            createdAt: comment.createdAt,
-            authorId: comment.authorId,
-            authorUsername: comment.author.username,
-            authorHasAvatar: comment.author.hasAvatar,
-          }))}
-        />
-      </PageSection>
-
-      <PageSection>
         {/* "items-start" to make "sticky" work. Without it, the sticky div has the full height of the flex container. */}
         <div className="md:flex w-full items-start">
           <div className="md:w-1/4 md:sticky top-40 pr-10">
@@ -490,6 +451,45 @@ function PostPageInternal({
             )}
           </div>
         </div>
+      </PageSection>
+
+      <PageSection>
+        <form
+          className="md:w-2/3"
+          onSubmit={async (e) => {
+            e.preventDefault()
+            addComment(null, inputRootComment)
+            setInputRootComment('')
+          }}
+        >
+          <input
+            className="h-16 p-8 w-full bg-transparent border-b outline-none border-orange-500 focus:ring-orange-300 focus:border-orange-300"
+            name="rootCommentInput"
+            placeholder="Leave a comment.."
+            id="rootCommentInput"
+            value={inputRootComment}
+            required
+            onChange={(e) => setInputRootComment(e.target.value)}
+            onKeyDown={(e) => e.key === 'Escape' && setInputRootComment('')}
+          />
+        </form>
+      </PageSection>
+
+      <PageSection>
+        <PostComments
+          userId={userId}
+          onAddComment={addComment}
+          onRemoveComment={removeComment}
+          comments={post.comments.map((comment) => ({
+            commentId: comment.commentId,
+            commentParentId: comment.commentParentId,
+            text: comment.text,
+            createdAt: comment.createdAt,
+            authorId: comment.authorId,
+            authorUsername: comment.author.username,
+            authorHasAvatar: comment.author.hasAvatar,
+          }))}
+        />
       </PageSection>
     </Page>
   )
