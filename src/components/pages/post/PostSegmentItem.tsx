@@ -87,7 +87,7 @@ export function PostSegmentItem({
             />
           </>
         ) : (
-          <span>{item.content}</span>
+          <span className="pr-10">{item.content}</span>
         )}
       </div>
     </Box>

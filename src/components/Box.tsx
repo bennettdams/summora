@@ -22,8 +22,12 @@ export function Box({
     <div
       onClick={() => onClick && onClick()}
       ref={refExternal}
-      className={`box rounded-xl shadow-md hover:shadow-lg ${
-        noPadding ? 'p-0' : smallPadding ? 'p-4' : 'p-10'
+      className={`box rounded-xl ${
+        noPadding
+          ? 'p-0 shadow-sm hover:shadow'
+          : smallPadding
+          ? 'p-4 shadow-md hover:shadow-lg'
+          : 'p-10 shadow-md hover:shadow-lg'
       } ${onClick && 'cursor-pointer'} ${
         !isHighlighted ? 'bg-white' : 'from-fuchsia-200 to-blue-200'
       } ${inline && 'inline-block'}`}

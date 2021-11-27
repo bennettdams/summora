@@ -418,7 +418,7 @@ function PostPageInternal({
           }}
         >
           <input
-            className="h-16 p-8 w-full bg-transparent border-b outline-none border-orange-500 focus:rounded-lg focus:ring-orange-300 focus:border-orange-300"
+            className="h-16 p-8 w-full bg-transparent border-b outline-none border-orange-500 focus:ring-orange-300 focus:border-orange-300"
             name="rootCommentInput"
             placeholder="Leave a comment.."
             id="rootCommentInput"
@@ -549,117 +549,121 @@ function Comment({
   const [inputComment, setInputComment] = useState('')
 
   return (
-    <div
-      className={`space-y-1 ${
-        isRoot ? 'bg-lime-100 rounded-xl p-10' : 'ml-14'
-      }`}
-    >
-      <div className="w-full flex">
-        <div className="w-10 flex flex-row items-center justify-center text-center text-lime-400 bold leading-none">
-          <PlusCircleIcon className="h-4 w-4" />
-          <MinusCircleIcon className="h-4 w-4" />
-        </div>
-        <div className="flex-grow ml-2">
-          <span>{comment.text}</span>
-        </div>
-      </div>
-
-      <div className="w-full flex m-0 text-xs text-gray-400">
-        <div className="w-10 flex flex-col text-center bold items-center leading-none">
-          <Avatar
-            size="tiny"
-            userId={comment.authorId}
-            hasUserAvatar={comment.authorHasAvatar}
-          />
+    <>
+      <div
+        className={`space-y-1 ${
+          isRoot ? 'bg-lime-100 rounded-xl p-10' : 'ml-14'
+        }`}
+      >
+        <div className="w-full flex">
+          <div className="w-10 flex flex-row items-center justify-center text-center text-lime-400 bold leading-none">
+            <PlusCircleIcon className="h-4 w-4" />
+            <MinusCircleIcon className="h-4 w-4" />
+          </div>
+          <div className="flex-grow ml-2">
+            <span>{comment.text}</span>
+          </div>
         </div>
 
-        <div className="leading-none flex items-center space-x-2">
-          <span className="ml-2">{comment.authorUsername}</span>
-        </div>
+        <div className="w-full flex m-0 text-xs text-gray-400">
+          <div className="w-10 flex flex-col text-center bold items-center leading-none">
+            <Avatar
+              size="tiny"
+              userId={comment.authorId}
+              hasUserAvatar={comment.authorHasAvatar}
+            />
+          </div>
 
-        <div className="leading-none flex items-center space-x-2">
-          <span className="ml-2">{comment.createdAt.toISOString()}</span>
-        </div>
+          <div className="leading-none flex items-center space-x-2">
+            <span className="ml-2">{comment.authorUsername}</span>
+          </div>
 
-        <div
-          className="ml-4 px-2 flex items-center rounded hover:bg-white hover:cursor-pointer"
-          onClick={() => setShowRemoveConfirmation(true)}
-        >
-          {!showCommentInput ? (
-            <div
-              className="flex items-center"
-              onClick={() => setShowCommentInput(true)}
-            >
-              <IconReply size="small" />
-              <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs font-medium tracking-widest">
-                Reply
-              </span>
-            </div>
-          ) : (
-            <form
-              className="md:w-2/3"
-              onSubmit={async (e) => {
-                e.preventDefault()
-                onAdd(comment.commentId, inputComment)
-                setInputComment('')
-                setShowCommentInput(false)
-              }}
-            >
-              <input
-                className="h-16 p-8 w-full bg-transparent border-b outline-none border-orange-500 focus:rounded-lg focus:ring-orange-300 focus:border-orange-300"
-                name="commentInput"
-                placeholder="Leave a reply.."
-                id="commentInput"
-                value={inputComment}
-                required
-                onChange={(e) => setInputComment(e.target.value)}
-                onKeyDown={(e) => e.key === 'Escape' && setInputComment('')}
-              />
-            </form>
-          )}
-        </div>
+          <div className="leading-none flex items-center space-x-2">
+            <span className="ml-2">{comment.createdAt.toISOString()}</span>
+          </div>
 
-        {!!userId && comment.authorId === userId && (
           <div
             className="ml-4 px-2 flex items-center rounded hover:bg-white hover:cursor-pointer"
             onClick={() => setShowRemoveConfirmation(true)}
           >
-            {!showRemoveConfirmation ? (
+            {!showCommentInput && (
               <div
                 className="flex items-center"
-                onClick={() => setShowRemoveConfirmation(true)}
+                onClick={() => setShowCommentInput(true)}
               >
-                <IconTrash size="small" />
+                <IconReply size="small" />
                 <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs font-medium tracking-widest">
-                  Remove
-                </span>
-              </div>
-            ) : (
-              <div
-                className="flex items-center"
-                onClick={() => onRemove(comment.commentId)}
-              >
-                <IconTrash size="small" />
-                <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs font-medium tracking-widest">
-                  Confirm
+                  Reply
                 </span>
               </div>
             )}
           </div>
-        )}
-      </div>
 
-      {comment.commentChilds.map((comment) => (
-        <Comment
-          key={comment.commentId}
-          isRoot={false}
-          comment={comment}
-          userId={userId}
-          onAdd={onAdd}
-          onRemove={onRemove}
-        />
-      ))}
-    </div>
+          {!!userId && comment.authorId === userId && (
+            <div
+              className="ml-4 px-2 flex items-center rounded hover:bg-white hover:cursor-pointer"
+              onClick={() => setShowRemoveConfirmation(true)}
+            >
+              {!showRemoveConfirmation ? (
+                <div
+                  className="flex items-center"
+                  onClick={() => setShowRemoveConfirmation(true)}
+                >
+                  <IconTrash size="small" />
+                  <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs font-medium tracking-widest">
+                    Remove
+                  </span>
+                </div>
+              ) : (
+                <div
+                  className="flex items-center"
+                  onClick={() => onRemove(comment.commentId)}
+                >
+                  <IconTrash size="small" />
+                  <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs font-medium tracking-widest">
+                    Confirm
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {!!showCommentInput && (
+          <form
+            className="md:w-2/3"
+            onSubmit={async (e) => {
+              e.preventDefault()
+              onAdd(comment.commentId, inputComment)
+              setInputComment('')
+              setShowCommentInput(false)
+            }}
+          >
+            <input
+              className="h-10 p-4 w-full bg-transparent border-b outline-none border-orange-500 focus:ring-orange-300 focus:border-orange-300"
+              name="commentInput"
+              placeholder="Leave a reply.."
+              id="commentInput"
+              value={inputComment}
+              required
+              onChange={(e) => setInputComment(e.target.value)}
+              onKeyDown={(e) => e.key === 'Escape' && setInputComment('')}
+            />
+          </form>
+        )}
+
+        {comment.commentChilds.map((comment) => (
+          <Comment
+            key={comment.commentId}
+            isRoot={false}
+            comment={comment}
+            userId={userId}
+            onAdd={onAdd}
+            onRemove={onRemove}
+          />
+        ))}
+      </div>
+    </>
   )
 }
 
