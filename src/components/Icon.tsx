@@ -7,6 +7,7 @@ import {
   ReplyIcon,
   CalendarIcon,
   AnnotationIcon,
+  EyeIcon,
 } from '@heroicons/react/solid'
 import { BookmarkAltIcon } from '@heroicons/react/outline'
 import { MouseEvent } from 'react'
@@ -183,6 +184,24 @@ export function IconComment({
 }: IconProps): JSX.Element {
   return (
     <AnnotationIcon
+      className={` ${style} ${className} ${sizes[size]} ${
+        onClick && 'cursor-pointer'
+      }`}
+      onClick={(event: MouseEvent) => {
+        event.stopPropagation()
+        onClick && onClick()
+      }}
+    />
+  )
+}
+
+export function IconView({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <EyeIcon
       className={` ${style} ${className} ${sizes[size]} ${
         onClick && 'cursor-pointer'
       }`}

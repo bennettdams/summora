@@ -318,8 +318,8 @@ function PostPageInternal({
                     </div>
 
                     <div className="flex items-center text-sm text-gray-400">
-                      <IconDate size="small" className="text-gray-400" />
-                      <span className="ml-2 py-1.5">
+                      <IconDate className="text-gray-400" />
+                      <span className="ml-1">
                         {post.createdAt.toISOString()}
                       </span>
                     </div>
