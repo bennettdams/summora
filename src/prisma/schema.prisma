@@ -16,7 +16,7 @@ model Post {
   updatedAt      DateTime      @updatedAt
   title          String
   subtitle       String?
-  views          Int           @default(0)
+  noOfViews      Int           @default(0)
   // segments
   segments       PostSegment[]
   // category
@@ -102,5 +102,6 @@ model User {
   hasAvatar   Boolean       @default(false)
   // posts
   posts       Post[]        @relation("AuthorPost")
+  // comments
   PostComment PostComment[] @relation("PostCommentAuthor")
 }

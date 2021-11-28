@@ -193,10 +193,10 @@ export function PostsPage({
                       username: post.author.username,
                       hasAvatar: post.author.hasAvatar,
                     },
-                    views: post.views,
+                    noOfViews: post.noOfViews,
+                    noOfComments: post._count?.comments ?? 0,
                     segments: post.segments,
                     tags: post.tags,
-                    noOfComments: post._count?.comments ?? 0,
                   }))
             }
           />

@@ -7,7 +7,7 @@ export type ApiPostIncrementViews = ReturnType<typeof incrementViews>
 async function incrementViews(postId: string): Promise<void> {
   await prisma.post.update({
     where: { id: postId },
-    data: { views: { increment: 1 } },
+    data: { noOfViews: { increment: 1 } },
   })
 }
 

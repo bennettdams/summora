@@ -16,14 +16,14 @@ type PostsPostsList =
       categoryTitle: string
       segments: { id: string; title: string }[]
       updatedAt: Date
-      views: number
+      noOfViews: number
+      noOfComments: number
       author: {
         id: string
         username: string
         hasAvatar: boolean
       }
       tags: { id: string; title: string }[]
-      noOfComments: number
     }[]
 
 type PostPostsList = NonNullable<PostsPostsList>[number]
@@ -92,7 +92,7 @@ function PostListItem({ post }: { post: PostPostsList }): JSX.Element {
           <div className="w-1/2 h-full leading-none flex justify-end space-x-4">
             <div className="w-1/2 h-full flex flex-col">
               <div className="flex-1 space-x-5">
-                <Views noOfViews={post.views} />
+                <Views noOfViews={post.noOfViews} />
                 <Comments noOfComments={post.noOfComments} />
               </div>
               <div className="flex-1">
@@ -136,7 +136,7 @@ function PostItemShort({ post }: { post: PostPostsList }): JSX.Element {
           </h1>
           <p className="mt-3 leading-relaxed">{post.subtitle}</p>
           <div className="text-center mt-2 leading-none flex justify-center absolute bottom-0 w-full py-3 space-x-4">
-            <Views noOfViews={post.views} />
+            <Views noOfViews={post.noOfViews} />
             <Comments noOfComments={post.noOfComments} />
             <span className="text-gray-400 inline-flex items-center leading-none text-sm">
               {post.updatedAt.toLocaleDateString()}

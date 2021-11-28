@@ -310,7 +310,7 @@ function PostPageInternal({
                     </div>
 
                     <div className="flex items-center text-sm text-gray-400">
-                      <Views noOfViews={post.views} />
+                      <Views noOfViews={post.noOfViews} />
                     </div>
 
                     <div className="flex items-center text-sm text-gray-400">

@@ -6,7 +6,7 @@ import { useUser } from '../../data/use-user'
 import { PostsList } from '../post'
 
 type QueryReturn = ReturnType<typeof useUser>
-// exclude null, because the page will return "notFound" if post is null
+// exclude null, because the page will return "notFound" if user is null
 type UserUserPage = Exclude<QueryReturn['user'], null>
 
 export function UserPage(props: UserPageProps): JSX.Element {
@@ -62,10 +62,10 @@ function UserPageInternal({
                     username: post.author.username,
                     hasAvatar: post.author.hasAvatar,
                   },
-                  views: post.views,
+                  noOfViews: post.noOfViews,
+                  noOfComments: post._count?.comments ?? 0,
                   segments: post.segments,
                   tags: post.tags,
-                  noOfComments: post._count?.comments ?? 0,
                 }))
           }
         />
