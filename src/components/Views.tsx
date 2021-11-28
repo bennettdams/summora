@@ -1,6 +1,4 @@
-import { ReactNode } from 'react'
-
-export function Views({ children }: { children: ReactNode }): JSX.Element {
+export function Views({ noOfViews }: { noOfViews: number }): JSX.Element {
   return (
     <span className="text-gray-400 inline-flex items-center leading-none text-sm py-1">
       <svg
@@ -15,7 +13,7 @@ export function Views({ children }: { children: ReactNode }): JSX.Element {
         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
         <circle cx="12" cy="12" r="3"></circle>
       </svg>
-      {children}
+      {noOfViews}
     </span>
   )
 }

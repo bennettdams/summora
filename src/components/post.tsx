@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from './Link'
-import { Views } from './Likes'
+import { Views } from './Views'
 import { Comments } from './Comments'
 import { Box } from './Box'
 import { Avatar } from './Avatar'
@@ -92,8 +92,8 @@ function PostListItem({ post }: { post: PostPostsList }): JSX.Element {
           <div className="w-1/2 h-full leading-none flex justify-end space-x-4">
             <div className="w-1/2 h-full flex flex-col">
               <div className="flex-1 space-x-5">
-                <Views>{post.views}</Views>
-                <Comments>{post.noOfComments}</Comments>
+                <Views noOfViews={post.views} />
+                <Comments noOfComments={post.noOfComments} />
               </div>
               <div className="flex-1">
                 <span className="text-gray-400 inline-flex items-center leading-none text-sm">
@@ -136,8 +136,8 @@ function PostItemShort({ post }: { post: PostPostsList }): JSX.Element {
           </h1>
           <p className="mt-3 leading-relaxed">{post.subtitle}</p>
           <div className="text-center mt-2 leading-none flex justify-center absolute bottom-0 w-full py-3 space-x-4">
-            <Views>{post.views}</Views>
-            <Comments>6</Comments>
+            <Views noOfViews={post.views} />
+            <Comments noOfComments={post.noOfComments} />
             <span className="text-gray-400 inline-flex items-center leading-none text-sm">
               {post.updatedAt.toLocaleDateString()}
             </span>

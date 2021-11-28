@@ -6,6 +6,7 @@ import {
   PlusIcon,
   ReplyIcon,
   CalendarIcon,
+  AnnotationIcon,
 } from '@heroicons/react/solid'
 import { BookmarkAltIcon } from '@heroicons/react/outline'
 import { MouseEvent } from 'react'
@@ -174,3 +175,22 @@ export function IconDate({
     />
   )
 }
+
+export function IconComment({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <AnnotationIcon
+      className={` ${style} ${className} ${sizes[size]} ${
+        onClick && 'cursor-pointer'
+      }`}
+      onClick={(event: MouseEvent) => {
+        event.stopPropagation()
+        onClick && onClick()
+      }}
+    />
+  )
+}
+

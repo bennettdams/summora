@@ -17,7 +17,7 @@ import { Page, PageSection } from '../../Page'
 import { usePost } from '../../../data/use-post'
 import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
-import { Views } from '../../Likes'
+import { Views } from '../../Views'
 import { Comments } from '../../Comments'
 import { PostPageProps } from '../../../pages/post/[postId]'
 import { PostSegment } from './PostSegment'
@@ -310,11 +310,11 @@ function PostPageInternal({
                     </div>
 
                     <div className="flex items-center text-sm text-gray-400">
-                      <Views>{post.views}</Views>
+                      <Views noOfViews={post.views} />
                     </div>
 
                     <div className="flex items-center text-sm text-gray-400">
-                      <Comments>{post.comments.length}</Comments>
+                      <Comments noOfComments={post.comments.length} />
                     </div>
 
                     <div className="flex items-center text-sm text-gray-400">
@@ -382,7 +382,7 @@ function PostPageInternal({
             </div>
             <div className="flex-1">
               <Box inline>
-                <p className="italic">Popular in general</p>
+                <p className="italic">Popular overall</p>
                 <div className="mt-2 flex flex-wrap -m-1">
                   {filterTags(tagsSorted).map((tag) => (
                     <Tag key={tag.id} tag={tag} onClick={handleAddTag} />
@@ -449,7 +449,7 @@ function PostPageInternal({
         </div>
       </PageSection>
 
-      <PageSection>
+      <PageSection title="Comments">
         <form
           className="md:w-2/3"
           onSubmit={async (e) => {

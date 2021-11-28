@@ -29,12 +29,7 @@ export function PageSection({
       className={`page-section w-full ${hideTopMargin ? 'mt-0' : 'mt-10'}`}
     >
       {title && (
-        <h2
-          className="page-section-title text-2xl w-full
-      "
-        >
-          {title}
-        </h2>
+        <h2 className="page-section-title text-2xl mb-10 w-full">{title}</h2>
       )}
 
       {children}
