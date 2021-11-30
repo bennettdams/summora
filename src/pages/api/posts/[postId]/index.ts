@@ -30,6 +30,7 @@ async function findPost(postId: string) {
         },
         orderBy: { createdAt: 'asc' },
       },
+      likedBy: { select: { userId: true } },
     },
   })
 }
@@ -84,6 +85,7 @@ async function updatePost(
           },
           orderBy: { createdAt: 'asc' },
         },
+        likedBy: { select: { userId: true } },
       },
     })
   } catch (error) {
@@ -110,7 +112,7 @@ export default async function _postAPI(
   } else {
     switch (method) {
       case 'GET': {
-        const post = await findPost(postId)
+        const post: ApiPost = await findPost(postId)
 
         if (!post) {
           res.status(404).json({ message: `Post ${postId} not found.` })

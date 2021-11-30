@@ -8,8 +8,12 @@ import {
   CalendarIcon,
   AnnotationIcon,
   EyeIcon,
+  HeartIcon as HeartIconSolid,
 } from '@heroicons/react/solid'
-import { BookmarkAltIcon } from '@heroicons/react/outline'
+import {
+  BookmarkAltIcon,
+  HeartIcon as HeartIconOutline,
+} from '@heroicons/react/outline'
 import { MouseEvent } from 'react'
 
 const sizes = {
@@ -213,3 +217,38 @@ export function IconView({
   )
 }
 
+export function IconLiked({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <HeartIconSolid
+      className={` ${style} ${className} ${sizes[size]} ${
+        onClick && 'cursor-pointer'
+      }`}
+      onClick={(event: MouseEvent) => {
+        event.stopPropagation()
+        onClick && onClick()
+      }}
+    />
+  )
+}
+
+export function IconUnliked({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <HeartIconOutline
+      className={` ${style} ${className} ${sizes[size]} ${
+        onClick && 'cursor-pointer'
+      }`}
+      onClick={(event: MouseEvent) => {
+        event.stopPropagation()
+        onClick && onClick()
+      }}
+    />
+  )
+}

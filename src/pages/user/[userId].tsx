@@ -10,10 +10,17 @@ import {
   serialize,
 } from '../../services/serialize-service'
 import { ServerPageProps } from '../../types/PageProps'
+import { ApiUser } from '../api/users/[userId]'
 
 export interface UserPageProps {
   userId: string
-  posts: Prisma.PromiseReturnType<typeof findUserPosts>
+  /**
+   * "posts" are not part of a typical user to not blow up the data,
+   * as the user object is also used for comments etc.
+   */
+  posts: (Prisma.PromiseReturnType<typeof findUserPosts>[number] & {
+    noOfLikes: number
+  })[]
 }
 
 interface Params extends ParsedUrlQuery {
@@ -40,13 +47,21 @@ async function findUserPosts(prisma: PrismaClient, userId: string) {
           category: { select: { title: true } },
           segments: { orderBy: { createdAt: 'asc' } },
           tags: { select: { id: true, title: true } },
+          /*
+           * TODO
+           * Using _count for implicit Many-To-Many relations does not work right now (30.11.2021),
+           * that's why we can't use it for "likedBy".
+           * https://github.com/prisma/prisma/issues/9880
+           */
+          // _count: { select: { comments: true, likedBy: true } },
           _count: { select: { comments: true } },
+          likedBy: { select: { userId: true } },
         },
       },
     },
   })
 
-  return userPosts?.posts ?? null
+  return userPosts?.posts ?? []
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -71,7 +86,7 @@ export const getStaticProps: GetStaticProps<
     return { notFound: true }
   } else {
     const userId = params.userId
-    const user = await findUserByUserId(prisma, userId)
+    const user: ApiUser = await findUserByUserId(prisma, userId)
 
     if (!user) {
       return { notFound: true }
@@ -79,7 +94,12 @@ export const getStaticProps: GetStaticProps<
       const client = hydrationHandler.createClient()
       prefillServer(client, userId, user)
 
-      const userPosts = await findUserPosts(prisma, userId)
+      const userPosts: UserPageProps['posts'] = (
+        await findUserPosts(prisma, userId)
+      ).map((post) => ({
+        ...post,
+        noOfLikes: post.likedBy.length,
+      }))
 
       return {
         props: {
@@ -93,7 +113,7 @@ export const getStaticProps: GetStaticProps<
   }
 }
 
-export default function _User(
+export default function _UserPage(
   props: UserPageProps & ServerPageProps
 ): JSX.Element {
   return (

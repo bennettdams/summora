@@ -31,6 +31,7 @@ import { Tag, TagsList } from '../../tag'
 import { useAuth } from '../../../services/auth-service'
 import { StepList } from '../../StepList'
 import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/react/outline'
+import { PostLikes } from '../../post'
 
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
@@ -330,19 +331,26 @@ function PostPageInternal({
           </div>
 
           <div className="w-full md:w-1/5">
-            <div className="flex divide-gray-400 divide-x">
-              <div className="flex-1 flex flex-col items-center justify-center">
-                <Avatar
-                  hasUserAvatar={post.author.hasAvatar ?? false}
-                  size="medium"
-                  userId={post.authorId}
-                />
+            <PostLikes
+              postId={postId}
+              noOfLikes={post.likedBy.length}
+              postLikedByUserIds={post.likedBy}
+              userId={userId}
+            />
+          </div>
 
-                <div className="mt-4 flex flex-col items-center text-center justify-center">
-                  <h2 className="font-semibold leading-none text-lg">
-                    {post.author.username}
-                  </h2>
-                </div>
+          <div className="w-full md:w-1/5">
+            <div className="flex-1 flex flex-col items-center justify-center">
+              <Avatar
+                hasUserAvatar={post.author.hasAvatar ?? false}
+                size="medium"
+                userId={post.authorId}
+              />
+
+              <div className="mt-4 flex flex-col items-center text-center justify-center">
+                <h2 className="font-semibold leading-none text-lg">
+                  {post.author.username}
+                </h2>
               </div>
             </div>
           </div>

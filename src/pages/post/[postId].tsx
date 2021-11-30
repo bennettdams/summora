@@ -9,6 +9,7 @@ import { Hydrate } from 'react-query'
 import { hydrationHandler, prefillServer } from '../../data/use-post'
 import { isServer } from '../../util/server/server-utils'
 import { apiIncrementPostViews } from '../../services/api-service'
+import { ApiPost } from '../api/posts/[postId]'
 
 export interface PostPageProps {
   postId: string
@@ -70,6 +71,7 @@ async function findPost(prisma: PrismaClient, postId: string) {
         },
         orderBy: { createdAt: 'asc' },
       },
+      likedBy: { select: { userId: true } },
     },
   })
 }
@@ -100,7 +102,7 @@ export const getStaticProps: GetStaticProps<
     return { notFound: true }
   } else {
     const postId = params.postId
-    const post = await findPost(prisma, postId)
+    const post: ApiPost = await findPost(prisma, postId)
 
     if (!post) {
       return { notFound: true }

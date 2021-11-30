@@ -28,7 +28,7 @@ export default async function _userAPI(
   } else {
     switch (method) {
       case 'GET': {
-        const user = await findUser(userId)
+        const user: ApiUser = await findUser(userId)
         if (!user) {
           res.status(404).json(`Cannot find user for id ${userId}`)
         } else {

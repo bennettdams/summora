@@ -33,6 +33,9 @@ model Post {
   // comments
   comments       PostComment[] @relation("PostComments")
   //
+  // likes
+  likedBy        User[]        @relation("PostLikes")
+  //
 }
 
 model PostComment {
@@ -104,4 +107,6 @@ model User {
   posts       Post[]        @relation("AuthorPost")
   // comments
   PostComment PostComment[] @relation("PostCommentAuthor")
+  // likes
+  likedPosts  Post[]        @relation("PostLikes")
 }

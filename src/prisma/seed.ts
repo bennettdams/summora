@@ -31,6 +31,10 @@ async function drop() {
   await prisma.postTag.deleteMany({})
 }
 
+async function sleep() {
+  await new Promise((r) => setTimeout(r, 300))
+}
+
 async function fill() {
   await prisma.postCategory.createMany({ data: postCategories })
   const postCategoriesCreated = await prisma.postCategory.findMany()
@@ -40,106 +44,124 @@ async function fill() {
 
   const users = await prisma.user.findMany()
 
-  await prisma.post.createMany({
-    data: [...new Array(100)].map((_, i) => {
-      const category = getRandomElementOfArray(postCategoriesCreated)
-      return {
-        title: `${category.title} ${loremRandom()} ${i + 1}`,
-        subtitle: `Subtitle - ${loremRandom()} ${i + 1}`,
-        postCategoryId: category.id,
-        authorId: getRandomElementOfArray(users).userId,
+  await Promise.all(
+    Array.from({ length: getRandomNumberForRange(50, 100) }).map(
+      async (_, i) => {
+        await sleep()
+        const category = getRandomElementOfArray(postCategoriesCreated)
+        await prisma.post.create({
+          data: {
+            title: `${category.title} ${loremRandom()} ${i + 1}`,
+            subtitle: `Subtitle - ${loremRandom()} ${i + 1}`,
+            postCategoryId: category.id,
+            authorId: getRandomElementOfArray(users).userId,
+          },
+        })
       }
-    }),
-  })
+    )
+  )
 
   const postsCreated = await prisma.post.findMany()
-  postsCreated.forEach(async (post) => {
-    await new Promise((r) => setTimeout(r, 10))
-    await prisma.post.update({
-      data: {
-        tags: {
-          connect: [...new Array(getRandomNumberForRange(1, 15))].map(() => ({
-            id: getRandomElementOfArray(postTagsCreated).id,
-          })),
-        },
-        segments: {
-          create: createSegments(),
-        },
-      },
-      where: { id: post.id },
-    })
-
-    // root comments
-    Array.from({ length: getRandomNumberForRange(1, 3) }).map(async (_, i1) => {
-      const in1 = i1 + 1
-      const text1 = loremRandom() + ' ' + in1
-      const com1 = await prisma.postComment.create({
+  await Promise.all(
+    postsCreated.map(async (post) => {
+      await sleep()
+      await prisma.post.update({
         data: {
-          text: text1,
-          postId: post.id,
-          authorId: getRandomElementOfArray(users).userId,
+          tags: {
+            connect: [...new Array(getRandomNumberForRange(1, 15))].map(() => ({
+              id: getRandomElementOfArray(postTagsCreated).id,
+            })),
+          },
+          segments: {
+            create: createSegments(),
+          },
         },
+        where: { id: post.id },
       })
-      await new Promise((r) => setTimeout(r, 300))
 
-      Array.from({ length: getRandomNumberForRange(1, 3) }).map(
-        async (_, i2) => {
-          const in2 = i2 + 1
-          const text2 = loremRandom() + ' ' + in1 + '-' + in2
-          const com2 = await prisma.postComment.create({
-            data: {
-              text: text2,
-              postId: post.id,
-              commentParentId: com1.commentId,
-              authorId: getRandomElementOfArray(users).userId,
-            },
-          })
-          await new Promise((r) => setTimeout(r, 300))
+      // root comments
+      await Promise.all(
+        Array.from({ length: getRandomNumberForRange(1, 3) }).map(
+          async (_, i1) => {
+            const in1 = i1 + 1
+            const text1 = loremRandom() + ' ' + in1
+            const com1 = await prisma.postComment.create({
+              data: {
+                text: text1,
+                postId: post.id,
+                authorId: getRandomElementOfArray(users).userId,
+              },
+            })
+            await sleep()
 
-          Array.from({ length: getRandomNumberForRange(1, 3) }).map(
-            async (_, i3) => {
-              const in3 = i3 + 1
-              const text3 = loremRandom() + ' ' + in1 + '-' + in2 + '-' + in3
-              const com3 = await prisma.postComment.create({
-                data: {
-                  text: text3,
-                  postId: post.id,
-                  commentParentId: com2.commentId,
-                  authorId: getRandomElementOfArray(users).userId,
-                },
-              })
-              await new Promise((r) => setTimeout(r, 300))
-
+            await Promise.all(
               Array.from({ length: getRandomNumberForRange(1, 3) }).map(
-                async (_, i4) => {
-                  const in4 = i4 + 1
-                  const text4 =
-                    loremRandom() +
-                    ' ' +
-                    in1 +
-                    '-' +
-                    in2 +
-                    '-' +
-                    in3 +
-                    '-' +
-                    in4
-                  await prisma.postComment.create({
+                async (_, i2) => {
+                  const in2 = i2 + 1
+                  const text2 = loremRandom() + ' ' + in1 + '-' + in2
+                  const com2 = await prisma.postComment.create({
                     data: {
-                      text: text4,
+                      text: text2,
                       postId: post.id,
-                      commentParentId: com3.commentId,
+                      commentParentId: com1.commentId,
                       authorId: getRandomElementOfArray(users).userId,
                     },
                   })
-                  await new Promise((r) => setTimeout(r, 300))
+                  await sleep()
+
+                  await Promise.all(
+                    Array.from({ length: getRandomNumberForRange(1, 3) }).map(
+                      async (_, i3) => {
+                        const in3 = i3 + 1
+                        const text3 =
+                          loremRandom() + ' ' + in1 + '-' + in2 + '-' + in3
+                        const com3 = await prisma.postComment.create({
+                          data: {
+                            text: text3,
+                            postId: post.id,
+                            commentParentId: com2.commentId,
+                            authorId: getRandomElementOfArray(users).userId,
+                          },
+                        })
+                        await sleep()
+
+                        await Promise.all(
+                          Array.from({
+                            length: getRandomNumberForRange(1, 3),
+                          }).map(async (_, i4) => {
+                            const in4 = i4 + 1
+                            const text4 =
+                              loremRandom() +
+                              ' ' +
+                              in1 +
+                              '-' +
+                              in2 +
+                              '-' +
+                              in3 +
+                              '-' +
+                              in4
+                            await prisma.postComment.create({
+                              data: {
+                                text: text4,
+                                postId: post.id,
+                                commentParentId: com3.commentId,
+                                authorId: getRandomElementOfArray(users).userId,
+                              },
+                            })
+                            await sleep()
+                          })
+                        )
+                      }
+                    )
+                  )
                 }
               )
-            }
-          )
-        }
+            )
+          }
+        )
       )
     })
-  })
+  )
 
   return postsCreated.length
 }

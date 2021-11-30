@@ -5,6 +5,7 @@ import { PostsPage } from '../components/pages/posts/PostsPage'
 import { hydrationHandler, prefillServer } from '../data/use-posts'
 import { Hydrate } from 'react-query'
 import { ServerPageProps } from '../types/PageProps'
+import { ApiPosts } from './api/posts'
 
 export type PostsPageProps = {
   postCategories: PostCategory[]
@@ -24,7 +25,15 @@ async function findPosts(prisma: PrismaClient) {
         category: true,
         segments: { orderBy: { createdAt: 'asc' } },
         tags: { select: { id: true, title: true } },
+        /*
+         * TODO
+         * Using _count for implicit Many-To-Many relations does not work right now (30.11.2021),
+         * that's why we can't use it for "likedBy".
+         * https://github.com/prisma/prisma/issues/9880
+         */
+        // _count: { select: { comments: true, likedBy: true } },
         _count: { select: { comments: true } },
+        likedBy: { select: { userId: true } },
       },
     })
   } catch (error) {
@@ -34,7 +43,10 @@ async function findPosts(prisma: PrismaClient) {
 
 export const getStaticProps: GetStaticProps<PostsPageProps & ServerPageProps> =
   async () => {
-    const posts = await findPosts(prisma)
+    const posts: ApiPosts = (await findPosts(prisma)).map((post) => ({
+      ...post,
+      noOfLikes: post.likedBy.length,
+    }))
 
     const client = hydrationHandler.createClient()
     prefillServer(client, posts)

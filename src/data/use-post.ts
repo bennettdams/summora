@@ -5,6 +5,7 @@ import {
   apiCreatePostSegmentItem,
   apiDeletePostComment,
   apiFetchPost,
+  apiLikeUnlikePost,
   apiUpdatePost,
   apiUpdatePostSegment,
   apiUpdatePostSegmentItem,
@@ -53,6 +54,7 @@ export function usePost(postId: string) {
     updatePostSegmentMutation,
     createPostCommentMutation,
     deletePostCommentMutation,
+    likeUnlikePostMutation,
   } = usePostMutation(postId)
 
   return {
@@ -65,7 +67,8 @@ export function usePost(postId: string) {
       createPostSegmentMutation.isLoading ||
       updatePostSegmentMutation.isLoading ||
       createPostCommentMutation.isLoading ||
-      deletePostCommentMutation.isLoading,
+      deletePostCommentMutation.isLoading ||
+      likeUnlikePostMutation.isLoading,
     isError:
       isError ||
       updatePostMutation.isError ||
@@ -74,7 +77,8 @@ export function usePost(postId: string) {
       createPostSegmentMutation.isError ||
       updatePostSegmentMutation.isError ||
       createPostCommentMutation.isError ||
-      deletePostCommentMutation.isError,
+      deletePostCommentMutation.isError ||
+      likeUnlikePostMutation.isError,
     updatePost: updatePostMutation.mutateAsync,
     createPostSegmentItem: createPostSegmentItemMutation.mutateAsync,
     createPostSegment: createPostSegmentMutation.mutateAsync,
@@ -82,6 +86,7 @@ export function usePost(postId: string) {
     updatePostSegment: updatePostSegmentMutation.mutateAsync,
     createPostComment: createPostCommentMutation.mutateAsync,
     deletePostComment: deletePostCommentMutation.mutateAsync,
+    likeUnlikePost: likeUnlikePostMutation.mutateAsync,
   }
 }
 
@@ -266,6 +271,18 @@ function usePostMutation(postId: string) {
     },
   })
 
+  // LIKE / UNLIKE
+  const likeUnlikePostMutation = useMutation(apiLikeUnlikePost, {
+    onSuccess: (data) => {
+      if (data.result) {
+        const likedByUpdated = data.result.likedBy
+        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
+          !prevData ? null : { ...prevData, likedBy: likedByUpdated }
+        )
+      }
+    },
+  })
+
   return {
     updatePostMutation,
     createPostSegmentItemMutation,
@@ -274,5 +291,6 @@ function usePostMutation(postId: string) {
     updatePostSegmentMutation,
     createPostCommentMutation,
     deletePostCommentMutation,
+    likeUnlikePostMutation,
   }
 }

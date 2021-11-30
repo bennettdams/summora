@@ -64,6 +64,8 @@ function UserPageInternal({
                   },
                   noOfViews: post.noOfViews,
                   noOfComments: post._count?.comments ?? 0,
+                  noOfLikes: post.noOfLikes,
+                  likedBy: post.likedBy,
                   segments: post.segments,
                   tags: post.tags,
                 }))

@@ -9,7 +9,5 @@ export function serialize<TDataSerialize>(
 export function deserializeUserPosts(
   posts: UserPageProps['posts']
 ): UserPageProps['posts'] {
-  return !posts
-    ? null
-    : posts.map((post) => ({ ...post, updatedAt: new Date(post.updatedAt) }))
+  return posts.map((post) => ({ ...post, updatedAt: new Date(post.updatedAt) }))
 }

@@ -48,7 +48,9 @@ export default async function _postCommentAPI(
           } else {
             await deletePostComment(commentId)
 
-            res.status(200).json(true)
+            const apiResult: ApiPostCommentDelete = true
+
+            res.status(200).json(apiResult)
           }
           break
         }
