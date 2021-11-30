@@ -197,7 +197,7 @@ export function PostLikes({
       <Likes
         noOfLikes={noOfLikes}
         isLiked={
-          isLikeUnlikeEnabled
+          !isLikeUnlikeEnabled
             ? true
             : !userId
             ? false
