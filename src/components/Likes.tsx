@@ -12,9 +12,9 @@ export function Likes({
   return (
     <div className="inline text-center">
       {isLiked ? (
-        <IconLiked onClick={onClick} />
+        <IconLiked size="big" onClick={onClick} />
       ) : (
-        <IconUnliked onClick={onClick} />
+        <IconUnliked size="big" onClick={onClick} />
       )}
       <span>{noOfLikes}</span>
     </div>

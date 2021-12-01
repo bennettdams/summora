@@ -98,7 +98,7 @@ model PostTag {
 }
 
 model User {
-  userId      String        @id
+  userId      String        @id @default(cuid())
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   username    String        @unique

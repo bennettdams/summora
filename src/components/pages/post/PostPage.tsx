@@ -330,7 +330,7 @@ function PostPageInternal({
             )}
           </div>
 
-          <div className="w-full md:w-1/5">
+          <div className="w-full md:w-1/5 flex justify-center">
             <PostLikes
               postId={postId}
               noOfLikes={post.likedBy.length}

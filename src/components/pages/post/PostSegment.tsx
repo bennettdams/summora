@@ -111,8 +111,8 @@ export function PostSegment({
           </div>
         ) : (
           <div
-            className={`flex-grow flex hover:text-orange-700 ${
-              isPostEditMode && 'cursor-pointer'
+            className={`flex-grow flex ${
+              isPostEditMode && 'hover:text-orange-700 cursor-pointer'
             }`}
             onClick={() => setIsSegmentEditable(true)}
             ref={refSegmentTitle}
@@ -123,16 +123,13 @@ export function PostSegment({
               </div>
             )}
 
-            <div className="ml-2 flex flex-col hover:text-orange-700">
+            <div className="ml-2 flex flex-col">
               <div className="flex-1">
                 <span>{segment.title}</span> <span>{segment.id}</span>
-                <span className="float-right">
-                  {segment.updatedAt.toISOString()}
-                </span>
               </div>
 
               <div className="flex-1">
-                <span className="text-gray-500 hover:text-orange-700 text-lg italic">
+                <span className="text-gray-500 text-lg italic">
                   {segment.subtitle}
                 </span>
               </div>
