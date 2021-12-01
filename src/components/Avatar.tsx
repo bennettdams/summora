@@ -4,6 +4,12 @@ import { useState } from 'react'
 import { useQuery } from 'react-query'
 import { useCloudStorage } from '../services/use-cloud-storage'
 
+/*
+ * For the love of god, this file is very similar to "PostSegmentImage".
+ * This is because I didn't want to build an abstraction YET.
+ * If you change something here, change it there as well.
+ */
+
 const SIZES = {
   tiny: 25,
   small: 40,
@@ -20,11 +26,18 @@ function createQueryKey(userId: string) {
   return [queryKeyPostBase, userId]
 }
 
-function useAvatar(isEnabled = false, userId: string, size: AvatarSize) {
-  const { data, isLoading, isError, isFetching } = useQuery<QueryData>(
+function useAvatar(userId: string, size: AvatarSize) {
+  const {
+    data,
+    isLoading,
+    isError,
+    isFetching,
+    refetch: refetchQuery,
+  } = useQuery<QueryData>(
     createQueryKey(userId),
     async () => {
       const avatarFile = await downloadAvatar(userId)
+
       if (!avatarFile) {
         throw Error('Avatar file is null')
       } else {
@@ -35,10 +48,11 @@ function useAvatar(isEnabled = false, userId: string, size: AvatarSize) {
       }
     },
     {
+      // only execute query via "refetch", needed when user uploads a new avatar
       keepPreviousData: true,
       refetchOnWindowFocus: false,
       refetchInterval: false,
-      enabled: isEnabled,
+      enabled: false,
     }
   )
 
@@ -46,8 +60,14 @@ function useAvatar(isEnabled = false, userId: string, size: AvatarSize) {
   const { downloadAvatar, getPublicURLAvatar } = useCloudStorage()
   const [publicURL] = useState(getPublicURLAvatar(userId))
 
+  function handleRefetch() {
+    data && URL.revokeObjectURL(data)
+    refetchQuery()
+  }
+
   return {
     avatarObjectUrl: data || null,
+    refetch: handleRefetch,
     sizePixels,
     publicURL,
     isLoading,
@@ -96,23 +116,22 @@ export function Avatar({
   hasUserAvatar: boolean
   isEditable?: boolean
 }): JSX.Element {
-  const [shouldFetchLocal, setShouldFetchLocal] = useState(false)
-  const { publicURL, sizePixels, avatarObjectUrl } = useAvatar(
-    shouldFetchLocal,
+  const { publicURL, sizePixels, avatarObjectUrl, refetch } = useAvatar(
     userId,
     size
   )
+
   return (
-    <div className="relative inline-grid place-items-center">
+    <div className="relative h-full w-full inline-grid place-items-center">
       {isEditable && (
         <div className="absolute z-30 group h-full w-full hover:cursor-pointer hover:bg-lime-200 rounded-full hover:bg-opacity-50">
           <span className="h-full w-full grid place-items-center invisible group-hover:visible">
-            <ImageUpload onUpload={() => setShouldFetchLocal(true)} />
+            <ImageUpload onUpload={refetch} />
           </span>
         </div>
       )}
 
-      {isEditable && shouldFetchLocal && avatarObjectUrl ? (
+      {isEditable && avatarObjectUrl ? (
         <Image
           src={avatarObjectUrl}
           alt="Avatar"

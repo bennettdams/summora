@@ -11,6 +11,7 @@ import {
   ApiPostSegmentUpdateRequestBody,
 } from '../../../services/api-service'
 import { SegmentPostPage } from './PostPage'
+import { PostSegmentImage } from '../../PostSegmentImage'
 
 export function PostSegment({
   segment,
@@ -90,89 +91,108 @@ export function PostSegment({
   const formIdNew = `post-segment-item-new-${segment.id}`
 
   return (
-    <div className="w-full p-10 rounded-xl bg-gradient-to-br from-green-50 to-indigo-50">
-      <div className="w-full h-20 text-xl flex flex-row">
-        <div className="w-20 h-full text-left">
-          <span className="text-4xl italic">{index}</span>
-        </div>
-        {isPostEditMode && isSegmentEditable ? (
-          <div className="flex-grow" ref={refSegmentEdit}>
-            <FormInput
-              placeholder="Title.."
-              initialValue={segment.title}
-              onSubmit={handleUpdateTitle}
-            />
-            <FormInput
-              placeholder="Subitle.."
-              initialValue={segment.subtitle || ''}
-              onSubmit={handleUpdateSubtitle}
-              autoFocus={false}
-            />
+    // stretch for the post image
+    <div className="w-full flex items-stretch p-10 rounded-xl bg-gradient-to-br from-green-50 to-indigo-50">
+      <div className="w-4/5">
+        <div className="w-full h-20 text-xl flex flex-row">
+          <div className="w-20 h-full text-left">
+            <span className="text-4xl italic">{index}</span>
           </div>
-        ) : (
-          <div
-            className={`flex-grow flex ${
-              isPostEditMode && 'hover:text-orange-700 cursor-pointer'
-            }`}
-            onClick={() => setIsSegmentEditable(true)}
-            ref={refSegmentTitle}
-          >
-            {isPostEditMode && isHovered && (
-              <div className="grid place-items-center">
-                <IconEdit />
-              </div>
-            )}
+          {isPostEditMode && isSegmentEditable ? (
+            <div className="flex-grow" ref={refSegmentEdit}>
+              <FormInput
+                placeholder="Title.."
+                initialValue={segment.title}
+                onSubmit={handleUpdateTitle}
+              />
+              <FormInput
+                placeholder="Subitle.."
+                initialValue={segment.subtitle || ''}
+                onSubmit={handleUpdateSubtitle}
+                autoFocus={false}
+              />
+            </div>
+          ) : (
+            <div
+              className={`flex-grow flex ${
+                isPostEditMode && 'hover:text-orange-700 cursor-pointer'
+              }`}
+              onClick={() => setIsSegmentEditable(true)}
+              ref={refSegmentTitle}
+            >
+              {isPostEditMode && isHovered && (
+                <div className="grid place-items-center">
+                  <IconEdit />
+                </div>
+              )}
 
-            <div className="ml-2 flex flex-col">
-              <div className="flex-1">
-                <span>{segment.title}</span> <span>{segment.id}</span>
-              </div>
+              <div className="ml-2 flex flex-col">
+                <div className="flex-1">
+                  <span>{segment.title}</span> <span>{segment.id}</span>
+                </div>
 
-              <div className="flex-1">
-                <span className="text-gray-500 text-lg italic">
-                  {segment.subtitle}
-                </span>
+                <div className="flex-1">
+                  <span className="text-gray-500 text-lg italic">
+                    {segment.subtitle}
+                  </span>
+                </div>
               </div>
             </div>
+          )}
+        </div>
+
+        <div className="mt-2 space-y-2">
+          {segment.items.map((item, index) => (
+            <div className="w-full" key={item.id}>
+              <PostSegmentItem
+                item={item}
+                postId={postId}
+                index={index}
+                isPostEditMode={isPostEditMode}
+              />
+            </div>
+          ))}
+        </div>
+
+        {isPostEditMode && (
+          <div className="h-20 flex items-center" ref={refEditItem}>
+            {showItemInput ? (
+              <>
+                <button className="inline" form={formIdNew} type="submit">
+                  <IconCheck />
+                </button>
+                <IconX
+                  onClick={() => setShowItemInput(false)}
+                  className="ml-4"
+                />
+                <div className="ml-4 w-full">
+                  <FormInput
+                    placeholder="New item"
+                    formId={formIdNew}
+                    resetOnSubmit
+                    onSubmit={handleCreate}
+                  />
+                </div>
+              </>
+            ) : (
+              <ButtonAdd size="huge" onClick={() => setShowItemInput(true)} />
+            )}
           </div>
         )}
       </div>
 
-      <div className="mt-2 space-y-2">
-        {segment.items.map((item, index) => (
-          <div className="w-full" key={item.id}>
-            <PostSegmentItem
-              item={item}
-              postId={postId}
-              index={index}
-              isPostEditMode={isPostEditMode}
-            />
-          </div>
-        ))}
+      {/* POST IMAGE */}
+      {/* the parent container uses "items-stretch" so the image can "fill" the height */}
+      <div className="w-1/5 bg-red-100 grid place-items-center">
+        <PostSegmentImage
+          postId={postId}
+          postSegmentId={segment.id}
+          hasSegmentImage={
+            segment.id === 'ckwlctm9o7030ssnl0t3k357q' ||
+            segment.id === 'ckwlctm9o7059ssnl4knakmeu'
+          }
+        />
       </div>
-
-      {isPostEditMode && (
-        <div className="h-20 flex items-center" ref={refEditItem}>
-          {showItemInput ? (
-            <>
-              <button className="inline" form={formIdNew} type="submit">
-                <IconCheck />
-              </button>
-              <IconX onClick={() => setShowItemInput(false)} className="ml-4" />
-              <div className="ml-4 w-full">
-                <FormInput
-                  placeholder="New item"
-                  formId={formIdNew}
-                  resetOnSubmit
-                  onSubmit={handleCreate}
-                />
-              </div>
-            </>
-          ) : (
-            <ButtonAdd size="huge" onClick={() => setShowItemInput(true)} />
-          )}
-        </div>
-      )}
     </div>
   )
 }

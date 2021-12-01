@@ -9,11 +9,19 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const STORAGE = {
   AVATARS: {
     bucket: 'avatars',
-    folder: 'public',
+    rootFolder: 'public',
+    extension: 'jpg',
+    filePath: (userId: string) =>
+      `${STORAGE.AVATARS.rootFolder}/${userId}.${STORAGE.AVATARS.extension}`,
+  },
+  POST_IMAGES: {
+    bucket: 'post-images',
+    rootFolder: 'public',
+    extension: 'jpg',
+    filePath: (postId: string, postSegmentId: string) =>
+      `${STORAGE.POST_IMAGES.rootFolder}/${postId}/${postSegmentId}.${STORAGE.POST_IMAGES.extension}`,
   },
 } as const
-
-const AVATAR_EXTENSION = 'jpg'
 
 function createSupabaseClient(supabaseKey = supabaseAnonKey) {
   if (!supabaseUrl || !supabaseKey)
@@ -78,11 +86,9 @@ function extractJWTFromNextRequestCookies(req: NextApiRequest): string {
   return jwt
 }
 
+// AVATAR #########
 export async function uploadAvatarSupabase(
-  /**
-   * filename & extension, e.g. "example.png"
-   */
-  filepath: string,
+  userId: string,
   avatarFileParsed: Buffer,
   req: NextApiRequest
 ): Promise<void> {
@@ -91,7 +97,7 @@ export async function uploadAvatarSupabase(
 
   const { error } = await supabaseServer.storage
     .from(STORAGE.AVATARS.bucket)
-    .upload(`${STORAGE.AVATARS.folder}/${filepath}`, avatarFileParsed, {
+    .upload(STORAGE.AVATARS.filePath(userId), avatarFileParsed, {
       upsert: true,
       contentType: 'image/jpg',
     })
@@ -104,14 +110,11 @@ export async function uploadAvatarSupabase(
 }
 
 export async function downloadAvatarSupabase(
-  /**
-   * filename without extension, e.g. "example" for "example.png"
-   */
-  filepath: string
+  userId: string
 ): Promise<Blob | null> {
   const { data, error } = await supabase.storage
     .from(STORAGE.AVATARS.bucket)
-    .download(`${STORAGE.AVATARS.folder}/${filepath}.${AVATAR_EXTENSION}`)
+    .download(STORAGE.AVATARS.filePath(userId))
 
   if (error) {
     throw new Error(`Error while downloading avatar: ${error.message}`)
@@ -120,19 +123,76 @@ export async function downloadAvatarSupabase(
   }
 }
 
-export function getPublicURLAvatarSupabase(
-  /**
-   * filename without extension, e.g. "example" for "example.png"
-   */
-  filepath: string
-): string | null {
+export function getPublicURLAvatarSupabase(userId: string): string | null {
   const { publicURL, error } = supabase.storage
     .from(STORAGE.AVATARS.bucket)
-    .getPublicUrl(`${STORAGE.AVATARS.folder}/${filepath}.${AVATAR_EXTENSION}`)
+    .getPublicUrl(STORAGE.AVATARS.filePath(userId))
 
   if (error) {
     throw new Error(
       `Error while getting public URL for avatar: ${error.message}`
+    )
+  } else {
+    return publicURL
+  }
+}
+
+// POST SEGMENT IMAGE #########
+export async function uploadPostSegmentImageSupabase(
+  postId: string,
+  postSegmentId: string,
+  postSegmentImageFileParsed: Buffer,
+  req: NextApiRequest
+): Promise<void> {
+  const supabaseServer = createSupabaseClient()
+  supabaseServer.auth.setAuth(extractJWTFromNextRequestCookies(req))
+
+  const { error } = await supabaseServer.storage
+    .from(STORAGE.POST_IMAGES.bucket)
+    .upload(
+      STORAGE.POST_IMAGES.filePath(postId, postSegmentId),
+      postSegmentImageFileParsed,
+      {
+        upsert: true,
+        contentType: 'image/jpg',
+      }
+    )
+
+  if (error) {
+    throw new Error(
+      `Error while uploading post segment image file (Supabase: ${error.message}`
+    )
+  }
+}
+
+export async function downloadPostSegmentImageSupabase(
+  postId: string,
+  postSegmentId: string
+): Promise<Blob | null> {
+  const { data, error } = await supabase.storage
+    .from(STORAGE.POST_IMAGES.bucket)
+    .download(STORAGE.POST_IMAGES.filePath(postId, postSegmentId))
+
+  if (error) {
+    throw new Error(
+      `Error while downloading post segment image: ${error.message}`
+    )
+  } else {
+    return data
+  }
+}
+
+export function getPublicURLPostSegmentImageSupabase(
+  postId: string,
+  postSegmentId: string
+): string | null {
+  const { publicURL, error } = supabase.storage
+    .from(STORAGE.POST_IMAGES.bucket)
+    .getPublicUrl(STORAGE.POST_IMAGES.filePath(postId, postSegmentId))
+
+  if (error) {
+    throw new Error(
+      `Error while getting public URL for post segment image: ${error.message}`
     )
   } else {
     return publicURL

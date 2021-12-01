@@ -6,6 +6,7 @@ import { logAPI } from '../../../util/logger'
 import { Files, IncomingForm } from 'formidable'
 import fs from 'fs'
 import { FORM_DATA_FILE_KEY } from '../../../util/http'
+import { prisma } from '../../../prisma/prisma'
 
 export type ApiAvatarsUpload = void
 
@@ -98,9 +99,8 @@ export default async function _avatarsUploadAPI(
           const fileParsed = await parseMultipartForm(req)
 
           // TODO validation?
-          // TODO file extension
           // TODO convert png etc.
-          await uploadAvatarSupabase(`${userId}.jpg`, fileParsed, req)
+          await uploadAvatarSupabase(userId, fileParsed, req)
 
           await prisma.user.update({
             where: { userId },
