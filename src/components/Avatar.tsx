@@ -116,6 +116,7 @@ export function Avatar({
   hasUserAvatar: boolean
   isEditable?: boolean
 }): JSX.Element {
+  const { uploadAvatar } = useCloudStorage()
   const { publicURL, sizePixels, avatarObjectUrl, refetch } = useAvatar(
     userId,
     size
@@ -126,7 +127,12 @@ export function Avatar({
       {isEditable && (
         <div className="absolute z-30 group h-full w-full hover:cursor-pointer hover:bg-lime-200 rounded-full hover:bg-opacity-50">
           <span className="h-full w-full grid place-items-center invisible group-hover:visible">
-            <ImageUpload onUpload={refetch} />
+            <ImageUpload
+              uploadFn={async (file) => {
+                await uploadAvatar(file)
+              }}
+              onUpload={refetch}
+            />
           </span>
         </div>
       )}

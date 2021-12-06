@@ -1,16 +1,16 @@
 import { ChangeEvent, useState } from 'react'
-import { useCloudStorage } from '../services/use-cloud-storage'
 import { IconAdd } from '../components/Icon'
 import { LoadingAnimation } from '../components/LoadingAnimation'
 
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png']
 
 export function ImageUpload({
+  uploadFn,
   onUpload,
 }: {
+  uploadFn: (file: File) => Promise<void>
   onUpload?: () => void
 }): JSX.Element {
-  const { uploadAvatar } = useCloudStorage()
   const [isUploading, setIsUploading] = useState(false)
 
   async function handleUpload(event: ChangeEvent<HTMLInputElement>) {
@@ -28,7 +28,7 @@ export function ImageUpload({
             `You provided a ${fileExtension} file, but only ${ALLOWED_EXTENSIONS} are allowed.`
           )
         } else {
-          await uploadAvatar(file)
+          await uploadFn(file)
           onUpload?.()
         }
       }

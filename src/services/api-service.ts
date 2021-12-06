@@ -1,5 +1,6 @@
 import type { Prisma } from '@prisma/client'
 import { ApiAvatarsUpload } from '../pages/api/avatars/upload'
+import { ApiImageUploadPostSegment } from '../pages/api/image-upload/[postId]/[postSegmentId]'
 import { ApiPostCommentCreate } from '../pages/api/post-comments'
 import { ApiPostCommentDelete } from '../pages/api/post-comments/[commentId]'
 import { ApiPostSegmentItemCreate } from '../pages/api/post-segment-items'
@@ -39,6 +40,9 @@ export const ROUTES_API = {
     `post-segment-items/${postSegmentItemId}`,
   POST_COMMENTS: 'post-comments',
   POST_COMMENT: (commentId: string) => `post-comments/${commentId}`,
+  IMAGE_UPLOAD_POST_SEGMENTS: (postId: string, postSegmentId: string) =>
+    `image-upload/${postId}/${postSegmentId}`,
+  // IMAGE_UPLOAD_AVATR: "image-upload/post-segments"
 } as const
 
 // #########################################
@@ -70,6 +74,21 @@ export async function apiAvatarsUpload(
   avatarFile: File
 ): Promise<HttpResponse<ApiAvatarsUpload>> {
   return await postFile<ApiAvatarsUpload>(ROUTES_API.AVATARS_UPLOAD, avatarFile)
+}
+
+// #########################################
+
+export type ApiImageUploadPostSegmentsRequestBody = FormData
+
+export async function apiImageUploadPostSegments(
+  postId: string,
+  postSegmentId: string,
+  postSegmentImageFile: File
+): Promise<HttpResponse<ApiImageUploadPostSegment>> {
+  return await postFile<ApiImageUploadPostSegment>(
+    ROUTES_API.IMAGE_UPLOAD_POST_SEGMENTS(postId, postSegmentId),
+    postSegmentImageFile
+  )
 }
 
 // #########################################

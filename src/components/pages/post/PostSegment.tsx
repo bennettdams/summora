@@ -185,6 +185,7 @@ export function PostSegment({
       {/* the parent container uses "items-stretch" so the image can "fill" the height */}
       <div className="w-1/5 bg-red-100 grid place-items-center">
         <PostSegmentImage
+          isEditable={isPostEditMode}
           postId={postId}
           postSegmentId={segment.id}
           hasSegmentImage={

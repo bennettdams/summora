@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { apiAvatarsUpload } from './api-service'
+import { apiAvatarsUpload, apiImageUploadPostSegments } from './api-service'
 import {
   downloadAvatarSupabase,
   downloadPostSegmentImageSupabase,
@@ -20,9 +20,12 @@ export function useCloudStorage() {
     return getPublicURLAvatarSupabase(userId)
   }, [])
 
-  const uploadPostSegmentImage = useCallback(async (picture: File) => {
-    return await apiAvatarsUpload(picture)
-  }, [])
+  const uploadPostSegmentImage = useCallback(
+    async (postId: string, postSegmentId: string, picture: File) => {
+      return await apiImageUploadPostSegments(postId, postSegmentId, picture)
+    },
+    []
+  )
 
   const downloadPostSegmentImage = useCallback(
     async (postId: string, postSegmentId: string) => {
