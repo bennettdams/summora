@@ -19,13 +19,13 @@ export const config = {
   },
 }
 
-export default async function _avatarsUploadAPI(
+export default async function _imageUploadAvatarsAPI(
   req: Request,
   res: NextApiResponse
 ): Promise<void> {
   const { method } = req
 
-  logAPI('AVATARS_UPLOAD', method)
+  logAPI('IMAGE_UPLOAD_AVATARS', method)
 
   const { data: user, error } = await getUserByCookie(req)
 

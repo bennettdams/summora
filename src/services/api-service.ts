@@ -1,5 +1,5 @@
 import type { Prisma } from '@prisma/client'
-import { ApiAvatarsUpload } from '../pages/api/avatars/upload'
+import { ApiAvatarsUpload } from '../pages/api/image-upload/avatars'
 import { ApiImageUploadPostSegment } from '../pages/api/image-upload/[postId]/[postSegmentId]'
 import { ApiPostCommentCreate } from '../pages/api/post-comments'
 import { ApiPostCommentDelete } from '../pages/api/post-comments/[commentId]'
@@ -27,7 +27,6 @@ import {
 export const ROUTES_API = {
   USERS_SIGN_UP: 'users/signup',
   USER: (userId: string) => `users/${userId}`,
-  AVATARS_UPLOAD: 'avatars/upload',
   POSTS: 'posts',
   POST: (postId: string) => `posts/${postId}`,
   POST_INCREMENT_VIEWS: (postId: string) => `posts/${postId}/increment-views`,
@@ -40,9 +39,9 @@ export const ROUTES_API = {
     `post-segment-items/${postSegmentItemId}`,
   POST_COMMENTS: 'post-comments',
   POST_COMMENT: (commentId: string) => `post-comments/${commentId}`,
+  IMAGE_UPLOAD_AVATARS: 'image-upload/avatars',
   IMAGE_UPLOAD_POST_SEGMENTS: (postId: string, postSegmentId: string) =>
     `image-upload/${postId}/${postSegmentId}`,
-  // IMAGE_UPLOAD_AVATR: "image-upload/post-segments"
 } as const
 
 // #########################################
@@ -70,10 +69,13 @@ export async function apiUsersSignUp(
 
 export type ApiAvatarsUploadRequestBody = FormData
 
-export async function apiAvatarsUpload(
+export async function apiImageUploadAvatars(
   avatarFile: File
 ): Promise<HttpResponse<ApiAvatarsUpload>> {
-  return await postFile<ApiAvatarsUpload>(ROUTES_API.AVATARS_UPLOAD, avatarFile)
+  return await postFile<ApiAvatarsUpload>(
+    ROUTES_API.IMAGE_UPLOAD_AVATARS,
+    avatarFile
+  )
 }
 
 // #########################################
