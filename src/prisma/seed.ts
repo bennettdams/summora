@@ -32,7 +32,7 @@ async function drop() {
 }
 
 async function sleep() {
-  await new Promise((r) => setTimeout(r, 300))
+  await new Promise((r) => setTimeout(r, 1000))
 }
 
 async function fill() {
@@ -65,7 +65,10 @@ async function fill() {
   await Promise.all(
     postsCreated.map(async (post) => {
       await sleep()
-      await prisma.post.update({
+      const segments = await createSegments()
+      // tags & segments
+      const postUpdated = await prisma.post.update({
+        where: { id: post.id },
         data: {
           tags: {
             connect: [...new Array(getRandomNumberForRange(1, 15))].map(() => ({
@@ -73,11 +76,33 @@ async function fill() {
             })),
           },
           segments: {
-            create: createSegments(),
+            createMany: {
+              data: segments,
+            },
           },
         },
-        where: { id: post.id },
+        include: { segments: true },
       })
+
+      // segment items
+      await Promise.all(
+        postUpdated.segments.map(async (segment) => {
+          await sleep()
+
+          await Promise.all(
+            Array.from({ length: getRandomNumberForRange(1, 7) }).map(
+              async (_, i) => {
+                await prisma.postSegmentItem.create({
+                  data: {
+                    content: `Content ${loremRandom()} ${i}`,
+                    postSegmentId: segment.id,
+                  },
+                })
+              }
+            )
+          )
+        })
+      )
 
       // root comments
       await Promise.all(
@@ -166,6 +191,27 @@ async function fill() {
   return postsCreated.length
 }
 
+async function createSegments(): Promise<
+  Prisma.PostSegmentCreateManyPostInput[]
+> {
+  const segments: Prisma.PostSegmentCreateManyPostInput[] = await Promise.all(
+    Array.from({ length: getRandomNumberForRange(1, 5) }).map(
+      async (_, index) => {
+        await sleep()
+
+        const segment: Prisma.PostSegmentCreateManyPostInput = {
+          title: `Segment title ${loremRandom()} ${index}`,
+          subtitle: `Subtitle ${loremRandom()} ${index}`,
+        }
+
+        return segment
+      }
+    )
+  )
+
+  return segments
+}
+
 export const postCategories: Prisma.PostCategoryCreateInput[] = [
   { id: 'books', title: 'Books', description: '..' },
   { id: 'movies', title: 'Movies', description: '..' },
@@ -200,29 +246,6 @@ export const postTags: Prisma.PostTagCreateWithoutPostsInput[] = [
   { title: 'For dummies' + i, description: '..' },
   { title: 'History' + i, description: '..' },
 ])
-
-function createSegments(): Prisma.PostSegmentCreateManyPostInput[] {
-  return [...new Array(getRandomNumberForRange(1, 10))].map((_, index) => {
-    const now = new Date().getTime()
-    const step = 100
-
-    // const postSegment: Prisma.PostSegmentCreateManyPostInput = {}
-
-    return {
-      createdAt: new Date(now + 1 * step),
-      title: `Segment title ${loremRandom()} ${index}`,
-      subtitle: `Subtitle ${loremRandom()} ${index}`,
-      items: {
-        create: Array.from({ length: getRandomNumberForRange(1, 10) }).map(
-          () => ({
-            createdAt: new Date(now + 1 * step),
-            content: loremRandom(),
-          })
-        ),
-      },
-    }
-  })
-}
 
 function getRandomNumberForRange(min: number, max: number): number {
   // min and max included
