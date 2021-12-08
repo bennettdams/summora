@@ -17,7 +17,12 @@ function createQueryKey(postId: string, postSegmentId: string) {
   return [queryKeyPostBase, postId, postSegmentId]
 }
 
-function usePostImage(postId: string, postSegmentId: string) {
+function usePostImage(
+  hasSegmentImage: boolean,
+  postId: string,
+  authorId: string,
+  postSegmentId: string
+) {
   const {
     data,
     isLoading,
@@ -29,6 +34,7 @@ function usePostImage(postId: string, postSegmentId: string) {
     async () => {
       const postSegmentImageFile = await downloadPostSegmentImage(
         postId,
+        authorId,
         postSegmentId
       )
 
@@ -52,8 +58,10 @@ function usePostImage(postId: string, postSegmentId: string) {
 
   const { downloadPostSegmentImage, getPublicURLPostSegmentImage } =
     useCloudStorage()
-  const [publicURL] = useState(
-    getPublicURLPostSegmentImage(postId, postSegmentId)
+  const [publicURL] = useState<string | null>(
+    !hasSegmentImage
+      ? null
+      : getPublicURLPostSegmentImage(postId, authorId, postSegmentId)
   )
 
   function handleRefetch() {
@@ -73,18 +81,22 @@ function usePostImage(postId: string, postSegmentId: string) {
 
 export function PostSegmentImage({
   postId,
+  authorId,
   postSegmentId,
   hasSegmentImage = false,
   isEditable = false,
 }: {
   postId: string
+  authorId: string
   postSegmentId: string
   hasSegmentImage: boolean
   isEditable?: boolean
 }): JSX.Element {
   const { uploadPostSegmentImage } = useCloudStorage()
   const { publicURL, postSegmentImageObjectUrl, refetch } = usePostImage(
+    hasSegmentImage,
     postId,
+    authorId,
     postSegmentId
   )
 
@@ -114,7 +126,6 @@ export function PostSegmentImage({
           objectFit="contain"
         />
       ) : (
-        hasSegmentImage &&
         publicURL && (
           <Image
             src={publicURL}

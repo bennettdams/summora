@@ -431,6 +431,7 @@ function PostPageInternal({
                 <PostSegment
                   index={index + 1}
                   postId={post.id}
+                  authorId={post.authorId}
                   key={segment.id}
                   segment={segment}
                   isPostEditMode={isPostEditMode}

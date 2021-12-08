@@ -26,7 +26,7 @@ function createQueryKey(userId: string) {
   return [queryKeyPostBase, userId]
 }
 
-function useAvatar(userId: string, size: AvatarSize) {
+function useAvatar(hasUserAvatar: boolean, userId: string, size: AvatarSize) {
   const {
     data,
     isLoading,
@@ -58,7 +58,9 @@ function useAvatar(userId: string, size: AvatarSize) {
 
   const [sizePixels] = useState(SIZES[size])
   const { downloadAvatar, getPublicURLAvatar } = useCloudStorage()
-  const [publicURL] = useState(getPublicURLAvatar(userId))
+  const [publicURL] = useState<string | null>(
+    !hasUserAvatar ? null : getPublicURLAvatar(userId)
+  )
 
   function handleRefetch() {
     data && URL.revokeObjectURL(data)
@@ -118,6 +120,7 @@ export function Avatar({
 }): JSX.Element {
   const { uploadAvatar } = useCloudStorage()
   const { publicURL, sizePixels, avatarObjectUrl, refetch } = useAvatar(
+    hasUserAvatar,
     userId,
     size
   )

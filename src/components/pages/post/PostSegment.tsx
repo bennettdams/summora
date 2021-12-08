@@ -17,6 +17,7 @@ export function PostSegment({
   segment,
   index,
   postId,
+  authorId,
   isEditableInitial = false,
   isPostEditMode = false,
   onInitialEdit,
@@ -24,6 +25,7 @@ export function PostSegment({
   segment: SegmentPostPage
   index: number
   postId: string
+  authorId: string
   isEditableInitial: boolean
   isPostEditMode: boolean
   onInitialEdit: () => void
@@ -91,7 +93,7 @@ export function PostSegment({
   const formIdNew = `post-segment-item-new-${segment.id}`
 
   return (
-    // stretch for the post image
+    // items-stretch needed for the post image
     <div className="w-full flex items-stretch p-10 rounded-xl bg-gradient-to-br from-green-50 to-indigo-50">
       <div className="w-4/5">
         <div className="w-full h-20 text-xl flex flex-row">
@@ -187,11 +189,9 @@ export function PostSegment({
         <PostSegmentImage
           isEditable={isPostEditMode}
           postId={postId}
+          authorId={authorId}
           postSegmentId={segment.id}
-          hasSegmentImage={
-            segment.id === 'ckwlctm9o7030ssnl0t3k357q' ||
-            segment.id === 'ckwlctm9o7059ssnl4knakmeu'
-          }
+          hasSegmentImage={segment.hasImage}
         />
       </div>
     </div>

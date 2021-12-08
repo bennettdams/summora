@@ -11,6 +11,9 @@ const STORAGE = {
     bucket: 'avatars',
     rootFolder: 'public',
     extension: 'jpg',
+    /**
+     * `userId` is used in Supabase for the policy attached to that post
+     */
     filePath: (userId: string) =>
       `${STORAGE.AVATARS.rootFolder}/${userId}.${STORAGE.AVATARS.extension}`,
   },
@@ -18,8 +21,11 @@ const STORAGE = {
     bucket: 'post-images',
     rootFolder: 'public',
     extension: 'jpg',
-    filePath: (postId: string, postSegmentId: string) =>
-      `${STORAGE.POST_IMAGES.rootFolder}/${postId}/${postSegmentId}.${STORAGE.POST_IMAGES.extension}`,
+    /**
+     * `authorId` is used in Supabase for the policy attached to that post
+     */
+    filePath: (postId: string, authorId: string, postSegmentId: string) =>
+      `${STORAGE.POST_IMAGES.rootFolder}/${postId}/${authorId}/${postSegmentId}.${STORAGE.POST_IMAGES.extension}`,
   },
 } as const
 
@@ -140,6 +146,7 @@ export function getPublicURLAvatarSupabase(userId: string): string | null {
 // POST SEGMENT IMAGE #########
 export async function uploadPostSegmentImageSupabase(
   postId: string,
+  authorId: string,
   postSegmentId: string,
   postSegmentImageFileParsed: Buffer,
   req: NextApiRequest
@@ -150,7 +157,7 @@ export async function uploadPostSegmentImageSupabase(
   const { error } = await supabaseServer.storage
     .from(STORAGE.POST_IMAGES.bucket)
     .upload(
-      STORAGE.POST_IMAGES.filePath(postId, postSegmentId),
+      STORAGE.POST_IMAGES.filePath(postId, authorId, postSegmentId),
       postSegmentImageFileParsed,
       {
         upsert: true,
@@ -167,11 +174,12 @@ export async function uploadPostSegmentImageSupabase(
 
 export async function downloadPostSegmentImageSupabase(
   postId: string,
+  authorId: string,
   postSegmentId: string
 ): Promise<Blob | null> {
   const { data, error } = await supabase.storage
     .from(STORAGE.POST_IMAGES.bucket)
-    .download(STORAGE.POST_IMAGES.filePath(postId, postSegmentId))
+    .download(STORAGE.POST_IMAGES.filePath(postId, authorId, postSegmentId))
 
   if (error) {
     throw new Error(
@@ -184,11 +192,12 @@ export async function downloadPostSegmentImageSupabase(
 
 export function getPublicURLPostSegmentImageSupabase(
   postId: string,
+  authorId: string,
   postSegmentId: string
 ): string | null {
   const { publicURL, error } = supabase.storage
     .from(STORAGE.POST_IMAGES.bucket)
-    .getPublicUrl(STORAGE.POST_IMAGES.filePath(postId, postSegmentId))
+    .getPublicUrl(STORAGE.POST_IMAGES.filePath(postId, authorId, postSegmentId))
 
   if (error) {
     throw new Error(

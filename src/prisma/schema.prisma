@@ -61,6 +61,7 @@ model PostSegment {
   updatedAt DateTime          @updatedAt
   title     String
   subtitle  String?
+  hasImage  Boolean           @default(false)
   items     PostSegmentItem[]
   // for Post.segments
   Post      Post              @relation(fields: [postId], references: [id])

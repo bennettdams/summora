@@ -76,10 +76,16 @@ export default async function _imageUploadPostSegmentAPI(
               // TODO convert png etc.
               await uploadPostSegmentImageSupabase(
                 postForSegment.postId,
+                userId,
                 postSegmentId,
                 fileParsed,
                 req
               )
+
+              await prisma.postSegment.update({
+                where: { id: postSegmentId },
+                data: { hasImage: true },
+              })
 
               const message = `Uploaded post segment image for ${postSegmentId}`
               console.info(`[API] ${message}`)

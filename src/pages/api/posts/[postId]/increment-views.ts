@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../../prisma/prisma'
-import { logAPI } from '../../../../util/logger'
+// import { logAPI } from '../../../../util/logger'
 
 export type ApiPostIncrementViews = ReturnType<typeof incrementViews>
 
@@ -19,7 +19,7 @@ export default async function _incrementPostViewsAPI(
     query: { postId },
     method,
   } = req
-  logAPI('POST_INCREMENT_VIEWS', method)
+  // logAPI('POST_INCREMENT_VIEWS', method)
 
   if (!postId) {
     res.status(500).end('No post ID!')
