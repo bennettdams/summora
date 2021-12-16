@@ -14,6 +14,7 @@ import { SegmentPostPage } from './PostPage'
 import { PostSegmentImage } from '../../PostSegmentImage'
 
 export function PostSegment({
+  postSegmentId,
   segment,
   index,
   postId,
@@ -22,6 +23,7 @@ export function PostSegment({
   isPostEditMode = false,
   onInitialEdit,
 }: {
+  postSegmentId: string
   segment: SegmentPostPage
   index: number
   postId: string
@@ -54,7 +56,7 @@ export function PostSegment({
       setIsSegmentEditable(false)
 
       await updatePostSegment({
-        postSegmentId: segment.id,
+        postSegmentId,
         postSegmentToUpdate,
       })
     }
@@ -72,7 +74,7 @@ export function PostSegment({
       setIsSegmentEditable(false)
 
       await updatePostSegment({
-        postSegmentId: segment.id,
+        postSegmentId,
         postSegmentToUpdate,
       })
     }
@@ -85,12 +87,12 @@ export function PostSegment({
       }
 
     await createPostSegmentItem({
-      postSegmentId: segment.id,
+      postSegmentId,
       postSegmentItemToCreate,
     })
   }
 
-  const formIdNew = `post-segment-item-new-${segment.id}`
+  const formIdNew = `post-segment-item-new-${postSegmentId}`
 
   return (
     // items-stretch needed for the post image
@@ -130,7 +132,7 @@ export function PostSegment({
 
               <div className="ml-2 flex flex-col">
                 <div className="flex-1">
-                  <span>{segment.title}</span> <span>{segment.id}</span>
+                  <span>{segment.title}</span> <span>{postSegmentId}</span>
                 </div>
 
                 <div className="flex-1">
@@ -190,7 +192,7 @@ export function PostSegment({
           isEditable={isPostEditMode}
           postId={postId}
           authorId={authorId}
-          postSegmentId={segment.id}
+          postSegmentId={postSegmentId}
           hasSegmentImage={segment.hasImage}
         />
       </div>

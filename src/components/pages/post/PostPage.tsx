@@ -429,6 +429,7 @@ function PostPageInternal({
             <div className="space-y-16">
               {post.segments.map((segment, index) => (
                 <PostSegment
+                  postSegmentId={segment.id}
                   index={index + 1}
                   postId={post.id}
                   authorId={post.authorId}

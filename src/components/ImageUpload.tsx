@@ -5,11 +5,13 @@ import { LoadingAnimation } from '../components/LoadingAnimation'
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png']
 
 export function ImageUpload({
+  inputId,
   uploadFn,
   onUpload,
 }: {
   uploadFn: (file: File) => Promise<void>
   onUpload?: () => void
+  inputId: string
 }): JSX.Element {
   const [isUploading, setIsUploading] = useState(false)
 
@@ -47,7 +49,7 @@ export function ImageUpload({
     >
       <label
         className="w-full h-full grid place-items-center cursor-pointer"
-        htmlFor="file-upload"
+        htmlFor={inputId}
       >
         {isUploading ? (
           <LoadingAnimation />
@@ -60,7 +62,7 @@ export function ImageUpload({
       </label>
       <input
         type="file"
-        id="file-upload"
+        id={inputId}
         className="hidden"
         accept="image/jpg, image/jpeg, image/png"
         onChange={handleUpload}

@@ -131,6 +131,7 @@ export function Avatar({
         <div className="absolute z-30 group h-full w-full hover:cursor-pointer hover:bg-lime-200 rounded-full hover:bg-opacity-50">
           <span className="h-full w-full grid place-items-center invisible group-hover:visible">
             <ImageUpload
+              inputId="avatar-upload"
               uploadFn={async (file) => {
                 await uploadAvatar(file)
               }}

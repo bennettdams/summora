@@ -106,6 +106,7 @@ export function PostSegmentImage({
         <div className="absolute z-30 group h-full w-full hover:cursor-pointer hover:bg-lime-200 rounded-full hover:bg-opacity-50">
           <span className="h-full w-full grid place-items-center invisible group-hover:visible">
             <ImageUpload
+              inputId={postSegmentId}
               uploadFn={async (file) => {
                 await uploadPostSegmentImage(postId, postSegmentId, file)
               }}
