@@ -24,30 +24,30 @@
     "@headlessui/react": "^1.4.2",
     "@heroicons/react": "^1.0.5",
     "@prisma/client": "^3.6.0",
-    "@supabase/supabase-js": "^1.25.2",
+    "@supabase/supabase-js": "^1.28.5",
     "@tailwindcss/forms": "^0.3.4",
     "formidable": "^1.2.2",
     "next": "^12.0.7",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-query": "^3.34.0"
+    "react-query": "^3.34.4"
   },
   "devDependencies": {
     "@types/formidable": "^1.2.4",
     "@types/node": "^16.11.11",
     "@types/react": "17.0.37",
-    "@typescript-eslint/eslint-plugin": "^5.6.0",
-    "@typescript-eslint/parser": "^5.6.0",
+    "@typescript-eslint/eslint-plugin": "^5.7.0",
+    "@typescript-eslint/parser": "^5.7.0",
     "autoprefixer": "^10.4.0",
-    "eslint": "8.4.0",
+    "eslint": "8.4.1",
     "eslint-config-next": "^12.0.7",
     "eslint-config-prettier": "^8.3.0",
-    "postcss": "^8.4.4",
+    "postcss": "^8.4.5",
     "prettier": "^2.5.1",
     "prisma": "^3.6.0",
     "tailwindcss": "^2.2.19",
     "ts-node": "^10.4.0",
-    "typescript": "4.5.2"
+    "typescript": "4.5.4"
   },
   "//devDependencies": [
     "autoprefixer & postcss for Tailwind",
