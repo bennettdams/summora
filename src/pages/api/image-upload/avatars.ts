@@ -53,6 +53,8 @@ export default async function _imageUploadAvatarsAPI(
           await prisma.user.update({
             where: { userId },
             data: { hasAvatar: true },
+            // return not used
+            select: null,
           })
 
           console.info(`[API] uploaded avatar for user ${userId}`)

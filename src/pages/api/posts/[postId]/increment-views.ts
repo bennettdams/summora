@@ -8,6 +8,7 @@ async function incrementViews(postId: string): Promise<void> {
   await prisma.post.update({
     where: { id: postId },
     data: { noOfViews: { increment: 1 } },
+    select: null,
   })
 }
 

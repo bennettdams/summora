@@ -60,7 +60,7 @@ export default async function _imageUploadPostSegmentAPI(
              */
             const postForSegment = await prisma.postSegment.findUnique({
               where: { id: postSegmentId },
-              include: { Post: { select: { authorId: true } } },
+              select: { postId: true, Post: { select: { authorId: true } } },
             })
 
             if (!postForSegment) {
@@ -85,6 +85,7 @@ export default async function _imageUploadPostSegmentAPI(
               await prisma.postSegment.update({
                 where: { id: postSegmentId },
                 data: { hasImage: true },
+                select: null,
               })
 
               const message = `Uploaded post segment image for ${postSegmentId}`

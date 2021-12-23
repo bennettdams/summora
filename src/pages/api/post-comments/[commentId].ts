@@ -7,7 +7,10 @@ export type ApiPostCommentDelete = boolean
 
 async function deletePostComment(commentId: string) {
   try {
-    return await prisma.postComment.delete({ where: { commentId } })
+    return await prisma.postComment.delete({
+      where: { commentId },
+      select: null,
+    })
   } catch (error) {
     throw new Error(`Error while deleting post comment: ${error}`)
   }
