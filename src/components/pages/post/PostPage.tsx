@@ -568,7 +568,7 @@ function Comment({
             <PlusCircleIcon className="h-4 w-4" />
             <MinusCircleIcon className="h-4 w-4" />
           </div>
-          <div className="flex-grow ml-2">
+          <div className="grow ml-2">
             <span>{comment.text}</span>
           </div>
         </div>

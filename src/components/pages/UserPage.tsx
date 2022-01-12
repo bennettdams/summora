@@ -28,7 +28,7 @@ function UserPageInternal({
       <PageSection>
         <Box>
           <div className="flex">
-            <div className="flex-grow">
+            <div className="grow">
               <h2 className="text-3xl">{user.username}</h2>
               <p>User ID {userId}</p>
               <p>Created at {new Date(user.createdAt).toISOString()}</p>

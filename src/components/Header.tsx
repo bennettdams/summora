@@ -118,7 +118,7 @@ export function Header(): JSX.Element {
 
               {/* Navbar content */}
               <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-                <div className="flex-shrink-0 flex items-center">
+                <div className="shrink-0 flex items-center">
                   <Link to="/">
                     <div className="text-left text-4xl font-extrabold leading-none tracking-tight">
                       <span className="uppercase decoration-clone bg-clip-text text-transparent bg-gradient-to-b from-amber-400 to-orange-800">

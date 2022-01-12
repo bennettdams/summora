@@ -103,7 +103,7 @@ export function PostSegment({
             <span className="text-4xl italic">{index}</span>
           </div>
           {isPostEditMode && isSegmentEditable ? (
-            <div className="flex-grow" ref={refSegmentEdit}>
+            <div className="grow" ref={refSegmentEdit}>
               <FormInput
                 placeholder="Title.."
                 initialValue={segment.title}
@@ -118,7 +118,7 @@ export function PostSegment({
             </div>
           ) : (
             <div
-              className={`flex-grow flex ${
+              className={`grow flex ${
                 isPostEditMode && 'hover:text-orange-700 cursor-pointer'
               }`}
               onClick={() => setIsSegmentEditable(true)}
