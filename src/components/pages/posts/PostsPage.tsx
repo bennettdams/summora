@@ -134,7 +134,7 @@ export function PostsPage({
       <PageSection title="Find by category">
         <div className="grid gap-6 grid-cols-2 md:grid-cols-4 text-center text-lg">
           {postCategories.map((category) => (
-            <Box smallPadding key={category.id}>
+            <Box padding="small" key={category.id}>
               <span className="hover:font-bold cursor-pointer">
                 {category.title}
               </span>

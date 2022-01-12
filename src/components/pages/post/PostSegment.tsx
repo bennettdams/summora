@@ -96,7 +96,7 @@ export function PostSegment({
 
   return (
     // items-stretch needed for the post image
-    <div className="w-full flex items-stretch p-10 rounded-xl bg-gradient-to-br from-green-50 to-indigo-50">
+    <div className="w-full flex items-stretch p-10 rounded-xl shadow-2xl bg-gradient-to-br from-green-50 to-indigo-50">
       <div className="w-4/5">
         <div className="w-full h-20 text-xl flex flex-row">
           <div className="w-20 h-full text-left">

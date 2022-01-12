@@ -50,7 +50,7 @@ export function PostSegmentItem({
       key={item.id}
       onClick={!isPostEditMode ? undefined : () => setIsEditable(true)}
       refExternal={refEdit}
-      noPadding
+      padding={false}
       isHighlighted={isEditable}
       inline
     >

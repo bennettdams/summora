@@ -47,9 +47,9 @@ export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
       ) : posts.length === 0 ? (
         <div>No posts yet.</div>
       ) : showLongPost ? (
-        <div className="mt-10 flex flex-col space-y-10">
+        <div className="mt-10 flex flex-col space-y-20">
           {posts.map((post) => (
-            <PostListItem
+            <PostsListItem
               key={post.id}
               post={post}
               userId={user?.userId ?? null}
@@ -67,7 +67,7 @@ export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
   )
 }
 
-function PostListItem({
+function PostsListItem({
   post,
   userId,
 }: {
@@ -75,7 +75,7 @@ function PostListItem({
   userId: string | null
 }): JSX.Element {
   return (
-    <Box smallPadding>
+    <Box padding="small" shadow="xxl">
       <div className="w-full text-center">
         <Link to={`/post/${post.id}`}>
           <div className="relative">
@@ -152,7 +152,7 @@ function PostListItem({
 function PostItemShort({ post }: { post: PostPostsList }): JSX.Element {
   return (
     <Link to={`/post/${post.id}`}>
-      <Box smallPadding>
+      <Box padding="small">
         <div className="w-full h-60 text-center relative">
           <h2 className="tracking-widest text-xs font-semibold text-gray-400">
             {post.categoryTitle}

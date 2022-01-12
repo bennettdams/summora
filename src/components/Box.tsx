@@ -2,32 +2,35 @@ import { ReactNode, RefObject } from 'react'
 
 export function Box({
   children,
-  noPadding = false,
-  smallPadding = false,
   onClick,
   refExternal,
   isHighlighted = false,
   inline = false,
+  padding = 'medium',
+  shadow = false,
 }: {
   children: ReactNode
   onClick?: () => void
   refExternal?: RefObject<HTMLDivElement>
   isHighlighted?: boolean
   inline?: boolean
-} & (
-  | { smallPadding?: boolean; noPadding?: never }
-  | { smallPadding?: never; noPadding?: boolean }
-)): JSX.Element {
+  padding?: false | 'small' | 'medium'
+  shadow?: false | 'xxl'
+}): JSX.Element {
   return (
     <div
       onClick={() => onClick && onClick()}
       ref={refExternal}
       className={`box rounded-xl ${
-        noPadding
-          ? 'p-0 shadow-sm hover:shadow'
-          : smallPadding
-          ? 'p-4 shadow-md hover:shadow-lg'
-          : 'p-10 shadow-md hover:shadow-lg'
+        padding === false
+          ? 'p-0'
+          : padding === 'small'
+          ? 'p-4'
+          : padding === 'medium'
+          ? 'p-10'
+          : ''
+      } ${
+        shadow === false ? 'shadow-none' : shadow === 'xxl' ? 'shadow-2xl' : ''
       } ${onClick && 'cursor-pointer'} ${
         !isHighlighted ? 'bg-white' : 'from-fuchsia-200 to-blue-200'
       } ${inline && 'inline-block'}`}
