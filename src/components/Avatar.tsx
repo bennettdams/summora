@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { ImageUpload } from './ImageUpload'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useCloudStorage } from '../services/use-cloud-storage'
 
@@ -58,9 +58,14 @@ function useAvatar(hasUserAvatar: boolean, userId: string, size: AvatarSize) {
 
   const [sizePixels] = useState(SIZES[size])
   const { downloadAvatar, getPublicURLAvatar } = useCloudStorage()
-  const [publicURL] = useState<string | null>(
+
+  const [publicURL, setPublicURL] = useState<string | null>(
     !hasUserAvatar ? null : getPublicURLAvatar(userId)
   )
+  // only needed for client-side avatar of user (in navbar)
+  useEffect(() => {
+    if (!publicURL && !!hasUserAvatar) setPublicURL(getPublicURLAvatar(userId))
+  }, [hasUserAvatar, publicURL, userId, getPublicURLAvatar])
 
   function handleRefetch() {
     data && URL.revokeObjectURL(data)

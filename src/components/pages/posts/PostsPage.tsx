@@ -36,7 +36,7 @@ export function PostsPage({
 
       <PageSection hideTopMargin>
         <div>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
             <div className="lg:text-center">
               <h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
                 User-generated content
