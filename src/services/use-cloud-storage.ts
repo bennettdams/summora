@@ -31,23 +31,15 @@ export function useCloudStorage() {
   )
 
   const downloadPostSegmentImage = useCallback(
-    async (postId: string, authorId: string, postSegmentId: string) => {
-      return await downloadPostSegmentImageSupabase(
-        postId,
-        authorId,
-        postSegmentId
-      )
+    async (postId: string, authorId: string, imageId: string) => {
+      return await downloadPostSegmentImageSupabase(postId, authorId, imageId)
     },
     []
   )
 
   const getPublicURLPostSegmentImage = useCallback(
-    (postId: string, authorId: string, postSegmentId: string) => {
-      return getPublicURLPostSegmentImageSupabase(
-        postId,
-        authorId,
-        postSegmentId
-      )
+    (postId: string, authorId: string, imageId: string) => {
+      return getPublicURLPostSegmentImageSupabase(postId, authorId, imageId)
     },
     []
   )

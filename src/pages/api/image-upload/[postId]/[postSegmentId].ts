@@ -5,6 +5,7 @@ import { logAPI } from '../../../../util/logger'
 import { prisma } from '../../../../prisma/prisma'
 import { parseMultipartForm } from '../../../../services/image-upload-service'
 import { ApiImageUploadPostSegmentsRequestBody } from '../../../../services/api-service'
+import { createRandomId } from '../../../../util/random-id'
 
 export type ApiImageUploadPostSegment = void
 
@@ -72,19 +73,20 @@ export default async function _imageUploadPostSegmentAPI(
                 message: `User ${userId} is not the author of the post for post segment ${postSegmentId}.`,
               })
             } else {
+              const imageId = `segment-${postSegmentId}-${createRandomId()}`
               // TODO validation?
               // TODO convert png etc.
               await uploadPostSegmentImageSupabase(
                 postForSegment.postId,
                 userId,
-                postSegmentId,
+                imageId,
                 fileParsed,
                 req
               )
 
               await prisma.postSegment.update({
                 where: { id: postSegmentId },
-                data: { hasImage: true },
+                data: { imageId },
                 select: null,
               })
 

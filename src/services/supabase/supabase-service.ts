@@ -24,8 +24,8 @@ const STORAGE = {
     /**
      * `authorId` is used in Supabase for the policy attached to that post
      */
-    filePath: (postId: string, authorId: string, postSegmentId: string) =>
-      `${STORAGE.POST_IMAGES.rootFolder}/${postId}/${authorId}/${postSegmentId}.${STORAGE.POST_IMAGES.extension}`,
+    filePath: (postId: string, authorId: string, imageId: string) =>
+      `${STORAGE.POST_IMAGES.rootFolder}/${postId}/${authorId}/${imageId}.${STORAGE.POST_IMAGES.extension}`,
   },
 } as const
 
@@ -147,7 +147,7 @@ export function getPublicURLAvatarSupabase(userId: string): string | null {
 export async function uploadPostSegmentImageSupabase(
   postId: string,
   authorId: string,
-  postSegmentId: string,
+  imageId: string,
   postSegmentImageFileParsed: Buffer,
   req: NextApiRequest
 ): Promise<void> {
@@ -157,7 +157,7 @@ export async function uploadPostSegmentImageSupabase(
   const { error } = await supabaseServer.storage
     .from(STORAGE.POST_IMAGES.bucket)
     .upload(
-      STORAGE.POST_IMAGES.filePath(postId, authorId, postSegmentId),
+      STORAGE.POST_IMAGES.filePath(postId, authorId, imageId),
       postSegmentImageFileParsed,
       {
         upsert: true,
@@ -175,11 +175,11 @@ export async function uploadPostSegmentImageSupabase(
 export async function downloadPostSegmentImageSupabase(
   postId: string,
   authorId: string,
-  postSegmentId: string
+  imageId: string
 ): Promise<Blob | null> {
   const { data, error } = await supabase.storage
     .from(STORAGE.POST_IMAGES.bucket)
-    .download(STORAGE.POST_IMAGES.filePath(postId, authorId, postSegmentId))
+    .download(STORAGE.POST_IMAGES.filePath(postId, authorId, imageId))
 
   if (error) {
     throw new Error(
@@ -193,11 +193,11 @@ export async function downloadPostSegmentImageSupabase(
 export function getPublicURLPostSegmentImageSupabase(
   postId: string,
   authorId: string,
-  postSegmentId: string
+  imageId: string
 ): string | null {
   const { publicURL, error } = supabase.storage
     .from(STORAGE.POST_IMAGES.bucket)
-    .getPublicUrl(STORAGE.POST_IMAGES.filePath(postId, authorId, postSegmentId))
+    .getPublicUrl(STORAGE.POST_IMAGES.filePath(postId, authorId, imageId))
 
   if (error) {
     throw new Error(
