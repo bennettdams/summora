@@ -6,17 +6,12 @@ import { Link } from './Link'
 import { LoadingAnimation } from './LoadingAnimation'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { MenuIcon, XIcon, BellIcon } from '@heroicons/react/outline'
+import { useRouter } from 'next/router'
 
-/**
- * FROM https://tailwindui.com/components/application-ui/navigation/navbars
- */
-
-const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
-  { name: 'Team', href: '#', current: false },
-  { name: 'Projects', href: '#', current: false },
-  { name: 'Calendar', href: '#', current: false },
-]
+const NAV_ROUTES = [
+  { name: 'Home', href: '/' },
+  { name: 'Explore', href: '/explore' },
+] as const
 
 function classNames(...classes: unknown[]) {
   return classes.filter(Boolean).join(' ')
@@ -97,6 +92,7 @@ function UserNavbar() {
 
 export function Header(): JSX.Element {
   const isLoading = useRouteChange()
+  const { asPath } = useRouter()
 
   return (
     <Disclosure as="nav" className="w-full z-40 fixed top-0 bg-green-900">
@@ -131,19 +127,21 @@ export function Header(): JSX.Element {
                 {/* Navbar nav items */}
                 <div className="hidden sm:block sm:ml-6">
                   <div className="flex space-x-4">
-                    {navigation.map((item) => (
+                    {NAV_ROUTES.map((route) => (
                       <a
-                        key={item.name}
-                        href={item.href}
+                        key={route.name}
+                        href={route.href}
                         className={classNames(
-                          item.current
+                          route.href === asPath
                             ? 'bg-gray-900 text-white'
                             : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                           'px-3 py-2 rounded-md text-sm font-semibold'
                         )}
-                        aria-current={item.current ? 'page' : undefined}
+                        aria-current={
+                          route.href === asPath ? 'page' : undefined
+                        }
                       >
-                        {item.name}
+                        {route.name}
                       </a>
                     ))}
                   </div>
@@ -170,20 +168,20 @@ export function Header(): JSX.Element {
           {/* Navbar items mobile */}
           <Disclosure.Panel className="sm:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              {navigation.map((item) => (
+              {NAV_ROUTES.map((route) => (
                 <Disclosure.Button
-                  key={item.name}
+                  key={route.name}
                   as="a"
-                  href={item.href}
+                  href={route.href}
                   className={classNames(
-                    item.current
+                    route.href === asPath
                       ? 'bg-gray-900 text-white'
                       : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                     'block px-3 py-2 rounded-md text-base font-semibold'
                   )}
-                  aria-current={item.current ? 'page' : undefined}
+                  aria-current={route.href === asPath ? 'page' : undefined}
                 >
-                  {item.name}
+                  {route.name}
                 </Disclosure.Button>
               ))}
             </div>
