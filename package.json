@@ -22,33 +22,33 @@
     "p:seed": "npx prisma db seed"
   },
   "dependencies": {
-    "@headlessui/react": "^1.4.2",
+    "@headlessui/react": "^1.4.3",
     "@heroicons/react": "^1.0.5",
-    "@prisma/client": "^3.8.0",
-    "@supabase/supabase-js": "^1.29.1",
+    "@prisma/client": "^3.8.1",
+    "@supabase/supabase-js": "^1.29.3",
     "formidable": "^1.2.2",
     "next": "^12.0.8",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-query": "^3.34.8"
+    "react-query": "^3.34.12"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.4.0",
     "@types/formidable": "^1.2.4",
     "@types/node": "^16.11.11",
     "@types/react": "17.0.38",
-    "@typescript-eslint/eslint-plugin": "^5.9.1",
-    "@typescript-eslint/parser": "^5.9.1",
+    "@typescript-eslint/eslint-plugin": "^5.10.0",
+    "@typescript-eslint/parser": "^5.10.0",
     "autoprefixer": "^10.4.2",
-    "eslint": "8.6.0",
+    "eslint": "8.7.0",
     "eslint-config-next": "^12.0.8",
     "eslint-config-prettier": "^8.3.0",
     "postcss": "^8.4.5",
     "prettier": "^2.5.1",
-    "prisma": "^3.8.0",
-    "tailwindcss": "^3.0.13",
+    "prisma": "^3.8.1",
+    "tailwindcss": "^3.0.15",
     "ts-node": "^10.4.0",
-    "typescript": "4.5.4"
+    "typescript": "4.5.5"
   },
   "//devDependencies": [
     "autoprefixer & postcss for Tailwind",
