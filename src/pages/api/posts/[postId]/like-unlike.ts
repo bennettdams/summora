@@ -53,7 +53,7 @@ async function likeUnlikePost(postId: string, userId: string) {
   }
 }
 
-export default async function _likeUnlikePostAPI(
+export default async function _apiLikeUnlikePost(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {

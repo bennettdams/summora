@@ -93,7 +93,7 @@ async function updatePost(
   }
 }
 
-export default async function _postAPI(
+export default async function _apiPost(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {

@@ -29,7 +29,7 @@ async function updatePostSegmentItem(
   }
 }
 
-export default async function _postSegmentItemAPI(
+export default async function _apiPostSegmentItem(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {

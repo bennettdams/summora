@@ -12,7 +12,7 @@ async function incrementViews(postId: string): Promise<void> {
   })
 }
 
-export default async function _incrementPostViewsAPI(
+export default async function _apiIncrementPostViews(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {

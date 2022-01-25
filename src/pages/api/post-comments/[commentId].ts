@@ -16,7 +16,7 @@ async function deletePostComment(commentId: string) {
   }
 }
 
-export default async function _postCommentAPI(
+export default async function _apiPostComment(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {

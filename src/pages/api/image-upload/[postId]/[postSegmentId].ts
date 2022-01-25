@@ -20,7 +20,7 @@ export const config = {
   },
 }
 
-export default async function _imageUploadPostSegmentAPI(
+export default async function _apiImageUploadPostSegment(
   req: Request,
   res: NextApiResponse
 ): Promise<void> {

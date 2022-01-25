@@ -32,7 +32,7 @@ async function createPostComment(
   }
 }
 
-export default async function _postCommentsAPI(
+export default async function _apiPostComments(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {

@@ -27,7 +27,7 @@ async function findTags(searchInput: string) {
   }
 }
 
-export default async function _tagsSearchAPI(
+export default async function _apiTagsSearch(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {

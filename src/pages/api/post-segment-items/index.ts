@@ -27,7 +27,7 @@ async function createPostSegmentItem(
   }
 }
 
-export default async function _postSegmentItemsAPI(
+export default async function _apiPostSegmentItems(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {

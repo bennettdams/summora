@@ -34,7 +34,7 @@ async function findPosts() {
   }
 }
 
-export default async function _postsAPI(
+export default async function _apiPosts(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {

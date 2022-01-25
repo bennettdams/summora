@@ -12,7 +12,7 @@ async function findUser(userId: string) {
   })
 }
 
-export default async function _userAPI(
+export default async function _apiUser(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {

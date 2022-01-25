@@ -19,7 +19,7 @@ export const config = {
   },
 }
 
-export default async function _imageUploadAvatarsAPI(
+export default async function _apiImageUploadAvatars(
   req: Request,
   res: NextApiResponse
 ): Promise<void> {

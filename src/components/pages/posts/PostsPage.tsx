@@ -17,14 +17,16 @@ export function PostsPage({
   return (
     <Page
       pageHeader={
-        <div className="grid h-96 place-items-center bg-gradient-to-tr from-amber-300 to-lime-600 text-center">
+        <div className="text-gradient-to-tr mt-20 grid place-items-center from-amber-300 to-lime-600 text-center">
           <div>
-            <p className="text-7xl font-extrabold uppercase leading-none tracking-tight text-white">
-              Condun
-            </p>
-            <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-lime-100 sm:text-4xl">
-              Everything, but summarized
-            </p>
+            <div className="text-center text-4xl font-extrabold leading-none tracking-tight">
+              <p className="bg-gradient-to-b from-amber-200 to-orange-300 decoration-clone bg-clip-text text-8xl uppercase text-transparent">
+                Condun
+              </p>
+              <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-lime-600 sm:text-4xl">
+                Everything, but summarized.
+              </p>
+            </div>
           </div>
         </div>
       }
@@ -35,6 +37,20 @@ export function PostsPage({
       </Head>
 
       <PageSection hideTopMargin>
+        <div className="flex flex-row space-x-10">
+          <div className="flex-1">
+            <Box>No. of posts {noOfPosts}</Box>
+          </div>
+          <div className="flex-1">
+            <Box>No. of posts last 24 hours{noOfPostsCreatedLast24Hours}</Box>
+          </div>
+          <div className="flex-1">
+            <Box>{noOfPostsCreatedLast24Hours}</Box>
+          </div>
+        </div>
+      </PageSection>
+
+      <PageSection>
         <div>
           <div className="mx-auto max-w-7xl">
             <div className="lg:text-center">
@@ -117,20 +133,6 @@ export function PostsPage({
         </div>
       </PageSection>
 
-      <PageSection>
-        <div className="flex flex-row space-x-10">
-          <div className="flex-1">
-            <Box>No. of posts {noOfPosts}</Box>
-          </div>
-          <div className="flex-1">
-            <Box>No. of posts last 24 hours{noOfPostsCreatedLast24Hours}</Box>
-          </div>
-          <div className="flex-1">
-            <Box>{noOfPostsCreatedLast24Hours}</Box>
-          </div>
-        </div>
-      </PageSection>
-
       <PageSection title="Find by category">
         <div className="grid grid-cols-2 gap-6 text-center text-lg md:grid-cols-4">
           {postCategories.map((category) => (
@@ -144,7 +146,7 @@ export function PostsPage({
       </PageSection>
 
       <PageSection>
-        <div className="mx-auto max-w-7xl py-12 px-4 sm:px-6 lg:flex lg:items-center lg:justify-between lg:py-16 lg:px-8">
+        <div className="mx-auto max-w-7xl py-12 lg:flex lg:items-center lg:justify-between lg:py-16">
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
             <span className="block">
               Ready to make your knowledge to money?

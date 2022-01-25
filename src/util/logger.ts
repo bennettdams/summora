@@ -9,9 +9,12 @@ export function logAPI(
   method: string | undefined,
   additionalText?: string
 ): void {
-  let log = `[API] ${ROUTES_API[route]} | method: ${method}`
-  if (additionalText) {
-    log += ` | ${additionalText}`
+  if (process.env.NODE_ENV === 'development') {
+    let log = `[API] ${ROUTES_API[route]} | method: ${method}`
+    if (additionalText) {
+      log += ` | ${additionalText}`
+    }
+
+    console.info(log)
   }
-  console.info(log)
 }

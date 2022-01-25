@@ -21,7 +21,7 @@ async function createUser(userId: string, username: string) {
   })
 }
 
-export default async function _usersSignUpAPI(
+export default async function _apiUsersSignUp(
   req: Request,
   res: NextApiResponse
 ): Promise<void> {

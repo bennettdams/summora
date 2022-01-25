@@ -35,7 +35,7 @@ async function updatePostSegment(
   }
 }
 
-export default async function _postSegmentAPI(
+export default async function _apiPostSegment(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {

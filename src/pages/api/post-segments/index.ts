@@ -33,7 +33,7 @@ async function createPostSegment(
   }
 }
 
-export default async function _postSegmentsAPI(
+export default async function _apiPostSegments(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
