@@ -17,9 +17,9 @@ export function Button({
       onClick={onClick}
       disabled={disabled}
       className={
-        'p-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50' +
-        ' transition duration-75 ease-in-out bg-green-200 hover:bg-green-300' +
-        ' disabled:bg-gray-200 disabled:cursor-not-allowed'
+        'rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50' +
+        ' bg-green-200 transition duration-75 ease-in-out hover:bg-green-300' +
+        ' disabled:cursor-not-allowed disabled:bg-gray-200'
       }
     >
       {children}
@@ -37,7 +37,7 @@ export function ButtonAdd({
       onClick={onClick}
       disabled={disabled}
       className={
-        'disabled:bg-gray-200 cursor-pointer text-transparent bg-gradient-to-br from-orange-500 to-lime-600 hover:from-orange-300 hover:to-lime-300 rounded-full shadow-md disabled:cursor-not-allowed focus:outline-none'
+        'cursor-pointer rounded-full bg-gradient-to-br from-orange-500 to-lime-600 text-transparent shadow-md hover:from-orange-300 hover:to-lime-300 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-200'
       }
     >
       <IconAdd size={size} onClick={onClick} />

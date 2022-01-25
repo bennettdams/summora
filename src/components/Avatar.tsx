@@ -90,7 +90,7 @@ function AvatarPlaceholder({
 }): JSX.Element {
   return (
     <div
-      className="text-center rounded-full inline-flex items-center justify-center bg-gray-200 text-gray-400"
+      className="inline-flex items-center justify-center rounded-full bg-gray-200 text-center text-gray-400"
       style={{ width: sizePixels, height: sizePixels }}
     >
       <svg
@@ -131,10 +131,10 @@ export function Avatar({
   )
 
   return (
-    <div className="relative h-full w-full inline-grid place-items-center">
+    <div className="relative inline-grid h-full w-full place-items-center">
       {isEditable && (
-        <div className="absolute z-30 group h-full w-full hover:cursor-pointer hover:bg-lime-200 rounded-full hover:bg-opacity-50">
-          <span className="h-full w-full grid place-items-center invisible group-hover:visible">
+        <div className="group absolute z-30 h-full w-full rounded-full hover:cursor-pointer hover:bg-lime-200 hover:bg-opacity-50">
+          <span className="invisible grid h-full w-full place-items-center group-hover:visible">
             <ImageUpload
               inputId="avatar-upload"
               uploadFn={async (file) => {

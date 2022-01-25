@@ -33,7 +33,7 @@ export function TagsList({
         />
       ))}
       {showAddButton && onAddButtonClick && (
-        <div className="flex flex-row items-center ml-2 justify-center">
+        <div className="ml-2 flex flex-row items-center justify-center">
           <ButtonAdd onClick={onAddButtonClick} />
         </div>
       )}
@@ -60,7 +60,7 @@ export function Tag({
   return (
     <div
       ref={tagRef}
-      className={`inline m-1 py-0.5 px-1.5 leading-none rounded bg-orange-100 hover:bg-orange-200 text-orange-800 ${
+      className={`m-1 inline rounded bg-orange-100 py-0.5 px-1.5 leading-none text-orange-800 hover:bg-orange-200 ${
         onClick && 'cursor-pointer'
       }`}
       key={tag.id}
@@ -70,7 +70,7 @@ export function Tag({
       {!handleRemoving || !showRemoveConfirmation ? (
         <span
           onClick={() => !!handleRemoving && setShowRemoveConfirmation(true)}
-          className="uppercase inline-block text-xs tracking-widest"
+          className="inline-block text-xs uppercase tracking-widest"
         >
           {tag.title}
         </span>
@@ -80,7 +80,7 @@ export function Tag({
           onClick={() => !!handleRemoving && onClick?.(tag.id)}
         >
           <IconTrash size="small" />
-          <span className="uppercase inline-block text-xs font-semibold tracking-widest">
+          <span className="inline-block text-xs font-semibold uppercase tracking-widest">
             Confirm
           </span>
         </div>

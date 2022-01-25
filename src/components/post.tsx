@@ -79,7 +79,7 @@ function PostsListItem({
       <div className="w-full text-center">
         <Link to={`/post/${post.id}`}>
           <div className="relative">
-            <div className="inline absolute top-0 left-0">
+            <div className="absolute top-0 left-0 inline">
               <PostLikes
                 postId={post.id}
                 userId={userId}
@@ -87,20 +87,20 @@ function PostsListItem({
                 noOfLikes={post.noOfLikes}
               />
             </div>
-            <h2 className="tracking-widest text-xs font-semibold text-gray-400">
+            <h2 className="text-xs font-semibold tracking-widest text-gray-400">
               {post.categoryTitle}
             </h2>
-            <h1 className="mt-1 sm:text-2xl text-xl font-semibold">
+            <h1 className="mt-1 text-xl font-semibold sm:text-2xl">
               {post.title}
             </h1>
             <p className="mt-3 leading-relaxed">{post.subtitle}</p>
 
-            <div className="flex my-4 py-4 flex-row flex-nowrap overflow-y-hidden space-x-4">
+            <div className="my-4 flex flex-row flex-nowrap space-x-4 overflow-y-hidden py-4">
               {post.segments.map((segment) => {
                 return (
                   <div
                     key={segment.id}
-                    className="flex-none grid place-items-center w-60 h-32 bg-blue-100 rounded-lg"
+                    className="grid h-32 w-60 flex-none place-items-center rounded-lg bg-blue-100"
                   >
                     {segment.title}
                   </div>
@@ -110,28 +110,28 @@ function PostsListItem({
           </div>
         </Link>
 
-        <div className="text-center h-14 flex">
+        <div className="flex h-14 text-center">
           <div className="w-1/2 overflow-y-hidden">
             <TagsList tags={post.tags} />
           </div>
 
-          <div className="w-1/2 h-full leading-none flex justify-end space-x-4">
-            <div className="w-1/2 h-full flex flex-col">
+          <div className="flex h-full w-1/2 justify-end space-x-4 leading-none">
+            <div className="flex h-full w-1/2 flex-col">
               <div className="flex-1 space-x-5">
                 <Views noOfViews={post.noOfViews} />
                 <Comments noOfComments={post.noOfComments} />
               </div>
               <div className="flex-1">
-                <span className="text-gray-400 inline-flex items-center leading-none text-sm">
+                <span className="inline-flex items-center text-sm leading-none text-gray-400">
                   {post.updatedAt.toLocaleDateString()}
                 </span>
               </div>
             </div>
 
-            <div className="w-1/2 h-full">
+            <div className="h-full w-1/2">
               <div className="flex h-full justify-end">
                 <Link to={`user/${post.author.id}`}>
-                  <div className="flex h-full items-center space-x-4 px-4 rounded-lg hover:bg-lime-200">
+                  <div className="flex h-full items-center space-x-4 rounded-lg px-4 hover:bg-lime-200">
                     <span>{post.author.username}</span>
                     <Avatar
                       hasUserAvatar={post.author.hasAvatar ?? false}
@@ -153,18 +153,18 @@ function PostItemShort({ post }: { post: PostPostsList }): JSX.Element {
   return (
     <Link to={`/post/${post.id}`}>
       <Box padding="small">
-        <div className="w-full h-60 text-center relative">
-          <h2 className="tracking-widest text-xs font-semibold text-gray-400">
+        <div className="relative h-60 w-full text-center">
+          <h2 className="text-xs font-semibold tracking-widest text-gray-400">
             {post.categoryTitle}
           </h2>
-          <h1 className="mt-1 sm:text-2xl text-xl font-semibold">
+          <h1 className="mt-1 text-xl font-semibold sm:text-2xl">
             {post.title}
           </h1>
           <p className="mt-3 leading-relaxed">{post.subtitle}</p>
-          <div className="text-center mt-2 leading-none flex justify-center absolute bottom-0 w-full py-3 space-x-4">
+          <div className="absolute bottom-0 mt-2 flex w-full justify-center space-x-4 py-3 text-center leading-none">
             <Views noOfViews={post.noOfViews} />
             <Comments noOfComments={post.noOfComments} />
-            <span className="text-gray-400 inline-flex items-center leading-none text-sm">
+            <span className="inline-flex items-center text-sm leading-none text-gray-400">
               {post.updatedAt.toLocaleDateString()}
             </span>
           </div>

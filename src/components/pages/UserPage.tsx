@@ -79,7 +79,7 @@ function UserPageInternal({
 
           <div className="grid auto-rows-min grid-cols-3 text-center">
             <div className="col-start-1">
-              <div className="h-full grid place-items-center">
+              <div className="grid h-full place-items-center">
                 <Avatar
                   hasUserAvatar={user.hasAvatar ?? false}
                   userId={userId}
@@ -89,7 +89,7 @@ function UserPageInternal({
               <p>Small</p>
             </div>
             <div className="col-start-2">
-              <div className="h-full grid place-items-center">
+              <div className="grid h-full place-items-center">
                 <Avatar
                   hasUserAvatar={user.hasAvatar ?? false}
                   userId={userId}
@@ -99,7 +99,7 @@ function UserPageInternal({
               <p>Medium</p>
             </div>
             <div className="col-start-3">
-              <div className="h-full grid place-items-center">
+              <div className="grid h-full place-items-center">
                 <Avatar
                   hasUserAvatar={user.hasAvatar ?? false}
                   userId={userId}

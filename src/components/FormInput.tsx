@@ -41,7 +41,7 @@ export function FormInput({
   }
 
   return (
-    <form id={formId} onSubmit={handleSubmit} className="w-full inline-block">
+    <form id={formId} onSubmit={handleSubmit} className="inline-block w-full">
       <label htmlFor={`inputId ${id}`} className="block text-sm font-semibold">
         {children}
       </label>
@@ -57,7 +57,7 @@ export function FormInput({
           setInputValue(event.target.value)
         }
         id={`inputId ${id}`}
-        className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-md sm:text-sm border-gray-300 rounded-md disabled:bg-gray-100 disabled:cursor-not-allowed"
+        className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-gray-100 sm:text-sm"
       />
     </form>
   )

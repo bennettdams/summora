@@ -17,12 +17,12 @@ export function PostsPage({
   return (
     <Page
       pageHeader={
-        <div className="h-96 grid place-items-center bg-gradient-to-tr from-amber-300 to-lime-600 text-center">
+        <div className="grid h-96 place-items-center bg-gradient-to-tr from-amber-300 to-lime-600 text-center">
           <div>
-            <p className="uppercase text-7xl text-white font-extrabold leading-none tracking-tight">
+            <p className="text-7xl font-extrabold uppercase leading-none tracking-tight text-white">
               Condun
             </p>
-            <p className="mt-2 text-3xl text-lime-100 leading-8 font-extrabold tracking-tight sm:text-4xl">
+            <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-lime-100 sm:text-4xl">
               Everything, but summarized
             </p>
           </div>
@@ -36,12 +36,12 @@ export function PostsPage({
 
       <PageSection hideTopMargin>
         <div>
-          <div className="max-w-7xl mx-auto">
+          <div className="mx-auto max-w-7xl">
             <div className="lg:text-center">
-              <h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
+              <h2 className="text-base font-semibold uppercase tracking-wide text-indigo-600">
                 User-generated content
               </h2>
-              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight sm:text-4xl">
+              <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight sm:text-4xl">
                 A better way to learn
               </p>
               <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
@@ -51,16 +51,16 @@ export function PostsPage({
             </div>
 
             <div className="mt-10">
-              <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+              <dl className="space-y-10 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10 md:space-y-0">
                 <div className="relative">
                   <dt>
-                    <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                    <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-indigo-500 text-white">
                       <LightningBoltIcon
                         className="h-6 w-6"
                         aria-hidden="true"
                       />
                     </div>
-                    <p className="ml-16 text-lg leading-6 font-semibold text-gray-900">
+                    <p className="ml-16 text-lg font-semibold leading-6 text-gray-900">
                       Feature 1
                     </p>
                   </dt>
@@ -69,13 +69,13 @@ export function PostsPage({
 
                 <div className="relative">
                   <dt>
-                    <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                    <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-indigo-500 text-white">
                       <LightningBoltIcon
                         className="h-6 w-6"
                         aria-hidden="true"
                       />
                     </div>
-                    <p className="ml-16 text-lg leading-6 font-semibold text-gray-900">
+                    <p className="ml-16 text-lg font-semibold leading-6 text-gray-900">
                       Feature 2
                     </p>
                   </dt>
@@ -84,13 +84,13 @@ export function PostsPage({
 
                 <div className="relative">
                   <dt>
-                    <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                    <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-indigo-500 text-white">
                       <LightningBoltIcon
                         className="h-6 w-6"
                         aria-hidden="true"
                       />
                     </div>
-                    <p className="ml-16 text-lg leading-6 font-semibold text-gray-900">
+                    <p className="ml-16 text-lg font-semibold leading-6 text-gray-900">
                       Feature 3
                     </p>
                   </dt>
@@ -99,13 +99,13 @@ export function PostsPage({
 
                 <div className="relative">
                   <dt>
-                    <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                    <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-indigo-500 text-white">
                       <LightningBoltIcon
                         className="h-6 w-6"
                         aria-hidden="true"
                       />
                     </div>
-                    <p className="ml-16 text-lg leading-6 font-semibold text-gray-900">
+                    <p className="ml-16 text-lg font-semibold leading-6 text-gray-900">
                       Feature 4
                     </p>
                   </dt>
@@ -132,7 +132,7 @@ export function PostsPage({
       </PageSection>
 
       <PageSection title="Find by category">
-        <div className="grid gap-6 grid-cols-2 md:grid-cols-4 text-center text-lg">
+        <div className="grid grid-cols-2 gap-6 text-center text-lg md:grid-cols-4">
           {postCategories.map((category) => (
             <Box padding="small" key={category.id}>
               <span className="hover:font-bold cursor-pointer">
@@ -144,7 +144,7 @@ export function PostsPage({
       </PageSection>
 
       <PageSection>
-        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
+        <div className="mx-auto max-w-7xl py-12 px-4 sm:px-6 lg:flex lg:items-center lg:justify-between lg:py-16 lg:px-8">
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
             <span className="block">
               Ready to make your knowledge to money?
@@ -157,7 +157,7 @@ export function PostsPage({
             <div className="inline-flex rounded-md shadow">
               <a
                 href="#"
-                className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-semibold rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-5 py-3 text-base font-semibold text-white hover:bg-indigo-700"
               >
                 Sign Up
               </a>

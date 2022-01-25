@@ -41,35 +41,36 @@ async function findPosts(prisma: PrismaClient) {
   }
 }
 
-export const getStaticProps: GetStaticProps<PostsPageProps & ServerPageProps> =
-  async () => {
-    const posts: ApiPosts = (await findPosts(prisma)).map((post) => ({
-      ...post,
-      noOfLikes: post.likedBy.length,
-    }))
+export const getStaticProps: GetStaticProps<
+  PostsPageProps & ServerPageProps
+> = async () => {
+  const posts: ApiPosts = (await findPosts(prisma)).map((post) => ({
+    ...post,
+    noOfLikes: post.likedBy.length,
+  }))
 
-    const client = hydrationHandler.createClient()
-    prefillServer(client, posts)
+  const client = hydrationHandler.createClient()
+  prefillServer(client, posts)
 
-    const postCategories = await prisma.postCategory.findMany()
+  const postCategories = await prisma.postCategory.findMany()
 
-    const now = new Date()
-    const nowYesterday = new Date(now.setHours(now.getHours() - 24))
-    const noOfPosts = await prisma.post.count()
-    const noOfPostsCreatedLast24Hours = await prisma.post.count({
-      where: { createdAt: { gte: nowYesterday } },
-    })
+  const now = new Date()
+  const nowYesterday = new Date(now.setHours(now.getHours() - 24))
+  const noOfPosts = await prisma.post.count()
+  const noOfPostsCreatedLast24Hours = await prisma.post.count({
+    where: { createdAt: { gte: nowYesterday } },
+  })
 
-    return {
-      props: {
-        dehydratedState: hydrationHandler.dehydrate(client),
-        postCategories,
-        noOfPosts,
-        noOfPostsCreatedLast24Hours,
-      },
-      revalidate: revalidateInSeconds,
-    }
+  return {
+    props: {
+      dehydratedState: hydrationHandler.dehydrate(client),
+      postCategories,
+      noOfPosts,
+      noOfPostsCreatedLast24Hours,
+    },
+    revalidate: revalidateInSeconds,
   }
+}
 
 export default function _HomePage(
   props: PostsPageProps & ServerPageProps

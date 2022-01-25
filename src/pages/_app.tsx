@@ -13,7 +13,7 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <AuthContextProvider supabaseClient={supabase}>
       <QueryClientProvider client={queryClient}>
-        <div className="min-h-screen p-0 m-0 font-sans box-border flex flex-col text-lime-700 items-center justify-center bg-gradient-to-br from-lime-50 to-purple-50">
+        <div className="m-0 box-border flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-lime-50 to-purple-50 p-0 font-sans text-lime-700">
           <Head>
             <title>Condun</title>
             <link rel="icon" href="/favicon.ico" />

@@ -5,7 +5,7 @@ export function LoadingAnimation({
 }): JSX.Element {
   return (
     <svg
-      className={`animate-spin inline text-indigo-700 ${
+      className={`inline animate-spin text-indigo-700 ${
         small ? 'h-6 w-6' : 'h-10 w-10'
       }`}
       xmlns="http://www.w3.org/2000/svg"

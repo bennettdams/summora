@@ -43,12 +43,12 @@ export function ImageUpload({
 
   return (
     <form
-      className="group w-full h-full"
+      className="group h-full w-full"
       method="post"
       encType="multipart/form-data"
     >
       <label
-        className="w-full h-full grid place-items-center cursor-pointer"
+        className="grid h-full w-full cursor-pointer place-items-center"
         htmlFor={inputId}
       >
         {isUploading ? (

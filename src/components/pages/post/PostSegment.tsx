@@ -96,10 +96,10 @@ export function PostSegment({
 
   return (
     // items-stretch needed for the post image
-    <div className="w-full flex items-stretch p-10 rounded-xl shadow-2xl bg-gradient-to-br from-green-50 to-indigo-50">
+    <div className="flex w-full items-stretch rounded-xl bg-gradient-to-br from-green-50 to-indigo-50 p-10 shadow-2xl">
       <div className="w-4/5">
-        <div className="w-full h-20 text-xl flex flex-row">
-          <div className="w-20 h-full text-left">
+        <div className="flex h-20 w-full flex-row text-xl">
+          <div className="h-full w-20 text-left">
             <span className="text-4xl italic">{index}</span>
           </div>
           {isPostEditMode && isSegmentEditable ? (
@@ -118,8 +118,8 @@ export function PostSegment({
             </div>
           ) : (
             <div
-              className={`grow flex ${
-                isPostEditMode && 'hover:text-orange-700 cursor-pointer'
+              className={`flex grow ${
+                isPostEditMode && 'cursor-pointer hover:text-orange-700'
               }`}
               onClick={() => setIsSegmentEditable(true)}
               ref={refSegmentTitle}
@@ -136,7 +136,7 @@ export function PostSegment({
                 </div>
 
                 <div className="flex-1">
-                  <span className="text-gray-500 text-lg italic">
+                  <span className="text-lg italic text-gray-500">
                     {segment.subtitle}
                   </span>
                 </div>
@@ -159,7 +159,7 @@ export function PostSegment({
         </div>
 
         {isPostEditMode && (
-          <div className="h-20 flex items-center" ref={refEditItem}>
+          <div className="flex h-20 items-center" ref={refEditItem}>
             {showItemInput ? (
               <>
                 <button className="inline" form={formIdNew} type="submit">
@@ -187,7 +187,7 @@ export function PostSegment({
 
       {/* POST IMAGE */}
       {/* the parent container uses "items-stretch" so the image can "fill" the height */}
-      <div className="w-1/5 bg-red-100 grid place-items-center">
+      <div className="grid w-1/5 place-items-center bg-red-100">
         {segment.imageId && (
           <PostSegmentImage
             isEditable={isPostEditMode}

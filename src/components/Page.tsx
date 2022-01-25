@@ -8,9 +8,9 @@ export function Page({
   pageHeader?: ReactNode
 }): JSX.Element {
   return (
-    <div className="page w-full mt-16 pb-32">
+    <div className="page mt-16 w-full pb-32">
       {pageHeader && pageHeader}
-      <main className="container w-full mx-auto mt-20 pb-32">{children}</main>
+      <main className="container mx-auto mt-20 w-full pb-32">{children}</main>
     </div>
   )
 }
@@ -29,7 +29,7 @@ export function PageSection({
       className={`page-section w-full ${hideTopMargin ? 'mt-0' : 'mt-10'}`}
     >
       {title && (
-        <h2 className="page-section-title text-2xl mb-10 w-full">{title}</h2>
+        <h2 className="page-section-title mb-10 w-full text-2xl">{title}</h2>
       )}
 
       {children}

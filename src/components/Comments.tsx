@@ -6,7 +6,7 @@ export function Comments({
   noOfComments: number
 }): JSX.Element {
   return (
-    <span className="text-gray-400 inline-flex items-center leading-none text-sm">
+    <span className="inline-flex items-center text-sm leading-none text-gray-400">
       <IconComment />
       <span className="ml-1">{noOfComments}</span>
     </span>

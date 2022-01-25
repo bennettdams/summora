@@ -32,10 +32,10 @@ function UserNavbar() {
             </Link>
           )
         ) : (
-          <Menu.Button className="flex text-sm rounded-full focus:outline-none hover:bg-lime-200 focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+          <Menu.Button className="flex rounded-full text-sm hover:bg-lime-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
             <div className="flex flex-row items-center text-white hover:text-lime-700">
-              <p className="px-2 hidden sm:block">{user?.username}</p>
-              <div className="sm:ml-2 flex items-center">
+              <p className="hidden px-2 sm:block">{user?.username}</p>
+              <div className="flex items-center sm:ml-2">
                 <Avatar
                   hasUserAvatar={user?.hasAvatar ?? false}
                   userId={userAuth.id}
@@ -57,7 +57,7 @@ function UserNavbar() {
         leaveTo="transform opacity-0 scale-95"
       >
         {userAuth && (
-          <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <Menu.Item>
               {({ active }) => (
                 <span
@@ -76,7 +76,7 @@ function UserNavbar() {
                   onClick={signOut}
                   className={classNames(
                     active ? 'bg-gray-100' : '',
-                    'w-full px-4 py-2 text-sm text-left text-gray-700'
+                    'w-full px-4 py-2 text-left text-sm text-gray-700'
                   )}
                 >
                   Sign out
@@ -95,14 +95,14 @@ export function Header(): JSX.Element {
   const { asPath } = useRouter()
 
   return (
-    <Disclosure as="nav" className="w-full z-40 fixed top-0 bg-green-900">
+    <Disclosure as="nav" className="fixed top-0 z-40 w-full bg-green-900">
       {({ open }) => (
         <>
-          <div className="max-w-7dxl w-full mx-auto px-2 sm:px-6 lg:px-8">
-            <div className="relative flex items-center justify-between h-16">
+          <div className="max-w-7dxl mx-auto w-full px-2 sm:px-6 lg:px-8">
+            <div className="relative flex h-16 items-center justify-between">
               {/* Mobile menu button*/}
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                <Disclosure.Button className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
                     <XIcon className="block h-6 w-6" aria-hidden="true" />
@@ -113,11 +113,11 @@ export function Header(): JSX.Element {
               </div>
 
               {/* Navbar content */}
-              <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-                <div className="shrink-0 flex items-center">
+              <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+                <div className="flex shrink-0 items-center">
                   <Link to="/">
                     <div className="text-left text-4xl font-extrabold leading-none tracking-tight">
-                      <span className="uppercase decoration-clone bg-clip-text text-transparent bg-gradient-to-b from-amber-400 to-orange-800">
+                      <span className="bg-gradient-to-b from-amber-400 to-orange-800 decoration-clone bg-clip-text uppercase text-transparent">
                         Condun
                       </span>
                     </div>
@@ -125,7 +125,7 @@ export function Header(): JSX.Element {
                 </div>
 
                 {/* Navbar nav items */}
-                <div className="hidden sm:block sm:ml-6">
+                <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
                     {NAV_ROUTES.map((route) => (
                       <a
@@ -135,7 +135,7 @@ export function Header(): JSX.Element {
                           route.href === asPath
                             ? 'bg-gray-900 text-white'
                             : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                          'px-3 py-2 rounded-md text-sm font-semibold'
+                          'rounded-md px-3 py-2 text-sm font-semibold'
                         )}
                         aria-current={
                           route.href === asPath ? 'page' : undefined
@@ -149,12 +149,12 @@ export function Header(): JSX.Element {
               </div>
 
               {/* Navbar right side */}
-              <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 space-x-3">
+              <div className="absolute inset-y-0 right-0 flex items-center space-x-3 pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 {isLoading && <LoadingAnimation />}
 
                 <button
                   type="button"
-                  className="text-white hover:text-lime-700 hover:bg-lime-200 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+                  className="rounded-full p-1 text-white hover:bg-lime-200 hover:text-lime-700 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 >
                   <span className="sr-only">View notifications</span>
                   <BellIcon className="h-6 w-6" aria-hidden="true" />
@@ -167,7 +167,7 @@ export function Header(): JSX.Element {
 
           {/* Navbar items mobile */}
           <Disclosure.Panel className="sm:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1">
+            <div className="space-y-1 px-2 pt-2 pb-3">
               {NAV_ROUTES.map((route) => (
                 <Disclosure.Button
                   key={route.name}
@@ -177,7 +177,7 @@ export function Header(): JSX.Element {
                     route.href === asPath
                       ? 'bg-gray-900 text-white'
                       : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                    'block px-3 py-2 rounded-md text-base font-semibold'
+                    'block rounded-md px-3 py-2 text-base font-semibold'
                   )}
                   aria-current={route.href === asPath ? 'page' : undefined}
                 >

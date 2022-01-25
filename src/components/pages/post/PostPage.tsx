@@ -229,7 +229,7 @@ function PostPageInternal({
         <div className="flex flex-col md:flex-row">
           <div className="w-full md:w-4/5">
             {isTitleEditable ? (
-              <div className="h-40 mr-10" ref={refTitleEdit}>
+              <div className="mr-10 h-40" ref={refTitleEdit}>
                 <div className="flex space-x-8">
                   <button className="inline" form={formId} type="submit">
                     <IconCheck size="big" />
@@ -263,9 +263,9 @@ function PostPageInternal({
                 <div
                   ref={refTitle}
                   onClick={() => isPostEditMode && setIsTitleEditable(true)}
-                  className="flex-1 min-w-0"
+                  className="min-w-0 flex-1"
                 >
-                  <h2 className="text-2xl font-bold leading-7 sm:text-3xl">
+                  <h2 className="font-bold text-2xl leading-7 sm:text-3xl">
                     {isPostEditMode && isHovered && (
                       <span className="mr-10">
                         <IconEdit className="inline" />
@@ -276,14 +276,14 @@ function PostPageInternal({
                   </h2>
                 </div>
 
-                <div className="flex-1 mt-4">
+                <div className="mt-4 flex-1">
                   {!isTitleEditable && (
                     <span className="italic">{post.subtitle}</span>
                   )}
                 </div>
 
-                <div className="flex-1 mt-4">
-                  <div className="flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
+                <div className="mt-4 flex-1">
+                  <div className="flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
                     <div
                       className="flex items-center text-sm text-gray-400"
                       ref={refCategory}
@@ -330,7 +330,7 @@ function PostPageInternal({
             )}
           </div>
 
-          <div className="w-full md:w-1/5 flex justify-center">
+          <div className="flex w-full justify-center md:w-1/5">
             <PostLikes
               postId={postId}
               noOfLikes={post.likedBy.length}
@@ -340,15 +340,15 @@ function PostPageInternal({
           </div>
 
           <div className="w-full md:w-1/5">
-            <div className="flex-1 flex flex-col items-center justify-center">
+            <div className="flex flex-1 flex-col items-center justify-center">
               <Avatar
                 hasUserAvatar={post.author.hasAvatar ?? false}
                 size="medium"
                 userId={post.authorId}
               />
 
-              <div className="mt-4 flex flex-col items-center text-center justify-center">
-                <h2 className="font-semibold leading-none text-lg">
+              <div className="mt-4 flex flex-col items-center justify-center text-center">
+                <h2 className="text-lg font-semibold leading-none">
                   {post.author.username}
                 </h2>
               </div>
@@ -369,9 +369,9 @@ function PostPageInternal({
       {isShownTagSelection && (
         <PageSection>
           <div className="flex space-x-10" ref={refTagSelection}>
-            <div className="flex-1 w-full">
+            <div className="w-full flex-1">
               <Box>
-                <div className="w-full flex items-center space-x-3">
+                <div className="flex w-full items-center space-x-3">
                   <span className="italic">Search</span>
                   <span className="font-bold">{inputTagSearch}</span>
                   {isFetching && <LoadingAnimation small />}
@@ -380,7 +380,7 @@ function PostPageInternal({
                   initialValue={inputTagSearch}
                   onSubmit={async (inputNew) => setInputTagSearch(inputNew)}
                 />
-                <div className="mt-2 flex flex-wrap -m-1">
+                <div className="-m-1 mt-2 flex flex-wrap">
                   {tagsSearched &&
                     filterTags(tagsSearched).map((tag) => (
                       <Tag key={tag.id} tag={tag} onClick={handleAddTag} />
@@ -391,7 +391,7 @@ function PostPageInternal({
             <div className="flex-1">
               <Box inline>
                 <p className="italic">Popular overall</p>
-                <div className="mt-2 flex flex-wrap -m-1">
+                <div className="-m-1 mt-2 flex flex-wrap">
                   {filterTags(tagsSorted).map((tag) => (
                     <Tag key={tag.id} tag={tag} onClick={handleAddTag} />
                   ))}
@@ -401,7 +401,7 @@ function PostPageInternal({
             <div className="flex-1">
               <Box inline>
                 <p className="italic">Popular for this category</p>
-                <div className="mt-2 flex-1 flex flex-wrap -m-1">
+                <div className="-m-1 mt-2 flex flex-1 flex-wrap">
                   {filterTags(tagsSortedForCategory).map((tag) => (
                     <Tag key={tag.id} tag={tag} onClick={handleAddTag} />
                   ))}
@@ -414,8 +414,8 @@ function PostPageInternal({
 
       <PageSection>
         {/* "items-start" to make "sticky" work. Without it, the sticky div has the full height of the flex container. */}
-        <div className="md:flex w-full items-start">
-          <div className="md:w-1/4 md:sticky top-40 pr-10">
+        <div className="w-full items-start md:flex">
+          <div className="top-40 pr-10 md:sticky md:w-1/4">
             <StepList
               steps={post.segments.map((segment, index) => ({
                 no: index,
@@ -469,7 +469,7 @@ function PostPageInternal({
           }}
         >
           <input
-            className="h-16 p-8 w-full bg-transparent border-b outline-none border-orange-500 focus:ring-orange-300 focus:border-orange-300"
+            className="h-16 w-full border-b border-orange-500 bg-transparent p-8 outline-none focus:border-orange-300 focus:ring-orange-300"
             name="rootCommentInput"
             placeholder="Leave a comment.."
             id="rootCommentInput"
@@ -559,22 +559,22 @@ function Comment({
       <div
         className={`space-y-1 ${
           isRoot
-            ? 'rounded-xl p-10 bg-gradient-to-br from-green-50 to-indigo-50'
+            ? 'rounded-xl bg-gradient-to-br from-green-50 to-indigo-50 p-10'
             : 'ml-14'
         }`}
       >
-        <div className="w-full flex">
-          <div className="w-10 flex flex-row items-center justify-center text-center text-lime-400 bold leading-none">
+        <div className="flex w-full">
+          <div className="bold flex w-10 flex-row items-center justify-center text-center leading-none text-lime-400">
             <PlusCircleIcon className="h-4 w-4" />
             <MinusCircleIcon className="h-4 w-4" />
           </div>
-          <div className="grow ml-2">
+          <div className="ml-2 grow">
             <span>{comment.text}</span>
           </div>
         </div>
 
-        <div className="w-full flex m-0 text-xs text-gray-400">
-          <div className="w-10 flex flex-col text-center bold items-center leading-none">
+        <div className="m-0 flex w-full text-xs text-gray-400">
+          <div className="bold flex w-10 flex-col items-center text-center leading-none">
             <Avatar
               size="tiny"
               userId={comment.authorId}
@@ -582,16 +582,16 @@ function Comment({
             />
           </div>
 
-          <div className="leading-none flex items-center space-x-2">
+          <div className="flex items-center space-x-2 leading-none">
             <span className="ml-2">{comment.authorUsername}</span>
           </div>
 
-          <div className="leading-none flex items-center space-x-2">
+          <div className="flex items-center space-x-2 leading-none">
             <span className="ml-2">{comment.createdAt.toISOString()}</span>
           </div>
 
           <div
-            className="ml-4 px-2 flex items-center rounded hover:bg-white hover:cursor-pointer"
+            className="ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-white"
             onClick={() => setShowRemoveConfirmation(true)}
           >
             {!showCommentInput && (
@@ -600,7 +600,7 @@ function Comment({
                 onClick={() => setShowCommentInput(true)}
               >
                 <IconReply size="small" />
-                <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs tracking-widest">
+                <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-orange-400">
                   Reply
                 </span>
               </div>
@@ -609,7 +609,7 @@ function Comment({
 
           {!!userId && comment.authorId === userId && (
             <div
-              className="ml-4 px-2 flex items-center rounded hover:bg-white hover:cursor-pointer"
+              className="ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-white"
               onClick={() => setShowRemoveConfirmation(true)}
             >
               {!showRemoveConfirmation ? (
@@ -618,7 +618,7 @@ function Comment({
                   onClick={() => setShowRemoveConfirmation(true)}
                 >
                   <IconTrash size="small" />
-                  <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs tracking-widest">
+                  <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-orange-400">
                     Remove
                   </span>
                 </div>
@@ -628,7 +628,7 @@ function Comment({
                   onClick={() => onRemove(comment.commentId)}
                 >
                   <IconTrash size="small" />
-                  <span className="ml-1 uppercase text-orange-400 leading-none inline-block text-xs tracking-widest">
+                  <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-orange-400">
                     Confirm
                   </span>
                 </div>
@@ -648,7 +648,7 @@ function Comment({
             }}
           >
             <input
-              className="h-10 p-4 w-full bg-transparent border-b outline-none border-orange-500 focus:ring-orange-300 focus:border-orange-300"
+              className="h-10 w-full border-b border-orange-500 bg-transparent p-4 outline-none focus:border-orange-300 focus:ring-orange-300"
               name="commentInput"
               placeholder="Leave a reply.."
               id="commentInput"
