@@ -1,6 +1,6 @@
 import { IconComment } from './Icon'
 
-export function Comments({
+export function CommentsIcon({
   noOfComments,
 }: {
   noOfComments: number

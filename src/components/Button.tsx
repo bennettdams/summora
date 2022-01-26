@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { IconAdd, IconProps } from './Icon'
+import { IconAdd, IconSize } from './Icon'
 
 interface ButtonProps {
   onClick: () => void
@@ -31,7 +31,7 @@ export function ButtonAdd({
   onClick,
   disabled = false,
   size,
-}: ButtonProps & { size?: IconProps['size'] }): JSX.Element {
+}: ButtonProps & { size?: IconSize }): JSX.Element {
   return (
     <button
       onClick={onClick}

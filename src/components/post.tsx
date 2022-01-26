@@ -1,14 +1,15 @@
 import { useState } from 'react'
 import { Link } from './Link'
-import { Views } from './Views'
-import { Comments } from './Comments'
+import { ViewsIcon } from './ViewsIcon'
+import { CommentsIcon } from './CommentsIcon'
 import { Box } from './Box'
 import { Avatar } from './Avatar'
 import { Button } from './Button'
 import { TagsList } from './tag'
-import { Likes } from './Likes'
 import { usePost } from '../data/use-post'
 import { useAuth } from '../services/auth-service'
+import { LikesIcon } from './LikesIcon'
+import { IconSize } from './Icon'
 
 type PostsPostsList =
   | null
@@ -59,7 +60,11 @@ export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
       ) : (
         <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:gap-12">
           {posts.map((post) => (
-            <PostItemShort key={post.id} post={post} />
+            <PostItemShort
+              key={post.id}
+              post={post}
+              userId={user?.userId ?? null}
+            />
           ))}
         </div>
       )}
@@ -85,6 +90,7 @@ function PostsListItem({
                 userId={userId}
                 postLikedByUserIds={post.likedBy}
                 noOfLikes={post.noOfLikes}
+                iconSize="big"
               />
             </div>
             <h2 className="text-xs font-semibold tracking-widest text-gray-400">
@@ -102,7 +108,7 @@ function PostsListItem({
                     key={segment.id}
                     className="grid h-32 w-60 flex-none place-items-center rounded-lg bg-blue-100"
                   >
-                    {segment.title}
+                    <p className="p-5">{segment.title}</p>
                   </div>
                 )
               })}
@@ -118,8 +124,8 @@ function PostsListItem({
           <div className="flex h-full w-1/2 justify-end space-x-4 leading-none">
             <div className="flex h-full w-1/2 flex-col">
               <div className="flex-1 space-x-5">
-                <Views noOfViews={post.noOfViews} />
-                <Comments noOfComments={post.noOfComments} />
+                <ViewsIcon noOfViews={post.noOfViews} />
+                <CommentsIcon noOfComments={post.noOfComments} />
               </div>
               <div className="flex-1">
                 <span className="inline-flex items-center text-sm leading-none text-gray-400">
@@ -149,7 +155,13 @@ function PostsListItem({
   )
 }
 
-function PostItemShort({ post }: { post: PostPostsList }): JSX.Element {
+function PostItemShort({
+  post,
+  userId,
+}: {
+  post: PostPostsList
+  userId: string | null
+}): JSX.Element {
   return (
     <Link to={`/post/${post.id}`}>
       <Box padding="small">
@@ -162,8 +174,14 @@ function PostItemShort({ post }: { post: PostPostsList }): JSX.Element {
           </h1>
           <p className="mt-3 leading-relaxed">{post.subtitle}</p>
           <div className="absolute bottom-0 mt-2 flex w-full justify-center space-x-4 py-3 text-center leading-none">
-            <Views noOfViews={post.noOfViews} />
-            <Comments noOfComments={post.noOfComments} />
+            <PostLikes
+              postId={post.id}
+              userId={userId}
+              postLikedByUserIds={post.likedBy}
+              noOfLikes={post.noOfLikes}
+            />
+            <ViewsIcon noOfViews={post.noOfViews} />
+            <CommentsIcon noOfComments={post.noOfComments} />
             <span className="inline-flex items-center text-sm leading-none text-gray-400">
               {post.updatedAt.toLocaleDateString()}
             </span>
@@ -180,6 +198,7 @@ export function PostLikes({
   postLikedByUserIds,
   noOfLikes,
   isLikeUnlikeEnabled = true,
+  iconSize = 'medium',
 }: {
   postId: string
   userId: string | null
@@ -189,20 +208,24 @@ export function PostLikes({
    * e.g. use for a list of posts, where we want to show a "liked" icon all the time
    */
   isLikeUnlikeEnabled?: boolean
+  iconSize?: IconSize
 }): JSX.Element {
   const { likeUnlikePost } = usePost(postId)
 
   return (
     <div className="flex">
-      <Likes
+      <LikesIcon
         noOfLikes={noOfLikes}
         isLiked={
           !isLikeUnlikeEnabled
             ? true
             : !userId
             ? false
-            : postLikedByUserIds.some((el) => el.userId === userId)
+            : postLikedByUserIds.some(
+                (userLikesPost) => userLikesPost.userId === userId
+              )
         }
+        size={iconSize}
         onClick={async () =>
           !!isLikeUnlikeEnabled && (await likeUnlikePost(postId))
         }

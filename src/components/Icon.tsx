@@ -32,8 +32,10 @@ const sizes = {
 const style =
   'leading-none text-orange-600 rounded-full hover:bg-orange-200 hover:shadow-sm hover:text-orange-800 transition ease-in duration-75 transform hover:scale-110'
 
-export interface IconProps {
-  size?: keyof typeof sizes
+export type IconSize = keyof typeof sizes
+
+interface IconProps {
+  size?: IconSize
   // based on the prop type of Heroicons
   className?: Parameters<typeof PlusIcon>[0]['className']
   onClick?: () => void

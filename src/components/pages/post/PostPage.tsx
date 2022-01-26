@@ -17,8 +17,8 @@ import { Page, PageSection } from '../../Page'
 import { usePost } from '../../../data/use-post'
 import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
-import { Views } from '../../Views'
-import { Comments } from '../../Comments'
+import { ViewsIcon } from '../../ViewsIcon'
+import { CommentsIcon } from '../../CommentsIcon'
 import { PostPageProps } from '../../../pages/post/[postId]'
 import { PostSegment } from './PostSegment'
 import { useSearchTags } from '../../../data/use-search-tags'
@@ -311,11 +311,11 @@ function PostPageInternal({
                     </div>
 
                     <div className="flex items-center text-sm text-gray-400">
-                      <Views noOfViews={post.noOfViews} />
+                      <ViewsIcon noOfViews={post.noOfViews} />
                     </div>
 
                     <div className="flex items-center text-sm text-gray-400">
-                      <Comments noOfComments={post.comments.length} />
+                      <CommentsIcon noOfComments={post.comments.length} />
                     </div>
 
                     <div className="flex items-center text-sm text-gray-400">

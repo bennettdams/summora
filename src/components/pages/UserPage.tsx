@@ -30,9 +30,19 @@ function UserPageInternal({
           <div className="flex">
             <div className="grow">
               <h2 className="text-3xl">{user.username}</h2>
-              <p>User ID {userId}</p>
-              <p>Created at {new Date(user.createdAt).toISOString()}</p>
-              <p>Updated at {new Date(user.updatedAt).toISOString()}</p>
+              <p className="mt-8">User ID {userId}</p>
+              <p>
+                <span>Member since</span>
+                <span className="ml-2 text-lg">
+                  {new Date(user.createdAt).toISOString()}
+                </span>
+              </p>
+              <p>
+                <span>Last update</span>
+                <span className="ml-2 text-lg">
+                  {new Date(user.updatedAt).toISOString()}
+                </span>
+              </p>
             </div>
             <div>
               <Avatar
