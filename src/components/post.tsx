@@ -36,7 +36,7 @@ type PostPostsList = NonNullable<PostsPostsList>[number]
 
 export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
   const [showLongPost, setShowLongPost] = useState(true)
-  const { user } = useAuth()
+  const { userId } = useAuth()
 
   return (
     <div>
@@ -50,21 +50,13 @@ export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
       ) : showLongPost ? (
         <div className="mt-10 flex flex-col space-y-20">
           {posts.map((post) => (
-            <PostsListItem
-              key={post.id}
-              post={post}
-              userId={user?.userId ?? null}
-            />
+            <PostsListItem key={post.id} post={post} userId={userId} />
           ))}
         </div>
       ) : (
         <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:gap-12">
           {posts.map((post) => (
-            <PostItemShort
-              key={post.id}
-              post={post}
-              userId={user?.userId ?? null}
-            />
+            <PostsListItemShort key={post.id} post={post} userId={userId} />
           ))}
         </div>
       )}
@@ -155,7 +147,7 @@ function PostsListItem({
   )
 }
 
-function PostItemShort({
+function PostsListItemShort({
   post,
   userId,
 }: {

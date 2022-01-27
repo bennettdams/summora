@@ -117,9 +117,9 @@ export function Header(): JSX.Element {
                 <div className="flex shrink-0 items-center">
                   <Link to="/">
                     <div className="text-left text-4xl font-extrabold leading-none tracking-tight">
-                      <span className="bg-gradient-to-b from-amber-400 to-orange-800 decoration-clone bg-clip-text uppercase text-transparent">
+                      <p className="bg-gradient-to-b from-amber-200 to-orange-300 decoration-clone bg-clip-text text-3xl uppercase text-transparent">
                         Condun
-                      </span>
+                      </p>
                     </div>
                   </Link>
                 </div>

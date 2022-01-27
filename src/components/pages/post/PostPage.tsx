@@ -42,7 +42,7 @@ export type TagPostPage = PostPostPage['tags'][number]
 
 export function PostPage(props: PostPageProps): JSX.Element {
   const { post } = usePost(props.postId)
-  const { user } = useAuth()
+  const { userId } = useAuth()
 
   return !post ? (
     <p>no post</p>
@@ -53,8 +53,8 @@ export function PostPage(props: PostPageProps): JSX.Element {
       postCategories={props.postCategories}
       tagsSorted={props.tagsSorted}
       tagsSortedForCategory={props.tagsSortedForCategory}
-      isPostEditMode={user?.userId === post.authorId}
-      userId={user?.userId ?? null}
+      isPostEditMode={userId === post.authorId}
+      userId={userId}
     />
   )
 }

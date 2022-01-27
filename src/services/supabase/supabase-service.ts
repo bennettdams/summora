@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { GetServerSidePropsContextRequest } from '../../types/GetServerSidePropsContextRequest = GetServerSidePropsContext'
 import { isServer } from '../../util/server/server-utils'
@@ -39,6 +39,11 @@ export const supabase = createSupabaseClient()
 
 export function setAuthCookie(req: NextApiRequest, res: NextApiResponse): void {
   return supabase.auth.api.setAuthCookie(req, res)
+}
+
+// TODO use local supabase const here instead?
+export function getSessionSupabase(supabaseClient: SupabaseClient) {
+  return supabaseClient.auth.session()
 }
 
 export async function getUserByCookieSupabase(

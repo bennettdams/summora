@@ -17,7 +17,7 @@ export function PostsPage({
   return (
     <Page
       pageHeader={
-        <div className="text-gradient-to-tr mt-20 grid place-items-center from-amber-300 to-lime-600 text-center">
+        <div className="mt-20 grid place-items-center text-center">
           <div>
             <div className="text-center text-4xl font-extrabold leading-none tracking-tight">
               <p className="bg-gradient-to-b from-amber-200 to-orange-300 decoration-clone bg-clip-text text-8xl uppercase text-transparent">

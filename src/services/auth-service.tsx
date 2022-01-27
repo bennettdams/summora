@@ -7,6 +7,7 @@ import {
 } from 'react'
 import { SupabaseClient } from '@supabase/supabase-js'
 import {
+  getSessionSupabase,
   getUserByCookieSupabase,
   signInSupabase,
   signOutSupabase,
@@ -23,6 +24,7 @@ export interface AuthState {
   session: Session | null
   isLoading: boolean
   user: User | null
+  userId: string | null
 }
 
 const AuthContext = createContext<AuthState | null>(null)
@@ -34,11 +36,17 @@ export function AuthContextProvider({
   supabaseClient: SupabaseClient
   children: ReactNode
 }): JSX.Element {
-  const [authState, setAuthState] = useState<AuthState>({
-    session: null,
-    userAuth: null,
-    isLoading: true,
-    user: null,
+  const [authState, setAuthState] = useState<AuthState>(() => {
+    const session = getSessionSupabase(supabaseClient)
+    const userAuth = session?.user ?? null
+
+    return {
+      session,
+      userAuth,
+      isLoading: true,
+      user: null,
+      userId: userAuth?.id ?? null,
+    }
   })
 
   /**
@@ -46,38 +54,34 @@ export function AuthContextProvider({
    */
   async function fillAuth(session: Session) {
     const userAuth = session.user
-    /*
-     * Already set the auth state here, because the session could already exist on initial
-     * page load (due to token), but the user has to be fetched from the server.
-     */
-    setAuthState({
-      session,
-      userAuth,
-      isLoading: false,
-      user: null,
-    })
-    if (!userAuth) {
-      throw new Error('Session exists, but user auth does not.')
+    const userId = userAuth?.id ?? null
+
+    if (!userId) {
+      throw new Error('Session exists, but user auth/user ID does not.')
     } else {
-      const response = await apiFetchUser(userAuth.id)
+      const response = await apiFetchUser(userId)
       setAuthState({
         session,
         userAuth,
         isLoading: false,
         user: response.result ?? null,
+        userId,
       })
     }
   }
 
   useEffect(() => {
+    // #########
+    // auth state for initial page load
     const session = supabaseClient.auth.session()
 
-    // session for initial page load
+    // initially fetch our user if session exists
     if (session) {
       fillAuth(session)
     } else {
       setAuthState((prev) => ({ ...prev, isLoading: false }))
     }
+    // #########
 
     // Supabase will not execute this on the initial render when the session already exists
     const { data: authListener } = supabaseClient.auth.onAuthStateChange(
@@ -88,6 +92,7 @@ export function AuthContextProvider({
             session: null,
             user: null,
             userAuth: null,
+            userId: null,
           })
         } else if (session) {
           fillAuth(session)
