@@ -14,6 +14,7 @@ import {
 import { ApiPost } from '../pages/api/posts/[postId]'
 import { useState } from 'react'
 import { createHydrationHandler } from '../services/hydration-service'
+import { syncPostsLikedByData } from './use-posts'
 
 const queryKeyPostBase = 'post'
 type QueryData = ApiPost
@@ -35,7 +36,10 @@ export function prefillServer(
   queryClient.setQueryData(createQueryKey(postId), postSerialized)
 }
 
-export function usePost(postId: string) {
+/**
+ * @param enabled `false` is e.g. used by components that just want to like/unlike a post (to not trigger a fetch)
+ */
+export function usePost(postId: string, enabled = true) {
   const { data, isLoading, isError } = useQuery<QueryData>(
     createQueryKey(postId),
     async () => (await apiFetchPost(postId)).result ?? null,
@@ -43,6 +47,7 @@ export function usePost(postId: string) {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchInterval: false,
+      enabled,
     }
   )
 
@@ -79,6 +84,7 @@ export function usePost(postId: string) {
       createPostCommentMutation.isError ||
       deletePostCommentMutation.isError ||
       likeUnlikePostMutation.isError,
+    // TODO really mutateAsync?
     updatePost: updatePostMutation.mutateAsync,
     createPostSegmentItem: createPostSegmentItemMutation.mutateAsync,
     createPostSegment: createPostSegmentMutation.mutateAsync,
@@ -273,12 +279,14 @@ function usePostMutation(postId: string) {
 
   // LIKE / UNLIKE
   const likeUnlikePostMutation = useMutation(apiLikeUnlikePost, {
-    onSuccess: (data) => {
+    // `postId` coming from apiLikeUnlikePost
+    onSuccess: (data, postId) => {
       if (data.result) {
         const likedByUpdated = data.result.likedBy
         queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
           !prevData ? null : { ...prevData, likedBy: likedByUpdated }
         )
+        syncPostsLikedByData(queryClient, postId, likedByUpdated)
       }
     },
   })

@@ -202,7 +202,7 @@ export function PostLikes({
   isLikeUnlikeEnabled?: boolean
   iconSize?: IconSize
 }): JSX.Element {
-  const { likeUnlikePost } = usePost(postId)
+  const { likeUnlikePost } = usePost(postId, false)
 
   return (
     <div className="flex">
