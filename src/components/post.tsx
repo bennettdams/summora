@@ -10,6 +10,7 @@ import { usePost } from '../data/use-post'
 import { useAuth } from '../services/auth-service'
 import { LikesIcon } from './LikesIcon'
 import { IconSize } from './Icon'
+import { useHasMounted } from '../util/use-is-mounted'
 
 type PostsPostsList =
   | null
@@ -204,24 +205,36 @@ export function PostLikes({
 }): JSX.Element {
   const { likeUnlikePost } = usePost(postId, false)
 
+  const isLiked = !isLikeUnlikeEnabled
+    ? true
+    : !userId
+    ? false
+    : postLikedByUserIds.some(
+        (userLikesPost) => userLikesPost.userId === userId
+      )
+
+  /**
+   * We need to wait for the component to mount on the client before rendering the likes.
+   * That's because we can only determine whether the post is liked by a user when we have the auth cookie at hand.
+   * Without this check, the server will render the "unliked" heart, because he never has
+   * the user ID. After hydration at the client, the unliked heart is not replaced with the
+   * liked heart, because no properties (e.g. noOfLikes) have changed (because we provide the
+   * data via hydration/React Query), so even though a user liked a post, the unliked heart will be shown.
+   */
+  const hasMounted = useHasMounted()
+
   return (
     <div className="flex">
-      <LikesIcon
-        noOfLikes={noOfLikes}
-        isLiked={
-          !isLikeUnlikeEnabled
-            ? true
-            : !userId
-            ? false
-            : postLikedByUserIds.some(
-                (userLikesPost) => userLikesPost.userId === userId
-              )
-        }
-        size={iconSize}
-        onClick={async () =>
-          !!isLikeUnlikeEnabled && (await likeUnlikePost(postId))
-        }
-      />
+      {hasMounted && (
+        <LikesIcon
+          noOfLikes={noOfLikes}
+          isLiked={isLiked}
+          size={iconSize}
+          onClick={async () =>
+            !!isLikeUnlikeEnabled && (await likeUnlikePost(postId))
+          }
+        />
+      )}
     </div>
   )
 }

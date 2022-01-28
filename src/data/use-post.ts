@@ -14,7 +14,7 @@ import {
 import { ApiPost } from '../pages/api/posts/[postId]'
 import { useState } from 'react'
 import { createHydrationHandler } from '../services/hydration-service'
-import { syncPostsLikedByData } from './use-posts'
+import { syncPostsLikedData } from './use-posts'
 
 const queryKeyPostBase = 'post'
 type QueryData = ApiPost
@@ -286,7 +286,7 @@ function usePostMutation(postId: string) {
         queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
           !prevData ? null : { ...prevData, likedBy: likedByUpdated }
         )
-        syncPostsLikedByData(queryClient, postId, likedByUpdated)
+        syncPostsLikedData(queryClient, postId, likedByUpdated)
       }
     },
   })

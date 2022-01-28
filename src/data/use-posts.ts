@@ -9,10 +9,9 @@ type QueryData = ApiPosts
 
 /**
  * Liking/unliking a post is done via the `usePost` data hook.
- * This helper is used by that to set the query data of `usePosts`'s `likedBy`,
- * to the data in sync.
+ * This helper is used to keep the query "like" data of `usePosts`'s in sync.
  */
-export function syncPostsLikedByData(
+export function syncPostsLikedData(
   queryClient: QueryClient,
   postId: string,
   likedByUpdated: QueryData[number]['likedBy']
@@ -21,7 +20,13 @@ export function syncPostsLikedByData(
     !prevData
       ? []
       : prevData.map((post) =>
-          post.id !== postId ? post : { ...post, likedBy: likedByUpdated }
+          post.id !== postId
+            ? post
+            : {
+                ...post,
+                likedBy: likedByUpdated,
+                noOfLikes: likedByUpdated.length,
+              }
         )
   )
 }
