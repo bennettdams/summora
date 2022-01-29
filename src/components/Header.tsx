@@ -102,7 +102,7 @@ export function Header(): JSX.Element {
             <div className="relative flex h-16 items-center justify-between">
               {/* Mobile menu button*/}
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-lime-300 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
                     <XIcon className="block h-6 w-6" aria-hidden="true" />
@@ -133,9 +133,9 @@ export function Header(): JSX.Element {
                         href={route.href}
                         className={classNames(
                           route.href === asPath
-                            ? 'bg-gray-900 text-white'
-                            : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                          'rounded-md px-3 py-2 text-sm font-semibold'
+                            ? 'border-b border-b-lime-100 text-white'
+                            : 'text-gray-300 hover:rounded-md hover:bg-lime-100 hover:text-lime-700',
+                          'px-3 py-2 text-sm font-semibold'
                         )}
                         aria-current={
                           route.href === asPath ? 'page' : undefined
@@ -175,9 +175,9 @@ export function Header(): JSX.Element {
                   href={route.href}
                   className={classNames(
                     route.href === asPath
-                      ? 'bg-gray-900 text-white'
-                      : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                    'block rounded-md px-3 py-2 text-base font-semibold'
+                      ? 'rounded-md bg-lime-100 text-lime-700'
+                      : 'text-gray-300 hover:rounded-md hover:bg-lime-100 hover:text-lime-700',
+                    'block px-3 py-2 text-base font-semibold'
                   )}
                   aria-current={route.href === asPath ? 'page' : undefined}
                 >
