@@ -10,7 +10,9 @@ import { ApiPosts } from './api/posts'
 export type PostsPageProps = {
   postCategories: PostCategory[]
   noOfPosts: number
+  noOfComments: number
   noOfPostsCreatedLast24Hours: number
+  noOfCommentsCreatedLast24Hours: number
 }
 
 const revalidateInSeconds = 5 * 60
@@ -56,8 +58,13 @@ export const getStaticProps: GetStaticProps<
 
   const now = new Date()
   const nowYesterday = new Date(now.setHours(now.getHours() - 24))
+
   const noOfPosts = await prisma.post.count()
+  const noOfComments = await prisma.postComment.count()
   const noOfPostsCreatedLast24Hours = await prisma.post.count({
+    where: { createdAt: { gte: nowYesterday } },
+  })
+  const noOfCommentsCreatedLast24Hours = await prisma.postComment.count({
     where: { createdAt: { gte: nowYesterday } },
   })
 
@@ -67,6 +74,8 @@ export const getStaticProps: GetStaticProps<
       postCategories,
       noOfPosts,
       noOfPostsCreatedLast24Hours,
+      noOfComments,
+      noOfCommentsCreatedLast24Hours,
     },
     revalidate: revalidateInSeconds,
   }
@@ -81,6 +90,8 @@ export default function _HomePage(
         postCategories={props.postCategories}
         noOfPosts={props.noOfPosts}
         noOfPostsCreatedLast24Hours={props.noOfPostsCreatedLast24Hours}
+        noOfComments={props.noOfComments}
+        noOfCommentsCreatedLast24Hours={props.noOfCommentsCreatedLast24Hours}
       />
     </Hydrate>
   )

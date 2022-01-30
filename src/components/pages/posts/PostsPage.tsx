@@ -11,6 +11,8 @@ export function PostsPage({
   postCategories,
   noOfPosts,
   noOfPostsCreatedLast24Hours,
+  noOfComments,
+  noOfCommentsCreatedLast24Hours,
 }: PostsPageProps): JSX.Element {
   const { posts } = usePosts()
 
@@ -38,14 +40,28 @@ export function PostsPage({
 
       <PageSection hideTopMargin>
         <div className="flex flex-row space-x-10">
-          <div className="flex-1">
-            <Box>No. of posts {noOfPosts}</Box>
+          <div className="flex-1 text-center">
+            <p className="text-xl">Posts</p>
+            <p className="mt-1 text-5xl text-orange-400">{noOfPosts}</p>
           </div>
-          <div className="flex-1">
-            <Box>No. of posts last 24 hours{noOfPostsCreatedLast24Hours}</Box>
+
+          <div className="flex-1 text-center">
+            <p className="text-xl">Posts (24 hours)</p>
+            <p className="mt-1 text-5xl text-orange-400">
+              {noOfPostsCreatedLast24Hours}
+            </p>
           </div>
-          <div className="flex-1">
-            <Box>{noOfPostsCreatedLast24Hours}</Box>
+
+          <div className="flex-1 text-center">
+            <p className="text-xl">Comments</p>
+            <p className="mt-1 text-5xl text-orange-400">{noOfComments}</p>
+          </div>
+
+          <div className="flex-1 text-center">
+            <p className="text-xl">Comments (24 hours)</p>
+            <p className="mt-1 text-5xl text-orange-400">
+              {noOfCommentsCreatedLast24Hours}
+            </p>
           </div>
         </div>
       </PageSection>
