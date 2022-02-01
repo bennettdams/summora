@@ -10,7 +10,7 @@ import { usePost } from '../data/use-post'
 import { useAuth } from '../services/auth-service'
 import { LikesIcon } from './LikesIcon'
 import { IconSize } from './Icon'
-import { useHasMounted } from '../util/use-is-mounted'
+import { useHasMounted } from '../util/use-has-mounted'
 
 type PostsPostsList =
   | null

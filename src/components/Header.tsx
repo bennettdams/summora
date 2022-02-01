@@ -23,27 +23,28 @@ function UserNavbar() {
   return (
     <Menu as="div" className="relative">
       <div>
-        {!userAuth ? (
-          isLoadingAuth ? (
-            <LoadingAnimation />
-          ) : (
-            <Link to="/signin">
-              <Button onClick={() => console.info('here')}>Sign in</Button>
-            </Link>
-          )
+        {userAuth === null || !!isLoadingAuth ? (
+          <LoadingAnimation />
+        ) : userAuth === null && !isLoadingAuth ? (
+          <Link to="/signin">
+            <Button onClick={() => console.info('here')}>Sign in</Button>
+          </Link>
         ) : (
-          <Menu.Button className="flex rounded-full text-sm hover:bg-lime-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-            <div className="flex flex-row items-center text-white hover:text-lime-700">
-              <p className="hidden px-2 sm:block">{user?.username}</p>
-              <div className="flex items-center sm:ml-2">
-                <Avatar
-                  hasUserAvatar={user?.hasAvatar ?? false}
-                  userId={userAuth.id}
-                  size="small"
-                />
+          userAuth !== null &&
+          !isLoadingAuth && (
+            <Menu.Button className="flex rounded-full text-sm hover:bg-lime-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+              <div className="flex flex-row items-center text-white hover:text-lime-700">
+                <p className="hidden px-2 sm:block">{user?.username}</p>
+                <div className="flex items-center sm:ml-2">
+                  <Avatar
+                    hasUserAvatar={user?.hasAvatar ?? false}
+                    userId={userAuth.id}
+                    size="small"
+                  />
+                </div>
               </div>
-            </div>
-          </Menu.Button>
+            </Menu.Button>
+          )
         )}
       </div>
 
