@@ -32,6 +32,7 @@ import { useAuth } from '../../../services/auth-service'
 import { StepList } from '../../StepList'
 import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/react/outline'
 import { PostLikes } from '../../post'
+import { Link } from '../../Link'
 
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
@@ -340,19 +341,21 @@ function PostPageInternal({
           </div>
 
           <div className="w-full md:w-1/5">
-            <div className="flex flex-1 flex-col items-center justify-center">
-              <Avatar
-                hasUserAvatar={post.author.hasAvatar ?? false}
-                size="medium"
-                userId={post.authorId}
-              />
+            <Link to={`/user/${post.authorId}`}>
+              <div className="flex flex-1 flex-col items-center justify-center rounded-xl p-2 hover:bg-white">
+                <Avatar
+                  hasUserAvatar={post.author.hasAvatar ?? false}
+                  size="medium"
+                  userId={post.authorId}
+                />
 
-              <div className="mt-4 flex flex-col items-center justify-center text-center">
-                <h2 className="text-lg font-semibold leading-none">
-                  {post.author.username}
-                </h2>
+                <div className="mt-4 flex flex-col items-center justify-center text-center">
+                  <h2 className="text-lg font-semibold leading-none">
+                    {post.author.username}
+                  </h2>
+                </div>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </PageSection>
@@ -574,17 +577,21 @@ function Comment({
         </div>
 
         <div className="m-0 flex w-full text-xs text-gray-400">
-          <div className="bold flex w-10 flex-col items-center text-center leading-none">
-            <Avatar
-              size="tiny"
-              userId={comment.authorId}
-              hasUserAvatar={comment.authorHasAvatar}
-            />
-          </div>
+          <Link to={`/user/${comment.authorId}`} disablePrefetch>
+            <div className="flex hover:underline">
+              <div className="bold flex w-10 flex-col items-center text-center leading-none">
+                <Avatar
+                  size="tiny"
+                  userId={comment.authorId}
+                  hasUserAvatar={comment.authorHasAvatar}
+                />
+              </div>
 
-          <div className="flex items-center space-x-2 leading-none">
-            <span className="ml-2">{comment.authorUsername}</span>
-          </div>
+              <div className="flex items-center space-x-2 leading-none">
+                <span className="ml-2">{comment.authorUsername}</span>
+              </div>
+            </div>
+          </Link>
 
           <div className="flex items-center space-x-2 leading-none">
             <span className="ml-2">{comment.createdAt.toISOString()}</span>
