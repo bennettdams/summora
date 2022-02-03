@@ -67,84 +67,69 @@ export function PostsPage({
       </PageSection>
 
       <PageSection>
-        <div>
-          <div className="mx-auto max-w-7xl">
-            <div className="lg:text-center">
-              <h2 className="text-base font-semibold uppercase tracking-wide text-indigo-600">
-                User-generated content
-              </h2>
-              <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight sm:text-4xl">
-                A better way to learn
-              </p>
-              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-                Lorem ipsum dolor sit amet consect adipisicing elit. Possimus
-                magnam voluptatum cupiditate veritatis in accusamus quisquam.
-              </p>
-            </div>
+        <div className="mx-auto max-w-7xl">
+          <div className="lg:text-center">
+            <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight sm:text-4xl">
+              A <span className="line-through">better</span>{' '}
+              <span className="underline">faster</span> way to learn
+            </p>
+            <p className="mt-4 flex max-w-2xl flex-col text-xl text-gray-500 lg:mx-auto">
+              <span>
+                Condun is home of an endless stream of articles in every
+                category.
+              </span>
+              <span>
+                And if something is missing, <strong>you</strong> can create it!
+              </span>
+            </p>
+          </div>
+        </div>
+      </PageSection>
 
-            <div className="mt-10">
-              <dl className="space-y-10 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10 md:space-y-0">
-                <div className="relative">
-                  <dt>
-                    <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-indigo-500 text-white">
-                      <LightningBoltIcon
-                        className="h-6 w-6"
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <p className="ml-16 text-lg font-semibold leading-6 text-gray-900">
-                      Feature 1
-                    </p>
-                  </dt>
-                  <dd className="mt-2 ml-16 text-base text-gray-500">Desc</dd>
-                </div>
+      <PageSection>
+        <div className="grid grid-cols-2 grid-rows-2 gap-8 text-gray-500">
+          <div className="justify-left flex items-center">
+            <LightningBoltIcon
+              className="h-12 w-12 rounded-md bg-orange-500 p-2 text-white"
+              aria-hidden="true"
+            />
 
-                <div className="relative">
-                  <dt>
-                    <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-indigo-500 text-white">
-                      <LightningBoltIcon
-                        className="h-6 w-6"
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <p className="ml-16 text-lg font-semibold leading-6 text-gray-900">
-                      Feature 2
-                    </p>
-                  </dt>
-                  <dd className="mt-2 ml-16 text-base text-gray-500">Desc</dd>
-                </div>
+            <p className="ml-6 text-lg font-semibold leading-6">
+              Every topic you can imagine
+            </p>
+          </div>
 
-                <div className="relative">
-                  <dt>
-                    <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-indigo-500 text-white">
-                      <LightningBoltIcon
-                        className="h-6 w-6"
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <p className="ml-16 text-lg font-semibold leading-6 text-gray-900">
-                      Feature 3
-                    </p>
-                  </dt>
-                  <dd className="mt-2 ml-16 text-base text-gray-500">Desc</dd>
-                </div>
+          <div className="justify-left flex items-center">
+            <LightningBoltIcon
+              className="h-12 w-12 rounded-md bg-orange-500 p-2 text-white"
+              aria-hidden="true"
+            />
 
-                <div className="relative">
-                  <dt>
-                    <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-indigo-500 text-white">
-                      <LightningBoltIcon
-                        className="h-6 w-6"
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <p className="ml-16 text-lg font-semibold leading-6 text-gray-900">
-                      Feature 4
-                    </p>
-                  </dt>
-                  <dd className="mt-2 ml-16 text-base text-gray-500">Desc</dd>
-                </div>
-              </dl>
-            </div>
+            <p className="ml-6 text-lg font-semibold leading-6">
+              User-generated content
+            </p>
+          </div>
+
+          <div className="justify-left flex items-center">
+            <LightningBoltIcon
+              className="h-12 w-12 rounded-md bg-orange-500 p-2 text-white"
+              aria-hidden="true"
+            />
+
+            <p className="ml-6 text-lg font-semibold leading-6">
+              Get paid to write articles
+            </p>
+          </div>
+
+          <div className="justify-left flex items-center">
+            <LightningBoltIcon
+              className="h-12 w-12 rounded-md bg-orange-500 p-2 text-white"
+              aria-hidden="true"
+            />
+
+            <p className="ml-6 text-lg font-semibold leading-6">
+              Explore unknown knowledge territories
+            </p>
           </div>
         </div>
       </PageSection>
