@@ -273,13 +273,15 @@ function PostPageInternal({
                       </span>
                     )}
 
-                    <span>{post.title}</span>
+                    <span className="text-lime-600">{post.title}</span>
                   </h2>
                 </div>
 
                 <div className="mt-4 flex-1">
                   {!isTitleEditable && (
-                    <span className="italic">{post.subtitle}</span>
+                    <span className="italic text-gray-400">
+                      {post.subtitle}
+                    </span>
                   )}
                 </div>
 
@@ -350,7 +352,7 @@ function PostPageInternal({
                 />
 
                 <div className="mt-4 flex flex-col items-center justify-center text-center">
-                  <h2 className="text-lg font-semibold leading-none">
+                  <h2 className="text-lg font-semibold leading-none text-lime-600">
                     {post.author.username}
                   </h2>
                 </div>
@@ -587,7 +589,7 @@ function Comment({
                 />
               </div>
 
-              <div className="flex items-center space-x-2 leading-none">
+              <div className="flex items-center space-x-2 leading-none text-lime-600">
                 <span className="ml-2">{comment.authorUsername}</span>
               </div>
             </div>

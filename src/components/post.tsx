@@ -89,10 +89,12 @@ function PostsListItem({
             <h2 className="text-xs font-semibold tracking-widest text-gray-400">
               {post.categoryTitle}
             </h2>
-            <h1 className="mt-1 text-xl font-semibold sm:text-2xl">
+            <h1 className="mt-1 text-xl font-semibold text-lime-600 sm:text-2xl">
               {post.title}
             </h1>
-            <p className="mt-3 leading-relaxed">{post.subtitle}</p>
+            <p className="mt-3 leading-relaxed text-gray-400">
+              {post.subtitle}
+            </p>
 
             <div className="my-4 flex flex-row flex-nowrap space-x-4 overflow-y-hidden py-4">
               {post.segments.map((segment) => {

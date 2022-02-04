@@ -69,7 +69,7 @@ export function PostsPage({
       <PageSection>
         <div className="mx-auto max-w-7xl">
           <div className="lg:text-center">
-            <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight sm:text-4xl">
+            <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-lime-600 sm:text-4xl">
               A <span className="line-through">better</span>{' '}
               <span className="underline">faster</span> way to learn
             </p>
@@ -148,11 +148,11 @@ export function PostsPage({
 
       <PageSection>
         <div className="mx-auto max-w-7xl py-12 lg:flex lg:items-center lg:justify-between lg:py-16">
-          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+          <h2 className="text-3xl font-extrabold tracking-tight text-lime-600 sm:text-4xl">
             <span className="block">
               Ready to make your knowledge to money?
             </span>
-            <span className="block text-orange-400">
+            <span className="block text-orange-500">
               Create an account for free today.
             </span>
           </h2>

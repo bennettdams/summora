@@ -96,7 +96,7 @@ export function Header(): JSX.Element {
   const { asPath } = useRouter()
 
   return (
-    <Disclosure as="nav" className="fixed top-0 z-40 w-full bg-green-900">
+    <Disclosure as="nav" className="fixed top-0 z-40 w-full bg-lime-700">
       {({ open }) => (
         <>
           <div className="max-w-7dxl mx-auto w-full px-2 sm:px-6 lg:px-8">
