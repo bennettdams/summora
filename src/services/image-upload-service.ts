@@ -21,7 +21,7 @@ export async function parseMultipartForm(req: NextApiRequest) {
       })
 
       form.onPart = function (part) {
-        const mimeType = part.mime
+        const mimeType = part.mimetype
 
         if (!mimeType) {
           return reject(new Error('File has no MIME type.'))
@@ -29,7 +29,7 @@ export async function parseMultipartForm(req: NextApiRequest) {
           return reject(new Error(`MIME type ${mimeType} is not supported.`))
         } else {
           // needed to actually use the part
-          form.handlePart(part)
+          form._handlePart(part)
         }
       }
 
@@ -45,7 +45,7 @@ export async function parseMultipartForm(req: NextApiRequest) {
     if (Array.isArray(fileParsed)) {
       throw new Error('Trying to parse more than one file.')
     } else {
-      const fileContent = fs.readFileSync(fileParsed.path)
+      const fileContent = fs.readFileSync(fileParsed.filepath)
       return fileContent
     }
   } catch (error) {
