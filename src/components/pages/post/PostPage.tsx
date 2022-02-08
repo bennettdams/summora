@@ -226,123 +226,123 @@ function PostPageInternal({
 
   return (
     <Page>
+      {/* TITLE */}
       <PageSection hideTopMargin>
-        <div className="flex flex-col md:flex-row">
-          <div className="w-full md:w-4/5">
-            {isTitleEditable ? (
-              <div className="mr-10 h-40" ref={refTitleEdit}>
-                <div className="flex space-x-8">
-                  <button className="inline" form={formId} type="submit">
-                    <IconCheck size="big" />
-                  </button>
-                  <IconX size="big" onClick={() => setIsTitleEditable(false)} />
-                </div>
-
-                <div className="mt-4 space-y-2">
-                  <FormInput
-                    placeholder="Title.."
-                    initialValue={post.title}
-                    onSubmit={handleUpdateTitle}
-                    formId={formId}
-                  >
-                    Title
-                  </FormInput>
-
-                  <FormInput
-                    placeholder="Subitle.."
-                    initialValue={post.subtitle ?? ''}
-                    onSubmit={handleUpdateSubtitle}
-                    autoFocus={false}
-                    formId={formId}
-                  >
-                    Subtitle
-                  </FormInput>
-                </div>
+        <div className="w-full text-center">
+          {isTitleEditable ? (
+            <div className="mx-auto mb-10 w-full lg:w-1/2" ref={refTitleEdit}>
+              <div className="flex items-center">
+                <button className="inine" form={formId} type="submit">
+                  <IconCheck size="big" />
+                </button>
+                <IconX size="big" onClick={() => setIsTitleEditable(false)} />
               </div>
-            ) : (
-              <div className="lg:flex lg:flex-col lg:items-start lg:justify-between">
-                <div
-                  ref={refTitle}
-                  onClick={() => isPostEditMode && setIsTitleEditable(true)}
-                  className="min-w-0 flex-1"
+
+              <div className="mt-4 space-y-2">
+                <FormInput
+                  placeholder="Title.."
+                  initialValue={post.title}
+                  onSubmit={handleUpdateTitle}
+                  formId={formId}
                 >
-                  <h2 className="font-bold text-2xl leading-7 sm:text-3xl">
-                    {isPostEditMode && isHovered && (
-                      <span className="mr-10">
-                        <IconEdit className="inline" />
-                      </span>
-                    )}
+                  Title
+                </FormInput>
 
-                    <span className="text-lime-600">{post.title}</span>
-                  </h2>
-                </div>
-
-                <div className="mt-4 flex-1">
-                  {!isTitleEditable && (
-                    <span className="italic text-gray-400">
-                      {post.subtitle}
+                <FormInput
+                  placeholder="Subitle.."
+                  initialValue={post.subtitle ?? ''}
+                  onSubmit={handleUpdateSubtitle}
+                  autoFocus={false}
+                  formId={formId}
+                >
+                  Subtitle
+                </FormInput>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div
+                ref={refTitle}
+                onClick={() => isPostEditMode && setIsTitleEditable(true)}
+              >
+                <h2 className="font-bold text-2xl leading-7 sm:text-3xl">
+                  {isPostEditMode && isHovered && (
+                    <span className="mr-10">
+                      <IconEdit className="inline" />
                     </span>
                   )}
-                </div>
 
-                <div className="mt-4 flex-1">
-                  <div className="flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
-                    <div
-                      className="flex items-center text-sm text-gray-400"
-                      ref={refCategory}
-                    >
-                      {isPostEditMode && isShownCategoryDropdown ? (
-                        <div className="inline-block w-full">
-                          <DropdownSelect
-                            onChange={handleOnCategorySelect}
-                            items={postCategories.map((cat) => ({
-                              id: cat.id,
-                              title: cat.title,
-                            }))}
-                            initialItem={post.category}
-                          />
-                        </div>
-                      ) : (
-                        // TODO jump to explore
-                        <div className="flex items-center text-sm text-gray-400">
-                          <IconCategory />
-                          <span className="ml-2 py-1.5">
-                            {post.category.title}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex items-center text-sm text-gray-400">
-                      <ViewsIcon noOfViews={post.noOfViews} />
-                    </div>
-
-                    <div className="flex items-center text-sm text-gray-400">
-                      <CommentsIcon noOfComments={post.comments.length} />
-                    </div>
-
-                    <div className="flex items-center text-sm text-gray-400">
-                      <IconDate className="text-gray-400" />
-                      <span className="ml-1">
-                        {post.createdAt.toISOString()}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                  <span className="text-lime-600">{post.title}</span>
+                </h2>
               </div>
-            )}
+
+              <div className="mt-4 flex-1">
+                {!isTitleEditable && (
+                  <span className="italic text-gray-400">{post.subtitle}</span>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      </PageSection>
+
+      {/* META */}
+      <PageSection hideTopMargin>
+        <div className="flex flex-col lg:flex-row">
+          <div className="flex w-full flex-col sm:flex-row sm:flex-wrap md:space-x-6 lg:w-4/5">
+            {/* CATEGORY */}
+            <div
+              className="flex items-center text-sm text-gray-400"
+              ref={refCategory}
+            >
+              {isPostEditMode && isShownCategoryDropdown ? (
+                <div className="inline-block w-full">
+                  <DropdownSelect
+                    onChange={handleOnCategorySelect}
+                    items={postCategories.map((cat) => ({
+                      id: cat.id,
+                      title: cat.title,
+                    }))}
+                    initialItem={post.category}
+                  />
+                </div>
+              ) : (
+                // TODO jump to explore
+                <div className="flex items-center text-sm text-gray-400">
+                  <IconCategory />
+                  <span className="ml-2 py-1.5">{post.category.title}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center text-sm text-gray-400">
+              <ViewsIcon noOfViews={post.noOfViews} />
+            </div>
+
+            <div className="flex items-center text-sm text-gray-400">
+              <CommentsIcon noOfComments={post.comments.length} />
+            </div>
+
+            <div className="flex items-center text-sm text-gray-400">
+              <IconDate className="text-gray-400" />
+              <span className="ml-1">{post.createdAt.toISOString()}</span>
+            </div>
+
+            {/* LIKES */}
+            <div className="flex flex-grow flex-col items-center justify-end md:flex-row">
+              <div className="flex w-full justify-center md:w-1/5">
+                <PostLikes
+                  postId={postId}
+                  noOfLikes={post.likedBy.length}
+                  postLikedByUserIds={post.likedBy}
+                  userId={userId}
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="flex w-full justify-center md:w-1/5">
-            <PostLikes
-              postId={postId}
-              noOfLikes={post.likedBy.length}
-              postLikedByUserIds={post.likedBy}
-              userId={userId}
-            />
-          </div>
-
-          <div className="w-full md:w-1/5">
+          {/* AVATAR */}
+          <div className="w-full lg:w-1/5">
             <Link to={`/user/${post.authorId}`}>
               <div className="flex flex-1 flex-col items-center justify-center rounded-xl p-2 hover:bg-white">
                 <Avatar
@@ -362,7 +362,7 @@ function PostPageInternal({
         </div>
       </PageSection>
 
-      <PageSection>
+      <PageSection hideTopMargin>
         <TagsList
           tags={post.tags.map((tag) => ({ id: tag.id, title: tag.title }))}
           onAddButtonClick={() => setIsShownTagSelection(true)}
@@ -420,7 +420,7 @@ function PostPageInternal({
       <PageSection>
         {/* "items-start" to make "sticky" work. Without it, the sticky div has the full height of the flex container. */}
         <div className="w-full items-start md:flex">
-          <div className="top-40 pr-10 md:sticky md:w-1/4">
+          <div className="top-40 pr-10 md:sticky md:w-1/6">
             <StepList
               steps={post.segments.map((segment, index) => ({
                 no: index,
@@ -430,7 +430,7 @@ function PostPageInternal({
             />
           </div>
 
-          <div className="md:w-3/4">
+          <div className="md:w-4/6">
             <div className="space-y-16">
               {post.segments.map((segment, index) => (
                 <PostSegment
@@ -461,29 +461,32 @@ function PostPageInternal({
               </div>
             )}
           </div>
+
+          <div className="md:w-1/6">&nbsp;</div>
         </div>
       </PageSection>
 
       <PageSection title="Comments">
-        <form
-          className="md:w-2/3"
-          onSubmit={async (e) => {
-            e.preventDefault()
-            addComment(null, inputRootComment)
-            setInputRootComment('')
-          }}
-        >
-          <input
-            className="h-16 w-full border-b border-orange-500 bg-transparent p-8 outline-none focus:border-orange-300 focus:ring-orange-300"
-            name="rootCommentInput"
-            placeholder="Leave a comment.."
-            id="rootCommentInput"
-            value={inputRootComment}
-            required
-            onChange={(e) => setInputRootComment(e.target.value)}
-            onKeyDown={(e) => e.key === 'Escape' && setInputRootComment('')}
-          />
-        </form>
+        <div className="mx-auto w-2/3">
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault()
+              addComment(null, inputRootComment)
+              setInputRootComment('')
+            }}
+          >
+            <input
+              className="h-16 w-full border-b border-orange-500 bg-transparent p-8 outline-none focus:border-orange-300 focus:ring-orange-300"
+              name="rootCommentInput"
+              placeholder="Leave a comment.."
+              id="rootCommentInput"
+              value={inputRootComment}
+              required
+              onChange={(e) => setInputRootComment(e.target.value)}
+              onKeyDown={(e) => e.key === 'Escape' && setInputRootComment('')}
+            />
+          </form>
+        </div>
       </PageSection>
 
       <PageSection>
