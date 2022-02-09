@@ -54,7 +54,7 @@ export function PostPage(props: PostPageProps): JSX.Element {
       postCategories={props.postCategories}
       tagsSorted={props.tagsSorted}
       tagsSortedForCategory={props.tagsSortedForCategory}
-      isPostEditMode={userId === post.authorId}
+      isPostEditMode={props.isPostEditMode}
       userId={userId}
     />
   )
@@ -69,11 +69,10 @@ function PostPageInternal({
   postCategories,
   tagsSorted,
   tagsSortedForCategory,
-  isPostEditMode = false,
+  isPostEditMode,
   userId,
 }: PostPageProps & {
   post: PostPostPage
-  isPostEditMode: boolean
   userId: string | null
 }): JSX.Element {
   const {

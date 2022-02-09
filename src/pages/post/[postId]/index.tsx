@@ -1,15 +1,15 @@
 import { GetStaticPaths, GetStaticProps } from 'next'
-import { prisma } from '../../prisma/prisma'
+import { prisma } from '../../../prisma/prisma'
 import { PostCategory, PrismaClient } from '.prisma/client'
-import { PostPage } from '../../components/pages/post/PostPage'
+import { PostPage } from '../../../components/pages/post/PostPage'
 import { Prisma } from '@prisma/client'
 import type { ParsedUrlQuery } from 'querystring'
-import { ServerPageProps } from '../../types/PageProps'
+import { ServerPageProps } from '../../../types/PageProps'
 import { Hydrate } from 'react-query'
-import { hydrationHandler, prefillServer } from '../../data/use-post'
-import { isServer } from '../../util/server/server-utils'
-import { apiIncrementPostViews } from '../../services/api-service'
-import { ApiPost } from '../api/posts/[postId]'
+import { hydrationHandler, prefillServer } from '../../../data/use-post'
+import { isServer } from '../../../util/server/server-utils'
+import { apiIncrementPostViews } from '../../../services/api-service'
+import { ApiPost } from '../../api/posts/[postId]'
 
 export interface PostPageProps {
   postId: string
@@ -18,6 +18,7 @@ export interface PostPageProps {
   tagsSortedForCategory: Prisma.PromiseReturnType<
     typeof findTagsForPostByCategory
   >
+  isPostEditMode: boolean
 }
 
 async function findTagsForPost(prisma: PrismaClient) {
@@ -125,6 +126,7 @@ export const getStaticProps: GetStaticProps<
           postCategories,
           tagsSorted,
           tagsSortedForCategory,
+          isPostEditMode: true,
         },
         revalidate: revalidateInSeconds,
       }
@@ -144,6 +146,7 @@ export default function _PostPage(
         postCategories={props.postCategories}
         tagsSorted={props.tagsSorted}
         tagsSortedForCategory={props.tagsSortedForCategory}
+        isPostEditMode={props.isPostEditMode}
       />
     </Hydrate>
   )

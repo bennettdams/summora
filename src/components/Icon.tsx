@@ -23,14 +23,8 @@ const sizes = {
   huge: 'h-12 w-12',
 } as const
 
-// function Debug() {
-//   return (
-//     <div className="text-orange-600 bg-orange-100 hover:text-orange-800 transition ease-in duration-75 transform hover:scale-110"></div>
-//   )
-// }
-
 const style =
-  'leading-none text-orange-600 rounded-full hover:bg-orange-200 hover:shadow-sm hover:text-orange-800 transition ease-in duration-75 transform hover:scale-110'
+  'leading-none text-orange-400 rounded-full hover:bg-orange-200 hover:shadow-sm hover:text-orange-800 transition ease-in duration-75 transform hover:scale-110'
 
 export type IconSize = keyof typeof sizes
 

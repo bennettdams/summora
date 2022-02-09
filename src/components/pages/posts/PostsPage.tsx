@@ -70,7 +70,9 @@ export function PostsPage({
         <div className="mx-auto max-w-7xl">
           <div className="lg:text-center">
             <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-lime-600 sm:text-4xl">
-              A <span className="line-through">better</span>{' '}
+              <span>A </span>
+              <span className="line-through">better</span>
+              <span> </span>
               <span className="underline">faster</span> way to learn
             </p>
             <p className="mt-4 flex max-w-2xl flex-col text-xl text-gray-500 lg:mx-auto">
@@ -90,7 +92,7 @@ export function PostsPage({
         <div className="grid grid-cols-2 grid-rows-2 gap-8 text-gray-500">
           <div className="justify-left flex items-center">
             <LightningBoltIcon
-              className="h-12 w-12 rounded-md bg-orange-500 p-2 text-white"
+              className="h-12 w-12 rounded-md bg-orange-400 p-2 text-white"
               aria-hidden="true"
             />
 
@@ -101,7 +103,7 @@ export function PostsPage({
 
           <div className="justify-left flex items-center">
             <LightningBoltIcon
-              className="h-12 w-12 rounded-md bg-orange-500 p-2 text-white"
+              className="h-12 w-12 rounded-md bg-orange-400 p-2 text-white"
               aria-hidden="true"
             />
 
@@ -112,7 +114,7 @@ export function PostsPage({
 
           <div className="justify-left flex items-center">
             <LightningBoltIcon
-              className="h-12 w-12 rounded-md bg-orange-500 p-2 text-white"
+              className="h-12 w-12 rounded-md bg-orange-400 p-2 text-white"
               aria-hidden="true"
             />
 
@@ -123,7 +125,7 @@ export function PostsPage({
 
           <div className="justify-left flex items-center">
             <LightningBoltIcon
-              className="h-12 w-12 rounded-md bg-orange-500 p-2 text-white"
+              className="h-12 w-12 rounded-md bg-orange-400 p-2 text-white"
               aria-hidden="true"
             />
 
@@ -152,7 +154,7 @@ export function PostsPage({
             <span className="block">
               Ready to make your knowledge to money?
             </span>
-            <span className="block text-orange-500">
+            <span className="block text-orange-400">
               Create an account for free today.
             </span>
           </h2>
