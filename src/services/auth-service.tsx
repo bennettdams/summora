@@ -37,15 +37,19 @@ export function AuthContextProvider({
   children: ReactNode
 }): JSX.Element {
   const [authState, setAuthState] = useState<AuthState>(() => {
-    const session = getSessionSupabase(supabaseClient)
-    const userAuth = session?.user ?? null
+    /*
+     * We could initialize auth state for the initial render here
+     * from Supabase, but this will produce hydration/render mismatch for the server.
+     */
+    // const session = getSessionSupabase(supabaseClient)
+    // const userAuth = session?.user ?? null
 
     return {
-      session,
-      userAuth,
+      session: null,
+      userAuth: null,
       isLoading: true,
       user: null,
-      userId: userAuth?.id ?? null,
+      userId: null,
     }
   })
 
@@ -59,14 +63,22 @@ export function AuthContextProvider({
     if (!userId) {
       throw new Error('Session exists, but user auth/user ID does not.')
     } else {
-      const response = await apiFetchUser(userId)
+      // local session, don't have to wait for user from API
       setAuthState({
         session,
         userAuth,
-        isLoading: false,
-        user: response.result ?? null,
+        isLoading: true,
+        user: null,
         userId,
       })
+
+      // user profile from API
+      const response = await apiFetchUser(userId)
+      setAuthState((prev) => ({
+        ...prev,
+        isLoading: false,
+        user: response.result ?? null,
+      }))
     }
   }
 

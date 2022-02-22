@@ -80,10 +80,7 @@ export async function deleteUserSupabase(userId: string): Promise<void> {
       throw new Error('No Supabase service key.')
     } else {
       const supabaseServer = createSupabaseClient(supabaseServiceKey)
-      const { error } = await supabaseServer.auth.api.deleteUser(
-        userId,
-        supabaseServiceKey
-      )
+      const { error } = await supabaseServer.auth.api.deleteUser(userId)
       if (error) {
         throw new Error(`Error while deleting user: ${error.message}`)
       }

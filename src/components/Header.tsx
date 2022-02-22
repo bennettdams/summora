@@ -23,7 +23,7 @@ function UserNavbar() {
   return (
     <Menu as="div" className="relative">
       <div>
-        {userAuth === null || !!isLoadingAuth ? (
+        {isLoadingAuth ? (
           <LoadingAnimation />
         ) : userAuth === null && !isLoadingAuth ? (
           <Link to="/signin">
