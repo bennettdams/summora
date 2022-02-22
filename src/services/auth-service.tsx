@@ -7,7 +7,6 @@ import {
 } from 'react'
 import { SupabaseClient } from '@supabase/supabase-js'
 import {
-  getSessionSupabase,
   getUserByCookieSupabase,
   signInSupabase,
   signOutSupabase,

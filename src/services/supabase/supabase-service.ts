@@ -88,10 +88,13 @@ export async function deleteUserSupabase(userId: string): Promise<void> {
   }
 }
 
-function extractJWTFromNextRequestCookies(req: NextApiRequest): string {
-  const jwt = req.cookies['sb:token']
-  if (!jwt) throw new Error('No Supabase JWT found in Next.js request')
-  return jwt
+async function extractAccessTokenFromNextRequestCookies(
+  req: NextApiRequest
+): Promise<string> {
+  const { token } = await supabase.auth.api.getUserByCookie(req)
+  if (!token)
+    throw new Error('No Supabase Access Token found in Next.js request')
+  return token
 }
 
 // AVATAR #########
@@ -101,7 +104,9 @@ export async function uploadAvatarSupabase(
   req: NextApiRequest
 ): Promise<void> {
   const supabaseServer = createSupabaseClient()
-  supabaseServer.auth.setAuth(extractJWTFromNextRequestCookies(req))
+  supabaseServer.auth.setAuth(
+    await extractAccessTokenFromNextRequestCookies(req)
+  )
 
   const { error } = await supabaseServer.storage
     .from(STORAGE.AVATARS.bucket)
@@ -154,7 +159,9 @@ export async function uploadPostSegmentImageSupabase(
   req: NextApiRequest
 ): Promise<void> {
   const supabaseServer = createSupabaseClient()
-  supabaseServer.auth.setAuth(extractJWTFromNextRequestCookies(req))
+  supabaseServer.auth.setAuth(
+    await extractAccessTokenFromNextRequestCookies(req)
+  )
 
   const { error } = await supabaseServer.storage
     .from(STORAGE.POST_IMAGES.bucket)
