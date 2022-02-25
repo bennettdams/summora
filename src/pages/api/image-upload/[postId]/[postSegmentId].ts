@@ -1,13 +1,45 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getUserByCookie } from '../../../../services/auth-service'
-import { uploadPostSegmentImageSupabase } from '../../../../services/supabase/supabase-service'
+import {
+  deletePostSegmentImageSupabase,
+  uploadPostSegmentImageSupabase,
+} from '../../../../services/supabase/supabase-service'
 import { logAPI } from '../../../../util/logger'
 import { prisma } from '../../../../prisma/prisma'
 import { parseMultipartForm } from '../../../../services/image-upload-service'
 import { ApiImageUploadPostSegmentsRequestBody } from '../../../../services/api-service'
 import { createRandomId } from '../../../../util/random-id'
+import { Prisma } from '@prisma/client'
 
-export type ApiImageUploadPostSegment = void
+export type ApiImageUploadPostSegment = Prisma.PromiseReturnType<
+  typeof updatePostSegmentImageId
+>
+
+async function updatePostSegmentImageId(
+  postSegmentId: string,
+  imageId: string
+) {
+  const now = new Date()
+
+  try {
+    return await prisma.postSegment.update({
+      where: { id: postSegmentId },
+      data: {
+        updatedAt: now,
+        imageId,
+      },
+      include: {
+        items: {
+          orderBy: { createdAt: 'asc' },
+        },
+      },
+    })
+  } catch (error) {
+    throw new Error(
+      `Error while updating post segment with ID ${postSegmentId}: ${error}`
+    )
+  }
+}
 
 interface Request extends NextApiRequest {
   body: ApiImageUploadPostSegmentsRequestBody
@@ -33,7 +65,9 @@ export default async function _apiImageUploadPostSegment(
 
   if (!postId || !postSegmentId) {
     res.status(500).end('No post ID or post segment ID!')
-  } else if (typeof postSegmentId !== 'string') {
+  } else if (
+    !(typeof postSegmentId === 'string' && typeof postId === 'string')
+  ) {
     res.status(500).end('Post ID or post segment ID wrong format!')
   } else {
     const { data: user, error } = await getUserByCookie(req)
@@ -59,40 +93,51 @@ export default async function _apiImageUploadPostSegment(
              * TODO we only do this because we don't have the post ID available right now.
              * Should be done by providing the ID via the API itself.
              */
-            const postForSegment = await prisma.postSegment.findUnique({
+            const postSegment = await prisma.postSegment.findUnique({
               where: { id: postSegmentId },
-              select: { postId: true, Post: { select: { authorId: true } } },
+              select: { imageId: true, Post: { select: { authorId: true } } },
             })
 
-            if (!postForSegment) {
+            if (!postSegment) {
               return res.status(404).json({
-                message: `Post for post segment ${postSegmentId} not found.`,
+                message: `Postsegment ${postSegmentId} not found.`,
               })
-            } else if (postForSegment.Post.authorId !== userId) {
+            } else if (postSegment.Post.authorId !== userId) {
               return res.status(404).json({
                 message: `User ${userId} is not the author of the post for post segment ${postSegmentId}.`,
               })
             } else {
-              const imageId = `segment-${postSegmentId}-${createRandomId()}`
+              // delete old image
+              const imageIdOld = postSegment.imageId
+              if (imageIdOld) {
+                await deletePostSegmentImageSupabase({
+                  postId,
+                  authorId: postSegment.Post.authorId,
+                  imageId: imageIdOld,
+                  req,
+                })
+              }
+
+              const imageIdNew = `segment-${postSegmentId}-${createRandomId()}`
               // TODO validation?
               // TODO convert png etc.
               await uploadPostSegmentImageSupabase(
-                postForSegment.postId,
+                postId,
                 userId,
-                imageId,
+                imageIdNew,
                 fileParsed,
                 req
               )
 
-              await prisma.postSegment.update({
-                where: { id: postSegmentId },
-                data: { imageId },
-                select: null,
-              })
+              const segmentUpdated = await updatePostSegmentImageId(
+                postSegmentId,
+                imageIdNew
+              )
 
-              const message = `Uploaded post segment image for ${postSegmentId}`
-              console.info(`[API] ${message}`)
-              return res.status(200).json({ message })
+              console.info(
+                `[API] Uploaded post segment image for ${postSegmentId}`
+              )
+              return res.status(200).json(segmentUpdated)
             }
           } catch (error) {
             console.error(

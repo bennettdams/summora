@@ -82,11 +82,15 @@ export async function apiImageUploadAvatars(
 
 export type ApiImageUploadPostSegmentsRequestBody = FormData
 
-export async function apiImageUploadPostSegments(
-  postId: string,
-  postSegmentId: string,
+export async function apiImageUploadPostSegments({
+  postId,
+  postSegmentId,
+  postSegmentImageFile,
+}: {
+  postId: string
+  postSegmentId: string
   postSegmentImageFile: File
-): Promise<HttpResponse<ApiImageUploadPostSegment>> {
+}): Promise<HttpResponse<ApiImageUploadPostSegment>> {
   return await postFile<ApiImageUploadPostSegment>(
     ROUTES_API.IMAGE_UPLOAD_POST_SEGMENTS(postId, postSegmentId),
     postSegmentImageFile

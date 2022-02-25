@@ -5,6 +5,7 @@ import {
   apiCreatePostSegmentItem,
   apiDeletePostComment,
   apiFetchPost,
+  apiImageUploadPostSegments,
   apiLikeUnlikePost,
   apiUpdatePost,
   apiUpdatePostSegment,
@@ -55,6 +56,7 @@ export function usePost(postId: string, enabled = true) {
     updatePostMutation,
     createPostSegmentItemMutation,
     updatePostSegmentItemMutation,
+    updatePostSegmentImageIdMutation,
     createPostSegmentMutation,
     updatePostSegmentMutation,
     createPostCommentMutation,
@@ -69,6 +71,7 @@ export function usePost(postId: string, enabled = true) {
       updatePostMutation.isLoading ||
       createPostSegmentItemMutation.isLoading ||
       updatePostSegmentItemMutation.isLoading ||
+      updatePostSegmentImageIdMutation.isLoading ||
       createPostSegmentMutation.isLoading ||
       updatePostSegmentMutation.isLoading ||
       createPostCommentMutation.isLoading ||
@@ -79,6 +82,7 @@ export function usePost(postId: string, enabled = true) {
       updatePostMutation.isError ||
       createPostSegmentItemMutation.isError ||
       updatePostSegmentItemMutation.isError ||
+      updatePostSegmentImageIdMutation.isError ||
       createPostSegmentMutation.isError ||
       updatePostSegmentMutation.isError ||
       createPostCommentMutation.isError ||
@@ -90,6 +94,7 @@ export function usePost(postId: string, enabled = true) {
     createPostSegment: createPostSegmentMutation.mutateAsync,
     updatePostSegmentItem: updatePostSegmentItemMutation.mutateAsync,
     updatePostSegment: updatePostSegmentMutation.mutateAsync,
+    updatePostSegmentImageId: updatePostSegmentImageIdMutation.mutateAsync,
     createPostComment: createPostCommentMutation.mutateAsync,
     deletePostComment: deletePostCommentMutation.mutateAsync,
     likeUnlikePost: likeUnlikePostMutation.mutateAsync,
@@ -194,6 +199,27 @@ function usePostMutation(postId: string) {
     },
   })
 
+  const updatePostSegmentImageIdMutation = useMutation(
+    apiImageUploadPostSegments,
+    {
+      onSuccess: (data) => {
+        if (data.result) {
+          const segmentUpdated = data.result
+          queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
+            !prevData
+              ? null
+              : {
+                  ...prevData,
+                  segments: prevData.segments.map((segment) =>
+                    segment.id === segmentUpdated.id ? segmentUpdated : segment
+                  ),
+                }
+          )
+        }
+      },
+    }
+  )
+
   // ITEM
   const createPostSegmentItemMutation = useMutation(apiCreatePostSegmentItem, {
     onSuccess: (data) => {
@@ -295,6 +321,7 @@ function usePostMutation(postId: string) {
     updatePostMutation,
     createPostSegmentItemMutation,
     updatePostSegmentItemMutation,
+    updatePostSegmentImageIdMutation,
     createPostSegmentMutation,
     updatePostSegmentMutation,
     createPostCommentMutation,

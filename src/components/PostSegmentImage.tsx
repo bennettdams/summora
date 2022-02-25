@@ -3,6 +3,7 @@ import { ImageUpload } from './ImageUpload'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
 import { useCloudStorage } from '../services/use-cloud-storage'
+import { usePost } from '../data/use-post'
 
 /*
  * For the love of god, this file is very similar to "Avatar".
@@ -17,12 +18,19 @@ function createQueryKey(postId: string, postSegmentId: string) {
   return [queryKeyPostBase, postId, postSegmentId]
 }
 
-function usePostImage(
-  hasSegmentImage: boolean,
-  postId: string,
-  authorId: string,
-  imageId: string
-) {
+function usePostImage({
+  hasSegmentImage,
+  postId,
+  postSegmentId,
+  authorId,
+  imageId,
+}: {
+  hasSegmentImage: boolean
+  postId: string
+  postSegmentId: string
+  authorId: string
+  imageId: string | null
+}) {
   const {
     data,
     isLoading,
@@ -30,22 +38,27 @@ function usePostImage(
     isFetching,
     refetch: refetchQuery,
   } = useQuery<QueryData>(
-    // TODO this creates a new query for every image, as each image ID is unique
-    createQueryKey(postId, imageId),
+    createQueryKey(postId, postSegmentId),
     async () => {
-      const postSegmentImageFile = await downloadPostSegmentImage(
-        postId,
-        authorId,
-        imageId
-      )
-
-      if (!postSegmentImageFile) {
-        throw Error('Post segment image file is null')
+      if (!imageId) {
+        throw Error('Trying to fetch post segment image, but no image ID.')
       } else {
-        // FIXME revoke URL to prevent memory leak?
-        const url = URL.createObjectURL(postSegmentImageFile)
+        const postSegmentImageFile = await downloadPostSegmentImage(
+          postId,
+          authorId,
+          imageId
+        )
 
-        return url
+        if (!postSegmentImageFile) {
+          throw Error(
+            'Trying to create objectURL for post segment image, but is null.'
+          )
+        } else {
+          // FIXME revoke URL to prevent memory leak?
+          const url = URL.createObjectURL(postSegmentImageFile)
+
+          return url
+        }
       }
     },
     {
@@ -59,24 +72,26 @@ function usePostImage(
 
   const { downloadPostSegmentImage, getPublicURLPostSegmentImage } =
     useCloudStorage()
+
+  // This is only executed in one case: A post segment has rendered that already has an existing image ID.
   const [publicURL] = useState<string | null>(
-    !hasSegmentImage
-      ? null
-      : getPublicURLPostSegmentImage(postId, authorId, imageId)
+    !!hasSegmentImage && !!imageId
+      ? getPublicURLPostSegmentImage(postId, authorId, imageId)
+      : null
   )
 
-  function handleRefetch() {
+  async function handleRefetch() {
     data && URL.revokeObjectURL(data)
-    refetchQuery()
+    await refetchQuery()
   }
 
   return {
-    postSegmentImageObjectUrl: data || null,
     refetch: handleRefetch,
-    publicURL,
     isLoading,
     isError,
     isFetching,
+    // local object URL (from editing) has precedence over public URL from database
+    imageURL: !data && !publicURL ? null : data ?? publicURL,
   }
 }
 
@@ -90,16 +105,17 @@ export function PostSegmentImage({
   postId: string
   authorId: string
   postSegmentId: string
-  imageId: string
+  imageId: string | null
   isEditable?: boolean
 }): JSX.Element {
-  const { uploadPostSegmentImage } = useCloudStorage()
-  const { publicURL, postSegmentImageObjectUrl, refetch } = usePostImage(
-    !!imageId,
+  const { updatePostSegmentImageId } = usePost(postId)
+  const { refetch, imageURL } = usePostImage({
+    hasSegmentImage: !!imageId,
     postId,
+    postSegmentId,
     authorId,
-    imageId
-  )
+    imageId,
+  })
 
   return (
     <div className="relative inline-grid h-full w-full place-items-center">
@@ -109,36 +125,26 @@ export function PostSegmentImage({
             <ImageUpload
               inputId={postSegmentId}
               uploadFn={async (file) => {
-                await uploadPostSegmentImage(postId, postSegmentId, file)
+                await updatePostSegmentImageId({
+                  postId,
+                  postSegmentId,
+                  postSegmentImageFile: file,
+                })
+                await refetch()
               }}
-              onUpload={refetch}
             />
           </span>
         </div>
       )}
 
-      {isEditable && postSegmentImageObjectUrl ? (
+      {imageURL && (
         <Image
-          src={postSegmentImageObjectUrl}
+          src={imageURL}
           className="rounded-full"
           alt=""
-          // width="100%"
-          // height="100%"
           layout="fill"
           objectFit="contain"
         />
-      ) : (
-        publicURL && (
-          <Image
-            src={publicURL}
-            className="rounded-3xl"
-            alt=""
-            // width="100%"
-            // height="100%"
-            layout="fill"
-            objectFit="contain"
-          />
-        )
       )}
     </div>
   )
