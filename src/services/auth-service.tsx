@@ -8,6 +8,7 @@ import {
 import { SupabaseClient } from '@supabase/supabase-js'
 import {
   getUserByCookieSupabase,
+  setUpSSRAuthSupabase,
   signInSupabase,
   signOutSupabase,
   signUpSupabase,
@@ -105,22 +106,13 @@ export function AuthContextProvider({
             userAuth: null,
             userId: null,
           })
-        } else if (session) {
-          fillAuth(session)
-
-          // this enables SSR with Supabase
-          // TODO need for initial render? right now only executed on auth change
-          const response = await fetch('/api/auth', {
-            method: 'POST',
-            headers: new Headers({ 'Content-Type': 'application/json' }),
-            credentials: 'same-origin',
-            body: JSON.stringify({ event, session }),
-          })
-
-          if (!response.ok) {
-            throw new Error('Cannot setup auth for SSR.')
+        } else {
+          if (session) {
+            fillAuth(session)
           }
         }
+        // TODO need for initial render? right now only executed on auth change
+        await setUpSSRAuthSupabase(session, event)
       }
     )
 

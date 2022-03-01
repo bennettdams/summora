@@ -1,4 +1,9 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import {
+  AuthChangeEvent,
+  createClient,
+  Session,
+  SupabaseClient,
+} from '@supabase/supabase-js'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { GetServerSidePropsContextRequest } from '../../types/GetServerSidePropsContextRequest = GetServerSidePropsContext'
 import { isServer } from '../../util/server/server-utils'
@@ -47,6 +52,26 @@ export const supabase = createSupabaseClient()
 
 export function setAuthCookie(req: NextApiRequest, res: NextApiResponse): void {
   return supabase.auth.api.setAuthCookie(req, res)
+}
+
+/**
+ * Send session to /api/auth route to set the auth cookie.
+ * NOTE: this is only needed if you're doing SSR (getServerSideProps).
+ */
+export async function setUpSSRAuthSupabase(
+  session: Session | null,
+  event: AuthChangeEvent | null
+) {
+  const response = await fetch('/api/auth', {
+    method: 'POST',
+    headers: new Headers({ 'Content-Type': 'application/json' }),
+    credentials: 'same-origin',
+    body: JSON.stringify({ event, session }),
+  })
+
+  if (!response.ok) {
+    throw new Error('Cannot setup auth for SSR.')
+  }
 }
 
 // TODO use local supabase const here instead?
