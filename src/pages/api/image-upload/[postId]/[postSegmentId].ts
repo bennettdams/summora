@@ -121,13 +121,13 @@ export default async function _apiImageUploadPostSegment(
               const imageIdNew = `segment-${postSegmentId}-${createRandomId()}`
               // TODO validation?
               // TODO convert png etc.
-              await uploadPostSegmentImageSupabase(
+              await uploadPostSegmentImageSupabase({
                 postId,
-                userId,
-                imageIdNew,
-                fileParsed,
-                req
-              )
+                authorId: userId,
+                imageId: imageIdNew,
+                postSegmentImageFileParsed: fileParsed,
+                req,
+              })
 
               const segmentUpdated = await updatePostSegmentImageId(
                 postSegmentId,

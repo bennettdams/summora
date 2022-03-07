@@ -40,8 +40,13 @@ export const ROUTES_API = {
   POST_COMMENTS: 'post-comments',
   POST_COMMENT: (commentId: string) => `post-comments/${commentId}`,
   IMAGE_UPLOAD_AVATARS: 'image-upload/avatars',
-  IMAGE_UPLOAD_POST_SEGMENTS: (postId: string, postSegmentId: string) =>
-    `image-upload/${postId}/${postSegmentId}`,
+  IMAGE_UPLOAD_POST_SEGMENTS: ({
+    postId,
+    postSegmentId,
+  }: {
+    postId: string
+    postSegmentId: string
+  }) => `image-upload/${postId}/${postSegmentId}`,
 } as const
 
 // #########################################
@@ -92,7 +97,7 @@ export async function apiImageUploadPostSegments({
   postSegmentImageFile: File
 }): Promise<HttpResponse<ApiImageUploadPostSegment>> {
   return await postFile<ApiImageUploadPostSegment>(
-    ROUTES_API.IMAGE_UPLOAD_POST_SEGMENTS(postId, postSegmentId),
+    ROUTES_API.IMAGE_UPLOAD_POST_SEGMENTS({ postId, postSegmentId }),
     postSegmentImageFile
   )
 }

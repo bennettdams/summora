@@ -131,11 +131,15 @@ async function extractAccessTokenFromNextRequestCookies(
 }
 
 // AVATAR #########
-export async function uploadAvatarSupabase(
-  userId: string,
-  avatarFileParsed: Buffer,
+export async function uploadAvatarSupabase({
+  userId,
+  avatarFileParsed,
+  req,
+}: {
+  userId: string
+  avatarFileParsed: Buffer
   req: NextApiRequest
-): Promise<void> {
+}): Promise<void> {
   const supabaseServer = createSupabaseClient()
   supabaseServer.auth.setAuth(
     await extractAccessTokenFromNextRequestCookies(req)
@@ -184,13 +188,19 @@ export function getPublicURLAvatarSupabase(userId: string): string | null {
 }
 
 // POST SEGMENT IMAGE #########
-export async function uploadPostSegmentImageSupabase(
-  postId: string,
-  authorId: string,
-  imageId: string,
-  postSegmentImageFileParsed: Buffer,
+export async function uploadPostSegmentImageSupabase({
+  postId,
+  authorId,
+  imageId,
+  postSegmentImageFileParsed,
+  req,
+}: {
+  postId: string
+  authorId: string
+  imageId: string
+  postSegmentImageFileParsed: Buffer
   req: NextApiRequest
-): Promise<void> {
+}): Promise<void> {
   const supabaseServer = createSupabaseClient()
   supabaseServer.auth.setAuth(
     await extractAccessTokenFromNextRequestCookies(req)
@@ -241,11 +251,15 @@ export async function deletePostSegmentImageSupabase({
   }
 }
 
-export async function downloadPostSegmentImageSupabase(
-  postId: string,
-  authorId: string,
+export async function downloadPostSegmentImageSupabase({
+  postId,
+  authorId,
+  imageId,
+}: {
+  postId: string
+  authorId: string
   imageId: string
-): Promise<Blob | null> {
+}): Promise<Blob | null> {
   const { data, error } = await supabase.storage
     .from(STORAGE.POST_IMAGES.bucket)
     .download(STORAGE.POST_IMAGES.filePath({ postId, authorId, imageId }))
@@ -259,11 +273,15 @@ export async function downloadPostSegmentImageSupabase(
   }
 }
 
-export function getPublicURLPostSegmentImageSupabase(
-  postId: string,
-  authorId: string,
+export function getPublicURLPostSegmentImageSupabase({
+  postId,
+  authorId,
+  imageId,
+}: {
+  postId: string
+  authorId: string
   imageId: string
-): string | null {
+}): string | null {
   const { publicURL, error } = supabase.storage
     .from(STORAGE.POST_IMAGES.bucket)
     .getPublicUrl(STORAGE.POST_IMAGES.filePath({ postId, authorId, imageId }))

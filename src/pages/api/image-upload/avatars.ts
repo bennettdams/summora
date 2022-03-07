@@ -48,7 +48,11 @@ export default async function _apiImageUploadAvatars(
 
           // TODO validation?
           // TODO convert png etc.
-          await uploadAvatarSupabase(userId, fileParsed, req)
+          await uploadAvatarSupabase({
+            userId,
+            avatarFileParsed: fileParsed,
+            req,
+          })
 
           await prisma.user.update({
             where: { userId },

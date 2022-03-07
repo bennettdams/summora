@@ -43,11 +43,11 @@ function usePostImage({
       if (!imageId) {
         throw Error('Trying to fetch post segment image, but no image ID.')
       } else {
-        const postSegmentImageFile = await downloadPostSegmentImage(
+        const postSegmentImageFile = await downloadPostSegmentImage({
           postId,
           authorId,
-          imageId
-        )
+          imageId,
+        })
 
         if (!postSegmentImageFile) {
           throw Error(
