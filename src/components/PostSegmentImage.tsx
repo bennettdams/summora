@@ -14,22 +14,21 @@ import { usePost } from '../data/use-post'
 const queryKeyPostBase = 'post-segment-image'
 type QueryData = string | null
 
-function createQueryKey(postId: string, postSegmentId: string) {
-  return [queryKeyPostBase, postId, postSegmentId]
-}
-
 function usePostImage({
-  hasSegmentImage,
-  postId,
-  postSegmentId,
-  authorId,
+  hasImage,
   imageId,
+  queryKey,
+  downloadFn,
+  getPublicImageURL,
 }: {
-  hasSegmentImage: boolean
+  hasImage: boolean
   postId: string
   postSegmentId: string
   authorId: string
   imageId: string | null
+  queryKey: string[]
+  downloadFn: (imagIedNotNull: string) => Promise<Blob | null>
+  getPublicImageURL: (imagIedNotNull: string) => string | null
 }) {
   const {
     data,
@@ -38,24 +37,18 @@ function usePostImage({
     isFetching,
     refetch: refetchQuery,
   } = useQuery<QueryData>(
-    createQueryKey(postId, postSegmentId),
+    queryKey,
     async () => {
       if (!imageId) {
-        throw Error('Trying to fetch post segment image, but no image ID.')
+        throw Error('Trying to fetch image, but no image ID.')
       } else {
-        const postSegmentImageFile = await downloadPostSegmentImage({
-          postId,
-          authorId,
-          imageId,
-        })
+        const imageFileBlob = await downloadFn(imageId)
 
-        if (!postSegmentImageFile) {
-          throw Error(
-            'Trying to create objectURL for post segment image, but is null.'
-          )
+        if (!imageFileBlob) {
+          throw Error('Trying to create objectURL for image, but is null.')
         } else {
           // FIXME revoke URL to prevent memory leak?
-          const url = URL.createObjectURL(postSegmentImageFile)
+          const url = URL.createObjectURL(imageFileBlob)
 
           return url
         }
@@ -70,14 +63,9 @@ function usePostImage({
     }
   )
 
-  const { downloadPostSegmentImage, getPublicURLPostSegmentImage } =
-    useCloudStorage()
-
   // This is only executed in one case: A post segment has rendered that already has an existing image ID.
   const [publicURL] = useState<string | null>(
-    !!hasSegmentImage && !!imageId
-      ? getPublicURLPostSegmentImage(postId, authorId, imageId)
-      : null
+    !!hasImage && !!imageId ? getPublicImageURL(imageId) : null
   )
 
   async function handleRefetch() {
@@ -109,12 +97,27 @@ export function PostSegmentImage({
   isEditable?: boolean
 }): JSX.Element {
   const { updatePostSegmentImageId } = usePost(postId)
+  const { downloadPostSegmentImage, getPublicURLPostSegmentImage } =
+    useCloudStorage()
   const { refetch, imageURL } = usePostImage({
-    hasSegmentImage: !!imageId,
+    hasImage: !!imageId,
     postId,
     postSegmentId,
     authorId,
     imageId,
+    queryKey: [queryKeyPostBase, postId, postSegmentId],
+    downloadFn: (imageIdNotNull) =>
+      downloadPostSegmentImage({
+        postId,
+        authorId,
+        imageId: imageIdNotNull,
+      }),
+    getPublicImageURL: (imageIdNotNull) =>
+      getPublicURLPostSegmentImage({
+        postId,
+        authorId,
+        imageId: imageIdNotNull,
+      }),
   })
 
   return (

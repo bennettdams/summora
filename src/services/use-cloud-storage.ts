@@ -40,7 +40,15 @@ export function useCloudStorage() {
   )
 
   const getPublicURLPostSegmentImage = useCallback(
-    (postId: string, authorId: string, imageId: string) => {
+    ({
+      postId,
+      authorId,
+      imageId,
+    }: {
+      postId: string
+      authorId: string
+      imageId: string
+    }) => {
       return getPublicURLPostSegmentImageSupabase({ postId, authorId, imageId })
     },
     []
