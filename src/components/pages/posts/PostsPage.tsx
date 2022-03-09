@@ -196,7 +196,7 @@ export function PostsPage({
                     author: {
                       id: post.authorId,
                       username: post.author.username,
-                      hasAvatar: post.author.hasAvatar,
+                      imageId: post.author.imageId,
                     },
                     noOfViews: post.noOfViews,
                     noOfComments: post._count?.comments ?? 0,

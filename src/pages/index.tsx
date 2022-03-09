@@ -23,7 +23,7 @@ async function findPosts(prisma: PrismaClient) {
       take: 20,
       orderBy: { createdAt: 'asc' },
       include: {
-        author: { select: { username: true, hasAvatar: true } },
+        author: { select: { username: true, imageId: true } },
         category: true,
         segments: { orderBy: { createdAt: 'asc' } },
         tags: { select: { id: true, title: true } },

@@ -46,9 +46,9 @@ function UserPageInternal({
             </div>
             <div>
               <Avatar
-                hasUserAvatar={user.hasAvatar ?? false}
                 isEditable
                 userId={userId}
+                imageId={user.imageId ?? null}
                 size="large"
               />
             </div>
@@ -70,7 +70,7 @@ function UserPageInternal({
                   author: {
                     id: post.authorId,
                     username: post.author.username,
-                    hasAvatar: post.author.hasAvatar,
+                    imageId: post.author.imageId,
                   },
                   noOfViews: post.noOfViews,
                   noOfComments: post._count?.comments ?? 0,
@@ -91,8 +91,8 @@ function UserPageInternal({
             <div className="col-start-1">
               <div className="grid h-full place-items-center">
                 <Avatar
-                  hasUserAvatar={user.hasAvatar ?? false}
                   userId={userId}
+                  imageId={user.imageId ?? null}
                   size="small"
                 />
               </div>
@@ -101,8 +101,8 @@ function UserPageInternal({
             <div className="col-start-2">
               <div className="grid h-full place-items-center">
                 <Avatar
-                  hasUserAvatar={user.hasAvatar ?? false}
                   userId={userId}
+                  imageId={user.imageId ?? null}
                   size="medium"
                 />
               </div>
@@ -111,8 +111,8 @@ function UserPageInternal({
             <div className="col-start-3">
               <div className="grid h-full place-items-center">
                 <Avatar
-                  hasUserAvatar={user.hasAvatar ?? false}
                   userId={userId}
+                  imageId={user.imageId ?? null}
                   size="large"
                 />
               </div>

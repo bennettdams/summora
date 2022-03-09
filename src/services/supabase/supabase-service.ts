@@ -19,8 +19,8 @@ const STORAGE = {
     /**
      * `userId` is used in Supabase for the policy attached to that post
      */
-    filePath: (userId: string) =>
-      `${STORAGE.AVATARS.rootFolder}/${userId}.${STORAGE.AVATARS.extension}`,
+    filePath: ({ userId, imageId }: { userId: string; imageId: string }) =>
+      `${STORAGE.AVATARS.rootFolder}/${userId}/${imageId}.${STORAGE.AVATARS.extension}`,
   },
   POST_IMAGES: {
     bucket: 'post-images',
@@ -133,10 +133,12 @@ async function extractAccessTokenFromNextRequestCookies(
 // AVATAR #########
 export async function uploadAvatarSupabase({
   userId,
+  imageId,
   avatarFileParsed,
   req,
 }: {
   userId: string
+  imageId: string
   avatarFileParsed: Buffer
   req: NextApiRequest
 }): Promise<void> {
@@ -147,7 +149,7 @@ export async function uploadAvatarSupabase({
 
   const { error } = await supabaseServer.storage
     .from(STORAGE.AVATARS.bucket)
-    .upload(STORAGE.AVATARS.filePath(userId), avatarFileParsed, {
+    .upload(STORAGE.AVATARS.filePath({ userId, imageId }), avatarFileParsed, {
       upsert: true,
       contentType: 'image/jpg',
     })
@@ -159,12 +161,41 @@ export async function uploadAvatarSupabase({
   }
 }
 
-export async function downloadAvatarSupabase(
+export async function deleteAvatarSupabase({
+  userId,
+  imageId,
+  req,
+}: {
   userId: string
-): Promise<Blob | null> {
+  imageId: string
+  req: NextApiRequest
+}): Promise<void> {
+  const supabaseServer = createSupabaseClient()
+  supabaseServer.auth.setAuth(
+    await extractAccessTokenFromNextRequestCookies(req)
+  )
+
+  const { error } = await supabaseServer.storage
+    .from(STORAGE.AVATARS.bucket)
+    .remove([STORAGE.AVATARS.filePath({ userId, imageId })])
+
+  if (error) {
+    throw new Error(
+      `Error while deleting avatar image file (Supabase: ${error.message}`
+    )
+  }
+}
+
+export async function downloadAvatarSupabase({
+  userId,
+  imageId,
+}: {
+  userId: string
+  imageId: string
+}): Promise<Blob | null> {
   const { data, error } = await supabase.storage
     .from(STORAGE.AVATARS.bucket)
-    .download(STORAGE.AVATARS.filePath(userId))
+    .download(STORAGE.AVATARS.filePath({ userId, imageId }))
 
   if (error) {
     throw new Error(`Error while downloading avatar: ${error.message}`)
@@ -173,10 +204,16 @@ export async function downloadAvatarSupabase(
   }
 }
 
-export function getPublicURLAvatarSupabase(userId: string): string | null {
+export function getPublicURLAvatarSupabase({
+  userId,
+  imageId,
+}: {
+  userId: string
+  imageId: string
+}): string | null {
   const { publicURL, error } = supabase.storage
     .from(STORAGE.AVATARS.bucket)
-    .getPublicUrl(STORAGE.AVATARS.filePath(userId))
+    .getPublicUrl(STORAGE.AVATARS.filePath({ userId, imageId }))
 
   if (error) {
     throw new Error(

@@ -37,8 +37,8 @@ function UserNavbar() {
                 <p className="hidden px-2 sm:block">{user?.username}</p>
                 <div className="flex items-center sm:ml-2">
                   <Avatar
-                    hasUserAvatar={user?.hasAvatar ?? false}
                     userId={userAuth.id}
+                    imageId={user?.imageId ?? null}
                     size="small"
                   />
                 </div>

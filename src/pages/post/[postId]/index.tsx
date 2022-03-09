@@ -61,14 +61,14 @@ async function findPost(prisma: PrismaClient, postId: string) {
           description: true,
         },
       },
-      author: { select: { username: true, hasAvatar: true } },
+      author: { select: { username: true, imageId: true } },
       segments: {
         orderBy: { createdAt: 'asc' },
         include: { items: { orderBy: { createdAt: 'asc' } } },
       },
       comments: {
         include: {
-          author: { select: { username: true, hasAvatar: true } },
+          author: { select: { username: true, imageId: true } },
         },
         orderBy: { createdAt: 'asc' },
       },

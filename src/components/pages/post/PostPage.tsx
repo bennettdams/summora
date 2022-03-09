@@ -345,9 +345,9 @@ function PostPageInternal({
             <Link to={`/user/${post.authorId}`}>
               <div className="flex flex-1 flex-col items-center justify-center rounded-xl p-2 hover:bg-white">
                 <Avatar
-                  hasUserAvatar={post.author.hasAvatar ?? false}
-                  size="medium"
                   userId={post.authorId}
+                  imageId={post.author.imageId ?? null}
+                  size="medium"
                 />
 
                 <div className="mt-4 flex flex-col items-center justify-center text-center">
@@ -500,7 +500,7 @@ function PostPageInternal({
             createdAt: comment.createdAt,
             authorId: comment.authorId,
             authorUsername: comment.author.username,
-            authorHasAvatar: comment.author.hasAvatar,
+            authorImageId: comment.author.imageId,
           }))}
         />
       </PageSection>
@@ -537,7 +537,7 @@ type PostComment = {
   createdAt: Date
   authorId: string
   authorUsername: string
-  authorHasAvatar: boolean
+  authorImageId: string | null
 }
 
 type PostCommentTreeComment = PostComment & {
@@ -587,7 +587,7 @@ function Comment({
                 <Avatar
                   size="tiny"
                   userId={comment.authorId}
-                  hasUserAvatar={comment.authorHasAvatar}
+                  imageId={comment.authorImageId}
                 />
               </div>
 

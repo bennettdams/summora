@@ -1,15 +1,44 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { ApiAvatarsUploadRequestBody } from '../../../services/api-service'
+import { ApiAvatarsUploadRequestBody as ApiImageUploadAvatarsRequestBody } from '../../../services/api-service'
 import { getUserByCookie } from '../../../services/auth-service'
-import { uploadAvatarSupabase } from '../../../services/supabase/supabase-service'
+import {
+  deleteAvatarSupabase,
+  uploadAvatarSupabase,
+} from '../../../services/supabase/supabase-service'
 import { logAPI } from '../../../util/logger'
 import { prisma } from '../../../prisma/prisma'
 import { parseMultipartForm } from '../../../services/image-upload-service'
+import { Prisma } from '@prisma/client'
+import { createRandomId } from '../../../util/random-id'
 
-export type ApiAvatarsUpload = void
+export type ApiAvatarsUpload = Prisma.PromiseReturnType<
+  typeof updateUserImageId
+>
+
+async function updateUserImageId({
+  userId,
+  imageId,
+}: {
+  userId: string
+  imageId: string
+}) {
+  const now = new Date()
+
+  try {
+    return await prisma.user.update({
+      where: { userId },
+      data: {
+        updatedAt: now,
+        imageId,
+      },
+    })
+  } catch (error) {
+    throw new Error(`Error while updating user with ID ${userId}: ${error}`)
+  }
+}
 
 interface Request extends NextApiRequest {
-  body: ApiAvatarsUploadRequestBody
+  body: ApiImageUploadAvatarsRequestBody
 }
 
 // need to disable Next.js' parser for parsing multipart/form-data
@@ -46,28 +75,49 @@ export default async function _apiImageUploadAvatars(
         try {
           const fileParsed = await parseMultipartForm(req)
 
-          // TODO validation?
-          // TODO convert png etc.
-          await uploadAvatarSupabase({
-            userId,
-            avatarFileParsed: fileParsed,
-            req,
-          })
-
-          await prisma.user.update({
+          const userDb = await prisma.user.findUnique({
             where: { userId },
-            data: { hasAvatar: true },
-            // return not used
-            select: null,
+            select: { imageId: true },
           })
 
-          console.info(`[API] uploaded avatar for user ${userId}`)
+          if (!userDb) {
+            return res.status(404).json({
+              message: `User ${userId} not found.`,
+            })
+          } else {
+            // delete old image
+            const imageIdOld = userDb.imageId
+            if (imageIdOld) {
+              await deleteAvatarSupabase({
+                userId,
+                imageId: imageIdOld,
+                req,
+              })
+            }
 
-          return res
-            .status(200)
-            .json({ message: `Uploaded avatar for user ${userId}` })
+            const imageIdNew = `avatar-${userId}-${createRandomId()}`
+            // TODO validation?
+            // TODO convert png etc.
+            await uploadAvatarSupabase({
+              userId,
+              imageId: imageIdNew,
+              avatarFileParsed: fileParsed,
+              req,
+            })
+
+            const userUpdated = await updateUserImageId({
+              userId,
+              imageId: imageIdNew,
+            })
+
+            console.info(`[API] Uploaded avatar image for ${userId}`)
+            return res.status(200).json(userUpdated)
+          }
         } catch (error) {
-          console.error('[API] Error while uploading avatar:', error)
+          console.error(
+            `[API] Error while uploading avatar image for user ${userId}:`,
+            error
+          )
           return res.status(401).json({ error })
         }
       }
@@ -78,5 +128,4 @@ export default async function _apiImageUploadAvatars(
       }
     }
   }
-  // }
 }

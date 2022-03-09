@@ -24,7 +24,7 @@ async function createPostComment(
         text: postCommentToCreate.text,
       },
       include: {
-        author: { select: { username: true, hasAvatar: true } },
+        author: { select: { username: true, imageId: true } },
       },
     })
   } catch (error) {

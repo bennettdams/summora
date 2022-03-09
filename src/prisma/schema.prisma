@@ -103,7 +103,7 @@ model User {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   username    String        @unique
-  hasAvatar   Boolean       @default(false)
+  imageId     String?
   // posts
   posts       Post[]        @relation("AuthorPost")
   // comments

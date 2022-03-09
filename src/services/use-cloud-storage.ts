@@ -12,13 +12,19 @@ export function useCloudStorage() {
     return await apiImageUploadAvatars(picture)
   }, [])
 
-  const downloadAvatar = useCallback(async (userId: string) => {
-    return await downloadAvatarSupabase(userId)
-  }, [])
+  const downloadAvatar = useCallback(
+    async ({ userId, imageId }: { userId: string; imageId: string }) => {
+      return await downloadAvatarSupabase({ userId, imageId })
+    },
+    []
+  )
 
-  const getPublicURLAvatar = useCallback((userId: string) => {
-    return getPublicURLAvatarSupabase(userId)
-  }, [])
+  const getPublicURLAvatar = useCallback(
+    ({ userId, imageId }: { userId: string; imageId: string }) => {
+      return getPublicURLAvatarSupabase({ userId, imageId })
+    },
+    []
+  )
 
   const downloadPostSegmentImage = useCallback(
     async ({

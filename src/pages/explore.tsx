@@ -16,7 +16,7 @@ async function findPostsViews(prisma: PrismaClient) {
       take: 5,
       orderBy: { noOfViews: 'desc' },
       include: {
-        author: { select: { username: true, hasAvatar: true } },
+        author: { select: { username: true, imageId: true } },
         category: { select: { title: true } },
       },
     })
@@ -38,7 +38,7 @@ async function findPostsLikes(prisma: PrismaClient) {
         // take: 5,
         include: {
           likedBy: { select: { userId: true } },
-          author: { select: { username: true, hasAvatar: true } },
+          author: { select: { username: true, imageId: true } },
         },
       })
     )

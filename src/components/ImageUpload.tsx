@@ -7,10 +7,8 @@ const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png']
 export function ImageUpload({
   inputId,
   uploadFn,
-  onUpload,
 }: {
   uploadFn: (file: File) => Promise<void>
-  onUpload?: () => void
   inputId: string
 }): JSX.Element {
   const [isUploading, setIsUploading] = useState(false)
@@ -31,7 +29,6 @@ export function ImageUpload({
           )
         } else {
           await uploadFn(file)
-          onUpload?.()
         }
       }
     } catch (error) {

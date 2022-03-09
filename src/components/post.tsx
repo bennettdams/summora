@@ -28,7 +28,7 @@ type PostsPostsList =
       author: {
         id: string
         username: string
-        hasAvatar: boolean
+        imageId: string | null
       }
       tags: { id: string; title: string }[]
     }[]
@@ -135,9 +135,9 @@ function PostsListItem({
                   <div className="flex h-full items-center space-x-4 rounded-lg px-4 hover:bg-lime-200">
                     <span>{post.author.username}</span>
                     <Avatar
-                      hasUserAvatar={post.author.hasAvatar ?? false}
-                      size="small"
                       userId={post.author.id}
+                      imageId={post.author.imageId ?? null}
+                      size="small"
                     />
                   </div>
                 </Link>

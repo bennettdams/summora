@@ -1,7 +1,12 @@
-import { QueryClient, useQuery } from 'react-query'
+import { QueryClient, useMutation, useQuery, useQueryClient } from 'react-query'
 import { ApiUser } from '../pages/api/users/[userId]'
 import { createHydrationHandler } from '../services/hydration-service'
-import { apiFetchUser, transformApiUser } from '../services/api-service'
+import {
+  apiFetchUser,
+  apiImageUploadAvatars,
+  transformApiUser,
+} from '../services/api-service'
+import { useState } from 'react'
 
 const queryKeyUserBase = 'user'
 type QueryData = ApiUser
@@ -34,9 +39,35 @@ export function useUser(userId: string) {
     }
   )
 
+  const { updateUserImageIdMutation } = useUserMutation(userId)
+
   return {
     user: data ?? null,
-    isLoading: isLoading,
-    isError: isError,
+    isLoading: isLoading || updateUserImageIdMutation.isLoading,
+    isError: isError || updateUserImageIdMutation.isError,
+    updateUserImageId: updateUserImageIdMutation.mutateAsync,
   }
+}
+
+function useUserMutation(userId: string) {
+  const queryClient = useQueryClient()
+  const [queryKey] = useState(createQueryKey(userId))
+
+  const updateUserImageIdMutation = useMutation(apiImageUploadAvatars, {
+    onSuccess: (data) => {
+      if (data.result) {
+        const userUpdated = data.result
+        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
+          !prevData
+            ? null
+            : {
+                ...prevData,
+                ...userUpdated,
+              }
+        )
+      }
+    },
+  })
+
+  return { updateUserImageIdMutation }
 }

@@ -15,10 +15,13 @@ export type ApiImageUploadPostSegment = Prisma.PromiseReturnType<
   typeof updatePostSegmentImageId
 >
 
-async function updatePostSegmentImageId(
-  postSegmentId: string,
+async function updatePostSegmentImageId({
+  postSegmentId,
+  imageId,
+}: {
+  postSegmentId: string
   imageId: string
-) {
+}) {
   const now = new Date()
 
   try {
@@ -89,30 +92,26 @@ export default async function _apiImageUploadPostSegment(
           try {
             const fileParsed = await parseMultipartForm(req)
 
-            /*
-             * TODO we only do this because we don't have the post ID available right now.
-             * Should be done by providing the ID via the API itself.
-             */
-            const postSegment = await prisma.postSegment.findUnique({
+            const postSegmentDb = await prisma.postSegment.findUnique({
               where: { id: postSegmentId },
               select: { imageId: true, Post: { select: { authorId: true } } },
             })
 
-            if (!postSegment) {
+            if (!postSegmentDb) {
               return res.status(404).json({
                 message: `Postsegment ${postSegmentId} not found.`,
               })
-            } else if (postSegment.Post.authorId !== userId) {
+            } else if (postSegmentDb.Post.authorId !== userId) {
               return res.status(404).json({
                 message: `User ${userId} is not the author of the post for post segment ${postSegmentId}.`,
               })
             } else {
               // delete old image
-              const imageIdOld = postSegment.imageId
+              const imageIdOld = postSegmentDb.imageId
               if (imageIdOld) {
                 await deletePostSegmentImageSupabase({
                   postId,
-                  authorId: postSegment.Post.authorId,
+                  authorId: postSegmentDb.Post.authorId,
                   imageId: imageIdOld,
                   req,
                 })
@@ -129,10 +128,10 @@ export default async function _apiImageUploadPostSegment(
                 req,
               })
 
-              const segmentUpdated = await updatePostSegmentImageId(
+              const segmentUpdated = await updatePostSegmentImageId({
                 postSegmentId,
-                imageIdNew
-              )
+                imageId: imageIdNew,
+              })
 
               console.info(
                 `[API] Uploaded post segment image for ${postSegmentId}`

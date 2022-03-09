@@ -43,7 +43,7 @@ async function findUserPosts(prisma: PrismaClient, userId: string) {
         orderBy: { createdAt: 'desc' },
         // include: { category: { select: { id: true } } },
         include: {
-          author: { select: { username: true, hasAvatar: true } },
+          author: { select: { username: true, imageId: true } },
           category: { select: { title: true } },
           segments: { orderBy: { createdAt: 'asc' } },
           tags: { select: { id: true, title: true } },
