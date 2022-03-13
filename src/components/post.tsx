@@ -86,22 +86,20 @@ function PostsListItem({
                 iconSize="big"
               />
             </div>
-            <h2 className="text-xs font-semibold tracking-widest text-gray-400">
+            <h2 className="text-xs font-semibold tracking-widest text-dorange">
               {post.categoryTitle}
             </h2>
-            <h1 className="mt-1 text-xl font-semibold text-lime-600 sm:text-2xl">
+            <h1 className="mt-1 text-xl font-semibold text-dlila sm:text-2xl">
               {post.title}
             </h1>
-            <p className="mt-3 leading-relaxed text-gray-400">
-              {post.subtitle}
-            </p>
+            <p className="mt-3 leading-relaxed text-dorange">{post.subtitle}</p>
 
             <div className="my-4 flex flex-row flex-nowrap space-x-4 overflow-y-hidden py-4">
               {post.segments.map((segment) => {
                 return (
                   <div
                     key={segment.id}
-                    className="grid h-32 w-60 flex-none place-items-center rounded-lg bg-blue-100"
+                    className="grid h-32 w-60 flex-none place-items-center rounded-lg bg-dlight"
                   >
                     <p className="p-5">{segment.title}</p>
                   </div>
@@ -123,7 +121,7 @@ function PostsListItem({
                 <CommentsIcon noOfComments={post.noOfComments} />
               </div>
               <div className="flex-1">
-                <span className="inline-flex items-center text-sm leading-none text-gray-400">
+                <span className="inline-flex items-center text-sm">
                   {post.updatedAt.toLocaleDateString()}
                 </span>
               </div>
@@ -132,7 +130,7 @@ function PostsListItem({
             <div className="h-full w-1/2">
               <div className="flex h-full justify-end">
                 <Link to={`user/${post.author.id}`}>
-                  <div className="flex h-full items-center space-x-4 rounded-lg px-4 hover:bg-lime-200">
+                  <div className="flex h-full items-center space-x-4 rounded-lg px-4 hover:bg-dbrown hover:text-white">
                     <span>{post.author.username}</span>
                     <Avatar
                       userId={post.author.id}
@@ -161,13 +159,13 @@ function PostsListItemShort({
     <Link to={`/post/${post.id}`}>
       <Box padding="small">
         <div className="relative h-60 w-full text-center">
-          <h2 className="text-xs font-semibold tracking-widest text-gray-400">
+          <h2 className="text-xs font-semibold tracking-widest text-dorange">
             {post.categoryTitle}
           </h2>
-          <h1 className="mt-1 text-xl font-semibold sm:text-2xl">
+          <h1 className="mt-1 text-xl font-semibold text-dlila sm:text-2xl">
             {post.title}
           </h1>
-          <p className="mt-3 leading-relaxed">{post.subtitle}</p>
+          <p className="mt-3 leading-relaxed text-dbrown">{post.subtitle}</p>
           <div className="absolute bottom-0 mt-2 flex w-full justify-center space-x-4 py-3 text-center leading-none">
             <PostLikes
               postId={post.id}
@@ -177,7 +175,7 @@ function PostsListItemShort({
             />
             <ViewsIcon noOfViews={post.noOfViews} />
             <CommentsIcon noOfComments={post.noOfComments} />
-            <span className="inline-flex items-center text-sm leading-none text-gray-400">
+            <span className="inline-flex items-center text-sm leading-none">
               {post.updatedAt.toLocaleDateString()}
             </span>
           </div>

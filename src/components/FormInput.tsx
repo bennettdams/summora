@@ -57,7 +57,7 @@ export function FormInput({
           setInputValue(event.target.value)
         }
         id={`inputId ${id}`}
-        className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-gray-100 sm:text-sm"
+        className="mt-1 block w-full rounded-md border-dbrown shadow-md focus:border-dorange focus:ring-dorange disabled:cursor-not-allowed disabled:bg-gray-100 sm:text-sm"
       />
     </form>
   )

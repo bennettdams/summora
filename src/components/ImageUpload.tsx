@@ -51,10 +51,7 @@ export function ImageUpload({
         {isUploading ? (
           <LoadingAnimation />
         ) : (
-          <IconAdd
-            className="rotate-45 transition duration-300 group-hover:rotate-90"
-            size="huge"
-          />
+          <IconAdd className="duration-200 group-hover:scale-125" size="huge" />
         )}
       </label>
       <input

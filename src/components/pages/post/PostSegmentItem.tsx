@@ -72,7 +72,7 @@ export function PostSegmentItem({
               <IconTrash /> <IconEdit className="ml-4" />
             </>
           ) : (
-            <span>{index + 1}</span>
+            <span className="text-dorange">{index + 1}</span>
           )}
         </div>
 

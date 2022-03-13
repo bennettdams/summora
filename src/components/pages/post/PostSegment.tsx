@@ -96,7 +96,7 @@ export function PostSegment({
 
   return (
     // items-stretch needed for the post image
-    <div className="flex w-full items-stretch rounded-xl bg-gradient-to-br from-green-50 to-indigo-50 p-10 shadow-2xl">
+    <div className="flex w-full items-stretch rounded-xl bg-white p-10 shadow-2xl">
       <div className="w-4/5">
         <div className="flex h-20 w-full flex-row text-xl">
           <div className="h-full w-20 text-left">
@@ -118,9 +118,7 @@ export function PostSegment({
             </div>
           ) : (
             <div
-              className={`flex grow ${
-                isPostEditMode && 'cursor-pointer hover:text-orange-700'
-              }`}
+              className={`flex grow ${isPostEditMode && 'cursor-pointer'}`}
               onClick={() => setIsSegmentEditable(true)}
               ref={refSegmentTitle}
             >
@@ -131,12 +129,12 @@ export function PostSegment({
               )}
 
               <div className="ml-2 flex flex-col">
-                <div className="flex-1 text-lime-600">
+                <div className="flex-1 text-dlila">
                   <span>{segment.title}</span> <span>{postSegmentId}</span>
                 </div>
 
                 <div className="flex-1">
-                  <span className="text-lg italic text-gray-400">
+                  <span className="text-lg italic text-dorange">
                     {segment.subtitle}
                   </span>
                 </div>
@@ -187,7 +185,7 @@ export function PostSegment({
 
       {/* POST IMAGE */}
       {/* the parent container uses "items-stretch" so the image can "fill" the height */}
-      <div className="grid w-1/5 place-items-center bg-red-100">
+      <div className="grid w-1/5 place-items-center">
         <PostSegmentImage
           isEditable={isPostEditMode}
           postId={postId}

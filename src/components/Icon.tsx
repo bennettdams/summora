@@ -24,7 +24,7 @@ const sizes = {
 } as const
 
 const style =
-  'leading-none text-orange-400 rounded-full hover:bg-orange-200 hover:shadow-sm hover:text-orange-800 transition ease-in duration-75 transform hover:scale-110'
+  'leading-none text-dorange rounded-full hover:text-dlila hover:shadow-sm transition ease-in duration-75 transform hover:scale-110'
 
 export type IconSize = keyof typeof sizes
 

@@ -12,7 +12,7 @@ export function LikesIcon({
   size?: IconSize
 }): JSX.Element {
   return (
-    <span className="inline-flex items-center text-sm leading-none text-gray-400">
+    <span className="inline-flex items-center text-sm leading-none">
       {isLiked ? (
         <IconLiked size={size} onClick={onClick} />
       ) : (

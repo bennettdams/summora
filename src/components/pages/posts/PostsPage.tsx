@@ -22,10 +22,10 @@ export function PostsPage({
         <div className="mt-20 grid place-items-center text-center">
           <div>
             <div className="text-center text-4xl font-extrabold leading-none tracking-tight">
-              <p className="bg-gradient-to-b from-amber-200 to-orange-300 decoration-clone bg-clip-text text-8xl uppercase text-transparent">
+              <p className="bg-gradient-to-b from-dorange to-orange-300 decoration-clone bg-clip-text text-8xl uppercase text-transparent">
                 Condun
               </p>
-              <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-lime-600 sm:text-4xl">
+              <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-dlila sm:text-4xl">
                 Everything, but summarized.
               </p>
             </div>
@@ -42,24 +42,24 @@ export function PostsPage({
         <div className="flex flex-row space-x-10">
           <div className="flex-1 text-center">
             <p className="text-xl">Posts</p>
-            <p className="mt-1 text-5xl text-orange-400">{noOfPosts}</p>
+            <p className="mt-1 text-5xl text-dorange">{noOfPosts}</p>
           </div>
 
           <div className="flex-1 text-center">
             <p className="text-xl">Posts (24 hours)</p>
-            <p className="mt-1 text-5xl text-orange-400">
+            <p className="mt-1 text-5xl text-dorange">
               {noOfPostsCreatedLast24Hours}
             </p>
           </div>
 
           <div className="flex-1 text-center">
             <p className="text-xl">Comments</p>
-            <p className="mt-1 text-5xl text-orange-400">{noOfComments}</p>
+            <p className="mt-1 text-5xl text-dorange">{noOfComments}</p>
           </div>
 
           <div className="flex-1 text-center">
             <p className="text-xl">Comments (24 hours)</p>
-            <p className="mt-1 text-5xl text-orange-400">
+            <p className="mt-1 text-5xl text-dorange">
               {noOfCommentsCreatedLast24Hours}
             </p>
           </div>
@@ -69,13 +69,13 @@ export function PostsPage({
       <PageSection>
         <div className="mx-auto max-w-7xl">
           <div className="lg:text-center">
-            <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-lime-600 sm:text-4xl">
+            <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-dlila sm:text-4xl">
               <span>A </span>
               <span className="line-through">better</span>
               <span> </span>
               <span className="underline">faster</span> way to learn
             </p>
-            <p className="mt-4 flex max-w-2xl flex-col text-xl text-gray-500 lg:mx-auto">
+            <p className="mt-4 flex max-w-2xl flex-col text-xl lg:mx-auto">
               <span>
                 Condun is home of an endless stream of articles in every
                 category.
@@ -89,10 +89,10 @@ export function PostsPage({
       </PageSection>
 
       <PageSection>
-        <div className="grid grid-cols-2 grid-rows-2 gap-8 text-gray-500">
+        <div className="grid grid-cols-2 grid-rows-2 gap-8">
           <div className="justify-left flex items-center">
             <LightningBoltIcon
-              className="h-12 w-12 rounded-md bg-orange-400 p-2 text-white"
+              className="h-12 w-12 rounded-md bg-dorange p-2 text-white"
               aria-hidden="true"
             />
 
@@ -103,7 +103,7 @@ export function PostsPage({
 
           <div className="justify-left flex items-center">
             <LightningBoltIcon
-              className="h-12 w-12 rounded-md bg-orange-400 p-2 text-white"
+              className="h-12 w-12 rounded-md bg-dorange p-2 text-white"
               aria-hidden="true"
             />
 
@@ -114,7 +114,7 @@ export function PostsPage({
 
           <div className="justify-left flex items-center">
             <LightningBoltIcon
-              className="h-12 w-12 rounded-md bg-orange-400 p-2 text-white"
+              className="h-12 w-12 rounded-md bg-dorange p-2 text-white"
               aria-hidden="true"
             />
 
@@ -125,7 +125,7 @@ export function PostsPage({
 
           <div className="justify-left flex items-center">
             <LightningBoltIcon
-              className="h-12 w-12 rounded-md bg-orange-400 p-2 text-white"
+              className="h-12 w-12 rounded-md bg-dorange p-2 text-white"
               aria-hidden="true"
             />
 
@@ -150,11 +150,11 @@ export function PostsPage({
 
       <PageSection>
         <div className="mx-auto max-w-7xl py-12 lg:flex lg:items-center lg:justify-between lg:py-16">
-          <h2 className="text-3xl font-extrabold tracking-tight text-lime-600 sm:text-4xl">
+          <h2 className="text-3xl font-extrabold tracking-tight text-dlila sm:text-4xl">
             <span className="block">
               Ready to make your knowledge to money?
             </span>
-            <span className="block text-orange-400">
+            <span className="block text-dbrown">
               Create an account for free today.
             </span>
           </h2>
@@ -162,19 +162,11 @@ export function PostsPage({
             <div className="inline-flex rounded-md shadow">
               <a
                 href="#"
-                className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-5 py-3 text-base font-semibold text-white hover:bg-indigo-700"
+                className="inline-flex items-center justify-center rounded-md border border-transparent bg-dlila px-5 py-3 text-base font-semibold text-white hover:bg-dorange"
               >
                 Sign Up
               </a>
             </div>
-            {/* <div className="ml-3 inline-flex rounded-md shadow">
-              <a
-                href="#"
-                className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-semibold rounded-md text-indigo-600 bg-white hover:bg-indigo-50"
-              >
-                Learn more
-              </a>
-            </div> */}
           </div>
         </div>
       </PageSection>

@@ -1,5 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const defaultTheme = require('tailwindcss/defaultTheme')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+// const colors = require('tailwindcss/colors')
 
 module.exports = {
   content: [
@@ -10,6 +12,12 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['Nunito', ...defaultTheme.fontFamily.sans],
+      },
+      colors: {
+        dlight: '#fff6f0',
+        dlila: '#96284b',
+        dorange: '#d1744f',
+        dbrown: '#d4ad9f',
       },
     },
     fontWeight: {

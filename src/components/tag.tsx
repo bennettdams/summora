@@ -60,7 +60,7 @@ export function Tag({
   return (
     <div
       ref={tagRef}
-      className={`m-1 inline rounded bg-orange-100 py-0.5 px-1.5 leading-none text-orange-800 hover:bg-orange-200 ${
+      className={`m-1 inline rounded bg-dbrown py-0.5 px-1.5 leading-none text-white hover:bg-dorange ${
         onClick && 'cursor-pointer'
       }`}
       key={tag.id}

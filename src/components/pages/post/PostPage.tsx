@@ -271,13 +271,13 @@ function PostPageInternal({
                     </span>
                   )}
 
-                  <span className="text-lime-600">{post.title}</span>
+                  <span className="text-dlila">{post.title}</span>
                 </h2>
               </div>
 
               <div className="mt-4 flex-1">
                 {!isTitleEditable && (
-                  <span className="italic text-gray-400">{post.subtitle}</span>
+                  <span className="italic text-dorange">{post.subtitle}</span>
                 )}
               </div>
             </>
@@ -290,10 +290,7 @@ function PostPageInternal({
         <div className="flex flex-col lg:flex-row">
           <div className="flex w-full flex-col sm:flex-row sm:flex-wrap md:space-x-6 lg:w-4/5">
             {/* CATEGORY */}
-            <div
-              className="flex items-center text-sm text-gray-400"
-              ref={refCategory}
-            >
+            <div className="flex items-center text-sm" ref={refCategory}>
               {isPostEditMode && isShownCategoryDropdown ? (
                 <div className="inline-block w-full">
                   <DropdownSelect
@@ -307,23 +304,23 @@ function PostPageInternal({
                 </div>
               ) : (
                 // TODO jump to explore
-                <div className="flex items-center text-sm text-gray-400">
+                <div className="flex items-center text-sm">
                   <IconCategory />
                   <span className="ml-2 py-1.5">{post.category.title}</span>
                 </div>
               )}
             </div>
 
-            <div className="flex items-center text-sm text-gray-400">
+            <div className="flex items-center text-sm">
               <ViewsIcon noOfViews={post.noOfViews} />
             </div>
 
-            <div className="flex items-center text-sm text-gray-400">
+            <div className="flex items-center text-sm">
               <CommentsIcon noOfComments={post.comments.length} />
             </div>
 
-            <div className="flex items-center text-sm text-gray-400">
-              <IconDate className="text-gray-400" />
+            <div className="flex items-center text-sm">
+              <IconDate />
               <span className="ml-1">{post.createdAt.toISOString()}</span>
             </div>
 
@@ -351,7 +348,7 @@ function PostPageInternal({
                 />
 
                 <div className="mt-4 flex flex-col items-center justify-center text-center">
-                  <h2 className="text-lg font-semibold leading-none text-lime-600">
+                  <h2 className="text-lg font-semibold leading-none text-dlila">
                     {post.author.username}
                   </h2>
                 </div>
@@ -475,7 +472,7 @@ function PostPageInternal({
             }}
           >
             <input
-              className="h-16 w-full border-b border-orange-500 bg-transparent p-8 outline-none focus:border-orange-300 focus:ring-orange-300"
+              className="h-16 w-full border-b border-dbrown bg-transparent p-8 outline-none focus:border-dorange focus:ring-dorange"
               name="rootCommentInput"
               placeholder="Leave a comment.."
               id="rootCommentInput"
@@ -564,14 +561,10 @@ function Comment({
   return (
     <>
       <div
-        className={`space-y-1 ${
-          isRoot
-            ? 'rounded-xl bg-gradient-to-br from-green-50 to-indigo-50 p-10'
-            : 'ml-14'
-        }`}
+        className={`space-y-1 ${isRoot ? 'rounded-xl bg-white p-10' : 'ml-14'}`}
       >
         <div className="flex w-full">
-          <div className="bold flex w-10 flex-row items-center justify-center text-center leading-none text-lime-400">
+          <div className="bold flex w-10 flex-row items-center justify-center text-center leading-none text-dorange">
             <PlusCircleIcon className="h-4 w-4" />
             <MinusCircleIcon className="h-4 w-4" />
           </div>
@@ -580,7 +573,7 @@ function Comment({
           </div>
         </div>
 
-        <div className="m-0 flex w-full text-xs text-gray-400">
+        <div className="m-0 flex w-full text-xs">
           <Link to={`/user/${comment.authorId}`} disablePrefetch>
             <div className="flex hover:underline">
               <div className="bold flex w-10 flex-col items-center text-center leading-none">
@@ -591,13 +584,13 @@ function Comment({
                 />
               </div>
 
-              <div className="flex items-center space-x-2 leading-none text-lime-600">
+              <div className="flex items-center space-x-2 leading-none text-dlila">
                 <span className="ml-2">{comment.authorUsername}</span>
               </div>
             </div>
           </Link>
 
-          <div className="flex items-center space-x-2 leading-none">
+          <div className="flex items-center space-x-2 leading-none text-zinc-400">
             <span className="ml-2">{comment.createdAt.toISOString()}</span>
           </div>
 
@@ -611,7 +604,7 @@ function Comment({
                 onClick={() => setShowCommentInput(true)}
               >
                 <IconReply size="small" />
-                <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-orange-400">
+                <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dorange">
                   Reply
                 </span>
               </div>
@@ -629,7 +622,7 @@ function Comment({
                   onClick={() => setShowRemoveConfirmation(true)}
                 >
                   <IconTrash size="small" />
-                  <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-orange-400">
+                  <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dorange">
                     Remove
                   </span>
                 </div>
@@ -639,7 +632,7 @@ function Comment({
                   onClick={() => onRemove(comment.commentId)}
                 >
                   <IconTrash size="small" />
-                  <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-orange-400">
+                  <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dorange">
                     Confirm
                   </span>
                 </div>
@@ -659,7 +652,7 @@ function Comment({
             }}
           >
             <input
-              className="h-10 w-full border-b border-orange-500 bg-transparent p-4 outline-none focus:border-orange-300 focus:ring-orange-300"
+              className="h-10 w-full border-b border-dbrown bg-transparent p-4 outline-none focus:border-dorange focus:ring-dorange"
               name="commentInput"
               placeholder="Leave a reply.."
               id="commentInput"
