@@ -554,9 +554,13 @@ function Comment({
   onAdd: (commentParentId: string, text: string) => void
   onRemove: (commentId: string) => void
 }) {
-  const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
   const [showCommentInput, setShowCommentInput] = useState(false)
+  const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
+
   const [inputComment, setInputComment] = useState('')
+
+  const refCommentInput = useRef<HTMLFormElement>(null)
+  useOnClickOutside(refCommentInput, () => setShowCommentInput(false))
 
   return (
     <>
@@ -594,10 +598,7 @@ function Comment({
             <span className="ml-2">{comment.createdAt.toISOString()}</span>
           </div>
 
-          <div
-            className="ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-white"
-            onClick={() => setShowRemoveConfirmation(true)}
-          >
+          <div className="ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-white">
             {!showCommentInput && (
               <div
                 className="flex items-center"
@@ -643,6 +644,7 @@ function Comment({
 
         {!!showCommentInput && (
           <form
+            ref={refCommentInput}
             className="md:w-2/3"
             onSubmit={async (e) => {
               e.preventDefault()
