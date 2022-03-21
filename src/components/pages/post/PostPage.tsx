@@ -498,6 +498,8 @@ function PostPageInternal({
             authorId: comment.authorId,
             authorUsername: comment.author.username,
             authorImageId: comment.author.imageId,
+            upvotes: comment.upvotes,
+            downvotes: comment.downvotes,
           }))}
         />
       </PageSection>
@@ -535,6 +537,8 @@ type PostComment = {
   authorId: string
   authorUsername: string
   authorImageId: string | null
+  upvotes: number
+  downvotes: number
 }
 
 type PostCommentTreeComment = PostComment & {
@@ -568,16 +572,27 @@ function Comment({
         className={`space-y-1 ${isRoot ? 'rounded-xl bg-white p-10' : 'ml-14'}`}
       >
         <div className="flex w-full">
-          <div className="bold flex w-10 flex-row items-center justify-center text-center leading-none text-dorange">
-            <PlusCircleIcon className="h-4 w-4" />
-            <MinusCircleIcon className="h-4 w-4" />
+          <div className="group relative grid w-10 place-items-center">
+            <p className="font-bold block text-sm tracking-tight text-dorange group-hover:hidden">
+              {comment.upvotes - comment.downvotes}
+            </p>
+            <p
+              title="Upvotes | Downvotes"
+              className="font-bold absolute hidden w-20 text-center text-xs tracking-tight text-dbrown group-hover:block"
+            >
+              {comment.upvotes} | {comment.downvotes}
+            </p>
           </div>
           <div className="ml-2 grow">
             <span>{comment.text}</span>
           </div>
         </div>
 
-        <div className="m-0 flex w-full text-xs">
+        <div className="m-0 flex w-full text-sm">
+          <div className="flex w-10 flex-row items-center justify-center text-center leading-none text-dbrown">
+            <PlusCircleIcon className="h-4 w-4" />
+            <MinusCircleIcon className="h-4 w-4" />
+          </div>
           <Link to={`/user/${comment.authorId}`} disablePrefetch>
             <div className="flex hover:underline">
               <div className="bold flex w-10 flex-col items-center text-center leading-none">

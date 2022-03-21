@@ -43,6 +43,8 @@ model PostComment {
   text            String
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+  upvotes         Int           @default(0)
+  downvotes       Int           @default(0)
   // post
   Post            Post          @relation("PostComments", fields: [postId], references: [id])
   postId          String
