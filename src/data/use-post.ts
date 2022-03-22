@@ -292,6 +292,7 @@ function usePostMutation(postId: string) {
     },
   })
 
+  // nearly identical to downvote
   const upvotePostCommentMutation = useMutation(apiUpvotePostComment, {
     onSuccess: (data) => {
       if (data.result) {
@@ -310,8 +311,77 @@ function usePostMutation(postId: string) {
         )
       }
     },
+    onMutate: async (postCommentId: string) => {
+      // cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries(queryKey)
+
+      // snapshot the previous value
+      const postBeforeMutation = queryClient.getQueryData<QueryData>(queryKey)
+
+      if (userId) {
+        // optimistically update to the new value
+        if (postBeforeMutation) {
+          const postForOptimisticUpdate: QueryData = {
+            ...postBeforeMutation,
+          }
+          let commentsNew = postForOptimisticUpdate.comments
+          const commentToUpdate = postForOptimisticUpdate.comments.find(
+            (comment) => comment.commentId === postCommentId
+          )
+          if (commentToUpdate) {
+            commentsNew = commentsNew.map((comment) => {
+              if (comment.commentId !== postCommentId) {
+                return comment
+              } else {
+                const isUpvoted = commentToUpdate.upvotedBy.some(
+                  (vote) => vote.userId === userId
+                )
+                if (isUpvoted) {
+                  return {
+                    ...comment,
+                    upvotedBy: comment.upvotedBy.filter(
+                      (vote) => vote.userId !== userId
+                    ),
+                  }
+                } else {
+                  return {
+                    ...comment,
+                    upvotedBy: [...comment.upvotedBy, { userId }],
+                    downvotedBy: comment.downvotedBy.filter(
+                      (vote) => vote.userId !== userId
+                    ),
+                  }
+                }
+              }
+            })
+
+            postForOptimisticUpdate.comments = commentsNew
+
+            queryClient.setQueryData<QueryData>(
+              queryKey,
+              postForOptimisticUpdate
+            )
+          }
+        }
+      }
+
+      /*
+       * This return will be used in `onError` as `context`.
+       * We put the post before the mutation here, so it can be used to reset
+       * the state when an error occurs.
+       */
+      return { postBeforeMutation }
+    },
+    onError: (err, _, context) => {
+      const postBeforeMutation = context?.postBeforeMutation
+      if (postBeforeMutation) {
+        queryClient.setQueryData<QueryData>(queryKey, postBeforeMutation)
+      }
+      console.error('Error while upvoting post comment:', err)
+    },
   })
 
+  // nearly identical to upvote
   const downvotePostCommentMutation = useMutation(apiDownvotePostComment, {
     onSuccess: (data) => {
       if (data.result) {
@@ -329,6 +399,74 @@ function usePostMutation(postId: string) {
               }
         )
       }
+    },
+    onMutate: async (postCommentId: string) => {
+      // cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries(queryKey)
+
+      // snapshot the previous value
+      const postBeforeMutation = queryClient.getQueryData<QueryData>(queryKey)
+
+      if (userId) {
+        // optimistically update to the new value
+        if (postBeforeMutation) {
+          const postForOptimisticUpdate: QueryData = {
+            ...postBeforeMutation,
+          }
+          let commentsNew = postForOptimisticUpdate.comments
+          const commentToUpdate = postForOptimisticUpdate.comments.find(
+            (comment) => comment.commentId === postCommentId
+          )
+          if (commentToUpdate) {
+            commentsNew = commentsNew.map((comment) => {
+              if (comment.commentId !== postCommentId) {
+                return comment
+              } else {
+                const isDownvoted = commentToUpdate.downvotedBy.some(
+                  (vote) => vote.userId === userId
+                )
+                if (isDownvoted) {
+                  return {
+                    ...comment,
+                    downvotedBy: comment.downvotedBy.filter(
+                      (vote) => vote.userId !== userId
+                    ),
+                  }
+                } else {
+                  return {
+                    ...comment,
+                    downvotedBy: [...comment.downvotedBy, { userId }],
+                    upvotedBy: comment.upvotedBy.filter(
+                      (vote) => vote.userId !== userId
+                    ),
+                  }
+                }
+              }
+            })
+
+            postForOptimisticUpdate.comments = commentsNew
+
+            queryClient.setQueryData<QueryData>(
+              queryKey,
+              postForOptimisticUpdate
+            )
+          }
+        }
+      }
+
+      /*
+       * This return will be used in `onError` as `context`.
+       * We put the post before the mutation here, so it can be used to reset
+       * the state when an error occurs.
+       */
+      return { postBeforeMutation }
+    },
+    onError: (err, _, context) => {
+      const postBeforeMutation = context?.postBeforeMutation
+      if (postBeforeMutation) {
+        queryClient.setQueryData<QueryData>(queryKey, postBeforeMutation)
+      }
+      console.error('Error while downvoting post comment:', err)
     },
   })
 
