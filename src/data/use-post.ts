@@ -8,6 +8,7 @@ import {
   apiFetchPost,
   apiImageUploadPostSegments,
   apiLikeUnlikePost,
+  ApiPostUpdateRequestBody,
   apiUpdatePost,
   apiUpdatePostSegment,
   apiUpdatePostSegmentItem,
@@ -18,6 +19,7 @@ import { ApiPost } from '../pages/api/posts/[postId]'
 import { useState } from 'react'
 import { createHydrationHandler } from '../services/hydration-service'
 import { syncPostsLikedData } from './use-posts'
+import { useAuth } from '../services/auth-service'
 
 const queryKeyPostBase = 'post'
 type QueryData = ApiPost
@@ -112,19 +114,17 @@ export function usePost(postId: string, enabled = true) {
 }
 
 function usePostMutation(postId: string) {
+  const { userId } = useAuth()
   const queryClient = useQueryClient()
-  const [queryKey] = useState(createQueryKey(postId))
+  const [queryKey] = useState(() => createQueryKey(postId))
 
   // POST
   const updatePostMutation = useMutation(apiUpdatePost, {
-    onSuccess: (data) => {
-      if (data.result) {
-        queryClient.setQueryData<QueryData>(queryKey, data.result)
-      }
-    },
-    onMutate: async (postForMutation) => {
-      const postToUpdate = postForMutation.postToUpdate
-
+    onMutate: async ({
+      postToUpdate,
+    }: {
+      postToUpdate: ApiPostUpdateRequestBody
+    }) => {
       // cancel any outgoing refetches (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries(queryKey)
 
@@ -136,6 +136,7 @@ function usePostMutation(postId: string) {
         const postForOptimisticUpdate: QueryData = {
           ...postBeforeMutation,
         }
+
         /*
          * TODO include other fields like category & tags.
          * Right now, this does not work because the update object only has their IDs
@@ -156,21 +157,17 @@ function usePostMutation(postId: string) {
        */
       return { postBeforeMutation }
     },
-    onError: (err, _, contextUntyped) => {
-      // TODO check if there's a type-safe way
-      const context = contextUntyped as
-        | null
-        | undefined
-        | {
-            postBeforeMutation: QueryData
-          }
-      const postBeforeMutation: QueryData | null =
-        context?.postBeforeMutation ?? null
+    onError: (err, _, context) => {
+      const postBeforeMutation = context?.postBeforeMutation
       if (postBeforeMutation) {
-        const queryKey = createQueryKey(postBeforeMutation.id)
         queryClient.setQueryData<QueryData>(queryKey, postBeforeMutation)
       }
       console.error('Error while updating post:', err)
+    },
+    onSuccess: (data) => {
+      if (data.result) {
+        queryClient.setQueryData<QueryData>(queryKey, data.result)
+      }
     },
   })
 
@@ -355,6 +352,52 @@ function usePostMutation(postId: string) {
 
   // LIKE / UNLIKE
   const likeUnlikePostMutation = useMutation(apiLikeUnlikePost, {
+    onMutate: async () => {
+      // cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries(queryKey)
+
+      // snapshot the previous value
+      const postBeforeMutation = queryClient.getQueryData<QueryData>(queryKey)
+
+      if (userId) {
+        // optimistically update to the new value
+        if (postBeforeMutation) {
+          const postForOptimisticUpdate: QueryData = {
+            ...postBeforeMutation,
+          }
+          const isLiked = postForOptimisticUpdate.likedBy.some(
+            (like) => like.userId === userId
+          )
+          if (isLiked) {
+            postForOptimisticUpdate.likedBy =
+              postForOptimisticUpdate.likedBy.filter(
+                (like) => like.userId !== userId
+              )
+          } else {
+            postForOptimisticUpdate.likedBy = [
+              ...postForOptimisticUpdate.likedBy,
+              { userId },
+            ]
+          }
+
+          queryClient.setQueryData<QueryData>(queryKey, postForOptimisticUpdate)
+        }
+      }
+
+      /*
+       * This return will be used in `onError` as `context`.
+       * We put the post before the mutation here, so it can be used to reset
+       * the state when an error occurs.
+       */
+      return { postBeforeMutation }
+    },
+    onError: (err, _, context) => {
+      const postBeforeMutation = context?.postBeforeMutation
+      if (postBeforeMutation) {
+        queryClient.setQueryData<QueryData>(queryKey, postBeforeMutation)
+      }
+      console.error('Error while liking/unliking post:', err)
+    },
     // `postId` coming from apiLikeUnlikePost
     onSuccess: (data, postId) => {
       if (data.result) {
