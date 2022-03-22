@@ -4,12 +4,14 @@ import {
   apiCreatePostSegment,
   apiCreatePostSegmentItem,
   apiDeletePostComment,
+  apiDownvotePostComment,
   apiFetchPost,
   apiImageUploadPostSegments,
   apiLikeUnlikePost,
   apiUpdatePost,
   apiUpdatePostSegment,
   apiUpdatePostSegmentItem,
+  apiUpvotePostComment,
   transformApiPost,
 } from '../services/api-service'
 import { ApiPost } from '../pages/api/posts/[postId]'
@@ -62,6 +64,8 @@ export function usePost(postId: string, enabled = true) {
     createPostCommentMutation,
     deletePostCommentMutation,
     likeUnlikePostMutation,
+    upvotePostCommentMutation,
+    downvotePostCommentMutation,
   } = usePostMutation(postId)
 
   return {
@@ -76,7 +80,9 @@ export function usePost(postId: string, enabled = true) {
       updatePostSegmentMutation.isLoading ||
       createPostCommentMutation.isLoading ||
       deletePostCommentMutation.isLoading ||
-      likeUnlikePostMutation.isLoading,
+      likeUnlikePostMutation.isLoading ||
+      upvotePostCommentMutation.isLoading ||
+      downvotePostCommentMutation.isLoading,
     isError:
       isError ||
       updatePostMutation.isError ||
@@ -87,7 +93,9 @@ export function usePost(postId: string, enabled = true) {
       updatePostSegmentMutation.isError ||
       createPostCommentMutation.isError ||
       deletePostCommentMutation.isError ||
-      likeUnlikePostMutation.isError,
+      likeUnlikePostMutation.isError ||
+      upvotePostCommentMutation.isError ||
+      downvotePostCommentMutation.isError,
     // TODO really mutateAsync?
     updatePost: updatePostMutation.mutateAsync,
     createPostSegmentItem: createPostSegmentItemMutation.mutateAsync,
@@ -98,6 +106,8 @@ export function usePost(postId: string, enabled = true) {
     createPostComment: createPostCommentMutation.mutateAsync,
     deletePostComment: deletePostCommentMutation.mutateAsync,
     likeUnlikePost: likeUnlikePostMutation.mutateAsync,
+    upvotePostComment: upvotePostCommentMutation.mutateAsync,
+    downvotePostComment: downvotePostCommentMutation.mutateAsync,
   }
 }
 
@@ -285,6 +295,46 @@ function usePostMutation(postId: string) {
     },
   })
 
+  const upvotePostCommentMutation = useMutation(apiUpvotePostComment, {
+    onSuccess: (data) => {
+      if (data.result) {
+        const commentUpdated = data.result
+        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
+          !prevData
+            ? null
+            : {
+                ...prevData,
+                comments: prevData.comments.map((comment) =>
+                  comment.commentId === commentUpdated.commentId
+                    ? commentUpdated
+                    : comment
+                ),
+              }
+        )
+      }
+    },
+  })
+
+  const downvotePostCommentMutation = useMutation(apiDownvotePostComment, {
+    onSuccess: (data) => {
+      if (data.result) {
+        const commentUpdated = data.result
+        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
+          !prevData
+            ? null
+            : {
+                ...prevData,
+                comments: prevData.comments.map((comment) =>
+                  comment.commentId === commentUpdated.commentId
+                    ? commentUpdated
+                    : comment
+                ),
+              }
+        )
+      }
+    },
+  })
+
   const deletePostCommentMutation = useMutation(apiDeletePostComment, {
     onSuccess: (data, deletedCommentCommendId) => {
       // true = comment was deleted
@@ -327,5 +377,7 @@ function usePostMutation(postId: string) {
     createPostCommentMutation,
     deletePostCommentMutation,
     likeUnlikePostMutation,
+    upvotePostCommentMutation,
+    downvotePostCommentMutation,
   }
 }

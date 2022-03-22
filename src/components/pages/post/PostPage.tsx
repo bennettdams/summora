@@ -80,6 +80,8 @@ function PostPageInternal({
     createPostSegment,
     createPostComment,
     deletePostComment,
+    upvotePostComment,
+    downvotePostComment,
     isLoading,
   } = usePost(postId)
   const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
@@ -490,6 +492,8 @@ function PostPageInternal({
           userId={userId}
           onAddComment={addComment}
           onRemoveComment={removeComment}
+          onUpvoteComment={upvotePostComment}
+          onDownvoteComment={downvotePostComment}
           comments={post.comments.map((comment) => ({
             commentId: comment.commentId,
             commentParentId: comment.commentParentId,
@@ -551,12 +555,16 @@ function Comment({
   userId,
   onAdd,
   onRemove,
+  onUpvote,
+  onDownvote,
 }: {
   comment: PostCommentTreeComment
   isRoot: boolean
   userId: string | null
   onAdd: (commentParentId: string, text: string) => void
   onRemove: (commentId: string) => void
+  onUpvote: (commentId: string) => void
+  onDownvote: (commentId: string) => void
 }) {
   const [showCommentInput, setShowCommentInput] = useState(false)
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
@@ -596,7 +604,7 @@ function Comment({
               isVoted={comment.upvotedBy.some(
                 (upvote) => upvote.userId === userId
               )}
-              onClick={() => console.log('upo')}
+              onClick={() => onUpvote(comment.commentId)}
             />
             <VoteIcon
               size="small"
@@ -604,7 +612,7 @@ function Comment({
               isVoted={comment.downvotedBy.some(
                 (downvote) => downvote.userId === userId
               )}
-              onClick={() => console.log('downo')}
+              onClick={() => onDownvote(comment.commentId)}
             />
           </div>
           <Link to={`/user/${comment.authorId}`} disablePrefetch>
@@ -703,6 +711,8 @@ function Comment({
             userId={userId}
             onAdd={onAdd}
             onRemove={onRemove}
+            onUpvote={onUpvote}
+            onDownvote={onDownvote}
           />
         ))}
       </div>
@@ -719,11 +729,15 @@ export function PostComments({
   comments,
   onAddComment,
   onRemoveComment,
+  onUpvoteComment,
+  onDownvoteComment,
 }: {
   userId: string | null
   comments: PostComment[]
   onAddComment: (commentParentId: string, text: string) => void
   onRemoveComment: (commentId: string) => void
+  onUpvoteComment: (commentId: string) => void
+  onDownvoteComment: (commentId: string) => void
 }): JSX.Element {
   const [rootComments, setRootComments] = useState<PostCommentTreeComment[]>(
     createRootComments(comments)
@@ -741,6 +755,8 @@ export function PostComments({
           userId={userId}
           onAdd={onAddComment}
           onRemove={onRemoveComment}
+          onUpvote={onUpvoteComment}
+          onDownvote={onDownvoteComment}
         />
       ))}
     </div>

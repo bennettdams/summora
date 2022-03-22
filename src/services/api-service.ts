@@ -3,6 +3,8 @@ import { ApiAvatarsUpload } from '../pages/api/image-upload/avatars'
 import { ApiImageUploadPostSegment } from '../pages/api/image-upload/[postId]/[postSegmentId]'
 import { ApiPostCommentCreate } from '../pages/api/post-comments'
 import { ApiPostCommentDelete } from '../pages/api/post-comments/[commentId]'
+import { ApiPostCommentDownvote } from '../pages/api/post-comments/[commentId]/downvote'
+import { ApiPostCommentUpvote } from '../pages/api/post-comments/[commentId]/upvote'
 import { ApiPostSegmentItemCreate } from '../pages/api/post-segment-items'
 import { ApiPostSegmentItemUpdate } from '../pages/api/post-segment-items/[postSegmentItemId]'
 import { ApiPostSegmentCreate } from '../pages/api/post-segments'
@@ -39,6 +41,10 @@ export const ROUTES_API = {
     `post-segment-items/${postSegmentItemId}`,
   POST_COMMENTS: 'post-comments',
   POST_COMMENT: (commentId: string) => `post-comments/${commentId}`,
+  POST_COMMENT_UPVOTE: (postCommentId: string) =>
+    `post-comments/${postCommentId}/upvote`,
+  POST_COMMENT_DOWNVOTE: (postCommentId: string) =>
+    `post-comments/${postCommentId}/downvote`,
   IMAGE_UPLOAD_AVATARS: 'image-upload/avatars',
   IMAGE_UPLOAD_POST_SEGMENTS: ({
     postId,
@@ -311,6 +317,7 @@ export async function apiCreatePostSegmentItem(
 }
 
 // #########################################
+// POST COMMENT
 
 export type ApiPostCommentCreateRequestBody = {
   postId: string
@@ -327,6 +334,15 @@ export type ApiPostCommentCreateRequestBody = {
   >
 }
 
+function transformApiPostComment(
+  comment: NonNullable<ApiPostCommentCreate>
+): NonNullable<ApiPostCommentCreate> {
+  return {
+    ...comment,
+    createdAt: new Date(comment.createdAt),
+  }
+}
+
 export async function apiCreatePostComment(
   input: ApiPostCommentCreateRequestBody
 ): Promise<HttpResponse<ApiPostCommentCreate>> {
@@ -339,16 +355,28 @@ export async function apiCreatePostComment(
   return response
 }
 
-function transformApiPostComment(
-  comment: NonNullable<ApiPostCommentCreate>
-): NonNullable<ApiPostCommentCreate> {
-  return {
-    ...comment,
-    createdAt: new Date(comment.createdAt),
-  }
+export async function apiUpvotePostComment(
+  postCommentId: string
+): Promise<HttpResponse<ApiPostCommentUpvote>> {
+  const response = await put<ApiPostCommentUpvote>(
+    ROUTES_API.POST_COMMENT_UPVOTE(postCommentId),
+    null
+  )
+  if (response.result)
+    response.result = transformApiPostComment(response.result)
+  return response
 }
-
-// #########################################
+export async function apiDownvotePostComment(
+  postCommentId: string
+): Promise<HttpResponse<ApiPostCommentDownvote>> {
+  const response = await put<ApiPostCommentDownvote>(
+    ROUTES_API.POST_COMMENT_DOWNVOTE(postCommentId),
+    null
+  )
+  if (response.result)
+    response.result = transformApiPostComment(response.result)
+  return response
+}
 
 export async function apiDeletePostComment(
   commentId: string
@@ -360,6 +388,7 @@ export async function apiDeletePostComment(
 }
 
 // #########################################
+// TAGS SEARCH
 
 export type ApiTagsSearchCreateRequestBody = {
   searchInput: string
@@ -384,6 +413,7 @@ function transformApiTagsSearch(
 }
 
 // #########################################
+// POST LIKE UNLIKE
 
 export async function apiLikeUnlikePost(
   postId: string

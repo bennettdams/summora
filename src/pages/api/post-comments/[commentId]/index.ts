@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '../../../prisma/prisma'
-import { getUserByCookie } from '../../../services/auth-service'
-import { logAPI } from '../../../util/logger'
+import { prisma } from '../../../../prisma/prisma'
+import { getUserByCookie } from '../../../../services/auth-service'
+import { logAPI } from '../../../../util/logger'
 
 export type ApiPostCommentDelete = boolean
 
