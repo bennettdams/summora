@@ -25,6 +25,8 @@ async function createPostComment(
       },
       include: {
         author: { select: { username: true, imageId: true } },
+        upvotedBy: { select: { userId: true } },
+        downvotedBy: { select: { userId: true } },
       },
     })
   } catch (error) {

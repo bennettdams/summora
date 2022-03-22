@@ -27,6 +27,8 @@ async function findPost(postId: string) {
       comments: {
         include: {
           author: { select: { username: true, imageId: true } },
+          upvotedBy: { select: { userId: true } },
+          downvotedBy: { select: { userId: true } },
         },
         orderBy: { createdAt: 'asc' },
       },
@@ -82,6 +84,8 @@ async function updatePost(
         comments: {
           include: {
             author: { select: { username: true, imageId: true } },
+            upvotedBy: { select: { userId: true } },
+            downvotedBy: { select: { userId: true } },
           },
           orderBy: { createdAt: 'asc' },
         },

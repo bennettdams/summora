@@ -43,8 +43,6 @@ model PostComment {
   text            String
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-  upvotes         Int           @default(0)
-  downvotes       Int           @default(0)
   // post
   Post            Post          @relation("PostComments", fields: [postId], references: [id])
   postId          String
@@ -55,6 +53,10 @@ model PostComment {
   // author
   author          User          @relation("PostCommentAuthor", fields: [authorId], references: [userId])
   authorId        String
+  // upvotes
+  upvotedBy       User[]        @relation("PostCommentUpvotes")
+  // downvotes
+  downvotedBy     User[]        @relation("PostCommentDownvotes")
 }
 
 model PostSegment {
@@ -101,15 +103,19 @@ model PostTag {
 }
 
 model User {
-  userId      String        @id @default(cuid())
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  username    String        @unique
-  imageId     String?
+  userId            String        @id @default(cuid())
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  username          String        @unique
+  imageId           String?
   // posts
-  posts       Post[]        @relation("AuthorPost")
+  posts             Post[]        @relation("AuthorPost")
   // comments
-  PostComment PostComment[] @relation("PostCommentAuthor")
+  PostComment       PostComment[] @relation("PostCommentAuthor")
   // likes
-  likedPosts  Post[]        @relation("PostLikes")
+  likedPosts        Post[]        @relation("PostLikes")
+  // upvotes
+  upvotedComments   PostComment[] @relation("PostCommentUpvotes")
+  // downvotes
+  downvotedComments PostComment[] @relation("PostCommentDownvotes")
 }

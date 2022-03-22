@@ -30,9 +30,9 @@ import {
 import { Tag, TagsList } from '../../tag'
 import { useAuth } from '../../../services/auth-service'
 import { StepList } from '../../StepList'
-import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/react/outline'
 import { PostLikes } from '../../post'
 import { Link } from '../../Link'
+import { VoteIcon } from '../../VoteIcon'
 
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
@@ -498,8 +498,8 @@ function PostPageInternal({
             authorId: comment.authorId,
             authorUsername: comment.author.username,
             authorImageId: comment.author.imageId,
-            upvotes: comment.upvotes,
-            downvotes: comment.downvotes,
+            upvotedBy: comment.upvotedBy,
+            downvotedBy: comment.downvotedBy,
           }))}
         />
       </PageSection>
@@ -537,8 +537,8 @@ type PostComment = {
   authorId: string
   authorUsername: string
   authorImageId: string | null
-  upvotes: number
-  downvotes: number
+  upvotedBy: { userId: string }[]
+  downvotedBy: { userId: string }[]
 }
 
 type PostCommentTreeComment = PostComment & {
@@ -574,13 +574,13 @@ function Comment({
         <div className="flex w-full">
           <div className="group relative grid w-10 place-items-center">
             <p className="font-bold block text-sm tracking-tight text-dorange group-hover:hidden">
-              {comment.upvotes - comment.downvotes}
+              {comment.upvotedBy.length - comment.downvotedBy.length}
             </p>
             <p
               title="Upvotes | Downvotes"
               className="font-bold absolute hidden w-20 text-center text-xs tracking-tight text-dbrown group-hover:block"
             >
-              {comment.upvotes} | {comment.downvotes}
+              {comment.upvotedBy.length} | {comment.downvotedBy.length}
             </p>
           </div>
           <div className="ml-2 grow">
@@ -590,8 +590,22 @@ function Comment({
 
         <div className="m-0 flex w-full text-sm">
           <div className="flex w-10 flex-row items-center justify-center text-center leading-none text-dbrown">
-            <PlusCircleIcon className="h-4 w-4" />
-            <MinusCircleIcon className="h-4 w-4" />
+            <VoteIcon
+              size="small"
+              variant="upvote"
+              isVoted={comment.upvotedBy.some(
+                (upvote) => upvote.userId === userId
+              )}
+              onClick={() => console.log('upo')}
+            />
+            <VoteIcon
+              size="small"
+              variant="downvote"
+              isVoted={comment.downvotedBy.some(
+                (downvote) => downvote.userId === userId
+              )}
+              onClick={() => console.log('downo')}
+            />
           </div>
           <Link to={`/user/${comment.authorId}`} disablePrefetch>
             <div className="flex hover:underline">
@@ -613,14 +627,14 @@ function Comment({
             <span className="ml-2">{comment.createdAt.toISOString()}</span>
           </div>
 
-          <div className="ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-white">
+          <div className="group ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-dorange">
             {!showCommentInput && (
               <div
                 className="flex items-center"
                 onClick={() => setShowCommentInput(true)}
               >
-                <IconReply size="small" />
-                <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dorange">
+                <IconReply size="small" className="group-hover:text-white" />
+                <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dorange group-hover:text-white">
                   Reply
                 </span>
               </div>
@@ -629,7 +643,7 @@ function Comment({
 
           {!!userId && comment.authorId === userId && (
             <div
-              className="ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-white"
+              className="group ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-dorange"
               onClick={() => setShowRemoveConfirmation(true)}
             >
               {!showRemoveConfirmation ? (
@@ -637,8 +651,8 @@ function Comment({
                   className="flex items-center"
                   onClick={() => setShowRemoveConfirmation(true)}
                 >
-                  <IconTrash size="small" />
-                  <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dorange">
+                  <IconTrash size="small" className="group-hover:text-white" />
+                  <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dorange group-hover:text-white">
                     Remove
                   </span>
                 </div>
@@ -647,8 +661,8 @@ function Comment({
                   className="flex items-center"
                   onClick={() => onRemove(comment.commentId)}
                 >
-                  <IconTrash size="small" />
-                  <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dorange">
+                  <IconTrash size="small" className="group-hover:text-white" />
+                  <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dorange group-hover:text-white">
                     Confirm
                   </span>
                 </div>

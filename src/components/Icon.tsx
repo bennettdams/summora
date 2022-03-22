@@ -13,6 +13,8 @@ import {
 import {
   BookmarkAltIcon,
   HeartIcon as HeartIconOutline,
+  PlusCircleIcon as PlusCircleIconOutline,
+  MinusCircleIcon as MinusCircleIconOutline,
 } from '@heroicons/react/outline'
 import { MouseEvent } from 'react'
 
@@ -202,6 +204,42 @@ export function IconView({
 }: IconProps): JSX.Element {
   return (
     <EyeIcon
+      className={` ${style} ${className} ${sizes[size]} ${
+        onClick && 'cursor-pointer'
+      }`}
+      onClick={(event: MouseEvent) => {
+        event.stopPropagation()
+        onClick && onClick()
+      }}
+    />
+  )
+}
+
+export function IconUpvote({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <PlusCircleIconOutline
+      className={` ${style} ${className} ${sizes[size]} ${
+        onClick && 'cursor-pointer'
+      }`}
+      onClick={(event: MouseEvent) => {
+        event.stopPropagation()
+        onClick && onClick()
+      }}
+    />
+  )
+}
+
+export function IconDownvote({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <MinusCircleIconOutline
       className={` ${style} ${className} ${sizes[size]} ${
         onClick && 'cursor-pointer'
       }`}

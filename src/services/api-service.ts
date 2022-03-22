@@ -350,6 +350,17 @@ function transformApiPostComment(
 
 // #########################################
 
+export async function apiDeletePostComment(
+  commentId: string
+): Promise<HttpResponse<ApiPostCommentDelete>> {
+  const response = await deleteHTTP<ApiPostCommentDelete>(
+    ROUTES_API.POST_COMMENT(commentId)
+  )
+  return response
+}
+
+// #########################################
+
 export type ApiTagsSearchCreateRequestBody = {
   searchInput: string
 }
@@ -370,17 +381,6 @@ function transformApiTagsSearch(
     createdAt: new Date(tag.createdAt),
     updatedAt: new Date(tag.updatedAt),
   }))
-}
-
-// #########################################
-
-export async function apiDeletePostComment(
-  commentId: string
-): Promise<HttpResponse<ApiPostCommentDelete>> {
-  const response = await deleteHTTP<ApiPostCommentDelete>(
-    ROUTES_API.POST_COMMENT(commentId)
-  )
-  return response
 }
 
 // #########################################
