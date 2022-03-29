@@ -49,7 +49,7 @@ export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
       ) : posts.length === 0 ? (
         <div>No posts yet.</div>
       ) : showLongPost ? (
-        <div className="mt-10 flex flex-col space-y-20">
+        <div className="mt-10 grid w-full grid-cols-1 gap-20 xl:grid-cols-2">
           {posts.map((post) => (
             <PostsListItem key={post.id} post={post} userId={userId} />
           ))}
@@ -74,7 +74,7 @@ function PostsListItem({
 }): JSX.Element {
   return (
     <Box padding="small" shadow="xxl">
-      <div className="w-full text-center">
+      <div className="text-center">
         <Link to={`/post/${post.id}`}>
           <div className="relative">
             <div className="absolute top-0 left-0 inline">
