@@ -39,6 +39,7 @@ function UserNavbar() {
                   <Avatar
                     userId={userAuth.id}
                     imageId={user?.imageId ?? null}
+                    imageBlurDataURL={user?.imageBlurDataURL ?? null}
                     size="small"
                   />
                 </div>

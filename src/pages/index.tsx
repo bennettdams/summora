@@ -23,10 +23,13 @@ async function findPosts(prisma: PrismaClient) {
       take: 20,
       orderBy: { createdAt: 'asc' },
       include: {
-        author: { select: { username: true, imageId: true } },
+        author: {
+          select: { username: true, imageId: true, imageBlurDataURL: true },
+        },
         category: true,
         segments: { orderBy: { createdAt: 'asc' } },
         tags: { select: { id: true, title: true } },
+        likedBy: { select: { userId: true } },
         /*
          * TODO
          * Using _count for implicit Many-To-Many relations does not work right now (30.11.2021),
@@ -35,7 +38,6 @@ async function findPosts(prisma: PrismaClient) {
          */
         // _count: { select: { comments: true, likedBy: true } },
         _count: { select: { comments: true } },
-        likedBy: { select: { userId: true } },
       },
     })
   } catch (error) {

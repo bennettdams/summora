@@ -32,7 +32,9 @@ async function downvotePostComment({
           },
         },
         include: {
-          author: { select: { username: true, imageId: true } },
+          author: {
+            select: { username: true, imageId: true, imageBlurDataURL: true },
+          },
           upvotedBy: { select: { userId: true } },
           downvotedBy: { select: { userId: true } },
         },
@@ -53,7 +55,9 @@ async function downvotePostComment({
           },
         },
         include: {
-          author: { select: { username: true, imageId: true } },
+          author: {
+            select: { username: true, imageId: true, imageBlurDataURL: true },
+          },
           upvotedBy: { select: { userId: true } },
           downvotedBy: { select: { userId: true } },
         },

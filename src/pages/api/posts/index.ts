@@ -14,7 +14,9 @@ async function findPosts() {
       take: 20,
       orderBy: { createdAt: 'asc' },
       include: {
-        author: { select: { username: true, imageId: true } },
+        author: {
+          select: { username: true, imageId: true, imageBlurDataURL: true },
+        },
         category: true,
         segments: { orderBy: { createdAt: 'asc' } },
         tags: { select: { id: true, title: true } },

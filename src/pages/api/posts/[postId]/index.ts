@@ -19,14 +19,18 @@ async function findPost(postId: string) {
           description: true,
         },
       },
-      author: { select: { username: true, imageId: true } },
+      author: {
+        select: { username: true, imageId: true, imageBlurDataURL: true },
+      },
       segments: {
         orderBy: { createdAt: 'asc' },
         include: { items: { orderBy: { createdAt: 'asc' } } },
       },
       comments: {
         include: {
-          author: { select: { username: true, imageId: true } },
+          author: {
+            select: { username: true, imageId: true, imageBlurDataURL: true },
+          },
           upvotedBy: { select: { userId: true } },
           downvotedBy: { select: { userId: true } },
         },
@@ -76,14 +80,18 @@ async function updatePost(
             description: true,
           },
         },
-        author: { select: { username: true, imageId: true } },
+        author: {
+          select: { username: true, imageId: true, imageBlurDataURL: true },
+        },
         segments: {
           orderBy: { createdAt: 'asc' },
           include: { items: { orderBy: { createdAt: 'asc' } } },
         },
         comments: {
           include: {
-            author: { select: { username: true, imageId: true } },
+            author: {
+              select: { username: true, imageId: true, imageBlurDataURL: true },
+            },
             upvotedBy: { select: { userId: true } },
             downvotedBy: { select: { userId: true } },
           },

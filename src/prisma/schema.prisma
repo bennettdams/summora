@@ -108,6 +108,7 @@ model User {
   updatedAt         DateTime      @updatedAt
   username          String        @unique
   imageId           String?
+  imageBlurDataURL  String?
   // posts
   posts             Post[]        @relation("AuthorPost")
   // comments

@@ -54,11 +54,13 @@ function AvatarPlaceholder({
 export function Avatar({
   userId,
   imageId,
+  imageBlurDataURL,
   size = 'medium',
   isEditable = false,
 }: {
   userId: string
   imageId: string | null
+  imageBlurDataURL: string | null
   size: AvatarSize
   isEditable?: boolean
 }): JSX.Element {
@@ -100,6 +102,9 @@ export function Avatar({
       {imageURL ? (
         <Image
           src={imageURL}
+          placeholder="blur"
+          // Next.js' types don't allow `null`, but they do allow `undefined`
+          blurDataURL={imageBlurDataURL ?? undefined}
           className="rounded-full"
           alt="Avatar"
           width={sizePixels}

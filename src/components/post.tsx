@@ -29,6 +29,7 @@ type PostsPostsList =
         id: string
         username: string
         imageId: string | null
+        imageBlurDataURL: string | null
       }
       tags: { id: string; title: string }[]
     }[]
@@ -134,7 +135,8 @@ function PostsListItem({
                     <span>{post.author.username}</span>
                     <Avatar
                       userId={post.author.id}
-                      imageId={post.author.imageId ?? null}
+                      imageId={post.author.imageId}
+                      imageBlurDataURL={post.author.imageBlurDataURL}
                       size="small"
                     />
                   </div>

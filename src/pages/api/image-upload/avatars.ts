@@ -10,17 +10,18 @@ import { prisma } from '../../../prisma/prisma'
 import { parseMultipartForm } from '../../../services/image-upload-service'
 import { Prisma } from '@prisma/client'
 import { createRandomId } from '../../../util/random-id'
+import { getPlaiceholder } from 'plaiceholder'
 
-export type ApiAvatarsUpload = Prisma.PromiseReturnType<
-  typeof updateUserImageId
->
+export type ApiAvatarsUpload = Prisma.PromiseReturnType<typeof updateUserImage>
 
-async function updateUserImageId({
+async function updateUserImage({
   userId,
   imageId,
+  imageBlurDataURL,
 }: {
   userId: string
   imageId: string
+  imageBlurDataURL: string
 }) {
   const now = new Date()
 
@@ -30,10 +31,13 @@ async function updateUserImageId({
       data: {
         updatedAt: now,
         imageId,
+        imageBlurDataURL,
       },
     })
   } catch (error) {
-    throw new Error(`Error while updating user with ID ${userId}: ${error}`)
+    throw new Error(
+      `Error while updating user image for user ID ${userId}: ${error}`
+    )
   }
 }
 
@@ -105,9 +109,14 @@ export default async function _apiImageUploadAvatars(
               req,
             })
 
-            const userUpdated = await updateUserImageId({
+            const { base64: imageBlurDataURL } = await getPlaiceholder(
+              fileParsed
+            )
+
+            const userUpdated = await updateUserImage({
               userId,
               imageId: imageIdNew,
+              imageBlurDataURL,
             })
 
             console.info(`[API] Uploaded avatar image for ${userId}`)

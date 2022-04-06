@@ -345,7 +345,8 @@ function PostPageInternal({
               <div className="flex flex-1 flex-col items-center justify-center rounded-xl p-2 hover:bg-white">
                 <Avatar
                   userId={post.authorId}
-                  imageId={post.author.imageId ?? null}
+                  imageId={post.author.imageId}
+                  imageBlurDataURL={post.author.imageBlurDataURL}
                   size="medium"
                 />
 
@@ -502,6 +503,7 @@ function PostPageInternal({
             authorId: comment.authorId,
             authorUsername: comment.author.username,
             authorImageId: comment.author.imageId,
+            authorImageBlurDataURL: comment.author.imageBlurDataURL,
             upvotedBy: comment.upvotedBy,
             downvotedBy: comment.downvotedBy,
           }))}
@@ -541,6 +543,7 @@ type PostComment = {
   authorId: string
   authorUsername: string
   authorImageId: string | null
+  authorImageBlurDataURL: string | null
   upvotedBy: { userId: string }[]
   downvotedBy: { userId: string }[]
 }
@@ -622,6 +625,7 @@ function Comment({
                   size="tiny"
                   userId={comment.authorId}
                   imageId={comment.authorImageId}
+                  imageBlurDataURL={comment.authorImageBlurDataURL}
                 />
               </div>
 

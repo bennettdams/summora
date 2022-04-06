@@ -50,6 +50,7 @@ export function ExplorePage({
               id: post.authorId,
               username: post.author.username,
               imageId: post.author.imageId,
+              imageBlurDataURL: post.author.imageBlurDataURL,
             },
             noOfViews: post.noOfViews,
             segments: [],
