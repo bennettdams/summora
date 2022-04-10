@@ -29,15 +29,16 @@ async function findPosts(prisma: PrismaClient) {
         category: true,
         segments: { orderBy: { createdAt: 'asc' } },
         tags: { select: { id: true, title: true } },
-        likedBy: { select: { userId: true } },
         /*
          * TODO
-         * Using _count for implicit Many-To-Many relations does not work right now (30.11.2021),
+         * Using _count for implicit Many-To-Many relations does not work right now,
          * that's why we can't use it for "likedBy".
+         * Prisma v3.12.0
          * https://github.com/prisma/prisma/issues/9880
          */
         // _count: { select: { comments: true, likedBy: true } },
         _count: { select: { comments: true } },
+        likedBy: { select: { userId: true } },
       },
     })
   } catch (error) {

@@ -100,16 +100,30 @@ export function Avatar({
       )}
 
       {imageURL ? (
-        <Image
-          src={imageURL}
-          placeholder="blur"
-          // Next.js' types don't allow `null`, but they do allow `undefined`
-          blurDataURL={imageBlurDataURL ?? undefined}
-          className="rounded-full"
-          alt="Avatar"
-          width={sizePixels}
-          height={sizePixels}
-        />
+        /*
+         * This <div> is only there to cut out a circle around the image, because Next.js' <Image> component
+         * does not respect its styling (like: "rounded-full") for the blur placeholder.
+         * Next.js v12.1.4
+         * See: https://github.com/vercel/next.js/issues/30033
+         */
+        <div
+          className="block overflow-hidden rounded-full"
+          style={{
+            width: sizePixels,
+            height: sizePixels,
+          }}
+        >
+          <Image
+            src={imageURL}
+            placeholder="blur"
+            // Next.js' types don't allow `null`, but they do allow `undefined`
+            blurDataURL={imageBlurDataURL ?? undefined}
+            className="rounded-full"
+            alt="Avatar"
+            width={sizePixels}
+            height={sizePixels}
+          />
+        </div>
       ) : (
         <AvatarPlaceholder sizePixels={sizePixels} />
       )}
