@@ -3,8 +3,9 @@ import fs from 'fs'
 import { Files, IncomingForm } from 'formidable'
 import { FORM_DATA_FILE_KEY } from '../util/http'
 import sharp from 'sharp'
+import { validExtensions } from '../components/ImageUpload'
 
-const validMimeTypes = ['image/jpeg', 'image/png']
+const validMimeTypes = validExtensions.map((extension) => `image/${extension}`)
 
 const maxImageWidthPx = 1920
 const maxImageHeightPx = 1080

@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from 'react'
 import { IconAdd } from '../components/Icon'
 import { LoadingAnimation } from '../components/LoadingAnimation'
 
-const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png']
+export const validExtensions = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG']
 
 export function ImageUpload({
   inputId,
@@ -23,9 +23,9 @@ export function ImageUpload({
         const file = event.target.files[0]
         const fileExtension = file.name.split('.').pop()
 
-        if (!fileExtension || !ALLOWED_EXTENSIONS.includes(fileExtension)) {
+        if (!fileExtension || !validExtensions.includes(fileExtension)) {
           throw new Error(
-            `You provided a ${fileExtension} file, but only ${ALLOWED_EXTENSIONS} are allowed.`
+            `You provided a ${fileExtension} file, but only ${validExtensions} are allowed.`
           )
         } else {
           await uploadFn(file)

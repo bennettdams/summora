@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getUserByCookie } from '../../../../services/auth-service'
 import { logAPI } from '../../../../util/logger'
@@ -9,9 +9,11 @@ export type ApiPostCommentDownvote = Prisma.PromiseReturnType<
 
 // TODO can this be done in one operation instead of two?
 async function downvotePostComment({
+  prisma,
   commentId,
   userId,
 }: {
+  prisma: PrismaClient
   commentId: string
   userId: string
 }) {
@@ -97,6 +99,7 @@ export default async function _apiDownvotePostComment(
         case 'PUT': {
           const postCommentVotedUpdated: ApiPostCommentDownvote =
             await downvotePostComment({
+              prisma,
               commentId: commentId,
               userId: userAuth.id,
             })
