@@ -1,5 +1,6 @@
-import { ReactNode } from 'react'
-import { IconAdd, IconSize } from './Icon'
+import { ReactNode, useState } from 'react'
+import { OmitStrict } from '../types/util-types'
+import { IconAdd, IconSize, IconTrash } from './Icon'
 
 interface ButtonProps {
   onClick: () => void
@@ -17,7 +18,8 @@ export function Button({
       onClick={onClick}
       disabled={disabled}
       className={
-        'rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50' +
+        'inline-flex items-center' +
+        ' rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50' +
         ' bg-dlila text-white transition duration-75 ease-in-out hover:bg-dorange' +
         ' disabled:cursor-not-allowed disabled:bg-gray-200'
       }
@@ -37,10 +39,41 @@ export function ButtonAdd({
       onClick={onClick}
       disabled={disabled}
       className={
-        'cursor-pointer rounded-full bg-dlila text-transparent shadow-md duration-150 hover:rotate-90 hover:bg-dorange focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-200'
+        'cursor-pointer rounded-full bg-dlila text-transparent shadow-md duration-150 hover:rotate-90 hover:bg-dorange hover:text-white focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-200'
       }
     >
       <IconAdd size={size} onClick={onClick} />
     </button>
+  )
+}
+
+export function ButtonRemove({
+  onClick,
+  disabled = false,
+}: OmitStrict<ButtonProps, 'children'>): JSX.Element {
+  const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
+
+  return (
+    <Button onClick={onClick} disabled={disabled}>
+      <div
+        className="group flex items-center"
+        onClick={() => setShowRemoveConfirmation(true)}
+      >
+        {!showRemoveConfirmation ? (
+          <div
+            className="flex items-center"
+            onClick={() => setShowRemoveConfirmation(true)}
+          >
+            <IconTrash />
+            <span className="ml-1 inline-block">Remove</span>
+          </div>
+        ) : (
+          <div className="flex items-center" onClick={onClick}>
+            <IconTrash />
+            <span className="ml-1 inline-block ">Confirm</span>
+          </div>
+        )}
+      </div>
+    </Button>
   )
 }

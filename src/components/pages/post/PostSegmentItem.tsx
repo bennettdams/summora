@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { Box } from '../../Box'
 import { FormInput } from '../../FormInput'
 import { IconCheck, IconX, IconTrash, IconEdit } from '../../Icon'
@@ -8,6 +8,7 @@ import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
 import { ApiPostSegmentItemUpdateRequestBody } from '../../../services/api-service'
 import { SegmentItemPostPage } from './PostPage'
+import { ButtonRemove } from '../../Button'
 
 export function PostSegmentItem({
   item,
@@ -21,11 +22,10 @@ export function PostSegmentItem({
   isPostEditMode: boolean
 }): JSX.Element {
   const { updatePostSegmentItem, isLoading } = usePost(postId)
-  const [ref, isHovered] = useHover<HTMLDivElement>()
 
   const [isEditable, setIsEditable] = useState(false)
 
-  const refEdit = useRef<HTMLDivElement>(null)
+  const [refEdit, isHovered] = useHover<HTMLDivElement>()
   useOnClickOutside(refEdit, () => setIsEditable(false))
 
   async function handleUpdate(inputValue: string): Promise<void> {
@@ -52,9 +52,8 @@ export function PostSegmentItem({
       refExternal={refEdit}
       padding={false}
       isHighlighted={isEditable}
-      inline
     >
-      <div ref={ref} className="flex items-center space-x-2 p-2">
+      <div className="flex items-center space-x-2 p-2">
         <div className="ml-2 inline-flex w-10 items-center italic">
           {!isPostEditMode ? (
             <span>{index + 1}</span>
@@ -65,11 +64,11 @@ export function PostSegmentItem({
               <button className="inline" form={formId} type="submit">
                 <IconCheck />
               </button>
-              <IconX onClick={() => setIsEditable(false)} className="ml-4" />
+              <IconX onClick={() => setIsEditable(false)} />
             </>
           ) : isHovered ? (
             <>
-              <IconTrash /> <IconEdit className="ml-4" />
+              <IconTrash /> <IconEdit onClick={() => setIsEditable(true)} />
             </>
           ) : (
             <span className="text-dorange">{index + 1}</span>
@@ -85,6 +84,7 @@ export function PostSegmentItem({
               onSubmit={handleUpdate}
               formId={formId}
             />
+            <ButtonRemove onClick={() => console.log('asd')} />
           </>
         ) : (
           <span className="pr-10">{item.content}</span>

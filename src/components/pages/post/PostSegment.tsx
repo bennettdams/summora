@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { ButtonAdd } from '../../Button'
+import { ButtonAdd, ButtonRemove } from '../../Button'
 import { FormInput } from '../../FormInput'
 import { IconCheck, IconX, IconEdit } from '../../Icon'
 import { usePost } from '../../../data/use-post'
@@ -96,8 +96,8 @@ export function PostSegment({
 
   return (
     // items-stretch needed for the post image
-    <div className="flex w-full items-stretch rounded-xl bg-white p-10 shadow-2xl">
-      <div className="w-4/5">
+    <div className="flex w-full flex-col items-stretch rounded-xl bg-white p-10 shadow-2xl lg:flex-row">
+      <div className="w-full lg:w-4/5">
         <div className="flex h-20 w-full flex-row text-xl">
           <div className="h-full w-20 text-left">
             <span className="text-4xl italic">{index}</span>
@@ -177,7 +177,10 @@ export function PostSegment({
                 </div>
               </>
             ) : (
-              <ButtonAdd size="huge" onClick={() => setShowItemInput(true)} />
+              <div className="flex flex-row items-center space-x-2">
+                <ButtonAdd size="huge" onClick={() => setShowItemInput(true)} />
+                {/* <ButtonRemove onClick={() => console.log('re')} /> */}
+              </div>
             )}
           </div>
         )}
@@ -185,7 +188,7 @@ export function PostSegment({
 
       {/* POST IMAGE */}
       {/* the parent container uses "items-stretch" so the image can "fill" the height */}
-      <div className="grid w-1/5 place-items-center">
+      <div className="grid min-h-[150px] w-full place-items-center lg:w-1/5">
         <PostSegmentImage
           isEditable={isPostEditMode}
           postId={postId}
