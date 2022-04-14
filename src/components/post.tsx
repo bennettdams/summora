@@ -95,12 +95,12 @@ function PostsListItem({
             </h1>
             <p className="mt-3 leading-relaxed text-dorange">{post.subtitle}</p>
 
-            <div className="my-4 flex flex-row flex-nowrap space-x-4 overflow-y-hidden py-4">
+            <div className="my-4 flex snap-x flex-row flex-nowrap space-x-4 overflow-y-hidden py-4">
               {post.segments.map((segment) => {
                 return (
                   <div
                     key={segment.id}
-                    className="grid h-32 w-60 flex-none place-items-center rounded-lg bg-dlight"
+                    className="grid h-32 w-60 flex-none snap-start place-items-center rounded-lg bg-dlight"
                   >
                     <p className="p-5">{segment.title}</p>
                   </div>
