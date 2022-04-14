@@ -4,6 +4,7 @@ import {
   apiCreatePostSegment,
   apiCreatePostSegmentItem,
   apiDeletePostComment,
+  apiDeletePostSegmentItem,
   apiDownvotePostComment,
   apiFetchPost,
   apiImageUploadPostSegments,
@@ -60,6 +61,7 @@ export function usePost(postId: string, enabled = true) {
     updatePostMutation,
     createPostSegmentItemMutation,
     updatePostSegmentItemMutation,
+    deletePostSegmentItemMutation,
     updatePostSegmentImageIdMutation,
     createPostSegmentMutation,
     updatePostSegmentMutation,
@@ -77,6 +79,7 @@ export function usePost(postId: string, enabled = true) {
       updatePostMutation.isLoading ||
       createPostSegmentItemMutation.isLoading ||
       updatePostSegmentItemMutation.isLoading ||
+      deletePostSegmentItemMutation.isLoading ||
       updatePostSegmentImageIdMutation.isLoading ||
       createPostSegmentMutation.isLoading ||
       updatePostSegmentMutation.isLoading ||
@@ -90,6 +93,7 @@ export function usePost(postId: string, enabled = true) {
       updatePostMutation.isError ||
       createPostSegmentItemMutation.isError ||
       updatePostSegmentItemMutation.isError ||
+      deletePostSegmentItemMutation.isError ||
       updatePostSegmentImageIdMutation.isError ||
       createPostSegmentMutation.isError ||
       updatePostSegmentMutation.isError ||
@@ -103,6 +107,7 @@ export function usePost(postId: string, enabled = true) {
     createPostSegmentItem: createPostSegmentItemMutation.mutateAsync,
     createPostSegment: createPostSegmentMutation.mutateAsync,
     updatePostSegmentItem: updatePostSegmentItemMutation.mutateAsync,
+    deletePostSegmentItem: deletePostSegmentItemMutation.mutateAsync,
     updatePostSegment: updatePostSegmentMutation.mutateAsync,
     updatePostSegmentImageId: updatePostSegmentImageIdMutation.mutateAsync,
     createPostComment: createPostCommentMutation.mutateAsync,
@@ -269,6 +274,27 @@ function usePostMutation(postId: string) {
                         ),
                       }
                 ),
+              }
+        )
+      }
+    },
+  })
+
+  const deletePostSegmentItemMutation = useMutation(apiDeletePostSegmentItem, {
+    onSuccess: (data, deletedPostSegmentItemId) => {
+      // true = was deleted
+      if (data.result === true) {
+        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
+          !prevData
+            ? null
+            : {
+                ...prevData,
+                segments: prevData.segments.map((segment) => ({
+                  ...segment,
+                  items: segment.items.filter(
+                    (item) => item.id !== deletedPostSegmentItemId
+                  ),
+                })),
               }
         )
       }
@@ -552,6 +578,7 @@ function usePostMutation(postId: string) {
     updatePostMutation,
     createPostSegmentItemMutation,
     updatePostSegmentItemMutation,
+    deletePostSegmentItemMutation,
     updatePostSegmentImageIdMutation,
     createPostSegmentMutation,
     updatePostSegmentMutation,

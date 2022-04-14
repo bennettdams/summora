@@ -21,7 +21,8 @@ export function PostSegmentItem({
   postId: string
   isPostEditMode: boolean
 }): JSX.Element {
-  const { updatePostSegmentItem, isLoading } = usePost(postId)
+  const { updatePostSegmentItem, deletePostSegmentItem, isLoading } =
+    usePost(postId)
 
   const [isEditable, setIsEditable] = useState(false)
 
@@ -84,7 +85,7 @@ export function PostSegmentItem({
               onSubmit={handleUpdate}
               formId={formId}
             />
-            <ButtonRemove onClick={() => console.log('asd')} />
+            <ButtonRemove onClick={() => deletePostSegmentItem(item.id)} />
           </>
         ) : (
           <span className="pr-10">{item.content}</span>

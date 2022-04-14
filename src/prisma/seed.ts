@@ -229,6 +229,8 @@ export const postCategories: Prisma.PostCategoryCreateInput[] = [
   { id: 'babys', title: 'Babys', description: '..' },
   { id: 'fashion', title: 'Fashion', description: '..' },
   { id: 'sports', title: 'Sports', description: '..' },
+  { id: 'travel', title: 'Travel', description: '..' },
+  { id: 'programming', title: 'Programming', description: '..' },
 ]
 
 export const postTags: Prisma.PostTagCreateWithoutPostsInput[] = [

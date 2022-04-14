@@ -53,22 +53,24 @@ export function ButtonRemove({
 }: OmitStrict<ButtonProps, 'children'>): JSX.Element {
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
 
+  function handleClick() {
+    if (!showRemoveConfirmation) {
+      setShowRemoveConfirmation(true)
+    } else {
+      onClick()
+    }
+  }
+
   return (
-    <Button onClick={onClick} disabled={disabled}>
-      <div
-        className="group flex items-center"
-        onClick={() => setShowRemoveConfirmation(true)}
-      >
+    <Button onClick={handleClick} disabled={disabled}>
+      <div className="group flex items-center">
         {!showRemoveConfirmation ? (
-          <div
-            className="flex items-center"
-            onClick={() => setShowRemoveConfirmation(true)}
-          >
+          <div className="flex items-center">
             <IconTrash />
             <span className="ml-1 inline-block">Remove</span>
           </div>
         ) : (
-          <div className="flex items-center" onClick={onClick}>
+          <div className="flex items-center">
             <IconTrash />
             <span className="ml-1 inline-block ">Confirm</span>
           </div>

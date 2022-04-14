@@ -6,7 +6,10 @@ import { ApiPostCommentDelete } from '../pages/api/post-comments/[commentId]'
 import { ApiPostCommentDownvote } from '../pages/api/post-comments/[commentId]/downvote'
 import { ApiPostCommentUpvote } from '../pages/api/post-comments/[commentId]/upvote'
 import { ApiPostSegmentItemCreate } from '../pages/api/post-segment-items'
-import { ApiPostSegmentItemUpdate } from '../pages/api/post-segment-items/[postSegmentItemId]'
+import {
+  ApiPostSegmentItemDelete,
+  ApiPostSegmentItemUpdate,
+} from '../pages/api/post-segment-items/[postSegmentItemId]'
 import { ApiPostSegmentCreate } from '../pages/api/post-segments'
 import { ApiPostSegmentUpdate } from '../pages/api/post-segments/[postSegmentId]'
 import { ApiPosts } from '../pages/api/posts'
@@ -276,6 +279,15 @@ function transformApiPostSegmentItem(
     createdAt: new Date(postSegmentItem.createdAt),
     updatedAt: new Date(postSegmentItem.updatedAt),
   }
+}
+
+export async function apiDeletePostSegmentItem(
+  postSegmentItemId: string
+): Promise<HttpResponse<ApiPostSegmentItemDelete>> {
+  const response = await deleteHTTP<ApiPostSegmentItemDelete>(
+    ROUTES_API.POST_SEGMENT_ITEM(postSegmentItemId)
+  )
+  return response
 }
 
 // #########################################
