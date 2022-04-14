@@ -78,7 +78,7 @@ export async function apiUsersSignUp(
 
 // #########################################
 
-export type ApiAvatarsUploadRequestBody = FormData
+export type ApiImageUploadAvatarsRequestBody = FormData
 
 export async function apiImageUploadAvatars(
   avatarFile: File

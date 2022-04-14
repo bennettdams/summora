@@ -6,7 +6,7 @@ import {
 } from '../../../../services/supabase/supabase-service'
 import { logAPI } from '../../../../util/logger'
 import { prisma } from '../../../../prisma/prisma'
-import { parseMultipartForm } from '../../../../services/image-upload-service'
+import { convertImageForUpload } from '../../../../services/image-upload-service'
 import { ApiImageUploadPostSegmentsRequestBody } from '../../../../services/api-service'
 import { createRandomId } from '../../../../util/random-id'
 import { Prisma } from '@prisma/client'
@@ -90,7 +90,7 @@ export default async function _apiImageUploadPostSegment(
       switch (method) {
         case 'POST': {
           try {
-            const fileParsed = await parseMultipartForm(req)
+            const fileForUpload = await convertImageForUpload(req)
 
             const postSegmentDb = await prisma.postSegment.findUnique({
               where: { id: postSegmentId },
@@ -118,13 +118,11 @@ export default async function _apiImageUploadPostSegment(
               }
 
               const imageIdNew = `segment-${postSegmentId}-${createRandomId()}`
-              // TODO validation?
-              // TODO convert png etc.
               await uploadPostSegmentImageSupabase({
                 postId,
                 authorId: userId,
                 imageId: imageIdNew,
-                postSegmentImageFileParsed: fileParsed,
+                postSegmentImageFileParsed: fileForUpload,
                 req,
               })
 

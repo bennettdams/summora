@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { ApiAvatarsUploadRequestBody as ApiImageUploadAvatarsRequestBody } from '../../../services/api-service'
+import { ApiImageUploadAvatarsRequestBody } from '../../../services/api-service'
 import { getUserByCookie } from '../../../services/auth-service'
 import {
   deleteAvatarSupabase,
@@ -7,7 +7,7 @@ import {
 } from '../../../services/supabase/supabase-service'
 import { logAPI } from '../../../util/logger'
 import { prisma } from '../../../prisma/prisma'
-import { parseMultipartForm } from '../../../services/image-upload-service'
+import { convertImageForUpload } from '../../../services/image-upload-service'
 import { Prisma } from '@prisma/client'
 import { createRandomId } from '../../../util/random-id'
 import { getPlaiceholder } from 'plaiceholder'
@@ -77,7 +77,7 @@ export default async function _apiImageUploadAvatars(
     switch (method) {
       case 'POST': {
         try {
-          const fileParsed = await parseMultipartForm(req)
+          const fileForUpload = await convertImageForUpload(req)
 
           const userDb = await prisma.user.findUnique({
             where: { userId },
@@ -100,17 +100,15 @@ export default async function _apiImageUploadAvatars(
             }
 
             const imageIdNew = `avatar-${userId}-${createRandomId()}`
-            // TODO validation?
-            // TODO convert png etc.
             await uploadAvatarSupabase({
               userId,
               imageId: imageIdNew,
-              avatarFileParsed: fileParsed,
+              avatarFileParsed: fileForUpload,
               req,
             })
 
             const { base64: imageBlurDataURL } = await getPlaiceholder(
-              fileParsed
+              fileForUpload
             )
 
             const userUpdated = await updateUserImage({
