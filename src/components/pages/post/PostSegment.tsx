@@ -32,7 +32,8 @@ export function PostSegment({
   isPostEditMode: boolean
   onInitialEdit: () => void
 }): JSX.Element {
-  const { createPostSegmentItem, updatePostSegment } = usePost(postId)
+  const { createPostSegmentItem, updatePostSegment, deletePostSegment } =
+    usePost(postId)
 
   const [isSegmentEditable, setIsSegmentEditable] = useState(isEditableInitial)
   useEffect(() => setIsSegmentEditable(isEditableInitial), [isEditableInitial])
@@ -179,7 +180,7 @@ export function PostSegment({
             ) : (
               <div className="flex flex-row items-center space-x-2">
                 <ButtonAdd size="huge" onClick={() => setShowItemInput(true)} />
-                {/* <ButtonRemove onClick={() => console.log('re')} /> */}
+                <ButtonRemove onClick={() => deletePostSegment(segment.id)} />
               </div>
             )}
           </div>

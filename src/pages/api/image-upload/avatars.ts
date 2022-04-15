@@ -1,16 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiImageUploadAvatarsRequestBody } from '../../../services/api-service'
 import { getUserByCookie } from '../../../services/auth-service'
-import {
-  deleteAvatarSupabase,
-  uploadAvatarSupabase,
-} from '../../../services/supabase/supabase-service'
+import { uploadAvatarSupabase } from '../../../services/supabase/supabase-service'
 import { logAPI } from '../../../util/logger'
 import { prisma } from '../../../prisma/prisma'
 import { convertImageForUpload } from '../../../services/image-upload-service'
 import { Prisma } from '@prisma/client'
 import { createRandomId } from '../../../util/random-id'
 import { getPlaiceholder } from 'plaiceholder'
+import { deleteAvatarInStorage } from '../../../services/use-cloud-storage'
 
 export type ApiAvatarsUpload = Prisma.PromiseReturnType<typeof updateUserImage>
 
@@ -92,7 +90,7 @@ export default async function _apiImageUploadAvatars(
             // delete old image
             const imageIdOld = userDb.imageId
             if (imageIdOld) {
-              await deleteAvatarSupabase({
+              await deleteAvatarInStorage({
                 userId,
                 imageId: imageIdOld,
                 req,

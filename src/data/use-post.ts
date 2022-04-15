@@ -4,6 +4,7 @@ import {
   apiCreatePostSegment,
   apiCreatePostSegmentItem,
   apiDeletePostComment,
+  apiDeletePostSegment,
   apiDeletePostSegmentItem,
   apiDownvotePostComment,
   apiFetchPost,
@@ -58,16 +59,21 @@ export function usePost(postId: string, enabled = true) {
   )
 
   const {
+    // post
     updatePostMutation,
+    likeUnlikePostMutation,
+    // segment
+    createPostSegmentMutation,
+    updatePostSegmentMutation,
+    deletePostSegmentMutation,
+    updatePostSegmentImageIdMutation,
+    // segment item
     createPostSegmentItemMutation,
     updatePostSegmentItemMutation,
     deletePostSegmentItemMutation,
-    updatePostSegmentImageIdMutation,
-    createPostSegmentMutation,
-    updatePostSegmentMutation,
+    // comment
     createPostCommentMutation,
     deletePostCommentMutation,
-    likeUnlikePostMutation,
     upvotePostCommentMutation,
     downvotePostCommentMutation,
   } = usePostMutation(postId)
@@ -76,43 +82,58 @@ export function usePost(postId: string, enabled = true) {
     post: data ?? null,
     isLoading:
       isLoading ||
+      // post
       updatePostMutation.isLoading ||
+      likeUnlikePostMutation.isLoading ||
+      // segment
+      createPostSegmentMutation.isLoading ||
+      updatePostSegmentMutation.isLoading ||
+      deletePostSegmentMutation.isLoading ||
+      updatePostSegmentImageIdMutation.isLoading ||
+      // segment item
       createPostSegmentItemMutation.isLoading ||
       updatePostSegmentItemMutation.isLoading ||
       deletePostSegmentItemMutation.isLoading ||
-      updatePostSegmentImageIdMutation.isLoading ||
-      createPostSegmentMutation.isLoading ||
-      updatePostSegmentMutation.isLoading ||
+      // comment
       createPostCommentMutation.isLoading ||
       deletePostCommentMutation.isLoading ||
-      likeUnlikePostMutation.isLoading ||
       upvotePostCommentMutation.isLoading ||
       downvotePostCommentMutation.isLoading,
     isError:
       isError ||
+      // post
       updatePostMutation.isError ||
+      likeUnlikePostMutation.isError ||
+      // segment
+      createPostSegmentMutation.isError ||
+      updatePostSegmentMutation.isError ||
+      deletePostSegmentMutation.isError ||
+      updatePostSegmentImageIdMutation.isError ||
+      // segment item
       createPostSegmentItemMutation.isError ||
       updatePostSegmentItemMutation.isError ||
       deletePostSegmentItemMutation.isError ||
-      updatePostSegmentImageIdMutation.isError ||
-      createPostSegmentMutation.isError ||
-      updatePostSegmentMutation.isError ||
+      // comment
       createPostCommentMutation.isError ||
       deletePostCommentMutation.isError ||
-      likeUnlikePostMutation.isError ||
       upvotePostCommentMutation.isError ||
       downvotePostCommentMutation.isError,
     // TODO really mutateAsync?
+    // post
     updatePost: updatePostMutation.mutateAsync,
-    createPostSegmentItem: createPostSegmentItemMutation.mutateAsync,
+    likeUnlikePost: likeUnlikePostMutation.mutateAsync,
+    // segment
     createPostSegment: createPostSegmentMutation.mutateAsync,
+    updatePostSegment: updatePostSegmentMutation.mutateAsync,
+    deletePostSegment: deletePostSegmentMutation.mutateAsync,
+    updatePostSegmentImageId: updatePostSegmentImageIdMutation.mutateAsync,
+    // segment item
+    createPostSegmentItem: createPostSegmentItemMutation.mutateAsync,
     updatePostSegmentItem: updatePostSegmentItemMutation.mutateAsync,
     deletePostSegmentItem: deletePostSegmentItemMutation.mutateAsync,
-    updatePostSegment: updatePostSegmentMutation.mutateAsync,
-    updatePostSegmentImageId: updatePostSegmentImageIdMutation.mutateAsync,
+    // comment
     createPostComment: createPostCommentMutation.mutateAsync,
     deletePostComment: deletePostCommentMutation.mutateAsync,
-    likeUnlikePost: likeUnlikePostMutation.mutateAsync,
     upvotePostComment: upvotePostCommentMutation.mutateAsync,
     downvotePostComment: downvotePostCommentMutation.mutateAsync,
   }
@@ -204,6 +225,25 @@ function usePostMutation(postId: string) {
                 ...prevData,
                 segments: prevData.segments.map((segment) =>
                   segment.id === segmentUpdated.id ? segmentUpdated : segment
+                ),
+              }
+        )
+      }
+    },
+  })
+
+  // TODO missing deletion in `usePosts`' cache
+  const deletePostSegmentMutation = useMutation(apiDeletePostSegment, {
+    onSuccess: (data, deletedPostSegmentId) => {
+      // true = was deleted
+      if (data.result === true) {
+        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
+          !prevData
+            ? null
+            : {
+                ...prevData,
+                segments: prevData.segments.filter(
+                  (segment) => segment.id !== deletedPostSegmentId
                 ),
               }
         )
@@ -575,16 +615,21 @@ function usePostMutation(postId: string) {
   })
 
   return {
+    // post
     updatePostMutation,
+    likeUnlikePostMutation,
+    // segment
+    createPostSegmentMutation,
+    updatePostSegmentMutation,
+    deletePostSegmentMutation,
+    updatePostSegmentImageIdMutation,
+    // segment item
     createPostSegmentItemMutation,
     updatePostSegmentItemMutation,
     deletePostSegmentItemMutation,
-    updatePostSegmentImageIdMutation,
-    createPostSegmentMutation,
-    updatePostSegmentMutation,
+    // comment
     createPostCommentMutation,
     deletePostCommentMutation,
-    likeUnlikePostMutation,
     upvotePostCommentMutation,
     downvotePostCommentMutation,
   }

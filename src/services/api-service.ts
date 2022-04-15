@@ -11,7 +11,10 @@ import {
   ApiPostSegmentItemUpdate,
 } from '../pages/api/post-segment-items/[postSegmentItemId]'
 import { ApiPostSegmentCreate } from '../pages/api/post-segments'
-import { ApiPostSegmentUpdate } from '../pages/api/post-segments/[postSegmentId]'
+import {
+  ApiPostSegmentDelete,
+  ApiPostSegmentUpdate,
+} from '../pages/api/post-segments/[postSegmentId]'
 import { ApiPosts } from '../pages/api/posts'
 import { ApiPost, ApiPostUpdate } from '../pages/api/posts/[postId]'
 import { ApiPostIncrementViews } from '../pages/api/posts/[postId]/increment-views'
@@ -248,6 +251,15 @@ function transformApiPostSegment(
       updatedAt: new Date(item.updatedAt),
     })),
   }
+}
+
+export async function apiDeletePostSegment(
+  postSegmentId: string
+): Promise<HttpResponse<ApiPostSegmentDelete>> {
+  const response = await deleteHTTP<ApiPostSegmentDelete>(
+    ROUTES_API.POST_SEGMENT(postSegmentId)
+  )
+  return response
 }
 
 // #########################################

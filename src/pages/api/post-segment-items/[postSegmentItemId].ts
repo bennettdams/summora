@@ -67,16 +67,19 @@ export default async function _apiPostSegmentItem(
       topic: 'post segment item',
       req,
       res,
-      cbDetermineAuthorId: async () =>
-        (
-          await prisma.postSegmentItem.findUnique({
-            rejectOnNotFound: true,
-            where: { id: postSegmentItemId },
-            select: {
-              PostSegment: { select: { Post: { select: { authorId: true } } } },
-            },
-          })
-        ).PostSegment.Post.authorId,
+      cbQueryEntity: async () => {
+        const entity = await prisma.postSegmentItem.findUnique({
+          rejectOnNotFound: true,
+          where: { id: postSegmentItemId },
+          select: {
+            PostSegment: { select: { Post: { select: { authorId: true } } } },
+          },
+        })
+        return {
+          authorId: entity.PostSegment.Post.authorId,
+          entity,
+        }
+      },
       cbExecute: async () => {
         switch (method) {
           case 'PUT': {

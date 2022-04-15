@@ -61,13 +61,7 @@ export function PostSegmentImage({
       )}
 
       {imageURL && (
-        <Image
-          src={imageURL}
-          className="rounded-full"
-          alt=""
-          layout="fill"
-          objectFit="contain"
-        />
+        <Image src={imageURL} alt="" layout="fill" objectFit="contain" />
       )}
     </div>
   )

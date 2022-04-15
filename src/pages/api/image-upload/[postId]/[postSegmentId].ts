@@ -1,15 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getUserByCookie } from '../../../../services/auth-service'
-import {
-  deletePostSegmentImageSupabase,
-  uploadPostSegmentImageSupabase,
-} from '../../../../services/supabase/supabase-service'
+import { uploadPostSegmentImageSupabase } from '../../../../services/supabase/supabase-service'
 import { logAPI } from '../../../../util/logger'
 import { prisma } from '../../../../prisma/prisma'
 import { convertImageForUpload } from '../../../../services/image-upload-service'
 import { ApiImageUploadPostSegmentsRequestBody } from '../../../../services/api-service'
 import { createRandomId } from '../../../../util/random-id'
 import { Prisma } from '@prisma/client'
+import { deletePostSegmentImageInStorage } from '../../../../services/use-cloud-storage'
 
 export type ApiImageUploadPostSegment = Prisma.PromiseReturnType<
   typeof updatePostSegmentImageId
@@ -109,7 +107,7 @@ export default async function _apiImageUploadPostSegment(
               // delete old image
               const imageIdOld = postSegmentDb.imageId
               if (imageIdOld) {
-                await deletePostSegmentImageSupabase({
+                await deletePostSegmentImageInStorage({
                   postId,
                   authorId: postSegmentDb.Post.authorId,
                   imageId: imageIdOld,
