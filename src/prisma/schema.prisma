@@ -68,7 +68,7 @@ model PostSegment {
   imageId   String?
   items     PostSegmentItem[]
   // for Post.segments
-  Post      Post              @relation(fields: [postId], references: [id])
+  Post      Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
   //
 }
@@ -79,7 +79,7 @@ model PostSegmentItem {
   updatedAt     DateTime    @updatedAt
   content       String
   // for PostSegment.items
-  PostSegment   PostSegment @relation(fields: [postSegmentId], references: [id])
+  PostSegment   PostSegment @relation(fields: [postSegmentId], references: [id], onDelete: Cascade)
   postSegmentId String
   //
 }
