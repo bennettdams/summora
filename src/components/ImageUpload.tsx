@@ -40,6 +40,7 @@ export function ImageUpload({
 
   return (
     <form
+      id={`form-image-upload-${inputId}`}
       className="group h-full w-full"
       method="post"
       encType="multipart/form-data"

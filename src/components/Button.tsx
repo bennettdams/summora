@@ -1,22 +1,28 @@
-import { ReactNode, useState } from 'react'
-import { OmitStrict } from '../types/util-types'
+import { ReactNode, useRef, useState } from 'react'
+import { useOnClickOutside } from '../util/use-on-click-outside'
 import { IconAdd, IconSize, IconTrash } from './Icon'
 
 interface ButtonProps {
   onClick: () => void
   children?: ReactNode
   disabled?: boolean
+  onClickOutside?: () => void
 }
 
 export function Button({
   onClick,
   children,
   disabled = false,
+  onClickOutside,
 }: ButtonProps): JSX.Element {
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  useOnClickOutside(buttonRef, onClickOutside ?? (() => undefined))
+
   return (
     <button
       onClick={onClick}
       disabled={disabled}
+      ref={buttonRef}
       className={
         'inline-flex items-center' +
         ' rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50' +
@@ -47,27 +53,30 @@ export function ButtonAdd({
   )
 }
 
-export function ButtonRemove({
-  onClick,
-  disabled = false,
-}: OmitStrict<ButtonProps, 'children'>): JSX.Element {
+export function ButtonRemove(props: ButtonProps): JSX.Element {
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
 
   function handleClick() {
     if (!showRemoveConfirmation) {
       setShowRemoveConfirmation(true)
     } else {
-      onClick()
+      props.onClick()
     }
   }
 
   return (
-    <Button onClick={handleClick} disabled={disabled}>
+    <Button
+      {...props}
+      onClick={handleClick}
+      onClickOutside={() => setShowRemoveConfirmation(false)}
+    >
       <div className="group flex items-center">
         {!showRemoveConfirmation ? (
           <div className="flex items-center">
             <IconTrash />
-            <span className="ml-1 inline-block">Remove</span>
+            <span className="ml-1 inline-block">
+              {props.children ?? 'Remove'}
+            </span>
           </div>
         ) : (
           <div className="flex items-center">
