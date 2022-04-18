@@ -168,6 +168,7 @@ export function PostSegment({
             {isPostEditable && isSegmentEditMode ? (
               <div className="grow">
                 <FormInput
+                  formId={formId}
                   placeholder="Title.."
                   initialValue={segment.title}
                   onChange={(input) =>
@@ -175,6 +176,7 @@ export function PostSegment({
                   }
                 />
                 <FormInput
+                  formId={formId}
                   placeholder="Subtitle.."
                   initialValue={segment.subtitle || ''}
                   onChange={(input) =>
@@ -275,7 +277,12 @@ export function PostSegment({
 
                 {isSegmentEditMode && (
                   <div>
-                    <Button onClick={() => console.log('save')}>
+                    <Button
+                      isSubmit
+                      onClick={() => {
+                        // TODO placeholder, remove when we have FormSubmit button
+                      }}
+                    >
                       <IconCheck /> Save
                     </Button>
                     <Button

@@ -7,6 +7,7 @@ interface ButtonProps {
   children?: ReactNode
   disabled?: boolean
   onClickOutside?: () => void
+  isSubmit?: boolean
 }
 
 type ButtonOnClickEvent = Parameters<ButtonProps['onClick']>[0]
@@ -16,6 +17,7 @@ export function Button({
   children,
   disabled = false,
   onClickOutside,
+  isSubmit = false,
 }: ButtonProps): JSX.Element {
   const buttonRef = useRef<HTMLButtonElement>(null)
   useOnClickOutside(buttonRef, onClickOutside ?? (() => undefined))
@@ -25,7 +27,7 @@ export function Button({
       onClick={onClick}
       disabled={disabled}
       ref={buttonRef}
-      type="button"
+      type={isSubmit ? 'submit' : 'button'}
       className={
         'inline-flex items-center' +
         ' rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50' +
