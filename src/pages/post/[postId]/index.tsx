@@ -18,7 +18,7 @@ export interface PostPageProps {
   tagsSortedForCategory: Prisma.PromiseReturnType<
     typeof findTagsForPostByCategory
   >
-  isPostEditMode: boolean
+  isPostEditable: boolean
 }
 
 async function findTagsForPost(prisma: PrismaClient) {
@@ -132,7 +132,7 @@ export const getStaticProps: GetStaticProps<
           postCategories,
           tagsSorted,
           tagsSortedForCategory,
-          isPostEditMode: true,
+          isPostEditable: true,
         },
         revalidate: revalidateInSeconds,
       }
@@ -152,7 +152,7 @@ export default function _PostPage(
         postCategories={props.postCategories}
         tagsSorted={props.tagsSorted}
         tagsSortedForCategory={props.tagsSortedForCategory}
-        isPostEditMode={props.isPostEditMode}
+        isPostEditable={props.isPostEditable}
       />
     </Hydrate>
   )

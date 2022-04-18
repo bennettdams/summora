@@ -1,12 +1,7 @@
-import { useState } from 'react'
 import { Box } from '../../Box'
 import { FormInput } from '../../FormInput'
-import { IconCheck, IconX, IconTrash, IconEdit } from '../../Icon'
 import { LoadingAnimation } from '../../LoadingAnimation'
 import { usePost } from '../../../data/use-post'
-import { useHover } from '../../../util/use-hover'
-import { useOnClickOutside } from '../../../util/use-on-click-outside'
-import { ApiPostSegmentItemUpdateRequestBody } from '../../../services/api-service'
 import { SegmentItemPostPage } from './PostPage'
 import { ButtonRemove } from '../../Button'
 
@@ -14,63 +9,29 @@ export function PostSegmentItem({
   item,
   index,
   postId,
-  isPostEditMode = false,
+  isEditMode = false,
+  onChange,
 }: {
   item: SegmentItemPostPage
   index: number
   postId: string
-  isPostEditMode: boolean
+  isEditMode: boolean
+  onChange: (inputNew: string) => void
 }): JSX.Element {
-  const { updatePostSegmentItem, deletePostSegmentItem, isLoading } =
-    usePost(postId)
+  const { deletePostSegmentItem, isLoading } = usePost(postId)
 
-  const [isEditable, setIsEditable] = useState(false)
-
-  const [refEdit, isHovered] = useHover<HTMLDivElement>()
-  useOnClickOutside(refEdit, () => setIsEditable(false))
-
-  async function handleUpdate(inputValue: string): Promise<void> {
-    if (inputValue) {
-      const postSegmentItemToUpdate: ApiPostSegmentItemUpdateRequestBody = {
-        content: inputValue,
-      }
-
-      setIsEditable(false)
-
-      await updatePostSegmentItem({
-        postSegmentItemId: item.id,
-        postSegmentItemToUpdate,
-      })
-    }
-  }
-
-  const formId = `post-segment-item-${item.id}`
+  const isEditable = isEditMode
 
   return (
-    <Box
-      key={item.id}
-      onClick={!isPostEditMode ? undefined : () => setIsEditable(true)}
-      refExternal={refEdit}
-      padding={false}
-      isHighlighted={isEditable}
-    >
-      <div className="flex items-center space-x-2 p-2">
+    <Box key={item.id} padding={false} isHighlighted={isEditable}>
+      <div
+        className={`flex items-center space-x-2 p-2 ${
+          !isEditMode && 'group-hover:bg-dbrown'
+        }`}
+      >
         <div className="ml-2 inline-flex w-10 items-center italic">
-          {!isPostEditMode ? (
-            <span>{index + 1}</span>
-          ) : isLoading ? (
+          {isLoading ? (
             <LoadingAnimation />
-          ) : isEditable ? (
-            <>
-              <button className="inline" form={formId} type="submit">
-                <IconCheck />
-              </button>
-              <IconX onClick={() => setIsEditable(false)} />
-            </>
-          ) : isHovered ? (
-            <>
-              <IconTrash /> <IconEdit onClick={() => setIsEditable(true)} />
-            </>
           ) : (
             <span className="text-dorange">{index + 1}</span>
           )}
@@ -80,12 +41,15 @@ export function PostSegmentItem({
           <>
             <FormInput
               initialValue={item.content}
-              placeholder="New item"
+              placeholder="Add some text.."
               resetOnSubmit
-              onSubmit={handleUpdate}
-              formId={formId}
+              onChange={onChange}
             />
-            <ButtonRemove onClick={() => deletePostSegmentItem(item.id)} />
+            <ButtonRemove
+              onClick={async () => {
+                await deletePostSegmentItem(item.id)
+              }}
+            />
           </>
         ) : (
           <span className="pr-10">{item.content}</span>

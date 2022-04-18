@@ -54,7 +54,7 @@ export function PostPage(props: PostPageProps): JSX.Element {
       postCategories={props.postCategories}
       tagsSorted={props.tagsSorted}
       tagsSortedForCategory={props.tagsSortedForCategory}
-      isPostEditMode={props.isPostEditMode}
+      isPostEditable={props.isPostEditable}
       userId={userId}
     />
   )
@@ -69,7 +69,7 @@ function PostPageInternal({
   postCategories,
   tagsSorted,
   tagsSortedForCategory,
-  isPostEditMode,
+  isPostEditable,
   userId,
 }: PostPageProps & {
   post: PostPostPage
@@ -264,10 +264,10 @@ function PostPageInternal({
             <>
               <div
                 ref={refTitle}
-                onClick={() => isPostEditMode && setIsTitleEditable(true)}
+                onClick={() => isPostEditable && setIsTitleEditable(true)}
               >
                 <h2 className="font-bold text-2xl leading-7 sm:text-3xl">
-                  {isPostEditMode && isHovered && (
+                  {isPostEditable && isHovered && (
                     <span className="mr-10">
                       <IconEdit className="inline" />
                     </span>
@@ -293,7 +293,7 @@ function PostPageInternal({
           <div className="flex w-full flex-col sm:flex-row sm:flex-wrap md:space-x-6 lg:w-4/5">
             {/* CATEGORY */}
             <div className="flex items-center text-sm" ref={refCategory}>
-              {isPostEditMode && isShownCategoryDropdown ? (
+              {isPostEditable && isShownCategoryDropdown ? (
                 <div className="inline-block w-full">
                   <DropdownSelect
                     onChange={handleOnCategorySelect}
@@ -366,7 +366,7 @@ function PostPageInternal({
           tags={post.tags.map((tag) => ({ id: tag.id, title: tag.title }))}
           onAddButtonClick={() => setIsShownTagSelection(true)}
           onRemoveClick={(tagIdToRemove) => handleRemoveTag(tagIdToRemove)}
-          showAddButton={isPostEditMode && !isShownTagSelection}
+          showAddButton={isPostEditable && !isShownTagSelection}
         />
       </PageSection>
 
@@ -439,8 +439,8 @@ function PostPageInternal({
                   authorId={post.authorId}
                   key={segment.id}
                   segment={segment}
-                  isPostEditMode={isPostEditMode}
-                  isEditableInitial={
+                  isPostEditable={isPostEditable}
+                  isEditModeInitial={
                     !hasNewSegmentBeenEdited &&
                     index === post.segments.length - 1
                   }
@@ -448,7 +448,7 @@ function PostPageInternal({
                 />
               ))}
             </div>
-            {isPostEditMode && (
+            {isPostEditable && (
               <div className="mt-20">
                 <Button
                   onClick={handleCreateSegment}

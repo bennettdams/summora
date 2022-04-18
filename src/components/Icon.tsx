@@ -48,8 +48,10 @@ export function IconEdit({
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
-        event.stopPropagation()
-        onClick && onClick()
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
       }}
     />
   )
@@ -66,8 +68,10 @@ export function IconCheck({
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
-        event.stopPropagation()
-        onClick && onClick()
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
       }}
     />
   )
@@ -82,8 +86,10 @@ export function IconAdd({
     <PlusIcon
       className={'text-white' + ` ${sizes[size]} ${className}`}
       onClick={(event: MouseEvent) => {
-        event.stopPropagation()
-        onClick && onClick()
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
       }}
     />
   )
@@ -100,8 +106,10 @@ export function IconX({
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
-        event.stopPropagation()
-        onClick && onClick()
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
       }}
     />
   )
@@ -118,8 +126,10 @@ export function IconTrash({
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
-        event.stopPropagation()
-        onClick && onClick()
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
       }}
     />
   )
@@ -136,8 +146,10 @@ export function IconReply({
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
-        event.stopPropagation()
-        onClick && onClick()
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
       }}
     />
   )
@@ -154,8 +166,10 @@ export function IconCategory({
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
-        event.stopPropagation()
-        onClick && onClick()
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
       }}
     />
   )
@@ -172,8 +186,10 @@ export function IconDate({
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
-        event.stopPropagation()
-        onClick && onClick()
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
       }}
     />
   )
@@ -190,8 +206,10 @@ export function IconComment({
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
-        event.stopPropagation()
-        onClick && onClick()
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
       }}
     />
   )
@@ -208,8 +226,10 @@ export function IconView({
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
-        event.stopPropagation()
-        onClick && onClick()
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
       }}
     />
   )
@@ -226,8 +246,10 @@ export function IconUpvote({
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
-        event.stopPropagation()
-        onClick && onClick()
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
       }}
     />
   )
@@ -244,8 +266,10 @@ export function IconDownvote({
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
-        event.stopPropagation()
-        onClick && onClick()
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
       }}
     />
   )
@@ -262,8 +286,10 @@ export function IconLiked({
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
-        event.stopPropagation()
-        onClick && onClick()
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
       }}
     />
   )
@@ -280,8 +306,10 @@ export function IconUnliked({
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
-        event.stopPropagation()
-        onClick && onClick()
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
       }}
     />
   )

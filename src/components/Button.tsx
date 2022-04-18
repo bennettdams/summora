@@ -1,13 +1,15 @@
-import { ReactNode, useRef, useState } from 'react'
+import { MouseEvent, ReactNode, useRef, useState } from 'react'
 import { useOnClickOutside } from '../util/use-on-click-outside'
 import { IconAdd, IconSize, IconTrash } from './Icon'
 
 interface ButtonProps {
-  onClick: () => void
+  onClick: (e: MouseEvent<HTMLButtonElement>) => void
   children?: ReactNode
   disabled?: boolean
   onClickOutside?: () => void
 }
+
+type ButtonOnClickEvent = Parameters<ButtonProps['onClick']>[0]
 
 export function Button({
   onClick,
@@ -23,6 +25,7 @@ export function Button({
       onClick={onClick}
       disabled={disabled}
       ref={buttonRef}
+      type="button"
       className={
         'inline-flex items-center' +
         ' rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50' +
@@ -48,7 +51,7 @@ export function ButtonAdd({
         'cursor-pointer rounded-full bg-dlila text-transparent shadow-md duration-150 hover:rotate-90 hover:bg-dorange hover:text-white focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-200'
       }
     >
-      <IconAdd size={size} onClick={onClick} />
+      <IconAdd size={size} />
     </button>
   )
 }
@@ -56,11 +59,11 @@ export function ButtonAdd({
 export function ButtonRemove(props: ButtonProps): JSX.Element {
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
 
-  function handleClick() {
+  function handleClick(e: ButtonOnClickEvent) {
     if (!showRemoveConfirmation) {
       setShowRemoveConfirmation(true)
     } else {
-      props.onClick()
+      props.onClick(e)
     }
   }
 
