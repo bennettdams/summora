@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, FormEvent } from 'react'
 import { Box } from '../../Box'
 import { Button } from '../../Button'
 import { DropdownItem, DropdownSelect } from '../../DropdownSelect'
@@ -86,12 +86,6 @@ function PostPageInternal({
   } = usePost(postId)
   const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
 
-  const [isShownCategoryDropdown, setIsShownCategoryDropdown] = useState(false)
-  const [refCategory] = useHover<HTMLDivElement>(() =>
-    setIsShownCategoryDropdown(true)
-  )
-  useOnClickOutside(refCategory, () => setIsShownCategoryDropdown(false))
-
   async function handleCreateSegment(): Promise<void> {
     const postSegmentToCreate: ApiPostSegmentCreateRequestBody['postSegmentToCreate'] =
       {
@@ -107,14 +101,12 @@ function PostPageInternal({
     })
   }
 
-  const [isTitleEditable, setIsTitleEditable] = useState(false)
-  const [refTitle, isHovered] = useHover<HTMLDivElement>()
-  const refTitleEdit = useRef<HTMLDivElement>(null)
-  useOnClickOutside(refTitleEdit, () => setIsTitleEditable(false))
-
-  const [isShownTagSelection, setIsShownTagSelection] = useState(false)
-  const refTagSelection = useRef<HTMLDivElement>(null)
-  useOnClickOutside(refTagSelection, () => setIsShownTagSelection(false))
+  // CATEGORY
+  const [isShownCategoryDropdown, setIsShownCategoryDropdown] = useState(false)
+  const [refCategory] = useHover<HTMLDivElement>(() =>
+    setIsShownCategoryDropdown(true)
+  )
+  useOnClickOutside(refCategory, () => setIsShownCategoryDropdown(false))
 
   async function handleOnCategorySelect(newCategory: DropdownItem) {
     setIsShownCategoryDropdown(false)
@@ -129,35 +121,52 @@ function PostPageInternal({
     })
   }
 
-  async function handleUpdateTitle(inputValue: string): Promise<void> {
-    if (inputValue) {
-      const postToUpdate: ApiPostUpdateRequestBody = {
-        title: inputValue,
-      }
+  // POST HEADER
+  const [isPostHeaderEditable, setIsPostHeaderEditable] = useState(false)
+  const refPostHeaderEdit = useRef<HTMLFormElement>(null)
+  useOnClickOutside(refPostHeaderEdit, () => setIsPostHeaderEditable(false))
 
-      setIsTitleEditable(false)
+  const formId = `formPost-${postId}`
 
-      await updatePost({
-        postId: post.id,
-        postToUpdate,
-      })
-    }
+  const [inputs, setInputs] = useState<{
+    title?: string | null
+    subtitle?: string | null
+  } | null>()
+
+  function resetEditMode() {
+    setIsPostHeaderEditable(false)
+    setInputs(null)
   }
 
-  async function handleUpdateSubtitle(inputValue: string): Promise<void> {
-    if (inputValue) {
-      const postToUpdate: ApiPostUpdateRequestBody = {
-        subtitle: inputValue,
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+
+    if (inputs) {
+      let postToUpdate: ApiPostUpdateRequestBody | null = null
+      if (inputs.title) {
+        postToUpdate = { title: inputs.title }
+      }
+      if (inputs.subtitle) {
+        postToUpdate = !postToUpdate
+          ? { subtitle: inputs.subtitle }
+          : { ...postToUpdate, subtitle: inputs.subtitle }
       }
 
-      setIsTitleEditable(false)
-
-      await updatePost({
-        postId: post.id,
-        postToUpdate,
-      })
+      if (postToUpdate) {
+        await updatePost({
+          postId: post.id,
+          postToUpdate,
+        })
+      }
     }
+
+    resetEditMode()
   }
+
+  // TAGS
+  const [isShownTagSelection, setIsShownTagSelection] = useState(false)
+  const refTagSelection = useRef<HTMLDivElement>(null)
+  useOnClickOutside(refTagSelection, () => setIsShownTagSelection(false))
 
   async function handleRemoveTag(tagIdToRemove: string): Promise<void> {
     const tagsNew: TagPostPage[] = post.tags.filter(
@@ -173,9 +182,6 @@ function PostPageInternal({
       postToUpdate,
     })
   }
-
-  const formId = 'formPost'
-
   const [inputTagSearch, setInputTagSearch] = useState('')
   const { tagsSearched, isFetching } = useSearchTags(inputTagSearch)
 
@@ -194,8 +200,6 @@ function PostPageInternal({
     }
   }
 
-  const [inputRootComment, setInputRootComment] = useState('')
-
   /**
    * Removes tags which are already included in a post from a list of tags.
    */
@@ -204,6 +208,9 @@ function PostPageInternal({
       (tagToFilter) => !post.tags.some((tag) => tag.id === tagToFilter.id)
     )
   }
+
+  // COMMENTS
+  const [inputRootComment, setInputRootComment] = useState('')
 
   async function addComment(
     /**
@@ -227,62 +234,98 @@ function PostPageInternal({
 
   return (
     <Page>
-      {/* TITLE */}
+      {/* POST HEADER */}
       <PageSection hideTopMargin>
         <div className="w-full text-center">
-          {isTitleEditable ? (
-            <div className="mx-auto mb-10 w-full lg:w-1/2" ref={refTitleEdit}>
+          {isPostHeaderEditable ? (
+            <form
+              ref={refPostHeaderEdit}
+              id={formId}
+              onSubmit={handleSubmit}
+              //  className="w-full space-y-4 lg:w-4/5"
+              className="mx-auto mb-10 w-full lg:w-1/2"
+            >
+              {/* <div className="mx-auto mb-10 w-full lg:w-1/2" ref={refTitleEdit}> */}
               <div className="flex items-center">
-                <button className="inine" form={formId} type="submit">
+                {/* <button className="inine" form={formId} type="submit">
                   <IconCheck size="big" />
                 </button>
-                <IconX size="big" onClick={() => setIsTitleEditable(false)} />
+                <IconX size="big" onClick={() => setIsTitleEditable(false)} /> */}
+                <Button
+                  isSubmit
+                  onClick={() => {
+                    // TODO placeholder, remove when we have FormSubmit button
+                  }}
+                >
+                  <IconCheck /> Save
+                </Button>
+                <Button
+                  onClick={(e) => {
+                    // prevent form submit
+                    e.preventDefault()
+                    resetEditMode()
+                  }}
+                >
+                  <IconX /> Cancel
+                </Button>
               </div>
 
               <div className="mt-4 space-y-2">
                 <FormInput
                   placeholder="Title.."
                   initialValue={post.title}
-                  onSubmit={handleUpdateTitle}
+                  onChange={(input) =>
+                    setInputs((prev) => ({ ...prev, title: input }))
+                  }
                   formId={formId}
                 >
                   Title
                 </FormInput>
 
                 <FormInput
-                  placeholder="Subitle.."
+                  placeholder="Subtitle.."
                   initialValue={post.subtitle ?? ''}
-                  onSubmit={handleUpdateSubtitle}
+                  onChange={(input) =>
+                    setInputs((prev) => ({ ...prev, subtitle: input }))
+                  }
                   autoFocus={false}
                   formId={formId}
                 >
                   Subtitle
                 </FormInput>
               </div>
-            </div>
+              {/* </div> */}
+            </form>
           ) : (
-            <>
+            <div className="group relative rounded-xl hover:bg-dbrown">
               <div
-                ref={refTitle}
-                onClick={() => isPostEditable && setIsTitleEditable(true)}
+                onClick={() => isPostEditable && setIsPostHeaderEditable(true)}
               >
                 <h2 className="font-bold text-2xl leading-7 sm:text-3xl">
-                  {isPostEditable && isHovered && (
-                    <span className="mr-10">
-                      <IconEdit className="inline" />
-                    </span>
-                  )}
-
                   <span className="text-dlila">{post.title}</span>
                 </h2>
               </div>
 
               <div className="mt-4 flex-1">
-                {!isTitleEditable && (
+                {!isPostHeaderEditable && (
                   <span className="italic text-dorange">{post.subtitle}</span>
                 )}
               </div>
-            </>
+
+              {isPostEditable && (
+                <div
+                  onClick={() =>
+                    isPostEditable && setIsPostHeaderEditable(true)
+                  }
+                  className="absolute inset-0 hidden place-items-center group-hover:grid"
+                >
+                  <IconEdit
+                    className="text-transparent group-hover:text-white group-hover:opacity-100"
+                    size="huge"
+                  />
+                </div>
+              )}
+            </div>
           )}
         </div>
       </PageSection>
