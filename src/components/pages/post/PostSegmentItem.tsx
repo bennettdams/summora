@@ -20,15 +20,9 @@ export function PostSegmentItem({
 }): JSX.Element {
   const { deletePostSegmentItem, isLoading } = usePost(postId)
 
-  const isEditable = isEditMode
-
   return (
-    <Box key={item.id} padding={false} isHighlighted={isEditable}>
-      <div
-        className={`flex items-center space-x-2 p-2 ${
-          !isEditMode && 'group-hover:bg-dbrown'
-        }`}
-      >
+    <Box key={item.id} padding={false} isHighlighted={isEditMode}>
+      <div className="flex items-center space-x-2 p-2">
         <div className="ml-2 inline-flex w-10 items-center italic">
           {isLoading ? (
             <LoadingAnimation />
@@ -37,7 +31,7 @@ export function PostSegmentItem({
           )}
         </div>
 
-        {isEditable ? (
+        {isEditMode ? (
           <>
             <FormInput
               initialValue={item.content}

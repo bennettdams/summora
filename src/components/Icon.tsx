@@ -1,5 +1,5 @@
 import {
-  PencilAltIcon,
+  PencilIcon,
   CheckIcon,
   XIcon,
   TrashIcon,
@@ -43,7 +43,7 @@ export function IconEdit({
   onClick,
 }: IconProps): JSX.Element {
   return (
-    <PencilAltIcon
+    <PencilIcon
       className={`${style} ${sizes[size]} ${className} ${
         onClick && 'cursor-pointer'
       }`}
@@ -84,7 +84,7 @@ export function IconAdd({
 }: IconProps): JSX.Element {
   return (
     <PlusIcon
-      className={'text-white' + ` ${sizes[size]} ${className}`}
+      className={`text-white ${sizes[size]} ${className}`}
       onClick={(event: MouseEvent) => {
         if (onClick) {
           event.stopPropagation()
@@ -182,7 +182,7 @@ export function IconDate({
 }: IconProps): JSX.Element {
   return (
     <CalendarIcon
-      className={` ${style} ${className} ${sizes[size]} ${
+      className={`${style} ${className} ${sizes[size]} ${
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
@@ -202,7 +202,7 @@ export function IconComment({
 }: IconProps): JSX.Element {
   return (
     <AnnotationIcon
-      className={` ${style} ${className} ${sizes[size]} ${
+      className={`${style} ${className} ${sizes[size]} ${
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
@@ -222,7 +222,7 @@ export function IconView({
 }: IconProps): JSX.Element {
   return (
     <EyeIcon
-      className={` ${style} ${className} ${sizes[size]} ${
+      className={`${style} ${className} ${sizes[size]} ${
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
@@ -242,7 +242,7 @@ export function IconUpvote({
 }: IconProps): JSX.Element {
   return (
     <PlusCircleIconOutline
-      className={` ${style} ${className} ${sizes[size]} ${
+      className={`${style} ${className} ${sizes[size]} ${
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
@@ -262,7 +262,7 @@ export function IconDownvote({
 }: IconProps): JSX.Element {
   return (
     <MinusCircleIconOutline
-      className={` ${style} ${className} ${sizes[size]} ${
+      className={`${style} ${className} ${sizes[size]} ${
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
@@ -282,7 +282,7 @@ export function IconLiked({
 }: IconProps): JSX.Element {
   return (
     <HeartIconSolid
-      className={` ${style} ${className} ${sizes[size]} ${
+      className={`${style} ${className} ${sizes[size]} ${
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {
@@ -302,7 +302,7 @@ export function IconUnliked({
 }: IconProps): JSX.Element {
   return (
     <HeartIconOutline
-      className={` ${style} ${className} ${sizes[size]} ${
+      className={`${style} ${className} ${sizes[size]} ${
         onClick && 'cursor-pointer'
       }`}
       onClick={(event: MouseEvent) => {

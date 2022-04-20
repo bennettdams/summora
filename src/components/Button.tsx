@@ -49,9 +49,7 @@ export function ButtonAdd({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={
-        'cursor-pointer rounded-full bg-dlila text-transparent shadow-md duration-150 hover:rotate-90 hover:bg-dorange hover:text-white focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-200'
-      }
+      className="cursor-pointer rounded-full bg-dlila text-transparent text-white shadow-md duration-150 hover:rotate-90 hover:bg-dorange focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-200"
     >
       <IconAdd size={size} />
     </button>
@@ -86,7 +84,7 @@ export function ButtonRemove(props: ButtonProps): JSX.Element {
         ) : (
           <div className="flex items-center">
             <IconTrash />
-            <span className="ml-1 inline-block ">Confirm</span>
+            <span className="ml-1 inline-block">Confirm</span>
           </div>
         )}
       </div>

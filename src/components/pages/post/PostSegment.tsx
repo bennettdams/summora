@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, FormEvent } from 'react'
 import { Button, ButtonAdd, ButtonRemove } from '../../Button'
 import { FormInput } from '../../FormInput'
-import { IconCheck, IconX, IconEdit } from '../../Icon'
+import { IconCheck, IconX } from '../../Icon'
 import { usePost } from '../../../data/use-post'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
 import { PostSegmentItem } from './PostSegmentItem'
@@ -12,6 +12,7 @@ import {
 } from '../../../services/api-service'
 import { SegmentPostPage } from './PostPage'
 import { PostSegmentImage } from '../../PostSegmentImage'
+import { EditOverlay } from '../../EditOverlay'
 
 export function PostSegment({
   postSegmentId,
@@ -153,90 +154,78 @@ export function PostSegment({
         className="w-full space-y-4 lg:w-4/5"
       >
         {/* HEADER & ITEMS */}
-        <div
-          // relative is needed for the edit icon to be absolute in the middle
-          className={`group relative rounded-xl p-2 ${
-            !isSegmentEditMode && 'hover:bg-dbrown'
-          }`}
+        <EditOverlay
+          isEnabled={isPostEditable && !isSegmentEditMode}
+          onClick={() => setIsSegmentEditMode(true)}
         >
-          <div className="flex h-20 w-full flex-row text-xl">
-            <div className="h-full w-20 text-left">
-              <span className="text-4xl italic">{index}</span>
-            </div>
-
-            {/* SEGMENT HEADER */}
-            {isPostEditable && isSegmentEditMode ? (
-              <div className="grow">
-                <FormInput
-                  formId={formId}
-                  placeholder="Title.."
-                  initialValue={segment.title}
-                  onChange={(input) =>
-                    setInputs((prev) => ({ ...prev, title: input }))
-                  }
-                />
-                <FormInput
-                  formId={formId}
-                  placeholder="Subtitle.."
-                  initialValue={segment.subtitle || ''}
-                  onChange={(input) =>
-                    setInputs((prev) => ({ ...prev, subtitle: input }))
-                  }
-                  autoFocus={false}
-                />
+          <div className="rounded-xl p-2">
+            <div className="flex h-20 w-full flex-row text-xl">
+              <div className="h-full w-20 text-left">
+                <span className="text-4xl italic">{index}</span>
               </div>
-            ) : (
-              <div
-                className={`flex grow ${isPostEditable && 'cursor-pointer'}`}
-                onClick={() => setIsSegmentEditMode(true)}
-              >
-                {isPostEditable && (
-                  <div
-                    onClick={() => setIsSegmentEditMode(true)}
-                    className="absolute inset-0 hidden place-items-center group-hover:grid"
-                  >
-                    <IconEdit
-                      className="text-transparent group-hover:text-white group-hover:opacity-100"
-                      size="huge"
-                    />
-                  </div>
-                )}
 
-                <div className="ml-2 flex flex-col">
-                  <div className="flex-1 text-dlila">
-                    <span>{segment.title}</span> <span>{postSegmentId}</span>
-                  </div>
+              {/* SEGMENT HEADER */}
+              {isPostEditable && isSegmentEditMode ? (
+                <div className="grow">
+                  <FormInput
+                    formId={formId}
+                    placeholder="Title.."
+                    initialValue={segment.title}
+                    onChange={(input) =>
+                      setInputs((prev) => ({ ...prev, title: input }))
+                    }
+                  />
+                  <FormInput
+                    formId={formId}
+                    placeholder="Subtitle.."
+                    initialValue={segment.subtitle || ''}
+                    onChange={(input) =>
+                      setInputs((prev) => ({ ...prev, subtitle: input }))
+                    }
+                    autoFocus={false}
+                  />
+                </div>
+              ) : (
+                <div
+                  className={`flex grow ${isPostEditable && 'cursor-pointer'}`}
+                  onClick={() => setIsSegmentEditMode(true)}
+                >
+                  <div className="ml-2 flex flex-col">
+                    <div className="flex-1 text-dlila">
+                      <span>{segment.title}</span> <span>{postSegmentId}</span>
+                    </div>
 
-                  <div className="flex-1">
-                    <span className="text-lg italic text-dorange">
-                      {segment.subtitle}
-                    </span>
+                    <div className="flex-1">
+                      <span className="text-lg italic text-dorange">
+                        {segment.subtitle}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          {/* SEGMENT ITEMS */}
-          <div className="mt-2 space-y-2">
-            {segment.items.map((item, index) => (
-              <div className="w-full" key={item.id}>
-                <PostSegmentItem
-                  item={item}
-                  postId={postId}
-                  index={index}
-                  onChange={(input) =>
-                    setInputs((prev) => ({
-                      ...prev,
-                      items: { ...prev?.items, [item.id]: input },
-                    }))
-                  }
-                  isEditMode={isSegmentEditMode}
-                />
-              </div>
-            ))}
+            {/* SEGMENT ITEMS */}
+            <div className="mt-2 space-y-2">
+              {segment.items.map((item, index) => (
+                <div className="w-full" key={item.id}>
+                  <PostSegmentItem
+                    item={item}
+                    postId={postId}
+                    index={index}
+                    onChange={(input) =>
+                      setInputs((prev) => ({
+                        ...prev,
+                        items: { ...prev?.items, [item.id]: input },
+                      }))
+                    }
+                    isEditMode={isSegmentEditMode}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        </EditOverlay>
 
         {/* EDIT ACTIONS */}
         {isPostEditable && (

@@ -6,7 +6,6 @@ import { FormInput } from '../../FormInput'
 import {
   IconCheck,
   IconX,
-  IconEdit,
   IconTrash,
   IconReply,
   IconCategory,
@@ -33,6 +32,7 @@ import { StepList } from '../../StepList'
 import { PostLikes } from '../../post'
 import { Link } from '../../Link'
 import { VoteIcon } from '../../VoteIcon'
+import { EditOverlay } from '../../EditOverlay'
 
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
@@ -242,15 +242,9 @@ function PostPageInternal({
               ref={refPostHeaderEdit}
               id={formId}
               onSubmit={handleSubmit}
-              //  className="w-full space-y-4 lg:w-4/5"
               className="mx-auto mb-10 w-full lg:w-1/2"
             >
-              {/* <div className="mx-auto mb-10 w-full lg:w-1/2" ref={refTitleEdit}> */}
               <div className="flex items-center">
-                {/* <button className="inine" form={formId} type="submit">
-                  <IconCheck size="big" />
-                </button>
-                <IconX size="big" onClick={() => setIsTitleEditable(false)} /> */}
                 <Button
                   isSubmit
                   onClick={() => {
@@ -294,10 +288,12 @@ function PostPageInternal({
                   Subtitle
                 </FormInput>
               </div>
-              {/* </div> */}
             </form>
           ) : (
-            <div className="group relative rounded-xl hover:bg-dbrown">
+            <EditOverlay
+              isEnabled={isPostEditable}
+              onClick={() => setIsPostHeaderEditable(true)}
+            >
               <div
                 onClick={() => isPostEditable && setIsPostHeaderEditable(true)}
               >
@@ -311,21 +307,7 @@ function PostPageInternal({
                   <span className="italic text-dorange">{post.subtitle}</span>
                 )}
               </div>
-
-              {isPostEditable && (
-                <div
-                  onClick={() =>
-                    isPostEditable && setIsPostHeaderEditable(true)
-                  }
-                  className="absolute inset-0 hidden place-items-center group-hover:grid"
-                >
-                  <IconEdit
-                    className="text-transparent group-hover:text-white group-hover:opacity-100"
-                    size="huge"
-                  />
-                </div>
-              )}
-            </div>
+            </EditOverlay>
           )}
         </div>
       </PageSection>
