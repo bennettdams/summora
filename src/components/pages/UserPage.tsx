@@ -4,6 +4,7 @@ import { Avatar } from '../Avatar'
 import { Box } from '../Box'
 import { useUser } from '../../data/use-user'
 import { PostsList } from '../post'
+import { StatisticsCard } from '../StatisticsCard'
 
 type QueryReturn = ReturnType<typeof useUser>
 // exclude null, because the page will return "notFound" if user is null
@@ -14,7 +15,12 @@ export function UserPage(props: UserPageProps): JSX.Element {
   return !user ? (
     <p>no user</p>
   ) : (
-    <UserPageInternal user={user} userId={props.userId} posts={props.posts} />
+    <UserPageInternal
+      user={user}
+      userId={props.userId}
+      posts={props.posts}
+      userStatistics={props.userStatistics}
+    />
   )
 }
 
@@ -22,6 +28,7 @@ function UserPageInternal({
   user,
   userId,
   posts,
+  userStatistics,
 }: UserPageProps & { user: UserUserPage }): JSX.Element {
   return (
     <Page>
@@ -58,7 +65,28 @@ function UserPageInternal({
         </Box>
       </PageSection>
 
-      <PageSection title="Posts">
+      <PageSection label="Statistics">
+        <div className="flex flex-row space-x-10">
+          <StatisticsCard
+            label="Posts created"
+            no={userStatistics.noOfPostsCreated}
+          />
+          <StatisticsCard
+            label="Comments written"
+            no={userStatistics.noOfCommentsWritten}
+          />
+          <StatisticsCard
+            label="Views received"
+            no={userStatistics.noOfViewsReceived}
+          />
+          <StatisticsCard
+            label="Likes received"
+            no={userStatistics.noOfLikesReceived}
+          />
+        </div>
+      </PageSection>
+
+      <PageSection label="Posts">
         <PostsList
           posts={
             !posts

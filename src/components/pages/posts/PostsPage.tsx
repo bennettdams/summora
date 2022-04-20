@@ -6,6 +6,7 @@ import { Page, PageSection } from '../../Page'
 import { LightningBoltIcon } from '@heroicons/react/outline'
 import { usePosts } from '../../../data/use-posts'
 import { PostsList } from '../../post'
+import { StatisticsCard } from '../../StatisticsCard'
 
 export function PostsPage({
   postCategories,
@@ -40,29 +41,19 @@ export function PostsPage({
 
       <PageSection hideTopMargin>
         <div className="flex flex-row space-x-10">
-          <div className="flex-1 text-center">
-            <p className="text-xl">Posts</p>
-            <p className="mt-1 text-5xl text-dorange">{noOfPosts}</p>
-          </div>
+          <StatisticsCard label="Posts" no={noOfPosts} />
 
-          <div className="flex-1 text-center">
-            <p className="text-xl">Posts (24 hours)</p>
-            <p className="mt-1 text-5xl text-dorange">
-              {noOfPostsCreatedLast24Hours}
-            </p>
-          </div>
+          <StatisticsCard
+            label="Posts (24 hours)"
+            no={noOfPostsCreatedLast24Hours}
+          />
 
-          <div className="flex-1 text-center">
-            <p className="text-xl">Comments</p>
-            <p className="mt-1 text-5xl text-dorange">{noOfComments}</p>
-          </div>
+          <StatisticsCard label="Comments" no={noOfComments} />
 
-          <div className="flex-1 text-center">
-            <p className="text-xl">Comments (24 hours)</p>
-            <p className="mt-1 text-5xl text-dorange">
-              {noOfCommentsCreatedLast24Hours}
-            </p>
-          </div>
+          <StatisticsCard
+            label="Comments (24 hours)"
+            no={noOfCommentsCreatedLast24Hours}
+          />
         </div>
       </PageSection>
 
@@ -136,7 +127,7 @@ export function PostsPage({
         </div>
       </PageSection>
 
-      <PageSection title="Find by category">
+      <PageSection label="Find by category">
         <div className="grid grid-cols-2 gap-6 text-center text-lg md:grid-cols-4">
           {postCategories.map((category) => (
             <Box padding="small" key={category.id}>
@@ -174,7 +165,7 @@ export function PostsPage({
       {!posts ? (
         <ErrorPage statusCode={404}>Error while fetching posts</ErrorPage>
       ) : (
-        <PageSection title="Popular posts">
+        <PageSection label="Popular posts">
           <PostsList
             posts={
               !posts

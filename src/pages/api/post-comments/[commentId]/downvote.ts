@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from '@prisma/client'
+import { prisma } from '../../../../prisma/prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getUserByCookie } from '../../../../services/auth-service'
 import { logAPI } from '../../../../util/logger'

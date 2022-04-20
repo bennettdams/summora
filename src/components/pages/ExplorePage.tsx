@@ -24,11 +24,11 @@ export function ExplorePage({
 }: ExplorePageProps): JSX.Element {
   return (
     <Page>
-      <PageSection title="Post of the day">
+      <PageSection label="Post of the day">
         <p>Post abc</p>
       </PageSection>
 
-      <PageSection title="Post of the day">
+      <PageSection label="Post of the day">
         <div className="flex space-x-4">
           {postsViews.map((post) => (
             <div key={post.id} className="flex-1">
@@ -38,7 +38,7 @@ export function ExplorePage({
         </div>
       </PageSection>
 
-      <PageSection title="Top 5 posts by views">
+      <PageSection label="Top 5 posts by views">
         <PostsList
           posts={postsViews.map((post) => ({
             id: post.id,
@@ -65,7 +65,7 @@ export function ExplorePage({
         />
       </PageSection>
 
-      <PageSection title="Top 5 posts by likes">
+      <PageSection label="Top 5 posts by likes">
         <ul>
           {postsLikes.map((post) => (
             <li key={post.id}>

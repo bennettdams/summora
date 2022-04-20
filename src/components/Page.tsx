@@ -18,19 +18,19 @@ export function Page({
 export function PageSection({
   children,
   hideTopMargin = false,
-  title,
+  label,
 }: {
   children: ReactNode
   hideTopMargin?: boolean
-  title?: string
+  label?: string
 }): JSX.Element {
   return (
     <section
       className={`page-section w-full ${hideTopMargin ? 'mt-0' : 'mt-10'}`}
     >
-      {title && (
+      {label && (
         <h2 className="page-section-title mb-10 w-full text-2xl text-dorange">
-          {title}
+          {label}
         </h2>
       )}
 

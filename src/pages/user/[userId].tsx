@@ -12,6 +12,13 @@ import {
 import { ServerPageProps } from '../../types/PageProps'
 import { ApiUser } from '../api/users/[userId]'
 
+type UserStatistics = {
+  noOfPostsCreated: number
+  noOfCommentsWritten: number
+  noOfLikesReceived: number
+  noOfViewsReceived: number
+}
+
 export interface UserPageProps {
   userId: string
   /**
@@ -21,6 +28,7 @@ export interface UserPageProps {
   posts: (Prisma.PromiseReturnType<typeof findUserPosts>[number] & {
     noOfLikes: number
   })[]
+  userStatistics: UserStatistics
 }
 
 interface Params extends ParsedUrlQuery {
@@ -103,11 +111,35 @@ export const getStaticProps: GetStaticProps<
         noOfLikes: post.likedBy.length,
       }))
 
+      // STATISTICS
+      const statisticsQuery = await prisma.user.findUnique({
+        where: { userId },
+        select: {
+          _count: { select: { PostComment: true, posts: true } },
+        },
+      })
+      const noOfPostsCreated = statisticsQuery?._count.posts ?? 0
+      const noOfCommentsWritten = statisticsQuery?._count.PostComment ?? 0
+      const noOfLikesReceived = userPosts.reduce(
+        (acc, post) => acc + post.noOfLikes,
+        0
+      )
+      const noOfViewsReceived = userPosts.reduce(
+        (acc, post) => acc + post.noOfViews,
+        0
+      )
+
       return {
         props: {
           dehydratedState: hydrationHandler.dehydrate(client),
           userId,
           posts: serialize(userPosts),
+          userStatistics: {
+            noOfPostsCreated,
+            noOfCommentsWritten,
+            noOfLikesReceived,
+            noOfViewsReceived,
+          },
         },
         revalidate: revalidateInSeconds,
       }
@@ -123,6 +155,7 @@ export default function _UserPage(
       <UserPage
         userId={props.userId}
         posts={deserializeUserPosts(props.posts)}
+        userStatistics={props.userStatistics}
       />
     </Hydrate>
   )

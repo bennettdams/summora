@@ -496,7 +496,7 @@ function PostPageInternal({
         </div>
       </PageSection>
 
-      <PageSection title="Comments">
+      <PageSection label="Comments">
         <div className="mx-auto w-2/3">
           <form
             onSubmit={async (e) => {
