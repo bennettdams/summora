@@ -8,6 +8,7 @@ import { ServerPageProps } from '../../../types/PageProps'
 import { Hydrate } from 'react-query'
 import { hydrationHandler, prefillServer } from '../../../data/use-post'
 import { ApiPost } from '../../api/posts/[postId]'
+import { dbFindPost } from '../../../lib/db'
 
 export interface PostPageProps {
   postId: string
@@ -46,40 +47,6 @@ async function findTagsForPostByCategory(
   })
 }
 
-async function findPost(prisma: PrismaClient, postId: string) {
-  return await prisma.post.findUnique({
-    where: { id: postId },
-    include: {
-      category: true,
-      tags: {
-        select: {
-          id: true,
-          title: true,
-          description: true,
-        },
-      },
-      author: {
-        select: { username: true, imageId: true, imageBlurDataURL: true },
-      },
-      segments: {
-        orderBy: { createdAt: 'asc' },
-        include: { items: { orderBy: { createdAt: 'asc' } } },
-      },
-      comments: {
-        include: {
-          author: {
-            select: { username: true, imageId: true, imageBlurDataURL: true },
-          },
-          upvotedBy: { select: { userId: true } },
-          downvotedBy: { select: { userId: true } },
-        },
-        orderBy: { createdAt: 'asc' },
-      },
-      likedBy: { select: { userId: true } },
-    },
-  })
-}
-
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
     // TODO most popular posts
@@ -106,7 +73,7 @@ export const getStaticProps: GetStaticProps<
     return { notFound: true }
   } else {
     const postId = params.postId
-    const post: ApiPost = await findPost(prisma, postId)
+    const post: ApiPost = await dbFindPost(postId)
 
     if (!post) {
       return { notFound: true }

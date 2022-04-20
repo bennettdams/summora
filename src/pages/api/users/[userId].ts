@@ -1,16 +1,7 @@
-import { Prisma } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '../../../prisma/prisma'
+import { DbFindUser, dbFindUser } from '../../../lib/db'
 
-export type ApiUser = Prisma.PromiseReturnType<typeof findUser>
-
-async function findUser(userId: string) {
-  return await prisma.user.findUnique({
-    where: {
-      userId,
-    },
-  })
-}
+export type ApiUser = DbFindUser
 
 export default async function _apiUser(
   req: NextApiRequest,
@@ -28,7 +19,7 @@ export default async function _apiUser(
   } else {
     switch (method) {
       case 'GET': {
-        const user: ApiUser = await findUser(userId)
+        const user: ApiUser = await dbFindUser(userId)
         if (!user) {
           res.status(404).json(`Cannot find user for id ${userId}`)
         } else {

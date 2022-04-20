@@ -3,43 +3,10 @@ import { prisma } from '../../../../prisma/prisma'
 import { Prisma } from '@prisma/client'
 import { logAPI } from '../../../../util/logger'
 import { ApiPostUpdateRequestBody } from '../../../../services/api-service'
+import { dbFindPost, DbFindPost } from '../../../../lib/db'
 
-export type ApiPost = Prisma.PromiseReturnType<typeof findPost>
+export type ApiPost = DbFindPost
 export type ApiPostUpdate = Prisma.PromiseReturnType<typeof updatePost>
-
-async function findPost(postId: string) {
-  return await prisma.post.findUnique({
-    where: { id: postId },
-    include: {
-      category: true,
-      tags: {
-        select: {
-          id: true,
-          title: true,
-          description: true,
-        },
-      },
-      author: {
-        select: { username: true, imageId: true, imageBlurDataURL: true },
-      },
-      segments: {
-        orderBy: { createdAt: 'asc' },
-        include: { items: { orderBy: { createdAt: 'asc' } } },
-      },
-      comments: {
-        include: {
-          author: {
-            select: { username: true, imageId: true, imageBlurDataURL: true },
-          },
-          upvotedBy: { select: { userId: true } },
-          downvotedBy: { select: { userId: true } },
-        },
-        orderBy: { createdAt: 'asc' },
-      },
-      likedBy: { select: { userId: true } },
-    },
-  })
-}
 
 async function updatePost(
   postId: string,
@@ -124,7 +91,7 @@ export default async function _apiPost(
   } else {
     switch (method) {
       case 'GET': {
-        const post: ApiPost = await findPost(postId)
+        const post: ApiPost = await dbFindPost(postId)
 
         if (!post) {
           res.status(404).json({ message: `Post ${postId} not found.` })

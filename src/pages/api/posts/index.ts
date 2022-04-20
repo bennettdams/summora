@@ -1,40 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-
-import { Prisma } from '@prisma/client'
-import { prisma } from '../../../prisma/prisma'
 import { logAPI } from '../../../util/logger'
+import { dbFindPosts, DbFindPosts } from '../../../lib/db'
 
-export type ApiPosts = (Prisma.PromiseReturnType<typeof findPosts>[number] & {
+export type ApiPosts = (DbFindPosts[number] & {
   noOfLikes: number
 })[]
-
-async function findPosts() {
-  try {
-    return await prisma.post.findMany({
-      take: 20,
-      orderBy: { createdAt: 'asc' },
-      include: {
-        author: {
-          select: { username: true, imageId: true, imageBlurDataURL: true },
-        },
-        category: true,
-        segments: { orderBy: { createdAt: 'asc' } },
-        tags: { select: { id: true, title: true } },
-        /*
-         * TODO
-         * Using _count for implicit Many-To-Many relations does not work right now (30.11.2021),
-         * that's why we can't use it for "likedBy".
-         * https://github.com/prisma/prisma/issues/9880
-         */
-        // _count: { select: { comments: true, likedBy: true } },
-        _count: { select: { comments: true } },
-        likedBy: { select: { userId: true } },
-      },
-    })
-  } catch (error) {
-    throw new Error(`Error finding posts: ${error}`)
-  }
-}
 
 export default async function _apiPosts(
   req: NextApiRequest,
@@ -46,7 +16,7 @@ export default async function _apiPosts(
 
   switch (method) {
     case 'GET': {
-      const posts: ApiPosts = (await findPosts()).map((post) => ({
+      const posts: ApiPosts = (await dbFindPosts()).map((post) => ({
         ...post,
         noOfLikes: post.likedBy.length,
       }))

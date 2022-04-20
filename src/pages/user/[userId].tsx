@@ -4,6 +4,7 @@ import type { ParsedUrlQuery } from 'querystring'
 import { Hydrate } from 'react-query'
 import { UserPage } from '../../components/pages/UserPage'
 import { hydrationHandler, prefillServer } from '../../data/use-user'
+import { dbFindUser } from '../../lib/db'
 import { prisma } from '../../prisma/prisma'
 import {
   deserializeUserPosts,
@@ -33,12 +34,6 @@ export interface UserPageProps {
 
 interface Params extends ParsedUrlQuery {
   userId: string
-}
-
-async function findUserByUserId(prisma: PrismaClient, userId: string) {
-  return await prisma.user.findUnique({
-    where: { userId },
-  })
 }
 
 // TODO rather go posts -> user than user -> posts?
@@ -96,7 +91,7 @@ export const getStaticProps: GetStaticProps<
     return { notFound: true }
   } else {
     const userId = params.userId
-    const user: ApiUser = await findUserByUserId(prisma, userId)
+    const user: ApiUser = await dbFindUser(userId)
 
     if (!user) {
       return { notFound: true }
