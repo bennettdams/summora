@@ -48,6 +48,7 @@ function UserPageInternal({
               <Avatar
                 isEditable
                 userId={userId}
+                username={user.username}
                 imageId={user.imageId}
                 imageBlurDataURL={user.imageBlurDataURL}
                 size="large"
@@ -94,6 +95,7 @@ function UserPageInternal({
               <div className="grid h-full place-items-center">
                 <Avatar
                   userId={userId}
+                  username={user.username}
                   imageId={user.imageId}
                   imageBlurDataURL={user.imageBlurDataURL}
                   size="small"
@@ -105,6 +107,7 @@ function UserPageInternal({
               <div className="grid h-full place-items-center">
                 <Avatar
                   userId={userId}
+                  username={user.username}
                   imageId={user.imageId}
                   imageBlurDataURL={user.imageBlurDataURL}
                   size="medium"
@@ -116,6 +119,7 @@ function UserPageInternal({
               <div className="grid h-full place-items-center">
                 <Avatar
                   userId={userId}
+                  username={user.username}
                   imageId={user.imageId}
                   imageBlurDataURL={user.imageBlurDataURL}
                   size="large"

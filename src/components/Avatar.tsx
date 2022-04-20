@@ -24,27 +24,33 @@ const queryKeyPostBase = 'avatar-image'
 
 function AvatarPlaceholder({
   sizePixels,
+  username,
 }: {
   sizePixels: number
+  username: string
 }): JSX.Element {
   return (
     <div
       className="inline-flex items-center justify-center rounded-full bg-dbrown text-center text-dlight"
       style={{ width: sizePixels, height: sizePixels }}
     >
-      <p style={{ fontSize: sizePixels * 0.6 }}>B</p>
+      <p style={{ fontSize: sizePixels * 0.6 }} className="uppercase">
+        {username.charAt(0)}
+      </p>
     </div>
   )
 }
 
 export function Avatar({
   userId,
+  username,
   imageId,
   imageBlurDataURL,
   size = 'medium',
   isEditable = false,
 }: {
   userId: string
+  username: string
   imageId: string | null
   imageBlurDataURL: string | null
   size: AvatarSize
@@ -111,7 +117,7 @@ export function Avatar({
           />
         </div>
       ) : (
-        <AvatarPlaceholder sizePixels={sizePixels} />
+        <AvatarPlaceholder sizePixels={sizePixels} username={username} />
       )}
     </div>
   )

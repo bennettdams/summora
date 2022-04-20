@@ -16,7 +16,7 @@ export function EditOverlay({
     <div className="group relative">
       {children}
       <div
-        onClick={onClick}
+        onClick={() => isEnabled && onClick()}
         className="absolute inset-0 hidden place-items-center rounded-xl opacity-50 hover:bg-dbrown group-hover:grid group-hover:transition-colors group-hover:duration-200 group-hover:ease-in-out"
       >
         <IconEdit

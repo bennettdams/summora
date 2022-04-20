@@ -7,8 +7,6 @@ import type { ParsedUrlQuery } from 'querystring'
 import { ServerPageProps } from '../../../types/PageProps'
 import { Hydrate } from 'react-query'
 import { hydrationHandler, prefillServer } from '../../../data/use-post'
-import { isServer } from '../../../util/server/server-utils'
-import { apiIncrementPostViews } from '../../../services/api-service'
 import { ApiPost } from '../../api/posts/[postId]'
 
 export interface PostPageProps {
@@ -18,7 +16,6 @@ export interface PostPageProps {
   tagsSortedForCategory: Prisma.PromiseReturnType<
     typeof findTagsForPostByCategory
   >
-  isPostEditable: boolean
 }
 
 async function findTagsForPost(prisma: PrismaClient) {
@@ -132,7 +129,6 @@ export const getStaticProps: GetStaticProps<
           postCategories,
           tagsSorted,
           tagsSortedForCategory,
-          isPostEditable: true,
         },
         revalidate: revalidateInSeconds,
       }
@@ -143,8 +139,6 @@ export const getStaticProps: GetStaticProps<
 export default function _PostPage(
   props: PostPageProps & ServerPageProps
 ): JSX.Element {
-  if (isServer()) apiIncrementPostViews(props.postId)
-
   return (
     <Hydrate state={hydrationHandler.deserialize(props.dehydratedState)}>
       <PostPage
@@ -152,7 +146,6 @@ export default function _PostPage(
         postCategories={props.postCategories}
         tagsSorted={props.tagsSorted}
         tagsSortedForCategory={props.tagsSortedForCategory}
-        isPostEditable={props.isPostEditable}
       />
     </Hydrate>
   )

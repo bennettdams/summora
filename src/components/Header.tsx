@@ -38,6 +38,7 @@ function UserNavbar() {
                 <div className="flex items-center sm:ml-2">
                   <Avatar
                     userId={userAuth.id}
+                    username={user?.username ?? ''}
                     imageId={user?.imageId ?? null}
                     imageBlurDataURL={user?.imageBlurDataURL ?? null}
                     size="small"

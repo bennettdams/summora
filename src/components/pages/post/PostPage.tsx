@@ -23,6 +23,7 @@ import { PostSegment } from './PostSegment'
 import { useSearchTags } from '../../../data/use-search-tags'
 import { Avatar } from '../../Avatar'
 import {
+  apiIncrementPostViews,
   ApiPostSegmentCreateRequestBody,
   ApiPostUpdateRequestBody,
 } from '../../../services/api-service'
@@ -42,6 +43,7 @@ export type SegmentItemPostPage = SegmentPostPage['items'][number]
 export type TagPostPage = PostPostPage['tags'][number]
 
 export function PostPage(props: PostPageProps): JSX.Element {
+  apiIncrementPostViews(props.postId)
   const { post } = usePost(props.postId)
   const { userId } = useAuth()
 
@@ -54,7 +56,6 @@ export function PostPage(props: PostPageProps): JSX.Element {
       postCategories={props.postCategories}
       tagsSorted={props.tagsSorted}
       tagsSortedForCategory={props.tagsSortedForCategory}
-      isPostEditable={props.isPostEditable}
       userId={userId}
     />
   )
@@ -69,7 +70,6 @@ function PostPageInternal({
   postCategories,
   tagsSorted,
   tagsSortedForCategory,
-  isPostEditable,
   userId,
 }: PostPageProps & {
   post: PostPostPage
@@ -85,6 +85,11 @@ function PostPageInternal({
     isLoading,
   } = usePost(postId)
   const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
+  const [isPostEditable, setIsPostEditable] = useState(userId === post.authorId)
+  useEffect(
+    () => setIsPostEditable(userId === post.authorId),
+    [userId, post.authorId]
+  )
 
   async function handleCreateSegment(): Promise<void> {
     const postSegmentToCreate: ApiPostSegmentCreateRequestBody['postSegmentToCreate'] =
@@ -370,6 +375,7 @@ function PostPageInternal({
               <div className="flex flex-1 flex-col items-center justify-center rounded-xl p-2 hover:bg-white">
                 <Avatar
                   userId={post.authorId}
+                  username={post.author.username}
                   imageId={post.author.imageId}
                   imageBlurDataURL={post.author.imageBlurDataURL}
                   size="medium"
@@ -649,6 +655,7 @@ function Comment({
                 <Avatar
                   size="tiny"
                   userId={comment.authorId}
+                  username={comment.authorUsername}
                   imageId={comment.authorImageId}
                   imageBlurDataURL={comment.authorImageBlurDataURL}
                 />

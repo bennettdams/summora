@@ -156,7 +156,7 @@ export function PostSegment({
         {/* HEADER & ITEMS */}
         <EditOverlay
           isEnabled={isPostEditable && !isSegmentEditMode}
-          onClick={() => setIsSegmentEditMode(true)}
+          onClick={() => isPostEditable && setIsSegmentEditMode(true)}
         >
           <div className="rounded-xl p-2">
             <div className="flex h-20 w-full flex-row text-xl">
@@ -165,7 +165,7 @@ export function PostSegment({
               </div>
 
               {/* SEGMENT HEADER */}
-              {isPostEditable && isSegmentEditMode ? (
+              {isSegmentEditMode ? (
                 <div className="grow">
                   <FormInput
                     formId={formId}
@@ -188,7 +188,6 @@ export function PostSegment({
               ) : (
                 <div
                   className={`flex grow ${isPostEditable && 'cursor-pointer'}`}
-                  onClick={() => setIsSegmentEditMode(true)}
                 >
                   <div className="ml-2 flex flex-col">
                     <div className="flex-1 text-dlila">
@@ -229,72 +228,74 @@ export function PostSegment({
 
         {/* EDIT ACTIONS */}
         {isPostEditable && (
-          <div className="flex items-center" ref={refNewItem}>
-            {/* NEW ITEM */}
-            {showNewItemInput ? (
-              <>
-                <button className="inline" form={formId} type="submit">
-                  <IconCheck />
-                </button>
-                <IconX
-                  onClick={() => setShowNewItemInput(false)}
-                  className="ml-4"
-                />
-                <div className="ml-4 w-full">
-                  <FormInput
-                    key={Math.random()}
-                    placeholder="New item"
-                    formId={formId}
-                    initialValue={inputs?.newItem ?? undefined}
-                    onChange={(input) =>
-                      setInputs((prev) => ({
-                        ...prev,
-                        newItem: input,
-                      }))
-                    }
+          <>
+            <div className="flex items-center" ref={refNewItem}>
+              {/* NEW ITEM */}
+              {showNewItemInput ? (
+                <>
+                  <button className="inline" form={formId} type="submit">
+                    <IconCheck />
+                  </button>
+                  <IconX
+                    onClick={() => setShowNewItemInput(false)}
+                    className="ml-4"
                   />
-                </div>
-              </>
-            ) : (
-              <div className="flex flex-col space-y-4">
-                <div>
-                  <ButtonAdd
-                    size="big"
-                    onClick={() => setShowNewItemInput(true)}
-                  />
-                </div>
-
-                {isSegmentEditMode && (
-                  <div>
-                    <Button
-                      isSubmit
-                      onClick={() => {
-                        // TODO placeholder, remove when we have FormSubmit button
-                      }}
-                    >
-                      <IconCheck /> Save
-                    </Button>
-                    <Button
-                      onClick={(e) => {
-                        // prevent form submit
-                        e.preventDefault()
-                        resetEditMode()
-                      }}
-                    >
-                      <IconX /> Cancel
-                    </Button>
+                  <div className="ml-4 w-full">
+                    <FormInput
+                      key={Math.random()}
+                      placeholder="New item"
+                      formId={formId}
+                      initialValue={inputs?.newItem ?? undefined}
+                      onChange={(input) =>
+                        setInputs((prev) => ({
+                          ...prev,
+                          newItem: input,
+                        }))
+                      }
+                    />
                   </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
+                </>
+              ) : (
+                <div className="flex flex-col space-y-4">
+                  <div>
+                    <ButtonAdd
+                      size="big"
+                      onClick={() => setShowNewItemInput(true)}
+                    />
+                  </div>
 
-        <div>
-          <ButtonRemove onClick={() => deletePostSegment(segment.id)}>
-            Remove segment
-          </ButtonRemove>
-        </div>
+                  {isSegmentEditMode && (
+                    <div>
+                      <Button
+                        isSubmit
+                        onClick={() => {
+                          // TODO placeholder, remove when we have FormSubmit button
+                        }}
+                      >
+                        <IconCheck /> Save
+                      </Button>
+                      <Button
+                        onClick={(e) => {
+                          // prevent form submit
+                          e.preventDefault()
+                          resetEditMode()
+                        }}
+                      >
+                        <IconX /> Cancel
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <ButtonRemove onClick={() => deletePostSegment(segment.id)}>
+                Remove segment
+              </ButtonRemove>
+            </div>
+          </>
+        )}
       </form>
 
       {/* POST IMAGE */}

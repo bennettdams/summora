@@ -135,6 +135,7 @@ function PostsListItem({
                     <span>{post.author.username}</span>
                     <Avatar
                       userId={post.author.id}
+                      username={post.author.username}
                       imageId={post.author.imageId}
                       imageBlurDataURL={post.author.imageBlurDataURL}
                       size="small"
