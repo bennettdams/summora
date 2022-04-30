@@ -372,7 +372,7 @@ function PostPageInternal({
           {/* AVATAR */}
           <div className="w-full lg:w-1/5">
             <Link to={`/user/${post.authorId}`}>
-              <div className="flex flex-1 flex-col items-center justify-center rounded-xl p-2 hover:bg-white">
+              <div className="flex flex-1 flex-col items-center justify-center rounded-xl p-2 duration-200 hover:bg-white hover:transition-colors hover:ease-in-out">
                 <Avatar
                   userId={post.authorId}
                   username={post.author.username}
