@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { DbFindUser, dbFindUser } from '../../../lib/db'
+import { DbFindUser, dbFindUser } from '../../../../lib/db'
 
 export type ApiUser = DbFindUser
 

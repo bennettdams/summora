@@ -1,10 +1,9 @@
-import type { Prisma, PrismaClient } from '@prisma/client'
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import type { ParsedUrlQuery } from 'querystring'
 import { Hydrate } from 'react-query'
 import { UserPage } from '../../components/pages/UserPage'
 import { hydrationHandler, prefillServer } from '../../data/use-user'
-import { dbFindUser } from '../../lib/db'
+import { dbFindUser, DbFindUserPosts, dbFindUserPosts } from '../../lib/db'
 import { prisma } from '../../prisma/prisma'
 import {
   deserializeUserPosts,
@@ -26,7 +25,7 @@ export interface UserPageProps {
    * "posts" are not part of a typical user to not blow up the data,
    * as the user object is also used for comments etc.
    */
-  posts: (Prisma.PromiseReturnType<typeof findUserPosts>[number] & {
+  posts: (DbFindUserPosts[number] & {
     noOfLikes: number
   })[]
   userStatistics: UserStatistics
@@ -34,39 +33,6 @@ export interface UserPageProps {
 
 interface Params extends ParsedUrlQuery {
   userId: string
-}
-
-// TODO rather go posts -> user than user -> posts?
-async function findUserPosts(prisma: PrismaClient, userId: string) {
-  const userPosts = await prisma.user.findUnique({
-    where: { userId },
-    select: {
-      posts: {
-        take: 10,
-        orderBy: { createdAt: 'desc' },
-        // include: { category: { select: { id: true } } },
-        include: {
-          author: {
-            select: { username: true, imageId: true, imageBlurDataURL: true },
-          },
-          category: { select: { title: true } },
-          segments: { orderBy: { createdAt: 'asc' } },
-          tags: { select: { id: true, title: true } },
-          /*
-           * TODO
-           * Using _count for implicit Many-To-Many relations does not work right now (30.11.2021),
-           * that's why we can't use it for "likedBy".
-           * https://github.com/prisma/prisma/issues/9880
-           */
-          // _count: { select: { comments: true, likedBy: true } },
-          _count: { select: { comments: true } },
-          likedBy: { select: { userId: true } },
-        },
-      },
-    },
-  })
-
-  return userPosts?.posts ?? []
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -100,7 +66,7 @@ export const getStaticProps: GetStaticProps<
       prefillServer(client, userId, user)
 
       const userPosts: UserPageProps['posts'] = (
-        await findUserPosts(prisma, userId)
+        await dbFindUserPosts(userId)
       ).map((post) => ({
         ...post,
         noOfLikes: post.likedBy.length,
