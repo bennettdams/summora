@@ -22,6 +22,7 @@ import { ApiPostLikeUnlikePost } from '../pages/api/posts/[postId]/like-unlike'
 import { ApiTagsSearch } from '../pages/api/tags/search'
 import { ApiUsersSignUp } from '../pages/api/users/signup'
 import { ApiUser } from '../pages/api/users/[userId]'
+import { ApiUserPosts } from '../pages/api/users/[userId]/posts'
 import { OmitStrict } from '../types/util-types'
 import {
   deleteHTTP,
@@ -35,6 +36,7 @@ import {
 export const ROUTES_API = {
   USERS_SIGN_UP: 'users/signup',
   USER: (userId: string) => `users/${userId}`,
+  USER_POSTS: (userId: string) => `users/${userId}/posts`,
   POSTS: 'posts',
   POST: (postId: string) => `posts/${postId}`,
   POST_INCREMENT_VIEWS: (postId: string) => `posts/${postId}/increment-views`,
@@ -170,6 +172,14 @@ export function transformApiPost(
 
 export async function apiFetchPosts(): Promise<HttpResponse<ApiPosts>> {
   const response = await get<ApiPosts>(ROUTES_API.POSTS)
+  if (response.result) response.result = transformApiPosts(response.result)
+  return response
+}
+
+export async function apiFetchUserPosts(
+  userId: string
+): Promise<HttpResponse<ApiUserPosts>> {
+  const response = await get<ApiUserPosts>(ROUTES_API.USER_POSTS(userId))
   if (response.result) response.result = transformApiPosts(response.result)
   return response
 }

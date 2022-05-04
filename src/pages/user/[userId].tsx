@@ -3,14 +3,15 @@ import type { ParsedUrlQuery } from 'querystring'
 import { Hydrate } from 'react-query'
 import { UserPage } from '../../components/pages/UserPage'
 import { hydrationHandler, prefillServer } from '../../data/use-user'
-import { dbFindUser, DbFindUserPosts, dbFindUserPosts } from '../../lib/db'
-import { prisma } from '../../prisma/prisma'
 import {
-  deserializeUserPosts,
-  serialize,
-} from '../../services/serialize-service'
+  hydrationHandler as hydrationHandlerPosts,
+  prefillServer as prefillServerPosts,
+} from '../../data/use-user-posts'
+import { dbFindUser, dbFindUserPosts } from '../../lib/db'
+import { prisma } from '../../prisma/prisma'
 import { ServerPageProps } from '../../types/PageProps'
 import { ApiUser } from '../api/users/[userId]'
+import { ApiUserPosts } from '../api/users/[userId]/posts'
 
 type UserStatistics = {
   noOfPostsCreated: number
@@ -21,13 +22,6 @@ type UserStatistics = {
 
 export interface UserPageProps {
   userId: string
-  /**
-   * "posts" are not part of a typical user to not blow up the data,
-   * as the user object is also used for comments etc.
-   */
-  posts: (DbFindUserPosts[number] & {
-    noOfLikes: number
-  })[]
   userStatistics: UserStatistics
 }
 
@@ -48,8 +42,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 const revalidateInSeconds = 5 * 60
 
+type UserPageServerProps = UserPageProps &
+  ServerPageProps & { dehydratedState2: ServerPageProps['dehydratedState'] }
+
 export const getStaticProps: GetStaticProps<
-  UserPageProps & ServerPageProps,
+  UserPageServerProps,
   Params
 > = async ({ params }) => {
   if (!params) {
@@ -65,12 +62,10 @@ export const getStaticProps: GetStaticProps<
       const client = hydrationHandler.createClient()
       prefillServer(client, userId, user)
 
-      const userPosts: UserPageProps['posts'] = (
-        await dbFindUserPosts(userId)
-      ).map((post) => ({
-        ...post,
-        noOfLikes: post.likedBy.length,
-      }))
+      const userPosts: ApiUserPosts = await dbFindUserPosts(userId)
+
+      const clientPosts = hydrationHandlerPosts.createClient()
+      prefillServerPosts({ queryClient: clientPosts, userId, posts: userPosts })
 
       // STATISTICS
       const statisticsQuery = await prisma.user.findUnique({
@@ -93,8 +88,8 @@ export const getStaticProps: GetStaticProps<
       return {
         props: {
           dehydratedState: hydrationHandler.dehydrate(client),
+          dehydratedState2: hydrationHandlerPosts.dehydrate(clientPosts),
           userId,
-          posts: serialize(userPosts),
           userStatistics: {
             noOfPostsCreated,
             noOfCommentsWritten,
@@ -108,16 +103,14 @@ export const getStaticProps: GetStaticProps<
   }
 }
 
-export default function _UserPage(
-  props: UserPageProps & ServerPageProps
-): JSX.Element {
+export default function _UserPage(props: UserPageServerProps): JSX.Element {
   return (
     <Hydrate state={hydrationHandler.deserialize(props.dehydratedState)}>
-      <UserPage
-        userId={props.userId}
-        posts={deserializeUserPosts(props.posts)}
-        userStatistics={props.userStatistics}
-      />
+      <Hydrate
+        state={hydrationHandlerPosts.deserialize(props.dehydratedState2)}
+      >
+        <UserPage userId={props.userId} userStatistics={props.userStatistics} />
+      </Hydrate>
     </Hydrate>
   )
 }

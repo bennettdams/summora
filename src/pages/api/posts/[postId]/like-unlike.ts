@@ -26,7 +26,8 @@ async function likeUnlikePost(postId: string, userId: string) {
             disconnect: { userId },
           },
         },
-        select: { likedBy: { select: { userId: true } } },
+        // we include "authorId" so the mutation can sync the cache
+        select: { authorId: true, likedBy: { select: { userId: true } } },
       })
 
       return postLikedByUsersUpdated
@@ -40,7 +41,8 @@ async function likeUnlikePost(postId: string, userId: string) {
             connect: { userId },
           },
         },
-        select: { likedBy: { select: { userId: true } } },
+        // we include "authorId" so the mutation can sync the cache
+        select: { authorId: true, likedBy: { select: { userId: true } } },
       })
 
       return postLikedByUsersUpdated

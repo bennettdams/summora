@@ -1,4 +1,10 @@
-import { QueryClient, useMutation, useQuery, useQueryClient } from 'react-query'
+import {
+  QueryClient,
+  QueryKey,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from 'react-query'
 import {
   apiCreatePostComment,
   apiCreatePostSegment,
@@ -20,13 +26,13 @@ import {
 import { ApiPost } from '../pages/api/posts/[postId]'
 import { useState } from 'react'
 import { createHydrationHandler } from '../services/hydration-service'
-import { syncPostsLikedData } from './use-posts'
 import { useAuth } from '../services/auth-service'
+import { syncPostsLikedData } from './sync-query-cache'
 
 const queryKeyPostBase = 'post'
 type QueryData = ApiPost
 
-function createQueryKey(postId: string) {
+function createQueryKey(postId: string): QueryKey {
   return [queryKeyPostBase, postId]
 }
 
@@ -605,11 +611,18 @@ function usePostMutation(postId: string) {
     // `postId` coming from apiLikeUnlikePost
     onSuccess: (data, postId) => {
       if (data.result) {
-        const likedByUpdated = data.result.likedBy
-        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
-          !prevData ? null : { ...prevData, likedBy: likedByUpdated }
-        )
-        syncPostsLikedData(queryClient, postId, likedByUpdated)
+        const { likedBy: likedByUpdated, authorId } = data.result
+
+        queryClient.setQueryData<QueryData>(queryKey, (prevData) => {
+          return !prevData ? null : { ...prevData, likedBy: likedByUpdated }
+        })
+
+        syncPostsLikedData({
+          queryClient,
+          postId,
+          userId: authorId,
+          likedByUpdated,
+        })
       }
     },
   })

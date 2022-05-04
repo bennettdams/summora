@@ -1,4 +1,10 @@
-import { QueryClient, useMutation, useQuery, useQueryClient } from 'react-query'
+import {
+  QueryClient,
+  QueryKey,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from 'react-query'
 import { ApiUser } from '../pages/api/users/[userId]'
 import { createHydrationHandler } from '../services/hydration-service'
 import {
@@ -11,7 +17,7 @@ import { useState } from 'react'
 const queryKeyUserBase = 'user'
 type QueryData = ApiUser
 
-function createQueryKey(userId: string) {
+function createQueryKey(userId: string): QueryKey {
   return [queryKeyUserBase, userId]
 }
 

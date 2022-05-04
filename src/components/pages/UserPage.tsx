@@ -5,20 +5,26 @@ import { Box } from '../Box'
 import { useUser } from '../../data/use-user'
 import { PostsList } from '../post'
 import { StatisticsCard } from '../StatisticsCard'
+import { useUserPosts } from '../../data/use-user-posts'
 
 type QueryReturn = ReturnType<typeof useUser>
 // exclude null, because the page will return "notFound" if user is null
 type UserUserPage = Exclude<QueryReturn['user'], null>
 
+type QueryReturnPosts = ReturnType<typeof useUserPosts>
+type UserPostsUserPage = QueryReturnPosts['posts']
+
 export function UserPage(props: UserPageProps): JSX.Element {
   const { user } = useUser(props.userId)
+  const { posts } = useUserPosts(props.userId)
+
   return !user ? (
     <p>no user</p>
   ) : (
     <UserPageInternal
       user={user}
       userId={props.userId}
-      posts={props.posts}
+      posts={posts}
       userStatistics={props.userStatistics}
     />
   )
@@ -29,7 +35,10 @@ function UserPageInternal({
   userId,
   posts,
   userStatistics,
-}: UserPageProps & { user: UserUserPage }): JSX.Element {
+}: UserPageProps & {
+  user: UserUserPage
+  posts: UserPostsUserPage
+}): JSX.Element {
   return (
     <Page>
       <PageSection>

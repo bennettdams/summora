@@ -2,9 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { logAPI } from '../../../util/logger'
 import { dbFindPosts, DbFindPosts } from '../../../lib/db'
 
-export type ApiPosts = (DbFindPosts[number] & {
-  noOfLikes: number
-})[]
+export type ApiPosts = DbFindPosts
 
 export default async function _apiPosts(
   req: NextApiRequest,
@@ -16,10 +14,8 @@ export default async function _apiPosts(
 
   switch (method) {
     case 'GET': {
-      const posts: ApiPosts = (await dbFindPosts()).map((post) => ({
-        ...post,
-        noOfLikes: post.likedBy.length,
-      }))
+      const posts: ApiPosts = await dbFindPosts()
+
       res.status(200).json(posts)
       break
     }

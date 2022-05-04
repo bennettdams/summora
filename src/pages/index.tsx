@@ -21,10 +21,7 @@ const revalidateInSeconds = 5 * 60
 export const getStaticProps: GetStaticProps<
   PostsPageProps & ServerPageProps
 > = async () => {
-  const posts: ApiPosts = (await dbFindPosts()).map((post) => ({
-    ...post,
-    noOfLikes: post.likedBy.length,
-  }))
+  const posts: ApiPosts = await dbFindPosts()
 
   const client = hydrationHandler.createClient()
   prefillServer(client, posts)

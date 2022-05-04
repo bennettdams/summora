@@ -3,33 +3,9 @@ import { ApiPosts } from '../pages/api/posts'
 import { apiFetchPosts, transformApiPosts } from '../services/api-service'
 import { createHydrationHandler } from '../services/hydration-service'
 
-const queryKey = 'posts'
+export const queryKey = 'posts'
 
 type QueryData = ApiPosts
-
-/**
- * Liking/unliking a post is done via the `usePost` data hook.
- * This helper is used to keep the query "like" data of `usePosts`'s in sync.
- */
-export function syncPostsLikedData(
-  queryClient: QueryClient,
-  postId: string,
-  likedByUpdated: QueryData[number]['likedBy']
-) {
-  queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
-    !prevData
-      ? []
-      : prevData.map((post) =>
-          post.id !== postId
-            ? post
-            : {
-                ...post,
-                likedBy: likedByUpdated,
-                noOfLikes: likedByUpdated.length,
-              }
-        )
-  )
-}
 
 export const hydrationHandler =
   createHydrationHandler<QueryData>(transformApiPosts)
