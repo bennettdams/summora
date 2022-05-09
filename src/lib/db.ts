@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client'
 import { prisma } from '../prisma/prisma'
+import { ApiPostsCreateRequestBody } from '../services/api-service'
 
 export type DbFindUser = Prisma.PromiseReturnType<typeof dbFindUser>
 export async function dbFindUser(userId: string) {
@@ -78,6 +79,57 @@ export async function dbFindPost(postId: string) {
       likedBy: { select: { userId: true } },
     },
   })
+}
+
+export type DbCreatePost = Prisma.PromiseReturnType<typeof dbCreatePost>
+export async function dbCreatePost(
+  userId: string,
+  postToCreate: ApiPostsCreateRequestBody['postToCreate']
+) {
+  try {
+    const now = new Date()
+
+    return await prisma.post.create({
+      data: {
+        updatedAt: now,
+        title: postToCreate.title,
+        subtitle: postToCreate.subtitle,
+        // connect
+        author: { connect: { userId } },
+        category: { connect: { id: postToCreate.categoryId } },
+      },
+      include: {
+        category: true,
+        tags: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+          },
+        },
+        author: {
+          select: { username: true, imageId: true, imageBlurDataURL: true },
+        },
+        segments: {
+          orderBy: { createdAt: 'asc' },
+          include: { items: { orderBy: { createdAt: 'asc' } } },
+        },
+        comments: {
+          include: {
+            author: {
+              select: { username: true, imageId: true, imageBlurDataURL: true },
+            },
+            upvotedBy: { select: { userId: true } },
+            downvotedBy: { select: { userId: true } },
+          },
+          orderBy: { createdAt: 'asc' },
+        },
+        likedBy: { select: { userId: true } },
+      },
+    })
+  } catch (error) {
+    throw new Error(`Error while creating post: ${error}`)
+  }
 }
 
 export type DbFindUserPosts = Prisma.PromiseReturnType<typeof dbFindUserPosts>

@@ -15,7 +15,7 @@ import {
   ApiPostSegmentDelete,
   ApiPostSegmentUpdate,
 } from '../pages/api/post-segments/[postSegmentId]'
-import { ApiPosts } from '../pages/api/posts'
+import { ApiPosts, ApiPostsCreate } from '../pages/api/posts'
 import { ApiPost, ApiPostUpdate } from '../pages/api/posts/[postId]'
 import { ApiPostIncrementViews } from '../pages/api/posts/[postId]/increment-views'
 import { ApiPostLikeUnlikePost } from '../pages/api/posts/[postId]/like-unlike'
@@ -210,6 +210,24 @@ export async function apiUpdatePost({
     ROUTES_API.POST(postId),
     postToUpdate
   )
+  if (response.result) response.result = transformApiPost(response.result)
+  return response
+}
+
+// #########################################
+
+export type ApiPostsCreateRequestBody = {
+  postToCreate: {
+    title: string
+    subtitle: string
+    categoryId: string
+  }
+}
+
+export async function apiCreatePost(
+  input: ApiPostsCreateRequestBody
+): Promise<HttpResponse<ApiPostsCreate>> {
+  const response = await post<ApiPostsCreate>(ROUTES_API.POSTS, input)
   if (response.result) response.result = transformApiPost(response.result)
   return response
 }
