@@ -34,6 +34,7 @@ import { PostLikes } from '../../post'
 import { Link } from '../../Link'
 import { VoteIcon } from '../../VoteIcon'
 import { EditOverlay } from '../../EditOverlay'
+import { CategorySelect } from '../../CategorySelect'
 
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
@@ -322,26 +323,13 @@ function PostPageInternal({
         <div className="flex flex-col lg:flex-row">
           <div className="flex w-full flex-col sm:flex-row sm:flex-wrap md:space-x-6 lg:w-4/5">
             {/* CATEGORY */}
-            <div className="flex items-center text-sm" ref={refCategory}>
-              {isPostEditable && isShownCategoryDropdown ? (
-                <div className="inline-block w-full">
-                  <DropdownSelect
-                    onChange={handleOnCategorySelect}
-                    items={postCategories.map((cat) => ({
-                      id: cat.id,
-                      title: cat.title,
-                    }))}
-                    initialItem={post.category}
-                  />
-                </div>
-              ) : (
-                // TODO jump to explore
-                <div className="flex items-center text-sm">
-                  <IconCategory />
-                  <span className="ml-2 py-1.5">{post.category.title}</span>
-                </div>
-              )}
-            </div>
+            <CategorySelect
+              categories={postCategories}
+              categoryInitial={post.category}
+              onSelect={handleOnCategorySelect}
+              shouldShowDropdown={isPostEditable && isShownCategoryDropdown}
+              refExternal={refCategory}
+            />
 
             <div className="flex items-center text-sm">
               <ViewsIcon noOfViews={post.noOfViews} />
