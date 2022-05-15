@@ -1,16 +1,9 @@
 import { useState, useRef, useEffect, FormEvent } from 'react'
 import { Box } from '../../Box'
 import { Button } from '../../Button'
-import { DropdownItem, DropdownSelect } from '../../DropdownSelect'
+import { DropdownItem } from '../../DropdownSelect'
 import { FormInput } from '../../FormInput'
-import {
-  IconCheck,
-  IconX,
-  IconTrash,
-  IconReply,
-  IconCategory,
-  IconDate,
-} from '../../Icon'
+import { IconCheck, IconX, IconTrash, IconReply, IconDate } from '../../Icon'
 import { LoadingAnimation } from '../../LoadingAnimation'
 import { Page, PageSection } from '../../Page'
 import { usePost } from '../../../data/use-post'
