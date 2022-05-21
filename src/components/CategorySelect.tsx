@@ -11,7 +11,7 @@ export function CategorySelect({
   onSelect,
 }: {
   categories: PostCategory[]
-  categoryInitial: PostCategory
+  categoryInitial?: PostCategory
   shouldShowDropdown: boolean
   refExternal?: MutableRefObject<HTMLDivElement>
   onSelect: (selectedItem: DropdownItem) => void
@@ -32,7 +32,11 @@ export function CategorySelect({
       ) : (
         <div className="flex items-center text-sm">
           <IconCategory />
-          <span className="ml-2 py-1.5">{categoryInitial.title}</span>
+          <span className="ml-2 py-1.5">
+            {!categoryInitial
+              ? 'Please select a category'
+              : categoryInitial.title}
+          </span>
         </div>
       )}
     </div>

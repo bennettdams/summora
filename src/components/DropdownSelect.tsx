@@ -1,6 +1,6 @@
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useState } from 'react'
 
 export interface DropdownItem {
   id: string
@@ -16,8 +16,7 @@ export function DropdownSelect({
   initialItem?: DropdownItem
   onChange: (newItem: DropdownItem) => void
 }): JSX.Element {
-  const [selected, setSelected] = useState(initialItem ?? items[0])
-  useEffect(() => setSelected(initialItem ?? items[0]), [initialItem, items])
+  const [selected, setSelected] = useState(initialItem)
 
   function handleSelect(newItem: DropdownItem) {
     setSelected(newItem)
@@ -28,7 +27,13 @@ export function DropdownSelect({
     <Listbox value={selected} onChange={handleSelect}>
       <div className="relative z-10 mt-1">
         <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-dorange sm:text-sm">
-          <span className="block truncate">{selected.title}</span>
+          {!selected ? (
+            <span className="block truncate italic">
+              Please select an item.
+            </span>
+          ) : (
+            <span className="block truncate">{selected.title}</span>
+          )}
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
             <SelectorIcon className="h-5 w-5 text-dorange" aria-hidden="true" />
           </span>
