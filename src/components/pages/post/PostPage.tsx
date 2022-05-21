@@ -28,6 +28,7 @@ import { Link } from '../../Link'
 import { VoteIcon } from '../../VoteIcon'
 import { EditOverlay } from '../../EditOverlay'
 import { CategorySelect } from '../../CategorySelect'
+import { ROUTES } from '../../../services/routing'
 
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
@@ -352,7 +353,7 @@ function PostPageInternal({
 
           {/* AVATAR */}
           <div className="w-full lg:w-1/5">
-            <Link to={`/user/${post.authorId}`}>
+            <Link to={ROUTES.user(post.authorId)}>
               <div className="flex flex-1 flex-col items-center justify-center rounded-xl p-2 duration-200 hover:bg-white hover:transition-colors hover:ease-in-out">
                 <Avatar
                   userId={post.authorId}
@@ -630,7 +631,7 @@ function Comment({
               onClick={() => onDownvote(comment.commentId)}
             />
           </div>
-          <Link to={`/user/${comment.authorId}`} disablePrefetch>
+          <Link to={ROUTES.user(comment.authorId)} disablePrefetch>
             <div className="flex hover:underline">
               <div className="bold flex w-10 flex-col items-center text-center leading-none">
                 <Avatar

@@ -11,6 +11,7 @@ import { useAuth } from '../services/auth-service'
 import { LikesIcon } from './LikesIcon'
 import { IconSize } from './Icon'
 import { useHasMounted } from '../util/use-has-mounted'
+import { ROUTES } from '../services/routing'
 
 type PostsPostsList =
   | null
@@ -76,7 +77,7 @@ function PostsListItem({
   return (
     <Box padding="small" shadow="xxl">
       <div className="text-center">
-        <Link to={`/post/${post.id}`}>
+        <Link to={ROUTES.post(post.id)}>
           <div className="relative">
             <div className="absolute top-0 left-0 inline">
               <PostLikes
@@ -130,7 +131,7 @@ function PostsListItem({
 
             <div className="h-full w-1/2">
               <div className="flex h-full justify-end">
-                <Link to={`user/${post.author.id}`}>
+                <Link to={ROUTES.user(post.author.id)}>
                   <div className="flex h-full items-center space-x-4 rounded-lg px-4 hover:bg-dbrown hover:text-white">
                     <span>{post.author.username}</span>
                     <Avatar
@@ -159,7 +160,7 @@ function PostsListItemShort({
   userId: string | null
 }): JSX.Element {
   return (
-    <Link to={`/post/${post.id}`}>
+    <Link to={ROUTES.post(post.id)}>
       <Box padding="small">
         <div className="relative h-60 w-full text-center">
           <h2 className="text-xs font-semibold tracking-widest text-dorange">
