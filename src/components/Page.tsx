@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import { Title } from './Title'
 
 export function Page({
   children,
@@ -29,9 +30,9 @@ export function PageSection({
       className={`page-section w-full ${hideTopMargin ? 'mt-0' : 'mt-10'}`}
     >
       {label && (
-        <h2 className="page-section-title mb-10 w-full text-2xl text-dorange">
-          {label}
-        </h2>
+        <div className="page-section-title mb-10 w-full text-center">
+          <Title>{label}</Title>
+        </div>
       )}
 
       {children}
