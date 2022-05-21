@@ -1,15 +1,17 @@
 import { GetStaticProps } from 'next'
 import { prisma } from '../prisma/prisma'
-import { PostCategory } from '@prisma/client'
 import { PostsPage } from '../components/pages/posts/PostsPage'
 import { hydrationHandler, prefillServer } from '../data/use-posts'
+import {
+  prefillServer as prefillServerCategories,
+  hydrationHandler as hydrationHandlerCategories,
+} from '../data/use-post-categories'
 import { Hydrate } from 'react-query'
 import { ServerPageProps } from '../types/PageProps'
 import { ApiPosts } from './api/posts'
-import { dbFindPosts } from '../lib/db'
+import { dbFindPostCategories, dbFindPosts } from '../lib/db'
 
 export type PostsPageProps = {
-  postCategories: PostCategory[]
   noOfPosts: number
   noOfComments: number
   noOfPostsCreatedLast24Hours: number
@@ -17,6 +19,9 @@ export type PostsPageProps = {
 }
 
 const revalidateInSeconds = 5 * 60
+
+type Props = PostsPageProps &
+  ServerPageProps & { dehydratedState2: ServerPageProps['dehydratedState'] }
 
 export const getStaticProps: GetStaticProps<
   PostsPageProps & ServerPageProps
@@ -26,7 +31,9 @@ export const getStaticProps: GetStaticProps<
   const client = hydrationHandler.createClient()
   prefillServer(client, posts)
 
-  const postCategories = await prisma.postCategory.findMany()
+  const clientCategories = hydrationHandlerCategories.createClient()
+  const postCategories = await dbFindPostCategories()
+  prefillServerCategories(clientCategories, postCategories)
 
   const now = new Date()
   const nowYesterday = new Date(now.setHours(now.getHours() - 24))
@@ -43,6 +50,7 @@ export const getStaticProps: GetStaticProps<
   return {
     props: {
       dehydratedState: hydrationHandler.dehydrate(client),
+      dehydratedState2: hydrationHandlerCategories.dehydrate(clientCategories),
       postCategories,
       noOfPosts,
       noOfPostsCreatedLast24Hours,
@@ -53,18 +61,19 @@ export const getStaticProps: GetStaticProps<
   }
 }
 
-export default function _HomePage(
-  props: PostsPageProps & ServerPageProps
-): JSX.Element {
+export default function _HomePage(props: Props): JSX.Element {
   return (
     <Hydrate state={hydrationHandler.deserialize(props.dehydratedState)}>
-      <PostsPage
-        postCategories={props.postCategories}
-        noOfPosts={props.noOfPosts}
-        noOfPostsCreatedLast24Hours={props.noOfPostsCreatedLast24Hours}
-        noOfComments={props.noOfComments}
-        noOfCommentsCreatedLast24Hours={props.noOfCommentsCreatedLast24Hours}
-      />
+      <Hydrate
+        state={hydrationHandlerCategories.deserialize(props.dehydratedState2)}
+      >
+        <PostsPage
+          noOfPosts={props.noOfPosts}
+          noOfPostsCreatedLast24Hours={props.noOfPostsCreatedLast24Hours}
+          noOfComments={props.noOfComments}
+          noOfCommentsCreatedLast24Hours={props.noOfCommentsCreatedLast24Hours}
+        />
+      </Hydrate>
     </Hydrate>
   )
 }

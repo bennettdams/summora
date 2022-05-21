@@ -170,3 +170,14 @@ export async function dbFindUserPosts(userId: string) {
     throw new Error(`Error finding posts for user ${userId}: ${error}`)
   }
 }
+
+export type DbFindPostCategories = Prisma.PromiseReturnType<
+  typeof dbFindPostCategories
+>
+export async function dbFindPostCategories() {
+  try {
+    return await prisma.postCategory.findMany()
+  } catch (error) {
+    throw new Error(`Error finding post categories: ${error}`)
+  }
+}

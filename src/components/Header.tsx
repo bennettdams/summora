@@ -255,8 +255,7 @@ function CreatePostModal() {
         close={close}
         title="Create a post"
         forceHalfWidth
-        // forceFullHeight
-        onConfirm={async () => console.log('asd')}
+        onConfirm={async () => console.log('Confirmed')}
         isSubmit={true}
       >
         <div className="mt-2 text-center">
@@ -296,7 +295,6 @@ function CreatePostModal() {
               {/* fixed height to give the dropdown room to grow */}
               <div className="h-60">
                 <CategorySelect
-                  categories={postCategories}
                   onSelect={(selectedCategory) =>
                     setInputs((prev) => ({
                       ...prev,
@@ -319,4 +317,3 @@ function CreatePostModal() {
     </>
   )
 }
-

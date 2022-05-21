@@ -318,7 +318,6 @@ function PostPageInternal({
           <div className="flex w-full flex-col sm:flex-row sm:flex-wrap md:space-x-6 lg:w-4/5">
             {/* CATEGORY */}
             <CategorySelect
-              categories={postCategories}
               categoryInitial={post.category}
               onSelect={handleOnCategorySelect}
               shouldShowDropdown={isPostEditable && isShownCategoryDropdown}

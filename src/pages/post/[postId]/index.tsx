@@ -7,8 +7,12 @@ import type { ParsedUrlQuery } from 'querystring'
 import { ServerPageProps } from '../../../types/PageProps'
 import { Hydrate } from 'react-query'
 import { hydrationHandler, prefillServer } from '../../../data/use-post'
+import {
+  prefillServer as prefillServerCategories,
+  hydrationHandler as hydrationHandlerCategories,
+} from '../../../data/use-post-categories'
 import { ApiPost } from '../../api/posts/[postId]'
-import { dbFindPost } from '../../../lib/db'
+import { dbFindPost, dbFindPostCategories } from '../../../lib/db'
 
 export interface PostPageProps {
   postId: string
@@ -64,10 +68,12 @@ interface Params extends ParsedUrlQuery {
 
 const revalidateInSeconds = 5 * 60
 
-export const getStaticProps: GetStaticProps<
-  PostPageProps & ServerPageProps,
-  Params
-> = async ({ params }) => {
+type Props = PostPageProps &
+  ServerPageProps & { dehydratedState2: ServerPageProps['dehydratedState'] }
+
+export const getStaticProps: GetStaticProps<Props, Params> = async ({
+  params,
+}) => {
   if (!params) {
     // FIXME this is not really "not found", but rather a server error
     return { notFound: true }
@@ -81,7 +87,9 @@ export const getStaticProps: GetStaticProps<
       const client = hydrationHandler.createClient()
       prefillServer(client, postId, post)
 
-      const postCategories = await prisma.postCategory.findMany()
+      const clientCategories = hydrationHandlerCategories.createClient()
+      const postCategories = await dbFindPostCategories()
+      prefillServerCategories(clientCategories, postCategories)
 
       const tagsSorted = await findTagsForPost(prisma)
       const tagsSortedForCategory = await findTagsForPostByCategory(
@@ -92,6 +100,8 @@ export const getStaticProps: GetStaticProps<
       return {
         props: {
           dehydratedState: hydrationHandler.dehydrate(client),
+          dehydratedState2:
+            hydrationHandlerCategories.dehydrate(clientCategories),
           postId,
           postCategories,
           tagsSorted,
@@ -103,17 +113,19 @@ export const getStaticProps: GetStaticProps<
   }
 }
 
-export default function _PostPage(
-  props: PostPageProps & ServerPageProps
-): JSX.Element {
+export default function _PostPage(props: Props): JSX.Element {
   return (
     <Hydrate state={hydrationHandler.deserialize(props.dehydratedState)}>
-      <PostPage
-        postId={props.postId}
-        postCategories={props.postCategories}
-        tagsSorted={props.tagsSorted}
-        tagsSortedForCategory={props.tagsSortedForCategory}
-      />
+      <Hydrate
+        state={hydrationHandlerCategories.deserialize(props.dehydratedState2)}
+      >
+        <PostPage
+          postId={props.postId}
+          postCategories={props.postCategories}
+          tagsSorted={props.tagsSorted}
+          tagsSortedForCategory={props.tagsSortedForCategory}
+        />
+      </Hydrate>
     </Hydrate>
   )
 }

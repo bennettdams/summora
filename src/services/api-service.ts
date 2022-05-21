@@ -1,6 +1,7 @@
 import type { Prisma } from '@prisma/client'
 import { ApiAvatarsUpload } from '../pages/api/image-upload/avatars'
 import { ApiImageUploadPostSegment } from '../pages/api/image-upload/[postId]/[postSegmentId]'
+import { ApiPostCategories } from '../pages/api/post-categories'
 import { ApiPostCommentCreate } from '../pages/api/post-comments'
 import { ApiPostCommentDelete } from '../pages/api/post-comments/[commentId]'
 import { ApiPostCommentDownvote } from '../pages/api/post-comments/[commentId]/downvote'
@@ -37,6 +38,7 @@ export const ROUTES_API = {
   USERS_SIGN_UP: 'users/signup',
   USER: (userId: string) => `users/${userId}`,
   USER_POSTS: (userId: string) => `users/${userId}/posts`,
+  POST_CATEGORIES: 'post-categories',
   POSTS: 'posts',
   POST: (postId: string) => `posts/${postId}`,
   POST_INCREMENT_VIEWS: (postId: string) => `posts/${postId}/increment-views`,
@@ -132,6 +134,14 @@ export function transformApiUser(
     createdAt: new Date(user.createdAt),
     updatedAt: new Date(user.updatedAt),
   }
+}
+
+// #########################################
+
+export async function apiFetchPostCategories(): Promise<
+  HttpResponse<ApiPostCategories>
+> {
+  return await get<ApiPostCategories>(ROUTES_API.POST_CATEGORIES)
 }
 
 // #########################################

@@ -7,15 +7,16 @@ import { LightningBoltIcon } from '@heroicons/react/outline'
 import { usePosts } from '../../../data/use-posts'
 import { PostsList } from '../../post'
 import { StatisticsCard } from '../../StatisticsCard'
+import { usePostCategories } from '../../../data/use-post-categories'
 
 export function PostsPage({
-  postCategories,
   noOfPosts,
   noOfPostsCreatedLast24Hours,
   noOfComments,
   noOfCommentsCreatedLast24Hours,
 }: PostsPageProps): JSX.Element {
   const { posts } = usePosts()
+  const { postCategories } = usePostCategories()
 
   return (
     <Page

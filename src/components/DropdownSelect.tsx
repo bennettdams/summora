@@ -56,7 +56,6 @@ export function DropdownSelect({
               >
                 {({ selected, active }) => (
                   <>
-                    {console.log(selected)}
                     <span
                       className={`${
                         selected ? 'font-semibold' : 'font-normal'
