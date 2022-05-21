@@ -7,10 +7,21 @@ import { LoadingAnimation } from './LoadingAnimation'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { MenuIcon, XIcon, BellIcon } from '@heroicons/react/outline'
 import { useRouter } from 'next/router'
+import { FormEvent, useState } from 'react'
+import { IconEdit } from './Icon'
+import { FormInput } from './FormInput'
+import {
+  apiCreatePost,
+  ApiPostsCreateRequestBody,
+} from '../services/api-service'
+import { CategorySelect } from './CategorySelect'
+import { PostCategory } from '@prisma/client'
+import { Modal, useModal } from './modal'
+import { ROUTES } from '../services/routing'
 
 const NAV_ROUTES = [
-  { name: 'Home', href: '/' },
-  { name: 'Explore', href: '/explore' },
+  { name: 'home', href: ROUTES.home },
+  { name: 'explore', href: ROUTES.explore },
 ] as const
 
 function classNames(...classes: unknown[]) {
@@ -26,7 +37,7 @@ function UserNavbar() {
         {isLoadingAuth ? (
           <LoadingAnimation />
         ) : userAuth === null && !isLoadingAuth ? (
-          <Link to="/signin">
+          <Link to={ROUTES.signIn}>
             <Button onClick={() => console.info('here')}>Sign in</Button>
           </Link>
         ) : (
@@ -61,7 +72,7 @@ function UserNavbar() {
       >
         {userAuth && (
           <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-            <Link to={`/user/${userAuth.id}`}>
+            <Link to={ROUTES.user(userAuth.id)}>
               <Menu.Item>
                 {({ active }) => (
                   <span
@@ -100,10 +111,7 @@ export function Header(): JSX.Element {
   const { asPath } = useRouter()
 
   return (
-    <Disclosure
-      as="nav"
-      className="tedxt-white fixed top-0 z-40 w-full bg-dbrown"
-    >
+    <Disclosure as="nav" className="fixed top-0 z-40 w-full bg-dbrown">
       {({ open }) => (
         <>
           <div className="max-w-7dxl mx-auto w-full px-2 sm:px-6 lg:px-8">
@@ -123,7 +131,7 @@ export function Header(): JSX.Element {
               {/* Navbar content */}
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex shrink-0 items-center">
-                  <Link to="/">
+                  <Link to={ROUTES.home}>
                     <div className="text-left text-4xl font-extrabold leading-none tracking-tight">
                       <p className="bg-gradient-to-b from-amber-100 to-orange-100 decoration-clone bg-clip-text text-3xl uppercase text-transparent">
                         Condun
@@ -155,6 +163,8 @@ export function Header(): JSX.Element {
                   </div>
                 </div>
               </div>
+
+              <CreatePostModal />
 
               {/* Navbar right side */}
               <div className="absolute inset-y-0 right-0 flex items-center space-x-3 pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
@@ -199,3 +209,114 @@ export function Header(): JSX.Element {
     </Disclosure>
   )
 }
+
+const formId = 'create-post-form'
+
+function CreatePostModal() {
+  const { isOpen, open, close } = useModal()
+  const router = useRouter()
+
+  const [inputs, setInputs] = useState<{
+    title: string | null
+    subtitle: string | null
+    categoryId: string | null
+  }>({ title: null, subtitle: null, categoryId: null })
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+
+    if (inputs && inputs.title && inputs.subtitle && inputs.categoryId) {
+      const postToCreate: ApiPostsCreateRequestBody = {
+        postToCreate: {
+          title: inputs.title,
+          subtitle: inputs.subtitle,
+          categoryId: inputs.categoryId,
+        },
+      }
+
+      const response = await apiCreatePost(postToCreate)
+      const postCreated = response.result
+      if (postCreated) {
+        close()
+        await router.push(ROUTES.post(postCreated.id))
+      }
+    }
+  }
+
+  return (
+    <>
+      <Button onClick={open}>
+        <IconEdit /> <span className="ml-2">Create Post</span>
+      </Button>
+
+      <Modal
+        isOpen={isOpen}
+        open={open}
+        close={close}
+        title="Create a post"
+        forceHalfWidth
+        // forceFullHeight
+        onConfirm={async () => console.log('asd')}
+        isSubmit={true}
+      >
+        <div className="mt-2 text-center">
+          <p className="text-sm text-gray-500">
+            Give your post a title, subtitle and category to start with!
+          </p>
+        </div>
+
+        <div className="mx-auto mt-10 w-full first-letter:mb-10 lg:w-1/2">
+          <form id={formId} onSubmit={handleSubmit}>
+            <div className="mt-4 space-y-10">
+              <FormInput
+                placeholder="Title.."
+                initialValue=""
+                onChange={(input) => {
+                  if (input) {
+                    setInputs((prev) => ({ ...prev, title: input }))
+                  }
+                }}
+                formId={formId}
+              >
+                Title
+              </FormInput>
+
+              <FormInput
+                placeholder="Subtitle.."
+                initialValue=""
+                onChange={(input) =>
+                  setInputs((prev) => ({ ...prev, subtitle: input }))
+                }
+                autoFocus={false}
+                formId={formId}
+              >
+                Subtitle
+              </FormInput>
+
+              {/* fixed height to give the dropdown room to grow */}
+              <div className="h-60">
+                <CategorySelect
+                  categories={postCategories}
+                  onSelect={(selectedCategory) =>
+                    setInputs((prev) => ({
+                      ...prev,
+                      categoryId: selectedCategory.id,
+                    }))
+                  }
+                  shouldShowDropdown={true}
+                />
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <Button isSubmit onClick={handleSubmit}>
+                Create
+              </Button>
+            </div>
+          </form>
+        </div>
+      </Modal>
+    </>
+  )
+}
+
