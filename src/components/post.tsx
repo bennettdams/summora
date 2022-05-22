@@ -12,6 +12,7 @@ import { LikesIcon } from './LikesIcon'
 import { IconSize } from './Icon'
 import { useHasMounted } from '../util/use-has-mounted'
 import { ROUTES } from '../services/routing'
+import { NoContent } from './NoContent'
 
 type PostsPostsList =
   | null
@@ -97,16 +98,20 @@ function PostsListItem({
             <p className="mt-3 leading-relaxed text-dorange">{post.subtitle}</p>
 
             <div className="my-4 flex snap-x flex-row flex-nowrap space-x-4 overflow-y-hidden py-4">
-              {post.segments.map((segment) => {
-                return (
-                  <div
-                    key={segment.id}
-                    className="grid h-32 w-60 flex-none snap-start place-items-center rounded-lg bg-dlight"
-                  >
-                    <p className="p-5">{segment.title}</p>
-                  </div>
-                )
-              })}
+              {post.segments.length === 0 ? (
+                <NoContent>No segments yet</NoContent>
+              ) : (
+                post.segments.map((segment) => {
+                  return (
+                    <div
+                      key={segment.id}
+                      className="grid h-32 w-60 flex-none snap-start place-items-center rounded-lg bg-dlight"
+                    >
+                      <p className="p-5">{segment.title}</p>
+                    </div>
+                  )
+                })
+              )}
             </div>
           </div>
         </Link>

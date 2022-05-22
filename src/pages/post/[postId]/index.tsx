@@ -1,6 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { prisma } from '../../../prisma/prisma'
-import { PostCategory, PrismaClient } from '.prisma/client'
+import { PrismaClient } from '.prisma/client'
 import { PostPage } from '../../../components/pages/post/PostPage'
 import { Prisma } from '@prisma/client'
 import type { ParsedUrlQuery } from 'querystring'
@@ -16,7 +16,6 @@ import { dbFindPost, dbFindPostCategories } from '../../../lib/db'
 
 export interface PostPageProps {
   postId: string
-  postCategories: PostCategory[]
   tagsSorted: Prisma.PromiseReturnType<typeof findTagsForPost>
   tagsSortedForCategory: Prisma.PromiseReturnType<
     typeof findTagsForPostByCategory
@@ -103,7 +102,6 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
           dehydratedState2:
             hydrationHandlerCategories.dehydrate(clientCategories),
           postId,
-          postCategories,
           tagsSorted,
           tagsSortedForCategory,
         },
@@ -121,7 +119,6 @@ export default function _PostPage(props: Props): JSX.Element {
       >
         <PostPage
           postId={props.postId}
-          postCategories={props.postCategories}
           tagsSorted={props.tagsSorted}
           tagsSortedForCategory={props.tagsSortedForCategory}
         />
