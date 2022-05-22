@@ -9,6 +9,7 @@ import { Page, PageSection } from '../../Page'
 import { usePost } from '../../../data/use-post'
 import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
+import { useDebounce } from '../../../util/use-debounce'
 import { ViewsIcon } from '../../ViewsIcon'
 import { CommentsIcon } from '../../CommentsIcon'
 import { PostPageProps } from '../../../pages/post/[postId]'
@@ -182,7 +183,8 @@ function PostPageInternal({
     })
   }
   const [inputTagSearch, setInputTagSearch] = useState('')
-  const { tagsSearched, isFetching } = useSearchTags(inputTagSearch)
+  const inputTagSearchDebounced = useDebounce(inputTagSearch, 500)
+  const { tagsSearched, isFetching } = useSearchTags(inputTagSearchDebounced)
 
   async function handleAddTag(tagId: string): Promise<void> {
     const alreadyIncluded = post.tags.some((tag) => tag.id === tagId)
@@ -393,7 +395,7 @@ function PostPageInternal({
                 </div>
                 <FormInput
                   initialValue={inputTagSearch}
-                  onSubmit={async (inputNew) => setInputTagSearch(inputNew)}
+                  onChange={async (inputNew) => setInputTagSearch(inputNew)}
                 />
                 <div className="-m-1 mt-2 flex flex-wrap">
                   {tagsSearched &&

@@ -63,8 +63,6 @@ export function PostsPage({
           <div className="lg:text-center">
             <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-dlila sm:text-4xl">
               <span>A </span>
-              <span className="line-through">better</span>
-              <span> </span>
               <span className="underline">faster</span> way to learn
             </p>
             <p className="mt-4 flex max-w-2xl flex-col text-xl lg:mx-auto">

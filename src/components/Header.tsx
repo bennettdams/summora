@@ -264,8 +264,8 @@ function CreatePostModal() {
           </p>
         </div>
 
-        <div className="mx-auto mt-10 w-full first-letter:mb-10 lg:w-1/2">
-          <form id={formId} onSubmit={handleSubmit}>
+        <div className="mx-auto mt-10 w-full first-letter:mb-10 lg:w-3/4">
+          <form className="w-full" id={formId} onSubmit={handleSubmit}>
             <div className="mt-4 space-y-10">
               <FormInput
                 placeholder="Title.."
@@ -306,9 +306,9 @@ function CreatePostModal() {
               </div>
             </div>
 
-            <div className="mt-4">
+            <div className="mx-auto grid place-items-center">
               <Button isSubmit onClick={handleSubmit}>
-                Create
+                Create!
               </Button>
             </div>
           </form>
