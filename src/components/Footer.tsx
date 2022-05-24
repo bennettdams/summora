@@ -1,12 +1,12 @@
 export function Footer(): JSX.Element {
   return (
     <footer className="body-font">
-      <div className="mx-auto flex flex-col items-center px-5 py-8 sm:flex-row">
+      <div className="mx-auto flex flex-col items-center px-4 py-4 sm:flex-row">
         <a className="flex items-center justify-center font-semibold uppercase md:justify-start">
           <span className="ml-3 text-xl">Condun</span>
         </a>
         <p className="mt-4 text-sm sm:ml-4 sm:mt-0 sm:border-l-2 sm:border-dbrown sm:py-2 sm:pl-4">
-          © 2021 Condun —
+          © 2022 Condun —
         </p>
         <span className="mt-4 inline-flex justify-center sm:ml-auto sm:mt-0 sm:justify-start">
           <a className="ml-3">

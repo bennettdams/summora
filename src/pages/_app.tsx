@@ -15,17 +15,22 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
     <ErrorBoundary>
       <AuthContextProvider supabaseClient={supabase}>
         <QueryClientProvider client={queryClient}>
-          <div className="m-0 box-border flex min-h-screen flex-col items-center justify-center bg-dlight p-0 font-sans text-zinc-500 caret-dorange selection:bg-dlila selection:text-dbrown">
-            <Head>
-              <title>Condun</title>
-              <link rel="icon" href="/favicon.ico" />
-            </Head>
+          <Head>
+            <title>Condun</title>
+            <link rel="icon" href="/favicon.ico" />
+          </Head>
 
+          <div className="font-light flex h-screen min-h-screen flex-col bg-dlight font-sans text-zinc-500 caret-dorange selection:bg-dlila selection:text-dbrown">
             <Header />
 
-            <ErrorBoundary>
-              <Component {...pageProps} />
-            </ErrorBoundary>
+            <div className="flex-grow overflow-y-auto">
+              <main className="h-full">
+                {/* boundary to catch errors where we can still show some UI (like the header and footer) */}
+                <ErrorBoundary>
+                  <Component {...pageProps} />
+                </ErrorBoundary>
+              </main>
+            </div>
 
             <Footer />
           </div>
