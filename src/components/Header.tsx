@@ -15,7 +15,6 @@ import {
   ApiPostsCreateRequestBody,
 } from '../services/api-service'
 import { CategorySelect } from './CategorySelect'
-import { PostCategory } from '@prisma/client'
 import { Modal, useModal } from './modal'
 import { ROUTES } from '../services/routing'
 
