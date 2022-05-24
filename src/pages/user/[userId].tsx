@@ -1,8 +1,10 @@
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import type { ParsedUrlQuery } from 'querystring'
-import { Hydrate } from 'react-query'
 import { UserPage } from '../../components/pages/UserPage'
-import { hydrationHandler, prefillServer } from '../../data/use-user'
+import {
+  hydrationHandler as hydrationHandlerUser,
+  prefillServer as prefillServerUser,
+} from '../../data/use-user'
 import {
   hydrationHandler as hydrationHandlerPosts,
   prefillServer as prefillServerPosts,
@@ -59,8 +61,8 @@ export const getStaticProps: GetStaticProps<
     if (!user) {
       return { notFound: true }
     } else {
-      const client = hydrationHandler.createClient()
-      prefillServer(client, userId, user)
+      const client = hydrationHandlerUser.createClient()
+      prefillServerUser(client, userId, user)
 
       const userPosts: ApiUserPosts = await dbFindUserPosts(userId)
 
@@ -87,7 +89,7 @@ export const getStaticProps: GetStaticProps<
 
       return {
         props: {
-          dehydratedState: hydrationHandler.dehydrate(client),
+          dehydratedState: hydrationHandlerUser.dehydrate(client),
           dehydratedState2: hydrationHandlerPosts.dehydrate(clientPosts),
           userId,
           userStatistics: {
@@ -103,14 +105,15 @@ export const getStaticProps: GetStaticProps<
   }
 }
 
+const HydrateUser = hydrationHandlerUser.Hydrate
+const HydratePosts = hydrationHandlerPosts.Hydrate
+
 export default function _UserPage(props: UserPageServerProps): JSX.Element {
   return (
-    <Hydrate state={hydrationHandler.deserialize(props.dehydratedState)}>
-      <Hydrate
-        state={hydrationHandlerPosts.deserialize(props.dehydratedState2)}
-      >
+    <HydrateUser dehydratedState={props.dehydratedState}>
+      <HydratePosts dehydratedState={props.dehydratedState2}>
         <UserPage userId={props.userId} userStatistics={props.userStatistics} />
-      </Hydrate>
-    </Hydrate>
+      </HydratePosts>
+    </HydrateUser>
   )
 }

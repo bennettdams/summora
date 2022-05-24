@@ -1,12 +1,14 @@
 import { GetStaticProps } from 'next'
 import { prisma } from '../prisma/prisma'
 import { PostsPage } from '../components/pages/posts/PostsPage'
-import { hydrationHandler, prefillServer } from '../data/use-posts'
+import {
+  hydrationHandler as hydrationHandlerPosts,
+  prefillServer as prefillServerPosts,
+} from '../data/use-posts'
 import {
   prefillServer as prefillServerCategories,
   hydrationHandler as hydrationHandlerCategories,
 } from '../data/use-post-categories'
-import { Hydrate } from 'react-query'
 import { ServerPageProps } from '../types/PageProps'
 import { ApiPosts } from './api/posts'
 import { dbFindPostCategories, dbFindPosts } from '../lib/db'
@@ -28,8 +30,8 @@ export const getStaticProps: GetStaticProps<
 > = async () => {
   const posts: ApiPosts = await dbFindPosts()
 
-  const client = hydrationHandler.createClient()
-  prefillServer(client, posts)
+  const client = hydrationHandlerPosts.createClient()
+  prefillServerPosts(client, posts)
 
   const clientCategories = hydrationHandlerCategories.createClient()
   const postCategories = await dbFindPostCategories()
@@ -49,7 +51,7 @@ export const getStaticProps: GetStaticProps<
 
   return {
     props: {
-      dehydratedState: hydrationHandler.dehydrate(client),
+      dehydratedState: hydrationHandlerPosts.dehydrate(client),
       dehydratedState2: hydrationHandlerCategories.dehydrate(clientCategories),
       postCategories,
       noOfPosts,
@@ -61,19 +63,20 @@ export const getStaticProps: GetStaticProps<
   }
 }
 
+const HydratePosts = hydrationHandlerPosts.Hydrate
+const HydrateCategories = hydrationHandlerCategories.Hydrate
+
 export default function _HomePage(props: Props): JSX.Element {
   return (
-    <Hydrate state={hydrationHandler.deserialize(props.dehydratedState)}>
-      <Hydrate
-        state={hydrationHandlerCategories.deserialize(props.dehydratedState2)}
-      >
+    <HydratePosts dehydratedState={props.dehydratedState}>
+      <HydrateCategories dehydratedState={props.dehydratedState2}>
         <PostsPage
           noOfPosts={props.noOfPosts}
           noOfPostsCreatedLast24Hours={props.noOfPostsCreatedLast24Hours}
           noOfComments={props.noOfComments}
           noOfCommentsCreatedLast24Hours={props.noOfCommentsCreatedLast24Hours}
         />
-      </Hydrate>
-    </Hydrate>
+      </HydrateCategories>
+    </HydratePosts>
   )
 }

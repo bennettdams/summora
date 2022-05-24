@@ -1,17 +1,20 @@
-import { ServerPageProps } from '../types/PageProps'
-import { dehydrate as dehydrateReactQuery, QueryClient } from 'react-query'
-import { serialize } from './serialize-service'
+import {
+  dehydrate as dehydrateReactQuery,
+  Hydrate,
+  QueryClient,
+} from 'react-query'
+import type { DehydratedState as DehydratedStateReactQuery } from 'react-query'
+import type { ReactNode } from 'react'
 
-type DehydratedState = ServerPageProps['dehydratedState']
+export type DehydratedState = DehydratedStateReactQuery
 type QueryData = null | Record<string, unknown> | Record<string, unknown>[]
 type TransformCallbackFn<T> = (data: T) => T
 type SerializeFn<T> = (data: T) => T
-type DeserializeFn = (dehydratedState: DehydratedState) => DehydratedState
 type DehydrateFn = (client: QueryClient) => DehydratedState
 type CreateClientFn = () => QueryClient
 
 /**
- * Single entrypoint to create a hydration handler that can be used for a queries (e.g. "posts" or "postId").
+ * Single entrypoint to create a hydration handler that can be used for a queries (e.g. "batches" or "batchId").
  *
  * It will create the tools needed to do de-/hydration, besides the prefetching.
  *
@@ -23,15 +26,28 @@ export function createHydrationHandler<TData extends QueryData>(
   createClient: CreateClientFn
   dehydrate: DehydrateFn
   serialize: SerializeFn<TData>
-  deserialize: DeserializeFn
+  Hydrate: ({
+    dehydratedState,
+    children,
+  }: {
+    dehydratedState: DehydratedState
+    children: ReactNode
+  }) => ReturnType<typeof Hydrate>
 } {
   return {
     createClient,
     dehydrate,
     serialize,
-    deserialize: (dehydratedState) =>
-      deserializeQueryData(dehydratedState, transformCb),
+    Hydrate: (props) =>
+      Hydrate({
+        ...props,
+        state: deserialize(props.dehydratedState, transformCb),
+      }),
   }
+}
+
+function serialize<TDataSerialize>(data: TDataSerialize): TDataSerialize {
+  return JSON.parse(JSON.stringify(data))
 }
 
 function createClient(): QueryClient {
@@ -48,7 +64,7 @@ function dehydrate(client: QueryClient): DehydratedState {
  *
  * Is used in the hydration process.
  */
-function deserializeQueryData<TDataDeserialize extends QueryData>(
+function deserialize<TDataDeserialize extends QueryData>(
   dehydratedState: DehydratedState,
   transformCb: TransformCallbackFn<TDataDeserialize>
 ): DehydratedState {

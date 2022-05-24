@@ -5,8 +5,10 @@ import { PostPage } from '../../../components/pages/post/PostPage'
 import { Prisma } from '@prisma/client'
 import type { ParsedUrlQuery } from 'querystring'
 import { ServerPageProps } from '../../../types/PageProps'
-import { Hydrate } from 'react-query'
-import { hydrationHandler, prefillServer } from '../../../data/use-post'
+import {
+  hydrationHandler as hydrationHandlerPost,
+  prefillServer as prefillServerPost,
+} from '../../../data/use-post'
 import {
   prefillServer as prefillServerCategories,
   hydrationHandler as hydrationHandlerCategories,
@@ -83,8 +85,8 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
     if (!post) {
       return { notFound: true }
     } else {
-      const client = hydrationHandler.createClient()
-      prefillServer(client, postId, post)
+      const client = hydrationHandlerPost.createClient()
+      prefillServerPost(client, postId, post)
 
       const clientCategories = hydrationHandlerCategories.createClient()
       const postCategories = await dbFindPostCategories()
@@ -98,7 +100,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
 
       return {
         props: {
-          dehydratedState: hydrationHandler.dehydrate(client),
+          dehydratedState: hydrationHandlerPost.dehydrate(client),
           dehydratedState2:
             hydrationHandlerCategories.dehydrate(clientCategories),
           postId,
@@ -111,18 +113,19 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
   }
 }
 
+const HydratePost = hydrationHandlerPost.Hydrate
+const HydrateCategories = hydrationHandlerCategories.Hydrate
+
 export default function _PostPage(props: Props): JSX.Element {
   return (
-    <Hydrate state={hydrationHandler.deserialize(props.dehydratedState)}>
-      <Hydrate
-        state={hydrationHandlerCategories.deserialize(props.dehydratedState2)}
-      >
+    <HydratePost dehydratedState={props.dehydratedState}>
+      <HydrateCategories dehydratedState={props.dehydratedState2}>
         <PostPage
           postId={props.postId}
           tagsSorted={props.tagsSorted}
           tagsSortedForCategory={props.tagsSortedForCategory}
         />
-      </Hydrate>
-    </Hydrate>
+      </HydrateCategories>
+    </HydratePost>
   )
 }
