@@ -391,7 +391,7 @@ function PostPageInternal({
                 <div className="flex w-full items-center space-x-3">
                   <span className="italic">Search</span>
                   <span className="font-bold">{inputTagSearch}</span>
-                  {isFetching && <LoadingAnimation small />}
+                  {isFetching && <LoadingAnimation size="small" />}
                 </div>
                 <FormInput
                   initialValue={inputTagSearch}

@@ -32,7 +32,7 @@ function UserNavbar() {
 
   return (
     <Menu as="div" className="relative">
-      <div>
+      <div className="grid place-items-end md:min-w-[150px]">
         {isLoadingAuth ? (
           <LoadingAnimation />
         ) : userAuth === null && !isLoadingAuth ? (
