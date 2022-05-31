@@ -313,7 +313,7 @@ function CreatePostModal() {
 
             <div className="mx-auto grid place-items-center">
               <Button isSubmit onClick={handleSubmit}>
-                Create!
+                Create
               </Button>
             </div>
           </form>
