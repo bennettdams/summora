@@ -40,9 +40,16 @@ export type SegmentItemPostPage = SegmentPostPage['items'][number]
 export type TagPostPage = PostPostPage['tags'][number]
 
 export function PostPage(props: PostPageProps): JSX.Element {
-  apiIncrementPostViews(props.postId)
   const { post } = usePost(props.postId)
   const { userId } = useAuth()
+
+  const [hasViewsBeenIncremented, setHasViewBeenIncremented] = useState(
+    () => false
+  )
+  useEffect(() => {
+    if (!hasViewsBeenIncremented) apiIncrementPostViews(props.postId)
+    else setHasViewBeenIncremented(true)
+  }, [hasViewsBeenIncremented, props.postId])
 
   return !post ? (
     <p>no post</p>
