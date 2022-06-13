@@ -22,16 +22,22 @@ export type AvatarSize = keyof typeof SIZES
 
 const queryKeyPostBase = 'avatar-image'
 
+type ColorVariant = 'brown' | 'orange'
+
 function AvatarPlaceholder({
   sizePixels,
   username,
+  variant = 'brown',
 }: {
   sizePixels: number
   username: string
+  variant?: ColorVariant
 }): JSX.Element {
   return (
     <div
-      className="inline-flex items-center justify-center rounded-full bg-dbrown text-center text-dlight"
+      className={`inline-flex items-center justify-center rounded-full text-center text-dlight ${
+        variant === 'brown' ? 'bg-dbrown' : 'bg-dorange'
+      }`}
       style={{ width: sizePixels, height: sizePixels }}
     >
       <p style={{ fontSize: sizePixels * 0.6 }} className="uppercase">
@@ -48,6 +54,7 @@ export function Avatar({
   imageBlurDataURL,
   size = 'medium',
   isEditable = false,
+  placeholderColorVariant = 'brown',
 }: {
   userId: string
   username: string
@@ -55,6 +62,7 @@ export function Avatar({
   imageBlurDataURL: string | null
   size: AvatarSize
   isEditable?: boolean
+  placeholderColorVariant?: ColorVariant
 }): JSX.Element {
   const [sizePixels] = useState(SIZES[size])
   const { updateUserImageId } = useUser(userId)
@@ -117,7 +125,11 @@ export function Avatar({
           />
         </div>
       ) : (
-        <AvatarPlaceholder sizePixels={sizePixels} username={username} />
+        <AvatarPlaceholder
+          sizePixels={sizePixels}
+          username={username}
+          variant={placeholderColorVariant}
+        />
       )}
     </div>
   )

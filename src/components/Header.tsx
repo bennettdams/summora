@@ -52,6 +52,7 @@ function UserNavbar() {
                     imageId={user?.imageId ?? null}
                     imageBlurDataURL={user?.imageBlurDataURL ?? null}
                     size="small"
+                    placeholderColorVariant="orange"
                   />
                 </div>
               </div>
