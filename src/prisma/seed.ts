@@ -42,6 +42,9 @@ async function fill() {
   await prisma.postTag.createMany({ data: postTags })
   const postTagsCreated = await prisma.postTag.findMany()
 
+  await prisma.donationProvider.createMany({ data: donationProviders })
+  // const donationProvidersCreated = await prisma.donationProvider.findMany()
+
   const users = await prisma.user.findMany()
 
   await Promise.all(
@@ -212,7 +215,7 @@ async function createSegments(): Promise<
   return segments
 }
 
-export const postCategories: Prisma.PostCategoryCreateInput[] = [
+const postCategories: Prisma.PostCategoryCreateInput[] = [
   { id: 'books', title: 'Books', description: '..' },
   { id: 'movies', title: 'Movies', description: '..' },
   { id: 'series', title: 'Series', description: '..' },
@@ -233,7 +236,12 @@ export const postCategories: Prisma.PostCategoryCreateInput[] = [
   { id: 'programming', title: 'Programming', description: '..' },
 ]
 
-export const postTags: Prisma.PostTagCreateWithoutPostsInput[] = [
+const donationProviders: Prisma.DonationProviderCreateInput[] = [
+  { donationProviderId: 'paypal', name: 'PayPal', assetId: 'abc' },
+  { donationProviderId: 'bitcoin', name: 'Bitcoin', assetId: 'abc' },
+]
+
+const postTags: Prisma.PostTagCreateWithoutPostsInput[] = [
   ...new Array(100),
 ].flatMap((_, i) => [
   { title: 'Tutorial' + i, description: '..' },

@@ -19,6 +19,7 @@
     "p:create": "npx prisma migrate dev --create-only --schema ./src/prisma/schema.prisma",
     "p:studio": "npx prisma studio --schema ./src/prisma/schema.prisma",
     "p:reset": "npx prisma migrate reset --schema ./src/prisma/schema.prisma",
+    "p:reset-no-seed": "npx prisma migrate reset --skip-seed --schema ./src/prisma/schema.prisma",
     "p:generate": "npx prisma generate --schema ./src/prisma/schema.prisma",
     "p:format": "npx prisma format --schema ./src/prisma/schema.prisma",
     "p:seed": "npx prisma db seed"

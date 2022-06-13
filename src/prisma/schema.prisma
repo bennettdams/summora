@@ -103,20 +103,41 @@ model PostTag {
 }
 
 model User {
-  userId            String        @id @default(cuid())
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-  username          String        @unique
+  userId            String         @id @default(cuid())
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  username          String         @unique
   imageId           String?
   imageBlurDataURL  String?
   // posts
-  posts             Post[]        @relation("AuthorPost")
+  posts             Post[]         @relation("AuthorPost")
   // comments
-  PostComment       PostComment[] @relation("PostCommentAuthor")
+  PostComment       PostComment[]  @relation("PostCommentAuthor")
   // likes
-  likedPosts        Post[]        @relation("PostLikes")
+  likedPosts        Post[]         @relation("PostLikes")
   // upvotes
-  upvotedComments   PostComment[] @relation("PostCommentUpvotes")
+  upvotedComments   PostComment[]  @relation("PostCommentUpvotes")
   // downvotes
-  downvotedComments PostComment[] @relation("PostCommentDownvotes")
+  downvotedComments PostComment[]  @relation("PostCommentDownvotes")
+  // donation links
+  donationLinks     DonationLink[] @relation("UserDonationLinks")
+}
+
+model DonationLink {
+  donationLinkId     String           @id @default(cuid())
+  address            String
+  // user relation
+  User               User             @relation("UserDonationLinks", fields: [userId], references: [userId])
+  userId             String
+  // donation provider relation
+  donationProvider   DonationProvider @relation("DonationLink_DonationProvider", fields: [donationProviderId], references: [donationProviderId])
+  donationProviderId String
+}
+
+model DonationProvider {
+  donationProviderId String         @id
+  name               String
+  assetId            String
+  // donation links relation
+  DonationLink       DonationLink[] @relation("DonationLink_DonationProvider")
 }
