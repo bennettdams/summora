@@ -25,7 +25,7 @@ import { Tag, TagsList } from '../../tag'
 import { useAuth } from '../../../services/auth-service'
 import { StepList } from '../../StepList'
 import { PostLikes } from '../../post'
-import { Link } from '../../Link'
+import { Link } from '../../link'
 import { VoteIcon } from '../../VoteIcon'
 import { EditOverlay } from '../../EditOverlay'
 import { CategorySelect } from '../../CategorySelect'
@@ -371,7 +371,15 @@ function PostPageInternal({
             {/* DONATION */}
             {/* margin bottom to align the row vertically with the avatar image */}
             <div className="mr-4 mb-10">
-              <DonateButton />
+              <DonateButton
+                userDonations={post.author.donationLinks.map(
+                  (donationLink) => ({
+                    logoId: donationLink.donationProvider.logoId,
+                    donationProviderName: donationLink.donationProvider.name,
+                    donationAddress: donationLink.address,
+                  })
+                )}
+              />
             </div>
 
             {/* AVATAR */}

@@ -1,37 +1,59 @@
 import { Popover, Transition } from '@headlessui/react'
-import { ReactNode, Fragment } from 'react'
+import { Fragment } from 'react'
 import { IconDonate, IconArrowDown } from './Icon'
-import { LogoPayPal, LogoBitcoin } from './logo'
+import { LinkExternal } from './link'
+import { Logo } from './Logo'
 
-function DonationLink({ children }: { children: ReactNode }): JSX.Element {
+function DonationLink({
+  userDonation,
+}: {
+  userDonation: UserDonation
+}): JSX.Element {
   return (
-    <div className="flex items-center text-lg hover:text-dlila hover:underline">
-      <LogoPayPal />
-      <LogoBitcoin />
-      <span className="ml-2">{children}</span>
-    </div>
+    <LinkExternal to={userDonation.donationAddress}>
+      <div className="flex flex-1 items-center text-lg hover:text-dlila hover:underline">
+        <Logo logoId={userDonation.logoId} />
+        <span className="ml-2">{userDonation.donationProviderName}</span>
+      </div>
+    </LinkExternal>
   )
 }
 
-function UserDonations(): JSX.Element {
+type UserDonation = {
+  logoId: string
+  donationProviderName: string
+  donationAddress: string
+}
+
+function UserDonations({
+  userDonations,
+}: {
+  userDonations: UserDonation[]
+}): JSX.Element {
   return (
     <div className="grid h-full grid-cols-2">
       <div className="grid items-center justify-items-end pr-6 text-right">
         <p className="text-xl text-dlila">Donate via</p>
       </div>
       <div className="flex flex-col space-y-4 pl-6 text-left">
-        <div className="flex-1">
-          <DonationLink>PayPal</DonationLink>
-        </div>
-        <div className="flex-1">
-          <DonationLink>Bitcoin</DonationLink>
-        </div>
+        {userDonations.map((userDonation) => (
+          <DonationLink
+            key={userDonation.donationProviderName}
+            userDonation={userDonation}
+          />
+        ))}
       </div>
     </div>
   )
 }
 
-export function DonateButton(): JSX.Element {
+export function DonateButton({
+  userDonations,
+}: {
+  userDonations: UserDonation[]
+}): JSX.Element {
+  const hasDonationLinks = userDonations.length > 0
+
   return (
     <Popover>
       {({ open }) => (
@@ -61,16 +83,18 @@ export function DonateButton(): JSX.Element {
             leaveTo="opacity-0 translate-y-1"
           >
             <Popover.Panel className="absolute left-1/2 z-10 mt-3 w-screen max-w-sm -translate-x-1/2 transform px-4 sm:px-0 lg:max-w-xl">
-              <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
-                <div className="relative bg-white p-7">
-                  <UserDonations />
+              <div className="overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+                <div className="relative p-7">
+                  {hasDonationLinks ? (
+                    <UserDonations userDonations={userDonations} />
+                  ) : (
+                    <p className="text-center">
+                      This user has not provided any donation links.
+                    </p>
+                  )}
                 </div>
 
                 <div className="bg-dlight p-4">
-                  {/* <a
-                      href="##"
-                      className="flow-root rounded-md px-2 py-2 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
-                    > */}
                   <p className="font-medium text-sm">
                     All donations go <span className="underline">directly</span>{' '}
                     to the author of the post.
@@ -79,7 +103,6 @@ export function DonateButton(): JSX.Element {
                     As servers are expensive, we might take a cut in the future
                     - but not yet.
                   </p>
-                  {/* </a> */}
                 </div>
               </div>
             </Popover.Panel>

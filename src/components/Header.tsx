@@ -2,7 +2,6 @@ import { useAuth } from '../services/auth-service'
 import { useRouteChange } from '../util/use-route-change'
 import { Avatar } from './Avatar'
 import { Button } from './Button'
-import { Link } from './Link'
 import { LoadingAnimation } from './LoadingAnimation'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { MenuIcon, XIcon, BellIcon } from '@heroicons/react/outline'
@@ -17,6 +16,7 @@ import {
 import { CategorySelect } from './CategorySelect'
 import { Modal, useModal } from './modal'
 import { ROUTES } from '../services/routing'
+import { Link } from './link'
 
 const NAV_ROUTES = [
   { name: 'home', href: ROUTES.home },

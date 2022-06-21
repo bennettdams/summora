@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from './Link'
+import { Link } from './link'
 import { ViewsIcon } from './ViewsIcon'
 import { CommentsIcon } from './CommentsIcon'
 import { Box } from './Box'

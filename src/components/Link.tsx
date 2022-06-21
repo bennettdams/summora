@@ -23,3 +23,17 @@ export function Link({
     </NextLink>
   )
 }
+
+export function LinkExternal({
+  to,
+  children,
+}: {
+  to: string
+  children: ReactNode
+}): JSX.Element {
+  return (
+    <a href={to} target="_blank" rel="noreferrer">
+      <div className="cursor-pointer">{children}</div>
+    </a>
+  )
+}

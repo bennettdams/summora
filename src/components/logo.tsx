@@ -4,24 +4,23 @@ function createAssetPath(assetId: string): string {
   return `/assets/${assetId}`
 }
 
-const ASSETS = { paypal: 'logo-paypal', bitcoin: 'logo-bitcoin' } as const
+const LOGOS: Record<
+  string,
+  { assetId: string; width: number; height: number }
+> = {
+  paypal: { assetId: 'logo-paypal', width: 72, height: 16 },
+  bitcoin: { assetId: 'logo-bitcoin', width: 72, height: 72 },
+} as const
 
-function Logo({ assetId }: { assetId: string }): JSX.Element {
+export function Logo({ logoId }: { logoId: string }): JSX.Element {
+  const logo = LOGOS[logoId]
   return (
     <Image
-      src={createAssetPath(`${assetId}.svg`)}
+      src={createAssetPath(`${logo.assetId}.svg`)}
       className="inline"
-      alt={assetId}
-      width={72}
-      height={16}
+      alt={logo.assetId}
+      width={logo.width}
+      height={logo.height}
     />
   )
-}
-
-export function LogoPayPal(): JSX.Element {
-  return <Logo assetId={ASSETS.paypal} />
-}
-
-export function LogoBitcoin(): JSX.Element {
-  return <Logo assetId={ASSETS.bitcoin} />
 }
