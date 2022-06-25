@@ -48,7 +48,17 @@ async function updatePost(
           },
         },
         author: {
-          select: { username: true, imageId: true, imageBlurDataURL: true },
+          select: {
+            username: true,
+            imageId: true,
+            imageBlurDataURL: true,
+            donationLinks: {
+              select: {
+                address: true,
+                donationProvider: { select: { logoId: true, name: true } },
+              },
+            },
+          },
         },
         segments: {
           orderBy: { createdAt: 'asc' },
