@@ -9,7 +9,7 @@ const LOGOS: Record<
   { assetId: string; width: number; height: number }
 > = {
   paypal: { assetId: 'logo-paypal', width: 72, height: 16 },
-  bitcoin: { assetId: 'logo-bitcoin', width: 72, height: 72 },
+  bitcoin: { assetId: 'logo-bitcoin', width: 24, height: 24 },
 } as const
 
 export function Logo({ logoId }: { logoId: string }): JSX.Element {

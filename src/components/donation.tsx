@@ -10,12 +10,21 @@ function DonationLink({
   userDonation: UserDonation
 }): JSX.Element {
   return (
-    <LinkExternal to={userDonation.donationAddress}>
-      <div className="flex flex-1 items-center text-lg hover:text-dlila hover:underline">
-        <Logo logoId={userDonation.logoId} />
-        <span className="ml-2">{userDonation.donationProviderName}</span>
-      </div>
-    </LinkExternal>
+    <div className="flex-1">
+      <LinkExternal to={userDonation.donationAddress}>
+        <div className="flex">
+          <div className="grid w-1/2 place-items-center">
+            <Logo logoId={userDonation.logoId} />
+          </div>
+
+          <div className="w-1/2 text-left">
+            <span className="underline">
+              {userDonation.donationProviderName}
+            </span>
+          </div>
+        </div>
+      </LinkExternal>
+    </div>
   )
 }
 
@@ -35,6 +44,7 @@ function UserDonations({
       <div className="grid items-center justify-items-end pr-6 text-right">
         <p className="text-xl text-dlila">Donate via</p>
       </div>
+
       <div className="flex flex-col space-y-4 pl-6 text-left">
         {userDonations.map((userDonation) => (
           <DonationLink
