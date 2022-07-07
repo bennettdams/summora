@@ -3,7 +3,7 @@ import { prisma } from '../../../../prisma/prisma'
 import { Prisma } from '@prisma/client'
 import { logAPI } from '../../../../util/logger'
 import { ApiPostUpdateRequestBody } from '../../../../services/api-service'
-import { dbFindPost, DbFindPost } from '../../../../lib/db'
+import { dbFindPost, DbFindPost, postInclude } from '../../../../lib/db'
 
 export type ApiPost = DbFindPost
 export type ApiPostUpdate = Prisma.PromiseReturnType<typeof updatePost>
@@ -38,44 +38,8 @@ async function updatePost(
           ? undefined
           : { set: postToUpdate.tagIds.map((tagId) => ({ id: tagId })) },
       },
-      include: {
-        category: true,
-        tags: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-          },
-        },
-        author: {
-          select: {
-            username: true,
-            imageId: true,
-            imageBlurDataURL: true,
-            donationLinks: {
-              select: {
-                address: true,
-                donationProvider: { select: { logoId: true, name: true } },
-              },
-            },
-          },
-        },
-        segments: {
-          orderBy: { createdAt: 'asc' },
-          include: { items: { orderBy: { createdAt: 'asc' } } },
-        },
-        comments: {
-          include: {
-            author: {
-              select: { username: true, imageId: true, imageBlurDataURL: true },
-            },
-            upvotedBy: { select: { userId: true } },
-            downvotedBy: { select: { userId: true } },
-          },
-          orderBy: { createdAt: 'asc' },
-        },
-        likedBy: { select: { userId: true } },
-      },
+      // same `include` as the usual "get post" fetcher so we can use the same React Query type
+      include: postInclude,
     })
   } catch (error) {
     throw new Error(`Error while updating post with ID ${postId}: ${error}`)

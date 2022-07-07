@@ -46,48 +46,51 @@ export async function dbFindPosts() {
   }
 }
 
+/** Reusable `post include` statement, e.g. for "find" or "update" methods. */
+export const postInclude = Prisma.validator<Prisma.PostInclude>()({
+  category: true,
+  tags: {
+    select: {
+      id: true,
+      title: true,
+      description: true,
+    },
+  },
+  author: {
+    select: {
+      username: true,
+      imageId: true,
+      imageBlurDataURL: true,
+      donationLinks: {
+        select: {
+          address: true,
+          donationProvider: { select: { logoId: true, name: true } },
+        },
+      },
+    },
+  },
+  segments: {
+    orderBy: { createdAt: 'asc' },
+    include: { items: { orderBy: { createdAt: 'asc' } } },
+  },
+  comments: {
+    include: {
+      author: {
+        select: { username: true, imageId: true, imageBlurDataURL: true },
+      },
+      upvotedBy: { select: { userId: true } },
+      downvotedBy: { select: { userId: true } },
+    },
+    orderBy: { createdAt: 'asc' },
+  },
+  likedBy: { select: { userId: true } },
+})
+
 export type DbFindPost = Prisma.PromiseReturnType<typeof dbFindPost>
 export async function dbFindPost(postId: string) {
   return await prisma.post.findUnique({
     where: { id: postId },
-    include: {
-      category: true,
-      tags: {
-        select: {
-          id: true,
-          title: true,
-          description: true,
-        },
-      },
-      author: {
-        select: {
-          username: true,
-          imageId: true,
-          imageBlurDataURL: true,
-          donationLinks: {
-            select: {
-              address: true,
-              donationProvider: { select: { logoId: true, name: true } },
-            },
-          },
-        },
-      },
-      segments: {
-        orderBy: { createdAt: 'asc' },
-        include: { items: { orderBy: { createdAt: 'asc' } } },
-      },
-      comments: {
-        include: {
-          author: {
-            select: { username: true, imageId: true, imageBlurDataURL: true },
-          },
-          upvotedBy: { select: { userId: true } },
-          downvotedBy: { select: { userId: true } },
-        },
-        orderBy: { createdAt: 'asc' },
-      },
-      likedBy: { select: { userId: true } },
-    },
+    include: postInclude,
   })
 }
 
@@ -108,44 +111,7 @@ export async function dbCreatePost(
         author: { connect: { userId } },
         category: { connect: { id: postToCreate.categoryId } },
       },
-      include: {
-        category: true,
-        tags: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-          },
-        },
-        author: {
-          select: {
-            username: true,
-            imageId: true,
-            imageBlurDataURL: true,
-            donationLinks: {
-              select: {
-                address: true,
-                donationProvider: { select: { logoId: true, name: true } },
-              },
-            },
-          },
-        },
-        segments: {
-          orderBy: { createdAt: 'asc' },
-          include: { items: { orderBy: { createdAt: 'asc' } } },
-        },
-        comments: {
-          include: {
-            author: {
-              select: { username: true, imageId: true, imageBlurDataURL: true },
-            },
-            upvotedBy: { select: { userId: true } },
-            downvotedBy: { select: { userId: true } },
-          },
-          orderBy: { createdAt: 'asc' },
-        },
-        likedBy: { select: { userId: true } },
-      },
+      include: postInclude,
     })
   } catch (error) {
     throw new Error(`Error while creating post: ${error}`)
