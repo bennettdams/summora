@@ -1,7 +1,31 @@
+import { Prisma } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { DbFindUser, dbFindUser } from '../../../../lib/db'
+import { ApiUserUpdateRequestBody } from '../../../../services/api-service'
+import { getUserByCookie } from '../../../../services/auth-service'
 
 export type ApiUser = DbFindUser
+
+export type ApiUserUpdate = Prisma.PromiseReturnType<typeof updateUser>
+
+async function updateUser({
+  userId,
+  userToUpdate,
+}: {
+  userId: string
+  userToUpdate: ApiUserUpdateRequestBody
+}) {
+  try {
+    return await prisma.user.update({
+      where: { userId },
+      data: {
+        donationLinks: userToUpdate.donationLinks,
+      },
+    })
+  } catch (error) {
+    throw new Error(`Error while updating user with ID ${userId}: ${error}`)
+  }
+}
 
 export default async function _apiUser(
   req: NextApiRequest,
@@ -9,6 +33,7 @@ export default async function _apiUser(
 ): Promise<void> {
   const {
     query: { userId },
+    body: requestBody,
     method,
   } = req
 
@@ -27,8 +52,30 @@ export default async function _apiUser(
         }
         break
       }
+      case 'PUT': {
+        const user = await getUserByCookie(req)
+        const userIdAuth = user.userAuth?.id
+
+        if (!userIdAuth) {
+          res.status(401).end('Unauthenticated!')
+        } else if (userIdAuth !== userId) {
+          res.status(403).end('Not authorized for changing this user.')
+        } else {
+          // TODO parse
+          const userToUpdate: ApiUserUpdateRequestBody = requestBody
+
+          const userUpdated: ApiUserUpdate = await updateUser({
+            userId,
+            userToUpdate,
+          })
+
+          res.status(200).json(userUpdated)
+        }
+
+        break
+      }
       default: {
-        res.setHeader('Allow', ['GET'])
+        res.setHeader('Allow', ['GET', 'PUT'])
         res.status(405).end(`Method ${method} Not Allowed`)
       }
     }
