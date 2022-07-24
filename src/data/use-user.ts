@@ -10,6 +10,7 @@ import { createHydrationHandler } from '../services/hydration-service'
 import {
   apiFetchUser,
   apiImageUploadAvatars,
+  apiUpdateUser,
   transformApiUser,
 } from '../services/api-service'
 import { useState } from 'react'
@@ -45,13 +46,21 @@ export function useUser(userId: string) {
     }
   )
 
-  const { updateUserImageIdMutation } = useUserMutation(userId)
+  const { updateUserImageIdMutation, updateUserMutation } =
+    useUserMutation(userId)
 
   return {
     user: data ?? null,
-    isLoading: isLoading || updateUserImageIdMutation.isLoading,
-    isError: isError || updateUserImageIdMutation.isError,
+    isLoading:
+      isLoading ||
+      updateUserImageIdMutation.isLoading ||
+      updateUserMutation.isLoading,
+    isError:
+      isError ||
+      updateUserImageIdMutation.isError ||
+      updateUserMutation.isError,
     updateUserImageId: updateUserImageIdMutation.mutateAsync,
+    updateUser: updateUserMutation.mutateAsync,
   }
 }
 
@@ -75,5 +84,21 @@ function useUserMutation(userId: string) {
     },
   })
 
-  return { updateUserImageIdMutation }
+  const updateUserMutation = useMutation(apiUpdateUser, {
+    onSuccess: (data) => {
+      if (data.result) {
+        const userUpdated = data.result
+        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
+          !prevData
+            ? null
+            : {
+                ...prevData,
+                ...userUpdated,
+              }
+        )
+      }
+    },
+  })
+
+  return { updateUserImageIdMutation, updateUserMutation }
 }

@@ -127,7 +127,11 @@ export async function apiFetchUser(
 }
 
 export type ApiUserUpdateRequestBody = {
-  donationLinks: Prisma.UserUpdateInput['donationLinks']
+  donationLinks?: {
+    donationLinkId?: string
+    donationProviderId: string
+    address: string
+  }[]
 }
 
 export async function apiUpdateUser({

@@ -16,12 +16,26 @@ async function updateUser({
   userToUpdate: ApiUserUpdateRequestBody
 }) {
   try {
-    return await prisma.user.update({
-      where: { userId },
-      data: {
-        donationLinks: userToUpdate.donationLinks,
-      },
-    })
+    const donationLinks = userToUpdate.donationLinks
+
+    if (donationLinks) {
+      await prisma.$transaction(
+        donationLinks.map((donationLink) => {
+          const { donationLinkId, donationProviderId, address } = donationLink
+
+          return prisma.donationLink.upsert({
+            where: { donationLinkId },
+            create: { address, donationProviderId, userId },
+            update: {
+              address,
+              donationProviderId,
+            },
+          })
+        })
+      )
+    }
+
+    return await dbFindUser(userId)
   } catch (error) {
     throw new Error(`Error while updating user with ID ${userId}: ${error}`)
   }
