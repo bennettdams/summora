@@ -6,6 +6,7 @@ import { useUser } from '../../data/use-user'
 import { PostsList } from '../post'
 import { StatisticsCard } from '../StatisticsCard'
 import { useUserPosts } from '../../data/use-user-posts'
+import { UserDonations } from '../donation'
 
 type QueryReturn = ReturnType<typeof useUser>
 // exclude null, because the page will return "notFound" if user is null
@@ -91,6 +92,22 @@ function UserPageInternal({
           <StatisticsCard
             label="Likes received"
             no={userStatistics.noOfLikesReceived}
+          />
+        </div>
+      </PageSection>
+
+      <PageSection label="Donation links">
+        <div className="mx-auto w-full md:w-1/2 lg:w-1/3">
+          <UserDonations
+            isEditMode={true}
+            userId={userId}
+            userDonations={user.donationLinks.map((donationLink) => ({
+              donationLinkId: donationLink.donationLinkId,
+              donationProviderId: donationLink.donationProviderId,
+              donationProviderName: donationLink.donationProvider.name,
+              donationAddress: donationLink.address,
+              logoId: donationLink.donationProvider.logoId,
+            }))}
           />
         </div>
       </PageSection>

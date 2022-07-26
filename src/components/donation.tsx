@@ -1,6 +1,10 @@
 import { Popover, Transition } from '@headlessui/react'
-import { Fragment } from 'react'
-import { IconDonate, IconArrowDown } from './Icon'
+import { FormEvent, Fragment, useState } from 'react'
+import { useUser } from '../data/use-user'
+import { ApiUserUpdateRequestBody } from '../services/api-service'
+import { Button } from './Button'
+import { FormInput } from './FormInput'
+import { IconDonate, IconArrowDown, IconCheck, IconX } from './Icon'
 import { LinkExternal } from './link'
 import { Logo } from './Logo'
 
@@ -10,8 +14,8 @@ function DonationLink({
   userDonation: UserDonation
 }): JSX.Element {
   return (
-    <div className="flex-1">
-      <LinkExternal to={userDonation.donationAddress}>
+    <LinkExternal to={userDonation.donationAddress}>
+      <div className="flex-1 rounded-lg p-2 hover:bg-dbrown hover:text-white">
         <div className="flex">
           <div className="grid w-1/2 place-items-center">
             <Logo logoId={userDonation.logoId} />
@@ -23,36 +27,138 @@ function DonationLink({
             </span>
           </div>
         </div>
-      </LinkExternal>
-    </div>
+      </div>
+    </LinkExternal>
   )
 }
 
 type UserDonation = {
+  donationLinkId: string
+  donationProviderId: string
   logoId: string
   donationProviderName: string
   donationAddress: string
 }
 
-function UserDonations({
+const formId = 'form-donation-links'
+
+type Inputs = {
+  donationLinks?: {
+    [donationLinkId: string]: {
+      donationProviderId: string
+      address: string
+    }
+  }
+  newItem?: string | null
+}
+
+function UserDonationsUpdates({
+  userId,
   userDonations,
 }: {
+  userId: string
   userDonations: UserDonation[]
-}): JSX.Element {
-  return (
-    <div className="grid h-full grid-cols-2">
-      <div className="grid items-center justify-items-end pr-6 text-right">
-        <p className="text-xl text-dlila">Donate via</p>
-      </div>
+}) {
+  const { updateUser } = useUser(userId)
 
-      <div className="flex flex-col space-y-4 pl-6 text-left">
-        {userDonations.map((userDonation) => (
+  const [inputs, setInputs] = useState<Inputs>()
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+
+    if (inputs) {
+}): JSX.Element {
+      if (inputs.donationLinks) {
+        const tra: ApiUserUpdateRequestBody['donationLinks'] = Object.entries(
+          inputs.donationLinks
+        ).map(([donationLinkId, inputNew]) => ({
+          donationLinkId: donationLinkId,
+          donationProviderId: inputNew.donationProviderId,
+          address: inputNew.address,
+        }))
+
+        await updateUser({
+          userId,
+          userToUpdate: {
+            donationLinks: tra,
+          },
+        })
+      }
+    }
+  }
+
+  return (
+    <form
+      id={formId}
+      onSubmit={handleSubmit}
+      className="mx-auto mb-10 w-full space-y-4 lg:w-2/3"
+    >
+      {userDonations.map((don) => (
+        <div className="flex" key={don.donationLinkId}>
+          <span>{don.donationProviderName}</span>
+          <FormInput
+            placeholder="Link.."
+            initialValue={don.donationAddress}
+            onChange={(input) =>
+              setInputs((prev) => ({
+                ...prev,
+                donationLinks: {
+                  ...prev?.donationLinks,
+                  [don.donationLinkId]: {
+                    address: input,
+                    donationProviderId: don.donationProviderId,
+                  },
+                },
+              }))
+            }
+            autoFocus={false}
+            formId={formId}
+          />
+        </div>
+      ))}
+
+      <Button
+        isSubmit
+        onClick={() => {
+          // TODO placeholder, remove when we have FormSubmit button
+        }}
+      >
+        <IconCheck /> Save
+      </Button>
+      <Button
+        onClick={(e) => {
+          // prevent form submit
+          e.preventDefault()
+        }}
+      >
+        <IconX /> Cancel
+      </Button>
+    </form>
+  )
+}
+
+export function UserDonations({
+  userDonations,
+  isEditMode,
+  userId,
+}: {
+  userDonations: UserDonation[]
+} & (
+  | { isEditMode?: false; userId?: never }
+  | { isEditMode: true; userId: string }
+)): JSX.Element {
+  return (
+    <div className="flex flex-col space-y-4 pl-6 text-left">
+      {isEditMode === true ? (
+        <UserDonationsUpdates userId={userId} userDonations={userDonations} />
+      ) : (
+        userDonations.map((userDonation) => (
           <DonationLink
             key={userDonation.donationProviderName}
             userDonation={userDonation}
           />
-        ))}
-      </div>
+        ))
+      )}
     </div>
   )
 }
@@ -96,7 +202,13 @@ export function DonateButton({
               <div className="overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
                 <div className="relative p-7">
                   {hasDonationLinks ? (
-                    <UserDonations userDonations={userDonations} />
+                    <div className="grid h-full grid-cols-2">
+                      <div className="grid items-center justify-items-end pr-6 text-right">
+                        <p className="text-xl text-dlila">Donate via</p>
+                      </div>
+
+                      <UserDonations userDonations={userDonations} />
+                    </div>
                   ) : (
                     <p className="text-center">
                       This user has not provided any donation links.

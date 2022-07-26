@@ -374,6 +374,9 @@ function PostPageInternal({
               <DonateButton
                 userDonations={post.author.donationLinks.map(
                   (donationLink) => ({
+                    donationLinkId: donationLink.donationLinkId,
+                    donationProviderId:
+                      donationLink.donationProvider.donationProviderId,
                     logoId: donationLink.donationProvider.logoId,
                     donationProviderName: donationLink.donationProvider.name,
                     donationAddress: donationLink.address,
