@@ -7,6 +7,7 @@ import { PostsList } from '../post'
 import { StatisticsCard } from '../StatisticsCard'
 import { useUserPosts } from '../../data/use-user-posts'
 import { UserDonations } from '../donation'
+import { DateTime } from '../DateTime'
 
 type QueryReturn = ReturnType<typeof useUser>
 // exclude null, because the page will return "notFound" if user is null
@@ -51,13 +52,13 @@ function UserPageInternal({
               <p>
                 <span>Member since</span>
                 <span className="ml-2 text-lg">
-                  {new Date(user.createdAt).toISOString()}
+                  <DateTime format="MM-DD hh:mm" date={user.createdAt} />
                 </span>
               </p>
               <p>
                 <span>Last update</span>
                 <span className="ml-2 text-lg">
-                  {new Date(user.updatedAt).toISOString()}
+                  <DateTime format="MM-DD hh:mm" date={user.updatedAt} />
                 </span>
               </p>
             </div>

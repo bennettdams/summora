@@ -13,6 +13,7 @@ import { IconSize } from './Icon'
 import { useHasMounted } from '../util/use-has-mounted'
 import { ROUTES } from '../services/routing'
 import { NoContent } from './NoContent'
+import { DateTime } from './DateTime'
 
 type PostsPostsList =
   | null
@@ -129,7 +130,7 @@ function PostsListItem({
               </div>
               <div className="flex-1">
                 <span className="inline-flex items-center text-sm">
-                  {post.updatedAt.toLocaleDateString()}
+                  <DateTime format="MM-DD hh:mm" date={post.updatedAt} />
                 </span>
               </div>
             </div>
@@ -185,7 +186,7 @@ function PostsListItemShort({
             <ViewsIcon noOfViews={post.noOfViews} />
             <CommentsIcon noOfComments={post.noOfComments} />
             <span className="inline-flex items-center text-sm leading-none">
-              {post.updatedAt.toLocaleDateString()}
+              <DateTime format="MM-DD hh:mm" date={post.updatedAt} />
             </span>
           </div>
         </div>

@@ -32,6 +32,7 @@ import { CategorySelect } from '../../CategorySelect'
 import { ROUTES } from '../../../services/routing'
 import { NoContent } from '../../NoContent'
 import { DonateButton } from '../../donation'
+import { DateTime } from '../../DateTime'
 
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
@@ -362,7 +363,9 @@ function PostPageInternal({
 
             <div className="flex items-center text-sm">
               <IconDate />
-              <span className="ml-1">{post.createdAt.toISOString()}</span>
+              <span className="ml-1">
+                <DateTime format="MM-DD hh:mm" date={post.createdAt} />
+              </span>
             </div>
           </div>
 
@@ -689,7 +692,9 @@ function Comment({
           </Link>
 
           <div className="flex items-center space-x-2 leading-none text-zinc-400">
-            <span className="ml-2">{comment.createdAt.toISOString()}</span>
+            <span className="ml-2">
+              <DateTime format="MM-DD hh:mm" date={comment.createdAt} />
+            </span>
           </div>
 
           <div className="group ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-dorange">
