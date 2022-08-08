@@ -23,14 +23,23 @@ async function updateUser({
         donationLinks.map((donationLink) => {
           const { donationLinkId, donationProviderId, address } = donationLink
 
-          return prisma.donationLink.upsert({
-            where: { donationLinkId },
-            create: { address, donationProviderId, userId },
-            update: {
-              address,
-              donationProviderId,
-            },
-          })
+          if (donationLinkId) {
+            return prisma.donationLink.update({
+              where: { donationLinkId },
+              data: {
+                address,
+                donationProvider: { connect: { donationProviderId } },
+              },
+            })
+          } else {
+            return prisma.donationLink.create({
+              data: {
+                address,
+                donationProvider: { connect: { donationProviderId } },
+                User: { connect: { userId } },
+              },
+            })
+          }
         })
       )
     }

@@ -98,7 +98,7 @@ function UserPageInternal({
       </PageSection>
 
       <PageSection label="Donation links">
-        <div className="mx-auto w-full md:w-1/2 lg:w-1/3">
+        <div className="mx-auto w-full md:px-10 lg:px-20">
           <UserDonations
             isEditMode={true}
             userId={userId}

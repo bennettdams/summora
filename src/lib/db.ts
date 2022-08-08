@@ -8,6 +8,17 @@ export async function dbFindUser(userId: string) {
     where: {
       userId,
     },
+    include: {
+      // TODO Not a good idea, only needed for user page. Avatar also uses this, where donation links are unnecessary.
+      donationLinks: {
+        select: {
+          donationLinkId: true,
+          address: true,
+          donationProviderId: true,
+          donationProvider: { select: { logoId: true, name: true } },
+        },
+      },
+    },
   })
 }
 
@@ -63,8 +74,11 @@ export const postInclude = Prisma.validator<Prisma.PostInclude>()({
       imageBlurDataURL: true,
       donationLinks: {
         select: {
+          donationLinkId: true,
           address: true,
-          donationProvider: { select: { logoId: true, name: true } },
+          donationProvider: {
+            select: { donationProviderId: true, logoId: true, name: true },
+          },
         },
       },
     },

@@ -63,50 +63,72 @@ function UserDonationsUpdates({
 
   const [inputs, setInputs] = useState<Inputs>()
 
+  // function resetInputs() {
+  //   setInputs({ newItem: null })
+  // }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
 
     if (inputs) {
-}): JSX.Element {
+      const inputsForUpdate: ApiUserUpdateRequestBody['donationLinks'] = []
       if (inputs.donationLinks) {
-        const tra: ApiUserUpdateRequestBody['donationLinks'] = Object.entries(
-          inputs.donationLinks
-        ).map(([donationLinkId, inputNew]) => ({
-          donationLinkId: donationLinkId,
-          donationProviderId: inputNew.donationProviderId,
-          address: inputNew.address,
-        }))
+        inputsForUpdate.push(
+          ...Object.entries(inputs.donationLinks).map(
+            ([donationLinkId, inputNew]) => ({
+              donationLinkId: donationLinkId,
+              donationProviderId: inputNew.donationProviderId,
+              address: inputNew.address,
+            })
+          )
+        )
+      }
 
+      if (inputs.newItem) {
+        inputsForUpdate.push({
+          address: inputs.newItem,
+          donationProviderId: 'bitcoin',
+        })
+      }
+
+      if (inputsForUpdate.length > 0) {
         await updateUser({
           userId,
           userToUpdate: {
-            donationLinks: tra,
+            donationLinks: inputsForUpdate,
           },
         })
+
+        setInputs({ newItem: null })
       }
     }
+
+    // resetEditMode()
   }
 
   return (
     <form
       id={formId}
       onSubmit={handleSubmit}
-      className="mx-auto mb-10 w-full space-y-4 lg:w-2/3"
+      className="mx-auto mb-10 w-full space-y-4"
     >
-      {userDonations.map((don) => (
-        <div className="flex" key={don.donationLinkId}>
-          <span>{don.donationProviderName}</span>
+      {userDonations.map((userDonation) => (
+        <div className="flex items-center" key={userDonation.donationLinkId}>
+          <span className="w-1/3 text-ellipsis">
+            {userDonation.donationProviderName}
+          </span>
+
           <FormInput
             placeholder="Link.."
-            initialValue={don.donationAddress}
+            initialValue={userDonation.donationAddress}
             onChange={(input) =>
               setInputs((prev) => ({
                 ...prev,
                 donationLinks: {
                   ...prev?.donationLinks,
-                  [don.donationLinkId]: {
+                  [userDonation.donationLinkId]: {
                     address: input,
-                    donationProviderId: don.donationProviderId,
+                    donationProviderId: userDonation.donationProviderId,
                   },
                 },
               }))
@@ -117,22 +139,44 @@ function UserDonationsUpdates({
         </div>
       ))}
 
-      <Button
-        isSubmit
-        onClick={() => {
-          // TODO placeholder, remove when we have FormSubmit button
-        }}
-      >
-        <IconCheck /> Save
-      </Button>
-      <Button
-        onClick={(e) => {
-          // prevent form submit
-          e.preventDefault()
-        }}
-      >
-        <IconX /> Cancel
-      </Button>
+      {/* NEW LINK */}
+      <p className="text-center text-xl text-dlila">..or add a new link:</p>
+
+      <div className="flex items-center">
+        <span className="w-1/3 text-ellipsis">Provider..</span>
+
+        <FormInput
+          placeholder="New link.."
+          formId={formId}
+          initialValue={inputs?.newItem ?? undefined}
+          onChange={(input) =>
+            setInputs((prev) => ({
+              ...prev,
+              newItem: input,
+            }))
+          }
+        />
+      </div>
+
+      <div className="flex items-center justify-center space-x-4">
+        <Button
+          isSubmit
+          onClick={() => {
+            // TODO placeholder, remove when we have FormSubmit button
+          }}
+        >
+          <IconCheck /> Save
+        </Button>
+        <Button
+          onClick={(e) => {
+            // prevent form submit
+            e.preventDefault()
+            // resetEditMode()
+          }}
+        >
+          <IconX /> Cancel
+        </Button>
+      </div>
     </form>
   )
 }
