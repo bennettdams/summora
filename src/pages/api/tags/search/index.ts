@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { Prisma } from '@prisma/client'
 import { logAPI } from '../../../../util/logger'
 import { ApiTagsSearchCreateRequestBody } from '../../../../services/api-service'
+import { prisma } from '../../../../prisma/prisma'
 
 export type ApiTagsSearch = Prisma.PromiseReturnType<typeof findTags>
 

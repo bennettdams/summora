@@ -111,7 +111,7 @@ export function AuthContextProvider({
             fillAuth(session)
           }
         }
-        // TODO need for initial render? right now only executed on auth change
+        // TODO needed for initial render? right now only executed on auth change
         await setUpSSRAuthSupabase(session, event)
       }
     )

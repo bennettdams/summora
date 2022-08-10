@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { DbFindUser, dbFindUser } from '../../../../lib/db'
+import { prisma } from '../../../../prisma/prisma'
 import { ApiUserUpdateRequestBody } from '../../../../services/api-service'
 import { getUserByCookie } from '../../../../services/auth-service'
 
