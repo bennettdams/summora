@@ -1,8 +1,9 @@
-import { ChangeEvent, FormEvent, ReactNode, useState } from 'react'
+import { ChangeEvent, FormEvent, ReactNode, useEffect, useState } from 'react'
 
 export function FormInput({
   placeholder,
   children,
+  inputId,
   onSubmit,
   onChange,
   autoFocus = true,
@@ -10,6 +11,7 @@ export function FormInput({
   resetOnSubmit = false,
   formId,
 }: {
+  inputId: string
   placeholder?: string
   children?: ReactNode
   autoFocus?: boolean
@@ -27,7 +29,8 @@ export function FormInput({
     }
 )): JSX.Element {
   const [inputValue, setInputValue] = useState<string>(initialValue)
-  const [id] = useState(Math.random())
+  useEffect(() => setInputValue(initialValue), [initialValue])
+
   const [isDisabled, setIsDisabled] = useState(false)
 
   async function handleSubmit(event: FormEvent) {
@@ -49,14 +52,17 @@ export function FormInput({
     setIsDisabled(false)
   }
 
+  const inputIdGlobal = `inputId ${inputId}`
+
   const internals = (
     <>
-      <label htmlFor={`inputId ${id}`} className="block text-sm font-semibold">
+      <label htmlFor={inputIdGlobal} className="block text-sm font-semibold">
         {children}
       </label>
       <input
         type="text"
         name="input"
+        id={inputIdGlobal}
         form={formId}
         value={inputValue}
         disabled={isDisabled}
@@ -68,7 +74,6 @@ export function FormInput({
           onChange?.(inputValueNew)
         }}
         onSubmit={handleSubmit}
-        id={`inputId ${id}`}
         className="mt-1 block w-full rounded-md border-dbrown shadow-md focus:border-dorange focus:ring-dorange disabled:cursor-not-allowed disabled:bg-gray-100 sm:text-sm"
       />
     </>

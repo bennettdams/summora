@@ -276,6 +276,7 @@ function PostPageInternal({
 
               <div className="mt-4 space-y-2">
                 <FormInput
+                  inputId={`${formId}-title`}
                   placeholder="Title.."
                   initialValue={post.title}
                   onChange={(input) =>
@@ -287,6 +288,7 @@ function PostPageInternal({
                 </FormInput>
 
                 <FormInput
+                  inputId={`${formId}-subtitle`}
                   placeholder="Subtitle.."
                   initialValue={post.subtitle ?? ''}
                   onChange={(input) =>
@@ -429,10 +431,13 @@ function PostPageInternal({
                   <span className="font-bold">{inputTagSearch}</span>
                   {isFetching && <LoadingAnimation size="small" />}
                 </div>
+
                 <FormInput
+                  inputId="tags-search"
                   initialValue={inputTagSearch}
                   onChange={async (inputNew) => setInputTagSearch(inputNew)}
                 />
+
                 <div className="-m-1 mt-2 flex flex-wrap">
                   {tagsSearched &&
                     filterTags(tagsSearched).map((tag) => (

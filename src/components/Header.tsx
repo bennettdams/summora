@@ -274,6 +274,7 @@ function CreatePostModal() {
           <form className="w-full" id={formId} onSubmit={handleSubmit}>
             <div className="mt-4 space-y-10">
               <FormInput
+                inputId={`${formId}-title`}
                 placeholder="Title.."
                 initialValue=""
                 onChange={(input) => {
@@ -287,6 +288,7 @@ function CreatePostModal() {
               </FormInput>
 
               <FormInput
+                inputId={`${formId}-subtitle`}
                 placeholder="Subtitle.."
                 initialValue=""
                 onChange={(input) =>

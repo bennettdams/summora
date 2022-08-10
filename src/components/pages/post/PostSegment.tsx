@@ -169,6 +169,7 @@ export function PostSegment({
                 <div className="grow">
                   <FormInput
                     formId={formId}
+                    inputId={`${formId}-title`}
                     placeholder="Title.."
                     initialValue={segment.title}
                     onChange={(input) =>
@@ -177,6 +178,7 @@ export function PostSegment({
                   />
                   <FormInput
                     formId={formId}
+                    inputId={`${formId}-subtitle`}
                     placeholder="Subtitle.."
                     initialValue={segment.subtitle || ''}
                     onChange={(input) =>
@@ -242,6 +244,7 @@ export function PostSegment({
                   />
                   <div className="ml-4 w-full">
                     <FormInput
+                      inputId={`${formId}-new-item`}
                       key={Math.random()}
                       placeholder="New item"
                       formId={formId}

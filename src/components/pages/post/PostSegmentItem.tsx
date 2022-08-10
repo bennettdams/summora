@@ -34,6 +34,7 @@ export function PostSegmentItem({
         {isEditMode ? (
           <>
             <FormInput
+              inputId={`${item.id}-content`}
               initialValue={item.content}
               placeholder="Add some text.."
               resetOnSubmit
