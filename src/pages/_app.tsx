@@ -97,6 +97,8 @@ export default withTRPC<AppRouter>({
           },
         },
       },
+      // for SSR, it is maybe needed to include the headers here from context
+      // https://github.com/t3-oss/create-t3-app/issues/280
     }
   },
   /**
