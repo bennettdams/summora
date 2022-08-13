@@ -8,17 +8,6 @@ export async function dbFindUser(userId: string) {
     where: {
       userId,
     },
-    include: {
-      // TODO Not a good idea, only needed for user page. Avatar also uses this, where donation links are unnecessary.
-      donationLinks: {
-        select: {
-          donationLinkId: true,
-          address: true,
-          donationProviderId: true,
-          donationProvider: { select: { logoId: true, name: true } },
-        },
-      },
-    },
   })
 }
 

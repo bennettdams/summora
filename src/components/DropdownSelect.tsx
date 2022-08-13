@@ -4,7 +4,7 @@ import { Fragment, useState } from 'react'
 
 export interface DropdownItem {
   id: string
-  title: string
+  label: string
 }
 
 export function DropdownSelect({
@@ -12,7 +12,7 @@ export function DropdownSelect({
   initialItem,
   onChange,
 }: {
-  items: DropdownItem[]
+  items: DropdownItem[] | null
   initialItem?: DropdownItem
   onChange: (newItem: DropdownItem) => void
 }): JSX.Element {
@@ -32,7 +32,7 @@ export function DropdownSelect({
               Please select an item.
             </span>
           ) : (
-            <span className="block truncate">{selected.title}</span>
+            <span className="block truncate">{selected.label}</span>
           )}
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
             <SelectorIcon className="h-5 w-5 text-dorange" aria-hidden="true" />
@@ -45,37 +45,41 @@ export function DropdownSelect({
           leaveTo="opacity-0"
         >
           <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm md:w-52">
-            {items.map((item) => (
-              <Listbox.Option
-                key={item.id}
-                className={({ active }) =>
-                  `${active && 'bg-dorange text-white'}
+            {!items ? (
+              <p className="py-2 pl-10 pr-4">No options available</p>
+            ) : (
+              items.map((item) => (
+                <Listbox.Option
+                  key={item.id}
+                  className={({ active }) =>
+                    `${active && 'bg-dorange text-white'}
                       relative cursor-default select-none py-2 pl-10 pr-4`
-                }
-                value={item}
-              >
-                {({ selected, active }) => (
-                  <>
-                    <span
-                      className={`${
-                        selected ? 'font-semibold' : 'font-normal'
-                      } block truncate`}
-                    >
-                      {item.title}
-                    </span>
-                    {/* TODO does not work*/}
-                    {selected ? (
+                  }
+                  value={item}
+                >
+                  {({ selected, active }) => (
+                    <>
                       <span
-                        className={`${active && 'text-dorange'}
-                            absolute inset-y-0 left-0 flex items-center pl-3`}
+                        className={`${
+                          selected ? 'font-semibold' : 'font-normal'
+                        } block truncate`}
                       >
-                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                        {item.label}
                       </span>
-                    ) : null}
-                  </>
-                )}
-              </Listbox.Option>
-            ))}
+                      {/* TODO does not work*/}
+                      {selected ? (
+                        <span
+                          className={`${active && 'text-dorange'}
+                            absolute inset-y-0 left-0 flex items-center pl-3`}
+                        >
+                          <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                        </span>
+                      ) : null}
+                    </>
+                  )}
+                </Listbox.Option>
+              ))
+            )}
           </Listbox.Options>
         </Transition>
       </div>

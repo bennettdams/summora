@@ -86,7 +86,7 @@ model PostSegmentItem {
 
 model PostCategory {
   id          String @id
-  title       String
+  name        String
   description String
   Post        Post[]
 }
@@ -95,7 +95,7 @@ model PostTag {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  title       String
+  label       String
   description String
   // post
   posts       Post[]

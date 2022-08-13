@@ -9,6 +9,7 @@ import { useUserPosts } from '../../data/use-user-posts'
 import { UserDonations } from '../donation'
 import { DateTime } from '../DateTime'
 import { trpc } from '../../util/trpc'
+import { useAuth } from '../../services/auth-service'
 
 type QueryReturn = ReturnType<typeof useUser>
 // exclude null, because the page will return "notFound" if user is null
@@ -46,6 +47,7 @@ function UserPageInternal({
     'donationLink.byUserId',
     { userId },
   ])
+  const { userAuth } = useAuth()
 
   return (
     <Page>
@@ -106,7 +108,7 @@ function UserPageInternal({
       <PageSection label="Donation links">
         <div className="mx-auto w-full md:px-10 lg:px-20">
           <UserDonations
-            isEditMode={true}
+            isEditMode={userId === userAuth?.id}
             userId={userId}
             userDonations={
               !donationLinks

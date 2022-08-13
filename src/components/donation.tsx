@@ -222,7 +222,7 @@ export function UserDonations({
 }: {
   userDonations: UserDonation[]
 } & (
-  | { isEditMode?: false; userId?: never }
+  | { isEditMode?: false; userId?: string }
   | { isEditMode: true; userId: string }
 )): JSX.Element {
   return (
@@ -280,13 +280,13 @@ export function DonateButton({
               <div className="overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
                 <div className="relative p-7">
                   {hasDonationLinks ? (
-                    <div className="grid h-full grid-cols-2">
-                      <div className="grid items-center justify-items-end pr-6 text-right">
-                        <p className="text-xl text-dlila">Donate via</p>
-                      </div>
+                    <>
+                      <p className="mb-4 text-center text-xl text-dlila">
+                        Donate via..
+                      </p>
 
                       <UserDonations userDonations={userDonations} />
-                    </div>
+                    </>
                   ) : (
                     <p className="text-center">
                       This user has not provided any donation links.

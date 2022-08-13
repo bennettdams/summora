@@ -37,7 +37,10 @@ function UserNavbar() {
           <LoadingAnimation />
         ) : userAuth === null && !isLoadingAuth ? (
           <Link to={ROUTES.signIn}>
-            <Button onClick={() => console.info('here')}>Sign in</Button>
+            {/* TODO Should be a ButtonNav */}
+            <Button onClick={() => console.info('Signing in..')}>
+              Sign in
+            </Button>
           </Link>
         ) : (
           userAuth !== null &&

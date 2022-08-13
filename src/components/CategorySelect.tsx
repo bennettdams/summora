@@ -4,6 +4,10 @@ import { usePostCategories } from '../data/use-post-categories'
 import { DropdownItem, DropdownSelect } from './DropdownSelect'
 import { IconCategory } from './Icon'
 
+function createDropdownItem(category: PostCategory): DropdownItem {
+  return { id: category.id, label: category.name }
+}
+
 /**
  * Wherever this component is used, it would be wise to fill the cache
  * on the client with the categories, so the data hook does not need to fetch
@@ -28,11 +32,10 @@ export function CategorySelect({
         <div className="inline-block w-full">
           <DropdownSelect
             onChange={onSelect}
-            items={postCategories.map((category) => ({
-              id: category.id,
-              title: category.title,
-            }))}
-            initialItem={categoryInitial}
+            items={postCategories.map(createDropdownItem)}
+            initialItem={
+              !categoryInitial ? undefined : createDropdownItem(categoryInitial)
+            }
           />
         </div>
       ) : (
@@ -41,7 +44,7 @@ export function CategorySelect({
           <span className="ml-2 py-1.5">
             {!categoryInitial
               ? 'Please select a category'
-              : categoryInitial.title}
+              : categoryInitial.name}
           </span>
         </div>
       )}

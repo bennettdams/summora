@@ -16,6 +16,7 @@
     "cu": "npm run check-updates",
     "check": "npm run tc && npm run lint",
     "p:dev": "npx prisma migrate dev --schema ./src/prisma/schema.prisma",
+    "p:dev-create": "npx prisma migrate dev --create-only --schema ./src/prisma/schema.prisma",
     "p:create": "npx prisma migrate dev --create-only --schema ./src/prisma/schema.prisma",
     "p:studio": "npx prisma studio --schema ./src/prisma/schema.prisma",
     "p:reset": "npx prisma migrate reset --schema ./src/prisma/schema.prisma",
