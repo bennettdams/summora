@@ -31,6 +31,7 @@ export function CategorySelect({
       {shouldShowDropdown ? (
         <div className="inline-block w-full">
           <DropdownSelect
+            unselectedLabel="Please select a category."
             onChange={onSelect}
             items={postCategories.map(createDropdownItem)}
             initialItem={

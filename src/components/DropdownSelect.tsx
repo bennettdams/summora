@@ -11,10 +11,12 @@ export function DropdownSelect({
   items,
   initialItem,
   onChange,
+  unselectedLabel,
 }: {
   items: DropdownItem[] | null
   initialItem?: DropdownItem
   onChange: (newItem: DropdownItem) => void
+  unselectedLabel?: string
 }): JSX.Element {
   const [selected, setSelected] = useState(initialItem)
 
@@ -29,7 +31,7 @@ export function DropdownSelect({
         <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-dorange sm:text-sm">
           {!selected ? (
             <span className="block truncate italic">
-              Please select an item.
+              {unselectedLabel ?? 'Please select an item.'}
             </span>
           ) : (
             <span className="block truncate">{selected.label}</span>
