@@ -414,7 +414,7 @@ function PostPageInternal({
 
       <PageSection hideTopMargin>
         <TagsList
-          tags={post.tags.map((tag) => ({ id: tag.id, title: tag.title }))}
+          tags={post.tags.map((tag) => ({ id: tag.id, label: tag.label }))}
           onAddButtonClick={() => setIsShownTagSelection(true)}
           onRemoveClick={(tagIdToRemove) => handleRemoveTag(tagIdToRemove)}
           showAddButton={isPostEditable && !isShownTagSelection}

@@ -34,7 +34,7 @@ type PostsPostsList =
         imageId: string | null
         imageBlurDataURL: string | null
       }
-      tags: { id: string; title: string }[]
+      tags: { id: string; label: string }[]
     }[]
 
 type PostPostsList = NonNullable<PostsPostsList>[number]

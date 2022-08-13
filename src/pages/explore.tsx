@@ -19,7 +19,7 @@ async function findPostsViews(prisma: PrismaClient) {
         author: {
           select: { username: true, imageId: true, imageBlurDataURL: true },
         },
-        category: { select: { title: true } },
+        category: { select: { name: true } },
       },
     })
   } catch (error) {

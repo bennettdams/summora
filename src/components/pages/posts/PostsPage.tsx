@@ -131,7 +131,7 @@ export function PostsPage({
           {postCategories.map((category) => (
             <Box padding="small" key={category.id}>
               <span className="hover:font-bold cursor-pointer">
-                {category.title}
+                {category.name}
               </span>
             </Box>
           ))}
@@ -171,7 +171,7 @@ export function PostsPage({
                 ? null
                 : posts.map((post) => ({
                     id: post.id,
-                    categoryTitle: post.category.title,
+                    categoryTitle: post.category.name,
                     title: post.title,
                     subtitle: post.subtitle,
                     updatedAt: post.updatedAt,

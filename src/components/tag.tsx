@@ -5,7 +5,7 @@ import { IconTrash } from './Icon'
 
 type TagTagslist = {
   id: string
-  title: string
+  label: string
 }
 
 /**
@@ -72,7 +72,7 @@ export function Tag({
           onClick={() => !!handleRemoving && setShowRemoveConfirmation(true)}
           className="inline-block text-xs uppercase tracking-widest"
         >
-          {tag.title}
+          {tag.label}
         </span>
       ) : (
         <div

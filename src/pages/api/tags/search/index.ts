@@ -13,7 +13,7 @@ async function findTags(searchInput: string) {
       where: {
         OR: [
           {
-            title: { contains: searchInput, mode: 'insensitive' },
+            label: { contains: searchInput, mode: 'insensitive' },
           },
           {
             description: { contains: searchInput, mode: 'insensitive' },

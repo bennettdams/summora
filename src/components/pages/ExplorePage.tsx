@@ -42,7 +42,7 @@ export function ExplorePage({
         <PostsList
           posts={postsViews.map((post) => ({
             id: post.id,
-            categoryTitle: post.category.title,
+            categoryTitle: post.category.name,
             title: post.title,
             subtitle: post.subtitle,
             updatedAt: post.updatedAt,

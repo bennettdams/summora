@@ -28,7 +28,7 @@ async function findTagsForPost(prisma: PrismaClient) {
   return await prisma.postTag.findMany({
     select: {
       id: true,
-      title: true,
+      label: true,
       description: true,
     },
     orderBy: { posts: { _count: 'desc' } },
@@ -43,7 +43,7 @@ async function findTagsForPostByCategory(
   return await prisma.postTag.findMany({
     select: {
       id: true,
-      title: true,
+      label: true,
       description: true,
     },
     where: { posts: { some: { postCategoryId: categoryId } } },

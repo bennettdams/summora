@@ -54,7 +54,7 @@ async function fill() {
         const category = getRandomElementOfArray(postCategoriesCreated)
         await prisma.post.create({
           data: {
-            title: `${category.title} ${loremRandom()} ${i + 1}`,
+            title: `${category.name} ${loremRandom()} ${i + 1}`,
             subtitle: `Subtitle - ${loremRandom()} ${i + 1}`,
             postCategoryId: category.id,
             authorId: getRandomElementOfArray(users).userId,
@@ -216,24 +216,24 @@ async function createSegments(): Promise<
 }
 
 const postCategories: Prisma.PostCategoryCreateInput[] = [
-  { id: 'books', title: 'Books', description: '..' },
-  { id: 'movies', title: 'Movies', description: '..' },
-  { id: 'series', title: 'Series', description: '..' },
-  { id: 'music', title: 'Music', description: '..' },
-  { id: 'gaming', title: 'Gaming', description: '..' },
-  { id: 'pc-electronics', title: 'PC & Electronics', description: '..' },
-  { id: 'household', title: 'Electronic', description: '..' },
-  { id: 'animals', title: 'Animals', description: '..' },
-  { id: 'nature', title: 'Nature', description: '..' },
-  { id: 'beauty', title: 'Beauty', description: '..' },
-  { id: 'vehicles', title: 'Vehicles', description: '..' },
-  { id: 'food-drinks', title: 'Food & drinks', description: '..' },
-  { id: 'education', title: 'Education', description: '..' },
-  { id: 'babys', title: 'Babys', description: '..' },
-  { id: 'fashion', title: 'Fashion', description: '..' },
-  { id: 'sports', title: 'Sports', description: '..' },
-  { id: 'travel', title: 'Travel', description: '..' },
-  { id: 'programming', title: 'Programming', description: '..' },
+  { id: 'books', name: 'Books', description: '..' },
+  { id: 'movies', name: 'Movies', description: '..' },
+  { id: 'series', name: 'Series', description: '..' },
+  { id: 'music', name: 'Music', description: '..' },
+  { id: 'gaming', name: 'Gaming', description: '..' },
+  { id: 'pc-electronics', name: 'PC & Electronics', description: '..' },
+  { id: 'household', name: 'Electronic', description: '..' },
+  { id: 'animals', name: 'Animals', description: '..' },
+  { id: 'nature', name: 'Nature', description: '..' },
+  { id: 'beauty', name: 'Beauty', description: '..' },
+  { id: 'vehicles', name: 'Vehicles', description: '..' },
+  { id: 'food-drinks', name: 'Food & drinks', description: '..' },
+  { id: 'education', name: 'Education', description: '..' },
+  { id: 'babys', name: 'Babys', description: '..' },
+  { id: 'fashion', name: 'Fashion', description: '..' },
+  { id: 'sports', name: 'Sports', description: '..' },
+  { id: 'travel', name: 'Travel', description: '..' },
+  { id: 'programming', name: 'Programming', description: '..' },
 ]
 
 const donationProviders: Prisma.DonationProviderCreateInput[] = [
@@ -244,17 +244,17 @@ const donationProviders: Prisma.DonationProviderCreateInput[] = [
 const postTags: Prisma.PostTagCreateWithoutPostsInput[] = [
   ...new Array(100),
 ].flatMap((_, i) => [
-  { title: 'Tutorial' + i, description: '..' },
-  { title: 'Summary' + i, description: '..' },
-  { title: 'How-to' + i, description: '..' },
-  { title: 'Knowledge' + i, description: '..' },
-  { title: 'Legal' + i, description: '..' },
+  { label: 'Tutorial' + i, description: '..' },
+  { label: 'Summary' + i, description: '..' },
+  { label: 'How-to' + i, description: '..' },
+  { label: 'Knowledge' + i, description: '..' },
+  { label: 'Legal' + i, description: '..' },
   {
-    title: 'Everyday life' + i,
+    label: 'Everyday life' + i,
     description: '..',
   },
-  { title: 'For dummies' + i, description: '..' },
-  { title: 'History' + i, description: '..' },
+  { label: 'For dummies' + i, description: '..' },
+  { label: 'History' + i, description: '..' },
 ])
 
 function getRandomNumberForRange(min: number, max: number): number {

@@ -24,7 +24,7 @@ export async function dbFindPosts() {
           },
           category: true,
           segments: { orderBy: { createdAt: 'asc' } },
-          tags: { select: { id: true, title: true } },
+          tags: { select: { id: true, label: true } },
           /*
            * TODO
            * Using _count for implicit Many-To-Many relations does not work right now,
@@ -52,7 +52,7 @@ export const postInclude = Prisma.validator<Prisma.PostInclude>()({
   tags: {
     select: {
       id: true,
-      title: true,
+      label: true,
       description: true,
     },
   },
@@ -139,7 +139,7 @@ export async function dbFindUserPosts(userId: string) {
           },
           category: true,
           segments: { orderBy: { createdAt: 'asc' } },
-          tags: { select: { id: true, title: true } },
+          tags: { select: { id: true, label: true } },
           /*
            * TODO
            * Using _count for implicit Many-To-Many relations does not work right now (30.11.2021),
