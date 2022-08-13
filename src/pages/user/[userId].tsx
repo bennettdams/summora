@@ -11,6 +11,7 @@ import {
 } from '../../data/use-user-posts'
 import { dbFindUser, dbFindUserPosts } from '../../lib/db'
 import { prisma } from '../../prisma/prisma'
+import { createPrefetchHelpers } from '../../server/prefetch-helpers'
 import { ServerPageProps } from '../../types/PageProps'
 import { ApiUser } from '../api/users/[userId]'
 import { ApiUserPosts } from '../api/users/[userId]/posts'
@@ -58,9 +59,15 @@ export const getStaticProps: GetStaticProps<
     const userId = params.userId
     const user: ApiUser = await dbFindUser(userId)
 
+    const ssg = await createPrefetchHelpers()
+
     if (!user) {
       return { notFound: true }
     } else {
+      await ssg.prefetchQuery('donationLink.byUserId', {
+        userId,
+      })
+
       const client = hydrationHandlerUser.createClient()
       prefillServerUser(client, userId, user)
 
@@ -89,6 +96,7 @@ export const getStaticProps: GetStaticProps<
 
       return {
         props: {
+          trpcState: ssg.dehydrate(),
           dehydratedState: hydrationHandlerUser.dehydrate(client),
           dehydratedState2: hydrationHandlerPosts.dehydrate(clientPosts),
           userId,

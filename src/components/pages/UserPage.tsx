@@ -8,6 +8,7 @@ import { StatisticsCard } from '../StatisticsCard'
 import { useUserPosts } from '../../data/use-user-posts'
 import { UserDonations } from '../donation'
 import { DateTime } from '../DateTime'
+import { trpc } from '../../util/trpc'
 
 type QueryReturn = ReturnType<typeof useUser>
 // exclude null, because the page will return "notFound" if user is null
@@ -21,7 +22,7 @@ export function UserPage(props: UserPageProps): JSX.Element {
   const { posts } = useUserPosts(props.userId)
 
   return !user ? (
-    <p>no user</p>
+    <p>No user</p>
   ) : (
     <UserPageInternal
       user={user}
@@ -41,6 +42,11 @@ function UserPageInternal({
   user: UserUserPage
   posts: UserPostsUserPage
 }): JSX.Element {
+  const { data: donationLinks } = trpc.useQuery([
+    'donationLink.byUserId',
+    { userId },
+  ])
+
   return (
     <Page>
       <PageSection>
@@ -102,13 +108,18 @@ function UserPageInternal({
           <UserDonations
             isEditMode={true}
             userId={userId}
-            userDonations={user.donationLinks.map((donationLink) => ({
-              donationLinkId: donationLink.donationLinkId,
-              donationProviderId: donationLink.donationProviderId,
-              donationProviderName: donationLink.donationProvider.name,
-              donationAddress: donationLink.address,
-              logoId: donationLink.donationProvider.logoId,
-            }))}
+            userDonations={
+              !donationLinks
+                ? []
+                : donationLinks.map((donationLink) => ({
+                    donationLinkId: donationLink.donationLinkId,
+                    donationProviderId:
+                      donationLink.donationProvider.donationProviderId,
+                    donationProviderName: donationLink.donationProvider.name,
+                    donationAddress: donationLink.address,
+                    logoId: donationLink.donationProvider.logoId,
+                  }))
+            }
           />
         </div>
       </PageSection>

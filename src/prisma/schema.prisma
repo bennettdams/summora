@@ -125,6 +125,8 @@ model User {
 
 model DonationLink {
   donationLinkId     String           @id @default(cuid())
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
   address            String
   // user relation
   User               User             @relation("UserDonationLinks", fields: [userId], references: [userId])

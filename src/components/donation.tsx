@@ -1,8 +1,7 @@
 import { Popover, Transition } from '@headlessui/react'
 import { FormEvent, Fragment, useState } from 'react'
-import { useUser } from '../data/use-user'
-import { ApiUserUpdateRequestBody } from '../services/api-service'
-import { Button } from './Button'
+import { InferMutationInput, trpc } from '../util/trpc'
+import { Button, ButtonRemove } from './Button'
 import { FormInput } from './FormInput'
 import { IconDonate, IconArrowDown, IconCheck, IconX } from './Icon'
 import { LinkExternal } from './link'
@@ -40,8 +39,6 @@ type UserDonation = {
   donationAddress: string
 }
 
-const formId = 'form-donation-links'
-
 type Inputs = {
   donationLinks?: {
     [donationLinkId: string]: {
@@ -52,6 +49,8 @@ type Inputs = {
   newItem?: string | null
 }
 
+const formId = 'form-donation-links'
+
 function UserDonationsUpdates({
   userId,
   userDonations,
@@ -59,51 +58,59 @@ function UserDonationsUpdates({
   userId: string
   userDonations: UserDonation[]
 }) {
-  const { updateUser } = useUser(userId)
+  async function invalidate() {
+    await utils.invalidateQueries(['donationLink.byUserId', { userId }])
+  }
+
+  const utils = trpc.useContext()
+  const updateOne = trpc.useMutation('donationLink.edit', {
+    async onSuccess() {
+      invalidate()
+    },
+  })
+  const deleteOne = trpc.useMutation('donationLink.delete', {
+    async onSuccess() {
+      invalidate()
+    },
+  })
+  const createOne = trpc.useMutation('donationLink.addByUserId', {
+    async onSuccess() {
+      invalidate()
+    },
+  })
 
   const [inputs, setInputs] = useState<Inputs>()
 
-  // function resetInputs() {
-  //   setInputs({ newItem: null })
-  // }
+  function resetInputs() {
+    setInputs({ newItem: null })
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
 
     if (inputs) {
-      const inputsForUpdate: ApiUserUpdateRequestBody['donationLinks'] = []
       if (inputs.donationLinks) {
-        inputsForUpdate.push(
-          ...Object.entries(inputs.donationLinks).map(
-            ([donationLinkId, inputNew]) => ({
-              donationLinkId: donationLinkId,
+        Object.entries(inputs.donationLinks).forEach(
+          ([donationLinkId, inputNew]) => {
+            const inputData: InferMutationInput<'donationLink.edit'>['data'] = {
               donationProviderId: inputNew.donationProviderId,
               address: inputNew.address,
-            })
-          )
+            }
+
+            updateOne.mutate({ donationLinkId, data: inputData })
+          }
         )
       }
 
       if (inputs.newItem) {
-        inputsForUpdate.push({
-          address: inputs.newItem,
-          donationProviderId: 'bitcoin',
-        })
-      }
-
-      if (inputsForUpdate.length > 0) {
-        await updateUser({
+        createOne.mutate({
           userId,
-          userToUpdate: {
-            donationLinks: inputsForUpdate,
-          },
+          data: { address: inputs.newItem, donationProviderId: 'bitcoin' },
         })
-
-        setInputs({ newItem: null })
       }
-    }
 
-    // resetEditMode()
+      resetInputs()
+    }
   }
 
   return (
@@ -113,49 +120,76 @@ function UserDonationsUpdates({
       className="mx-auto mb-10 w-full space-y-4"
     >
       {userDonations.map((userDonation) => (
-        <div className="flex items-center" key={userDonation.donationLinkId}>
-          <span className="w-1/3 text-ellipsis">
-            {userDonation.donationProviderName}
-          </span>
+        <div
+          className="grid grid-cols-5 items-center gap-4"
+          key={userDonation.donationLinkId}
+        >
+          <div className="col-span-1">
+            <span className="w-1/3 text-ellipsis">
+              {userDonation.donationProviderName}
+            </span>
+          </div>
 
-          <FormInput
-            placeholder="Link.."
-            initialValue={userDonation.donationAddress}
-            onChange={(input) =>
-              setInputs((prev) => ({
-                ...prev,
-                donationLinks: {
-                  ...prev?.donationLinks,
-                  [userDonation.donationLinkId]: {
-                    address: input,
-                    donationProviderId: userDonation.donationProviderId,
+          <div className="col-span-3">
+            <FormInput
+              inputId={`${formId}-${userDonation.donationLinkId}-link`}
+              placeholder="Link.."
+              initialValue={userDonation.donationAddress}
+              onChange={(input) =>
+                setInputs((prev) => ({
+                  ...prev,
+                  donationLinks: {
+                    ...prev?.donationLinks,
+                    [userDonation.donationLinkId]: {
+                      address: input,
+                      donationProviderId: userDonation.donationProviderId,
+                    },
                   },
-                },
-              }))
-            }
-            autoFocus={false}
-            formId={formId}
-          />
+                }))
+              }
+              autoFocus={false}
+              formId={formId}
+            />
+          </div>
+
+          <div className="col-span-1">
+            <ButtonRemove
+              onClick={() =>
+                deleteOne.mutate({
+                  donationLinkId: userDonation.donationLinkId,
+                })
+              }
+            />
+          </div>
         </div>
       ))}
 
       {/* NEW LINK */}
-      <p className="text-center text-xl text-dlila">..or add a new link:</p>
+      <p className="text-center text-xl text-dlila">
+        {userDonations.length === 0
+          ? 'Add a new link:'
+          : '..or add a new link:'}
+      </p>
 
-      <div className="flex items-center">
-        <span className="w-1/3 text-ellipsis">Provider..</span>
+      <div className="grid grid-cols-5 items-center gap-4">
+        <div className="col-span-1">
+          <span className="text-ellipsis">Provider..</span>
+        </div>
 
-        <FormInput
-          placeholder="New link.."
-          formId={formId}
-          initialValue={inputs?.newItem ?? undefined}
-          onChange={(input) =>
-            setInputs((prev) => ({
-              ...prev,
-              newItem: input,
-            }))
-          }
-        />
+        <div className="col-span-3">
+          <FormInput
+            placeholder="New link.."
+            formId={formId}
+            inputId={`${formId}-new-link`}
+            initialValue={inputs?.newItem ?? undefined}
+            onChange={(input) =>
+              setInputs((prev) => ({
+                ...prev,
+                newItem: input,
+              }))
+            }
+          />
+        </div>
       </div>
 
       <div className="flex items-center justify-center space-x-4">
@@ -198,7 +232,7 @@ export function UserDonations({
       ) : (
         userDonations.map((userDonation) => (
           <DonationLink
-            key={userDonation.donationProviderName}
+            key={userDonation.donationLinkId}
             userDonation={userDonation}
           />
         ))
