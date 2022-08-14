@@ -4,6 +4,7 @@
 import superjson from 'superjson'
 import { createRouter } from '../context'
 import { donationLinkRouter } from './router-donation-link'
+import { donationProviderRouter } from './router-donation-providers'
 
 /**
  * Create your application's root router.
@@ -23,5 +24,6 @@ export const appRouter = createRouter()
    */
   // .formatError(({ shape, error }) => { })
   .merge('donationLink.', donationLinkRouter)
+  .merge('donationProvider.', donationProviderRouter)
 
 export type AppRouter = typeof appRouter

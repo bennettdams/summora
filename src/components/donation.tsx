@@ -2,6 +2,7 @@ import { Popover, Transition } from '@headlessui/react'
 import { FormEvent, Fragment, useState } from 'react'
 import { InferMutationInput, trpc } from '../util/trpc'
 import { Button, ButtonRemove } from './Button'
+import { DropdownSelect } from './DropdownSelect'
 import { FormInput } from './FormInput'
 import { IconDonate, IconArrowDown, IconCheck, IconX } from './Icon'
 import { LinkExternal } from './link'
@@ -31,6 +32,46 @@ function DonationLink({
   )
 }
 
+type DonationProviderSelectItem = { donationProviderId: string; name: string }
+
+function DonationProviderSelect({
+  donationProviders,
+  onSelect,
+  initialItem,
+  shouldReset,
+}: {
+  donationProviders: DonationProviderSelectItem[] | null
+  onSelect: (selectedProviderId: string) => void
+  initialItem?: DonationProviderSelectItem
+  shouldReset?: boolean
+}): JSX.Element {
+  return (
+    <DropdownSelect
+      unselectedLabel="Please select a provider."
+      shouldReset={shouldReset}
+      initialItem={
+        !initialItem
+          ? undefined
+          : {
+              id: initialItem.donationProviderId,
+              label: initialItem.name,
+            }
+      }
+      items={
+        !donationProviders
+          ? null
+          : donationProviders?.map((provider) => ({
+              id: provider.donationProviderId,
+              label: provider.name,
+            }))
+      }
+      onChange={(newItem) => {
+        onSelect(newItem.id)
+      }}
+    />
+  )
+}
+
 type UserDonation = {
   donationLinkId: string
   donationProviderId: string
@@ -39,14 +80,16 @@ type UserDonation = {
   donationAddress: string
 }
 
+type DonationLinkInput = InferMutationInput<'donationLink.edit'>['data']
 type Inputs = {
-  donationLinks?: {
-    [donationLinkId: string]: {
-      donationProviderId: string
-      address: string
-    }
-  }
-  newItem?: string | null
+  [donationLinkId: string]: DonationLinkInput
+}
+
+type DonationLinkCreateInput =
+  InferMutationInput<'donationLink.addByUserId'>['data']
+type InputCreate = {
+  newItemAddress?: DonationLinkCreateInput['address']
+  newItemProviderId?: DonationLinkCreateInput['donationProviderId']
 }
 
 const formId = 'form-donation-links'
@@ -58,6 +101,8 @@ function UserDonationsUpdates({
   userId: string
   userDonations: UserDonation[]
 }) {
+  const { data: donationProviders } = trpc.useQuery(['donationProvider.all'])
+
   async function invalidate() {
     await utils.invalidateQueries(['donationLink.byUserId', { userId }])
   }
@@ -80,37 +125,62 @@ function UserDonationsUpdates({
   })
 
   const [inputs, setInputs] = useState<Inputs>()
+  const [inputCreate, setInputCreate] = useState<InputCreate>()
 
   function resetInputs() {
-    setInputs({ newItem: null })
+    setInputs(undefined)
+    setInputCreate(undefined)
+  }
+
+  function updateOneInput({
+    donationLinkId,
+    address,
+    donationProviderId,
+  }: {
+    donationLinkId: string
+    address?: string
+    donationProviderId?: string
+  }) {
+    setInputs((prev) => {
+      return {
+        ...prev,
+        [donationLinkId]: {
+          address,
+          donationProviderId,
+        },
+      }
+    })
   }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
 
     if (inputs) {
-      if (inputs.donationLinks) {
-        Object.entries(inputs.donationLinks).forEach(
-          ([donationLinkId, inputNew]) => {
-            const inputData: InferMutationInput<'donationLink.edit'>['data'] = {
-              donationProviderId: inputNew.donationProviderId,
-              address: inputNew.address,
-            }
+      Object.entries(inputs).forEach(([donationLinkId, inputNew]) => {
+        const inputData: InferMutationInput<'donationLink.edit'>['data'] = {
+          donationProviderId: inputNew.donationProviderId,
+          address: inputNew.address,
+        }
 
-            updateOne.mutate({ donationLinkId, data: inputData })
-          }
-        )
-      }
-
-      if (inputs.newItem) {
-        createOne.mutate({
-          userId,
-          data: { address: inputs.newItem, donationProviderId: 'bitcoin' },
-        })
-      }
-
-      resetInputs()
+        updateOne.mutate({ donationLinkId, data: inputData })
+      })
     }
+
+    if (
+      inputCreate &&
+      inputCreate.newItemAddress &&
+      inputCreate.newItemProviderId
+    ) {
+      createOne.mutate({
+        userId,
+        data: {
+          address: inputCreate.newItemAddress,
+          donationProviderId: inputCreate.newItemProviderId,
+        },
+      })
+    }
+
+    resetInputs()
   }
 
   return (
@@ -121,13 +191,27 @@ function UserDonationsUpdates({
     >
       {userDonations.map((userDonation) => (
         <div
-          className="grid grid-cols-5 items-center gap-4"
+          className="grid grid-cols-6 items-center gap-4"
           key={userDonation.donationLinkId}
         >
           <div className="col-span-1">
-            <span className="w-1/3 text-ellipsis">
-              {userDonation.donationProviderName}
-            </span>
+            <Logo logoId={userDonation.logoId} />
+          </div>
+
+          <div className="col-span-1">
+            <DonationProviderSelect
+              onSelect={(selectedProviderId) => {
+                updateOneInput({
+                  donationLinkId: userDonation.donationLinkId,
+                  donationProviderId: selectedProviderId,
+                })
+              }}
+              donationProviders={donationProviders ?? null}
+              initialItem={{
+                donationProviderId: userDonation.donationProviderId,
+                name: userDonation.donationProviderName,
+              }}
+            />
           </div>
 
           <div className="col-span-3">
@@ -136,16 +220,10 @@ function UserDonationsUpdates({
               placeholder="Link.."
               initialValue={userDonation.donationAddress}
               onChange={(input) =>
-                setInputs((prev) => ({
-                  ...prev,
-                  donationLinks: {
-                    ...prev?.donationLinks,
-                    [userDonation.donationLinkId]: {
-                      address: input,
-                      donationProviderId: userDonation.donationProviderId,
-                    },
-                  },
-                }))
+                updateOneInput({
+                  donationLinkId: userDonation.donationLinkId,
+                  address: input,
+                })
               }
               autoFocus={false}
               formId={formId}
@@ -171,9 +249,23 @@ function UserDonationsUpdates({
           : '..or add a new link:'}
       </p>
 
-      <div className="grid grid-cols-5 items-center gap-4">
+      <div className="grid grid-cols-6 items-center gap-4">
         <div className="col-span-1">
-          <span className="text-ellipsis">Provider..</span>
+          {/* <Logo logoId={userDonation.logoId} /> */}
+        </div>
+
+        <div className="col-span-1">
+          <DonationProviderSelect
+            shouldReset={!inputCreate?.newItemProviderId}
+            onSelect={(selectedProviderId) => {
+              setInputCreate((prev) => ({
+                ...prev,
+                newItemProviderId: selectedProviderId,
+              }))
+            }}
+            initialItem={undefined}
+            donationProviders={donationProviders ?? null}
+          />
         </div>
 
         <div className="col-span-3">
@@ -181,12 +273,9 @@ function UserDonationsUpdates({
             placeholder="New link.."
             formId={formId}
             inputId={`${formId}-new-link`}
-            initialValue={inputs?.newItem ?? undefined}
+            initialValue={inputCreate?.newItemAddress ?? undefined}
             onChange={(input) =>
-              setInputs((prev) => ({
-                ...prev,
-                newItem: input,
-              }))
+              setInputCreate((prev) => ({ ...prev, newItemAddress: input }))
             }
           />
         </div>

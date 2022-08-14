@@ -103,8 +103,8 @@ export const donationLinkRouter = createRouter()
     input: z.object({
       donationLinkId: z.string().cuid(),
       data: z.object({
-        donationProviderId: z.string().min(1),
-        address: addressSchema,
+        donationProviderId: z.string().min(1).optional(),
+        address: addressSchema.optional(),
       }),
     }),
     async resolve({ input, ctx }) {
