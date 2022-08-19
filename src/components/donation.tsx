@@ -18,7 +18,10 @@ function DonationLink({
       <div className="flex-1 rounded-lg p-2 hover:bg-dbrown hover:text-white">
         <div className="flex">
           <div className="grid w-1/2 place-items-center">
-            <Logo topic="donationProviderId" logoId={userDonation.logoId} />
+            <Logo
+              topic="donationProviderId"
+              logoIdForAccess={userDonation.logoId}
+            />
           </div>
 
           <div className="w-1/2 text-left">
@@ -195,7 +198,10 @@ function UserDonationsUpdates({
           key={userDonation.donationLinkId}
         >
           <div className="col-span-1">
-            <Logo topic="donationProviderId" logoId={userDonation.logoId} />
+            <Logo
+              topic="donationProviderId"
+              logoIdForAccess={userDonation.logoId}
+            />
           </div>
 
           <div className="col-span-1">
@@ -254,7 +260,7 @@ function UserDonationsUpdates({
           {inputCreate?.newItemProviderId && (
             <Logo
               topic="donationProviderId"
-              logoId={inputCreate.newItemProviderId}
+              logoIdForAccess={inputCreate.newItemProviderId}
             />
           )}
         </div>

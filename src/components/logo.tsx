@@ -4,39 +4,64 @@ function createAssetPath(assetId: string): string {
   return `/assets/${assetId}`
 }
 
+type AssetInfo = {
+  assetId: string
+  width: number
+  height: number
+}
+
 /**
  * Logo IDs are not type-safe, as they may come from a string from the database.
- * Therefore we create a wrapper object to access logos, so removing one produces
+ * Therefore we create another prop to access logos, so changing/removing one produces
  * type errors in the code where it is used.
  */
-// type LogoTopic = 'donationProviderId' | 'otherVariant'
-type LogoTopic = 'donationProviderId'
+const TOPIC_IDS = ['donationProviderId', 'topic2'] as const
+type TopicId = typeof TOPIC_IDS[number]
+const LOGO_IDS = ['paypal', 'bitcoin'] as const
+type LogoId = typeof LOGO_IDS[number]
 
-const LOGOS: Record<
-  LogoTopic,
-  Record<string, { assetId: string; width: number; height: number }>
-> = {
-  donationProviderId: {
-    paypal: { assetId: 'logo-paypal', width: 72, height: 16 },
-    bitcoin: { assetId: 'logo-bitcoin', width: 24, height: 24 },
+type Logoinfo = { topics: TopicId[]; assetInfo: AssetInfo }
+
+const LOGOS: Record<LogoId, Logoinfo> = {
+  paypal: {
+    topics: ['donationProviderId'],
+    assetInfo: { assetId: 'logo-paypal', width: 72, height: 16 },
   },
-} as const
+  bitcoin: {
+    topics: ['topic2'],
+    assetInfo: { assetId: 'logo-bitcoin', width: 24, height: 24 },
+  },
+}
+
+type Logos = typeof LOGOS
+
+type TopicChoice = Logos[LogoId]['topics'][number]
+
+/**
+ * We create a second version of the logos with looser types (key is a string instead of string literal).
+ * That's because the logo ID is not a string literal as well and we want to use it to find the logo.
+ */
+const logosForAccess: Record<string, Logoinfo> = LOGOS
 
 export function Logo({
   topic,
-  logoId,
+  logoIdForAccess,
 }: {
-  topic: LogoTopic
-  logoId: string
+  topic: TopicChoice
+  logoIdForAccess: string
 }): JSX.Element {
-  const logo = LOGOS[topic][logoId]
-  return (
-    <Image
-      src={createAssetPath(`${logo.assetId}.svg`)}
-      className="inline"
-      alt={logo.assetId}
-      width={logo.width}
-      height={logo.height}
-    />
-  )
+  const logo = logosForAccess[logoIdForAccess]
+  if (!logo) {
+    return <span>No logo for topic: {topic}</span>
+  } else {
+    return (
+      <Image
+        src={createAssetPath(`${logo.assetInfo.assetId}.svg`)}
+        className="inline"
+        alt={logo.assetInfo.assetId}
+        width={logo.assetInfo.width}
+        height={logo.assetInfo.height}
+      />
+    )
+  }
 }
