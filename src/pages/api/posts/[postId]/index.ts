@@ -12,8 +12,6 @@ async function updatePost(
   postId: string,
   postToUpdate: ApiPostUpdateRequestBody
 ) {
-  const now = new Date()
-
   try {
     return await prisma.post.update({
       where: {
@@ -24,7 +22,6 @@ async function updatePost(
        * how Prisma would handle the fields that are non-primitive (like "author")
        */
       data: {
-        updatedAt: now,
         title: postToUpdate.title,
         subtitle: postToUpdate.subtitle,
         category: !postToUpdate.categoryId

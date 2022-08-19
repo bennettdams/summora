@@ -20,13 +20,10 @@ async function updatePostSegmentImageId({
   postSegmentId: string
   imageId: string
 }) {
-  const now = new Date()
-
   try {
     return await prisma.postSegment.update({
       where: { id: postSegmentId },
       data: {
-        updatedAt: now,
         imageId,
       },
       include: {

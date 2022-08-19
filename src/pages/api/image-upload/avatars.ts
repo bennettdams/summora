@@ -21,13 +21,10 @@ async function updateUserImage({
   imageId: string
   imageBlurDataURL: string
 }) {
-  const now = new Date()
-
   try {
     return await prisma.user.update({
       where: { userId },
       data: {
-        updatedAt: now,
         imageId,
         imageBlurDataURL,
       },

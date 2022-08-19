@@ -16,13 +16,10 @@ async function updatePostSegment(
   postSegmentId: string,
   postSegmentToUpdate: ApiPostSegmentUpdateRequestBody
 ) {
-  const now = new Date()
-
   try {
     return await prisma.postSegment.update({
       where: { id: postSegmentId },
       data: {
-        updatedAt: now,
         title: postSegmentToUpdate.title,
         subtitle: postSegmentToUpdate.subtitle,
       },

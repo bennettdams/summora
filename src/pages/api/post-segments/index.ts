@@ -13,12 +13,9 @@ async function createPostSegment(
   postSegmentToCreate: ApiPostSegmentCreateRequestBody['postSegmentToCreate']
 ) {
   try {
-    const now = new Date()
-
     return await prisma.postSegment.create({
       data: {
         postId,
-        updatedAt: now,
         title: postSegmentToCreate.title,
         subtitle: postSegmentToCreate.subtitle,
       },

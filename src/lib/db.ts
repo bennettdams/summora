@@ -103,11 +103,8 @@ export async function dbCreatePost(
   postToCreate: ApiPostsCreateRequestBody['postToCreate']
 ) {
   try {
-    const now = new Date()
-
     return await prisma.post.create({
       data: {
-        updatedAt: now,
         title: postToCreate.title,
         subtitle: postToCreate.subtitle,
         // connect
