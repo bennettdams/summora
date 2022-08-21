@@ -99,12 +99,14 @@ const formId = 'form-donation-links'
 
 function UserDonationUpdateRow({
   userDonation,
+  inputDonationProviderId,
   donationProviders,
   updateOneInput,
   deleteItem,
 }: {
   userDonation: UserDonation
-  donationProviders: DonationProviderSelectItem[] | null
+  inputDonationProviderId: string | null
+  donationProviders: (DonationProviderSelectItem & { logoId: string })[] | null
   updateOneInput: (args: {
     donationLinkId: string
     address?: string
@@ -112,6 +114,10 @@ function UserDonationUpdateRow({
   }) => void
   deleteItem: () => void
 }) {
+  const logoIdFromInput = donationProviders?.find(
+    (prov) => prov.donationProviderId === inputDonationProviderId
+  )?.logoId
+
   return (
     <div
       className="grid grid-cols-6 items-center gap-4"
@@ -120,7 +126,7 @@ function UserDonationUpdateRow({
       <div className="col-span-1">
         <Logo
           topic="donationProviderId"
-          logoIdForAccess={userDonation.logoId}
+          logoIdForAccess={logoIdFromInput ?? userDonation.logoId}
         />
       </div>
 
@@ -232,14 +238,14 @@ function UserDonationsUpdates({
     e.preventDefault()
 
     if (inputs) {
-      Object.entries(inputs).forEach(([donationLinkId, inputNew]) => {
+      for (const [donationLinkId, inputNew] of Object.entries(inputs)) {
         const inputData: InferMutationInput<'donationLink.edit'>['data'] = {
           donationProviderId: inputNew.donationProviderId,
           address: inputNew.address,
         }
 
-        updateOne.mutate({ donationLinkId, data: inputData })
-      })
+        await updateOne.mutateAsync({ donationLinkId, data: inputData })
+      }
     }
 
     if (
@@ -247,7 +253,7 @@ function UserDonationsUpdates({
       inputCreate.newItemAddress &&
       inputCreate.newItemProviderId
     ) {
-      createOne.mutate({
+      await createOne.mutateAsync({
         userId,
         data: {
           address: inputCreate.newItemAddress,
@@ -272,6 +278,9 @@ function UserDonationsUpdates({
         <UserDonationUpdateRow
           key={userDonation.donationLinkId}
           userDonation={userDonation}
+          inputDonationProviderId={
+            inputs?.[userDonation.donationLinkId]?.donationProviderId ?? null
+          }
           donationProviders={donationProviders ?? null}
           updateOneInput={updateOneInput}
           deleteItem={() => deleteOneItem(userDonation)}
