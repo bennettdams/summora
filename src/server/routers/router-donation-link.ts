@@ -102,10 +102,15 @@ export const donationLinkRouter = createRouter()
   .mutation('edit', {
     input: z.object({
       donationLinkId: z.string().cuid(),
-      data: z.object({
-        donationProviderId: z.string().min(1).optional(),
-        address: addressSchema.optional(),
-      }),
+      data: z
+        .object({
+          donationProviderId: z.string().min(1).optional(),
+          address: addressSchema.optional(),
+        })
+        .refine(
+          (data) => !!data.address || !!data.donationProviderId,
+          'Either address or donation provider ID should be filled in.'
+        ),
     }),
     async resolve({ input, ctx }) {
       const { data, donationLinkId } = input
@@ -116,8 +121,12 @@ export const donationLinkRouter = createRouter()
       return ctx.prisma.donationLink.update({
         where: { donationLinkId },
         data: {
-          address,
-          donationProvider: { connect: { donationProviderId } },
+          address: address,
+          donationProvider: !donationProviderId
+            ? undefined
+            : {
+                connect: { donationProviderId },
+              },
         },
         select: defaultDonationLinkSelect,
       })
