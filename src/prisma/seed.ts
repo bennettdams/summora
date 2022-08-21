@@ -262,8 +262,14 @@ function getRandomNumberForRange(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-function getRandomElementOfArray<T>(arr: T[]) {
-  return arr[Math.floor(Math.random() * arr.length)]
+function getRandomElementOfArray<T>(arr: T[]): T {
+  const element = arr[Math.floor(Math.random() * arr.length)]
+
+  if (!element) {
+    throw new Error('There is no element when accessing a random one.')
+  } else {
+    return element
+  }
 }
 
 function loremRandom() {

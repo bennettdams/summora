@@ -21,14 +21,19 @@ export function ImageUpload({
         throw new Error('You must select an image to upload.')
       } else {
         const file = event.target.files[0]
-        const fileExtension = file.name.split('.').pop()
 
-        if (!fileExtension || !validExtensions.includes(fileExtension)) {
-          throw new Error(
-            `You provided a ${fileExtension} file, but only ${validExtensions} are allowed.`
-          )
+        if (!file) {
+          throw new Error('There is no file for your request.')
         } else {
-          await uploadFn(file)
+          const fileExtension = file.name.split('.').pop()
+
+          if (!fileExtension || !validExtensions.includes(fileExtension)) {
+            throw new Error(
+              `You provided a ${fileExtension} file, but only ${validExtensions} are allowed.`
+            )
+          } else {
+            await uploadFn(file)
+          }
         }
       }
     } catch (error) {

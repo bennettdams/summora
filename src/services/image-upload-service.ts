@@ -75,8 +75,10 @@ export async function parseMultipartForm(req: NextApiRequest): Promise<Buffer> {
 
     const fileParsed = files[FORM_DATA_FILE_KEY]
 
-    // FIXME not sure if isArray or checking for existence of "length"
-    if (Array.isArray(fileParsed)) {
+    if (!fileParsed) {
+      throw new Error('There is no file to parse.')
+    } else if (Array.isArray(fileParsed)) {
+      // FIXME not sure if isArray or checking for existence of "length"
       throw new Error('Trying to parse more than one file.')
     } else {
       const fileContent = fs.readFileSync(fileParsed.filepath)
