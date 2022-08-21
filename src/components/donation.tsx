@@ -97,6 +97,72 @@ type InputCreate = {
 
 const formId = 'form-donation-links'
 
+function UserDonationUpdateRow({
+  userDonation,
+  donationProviders,
+  updateOneInput,
+  deleteItem,
+}: {
+  userDonation: UserDonation
+  donationProviders: DonationProviderSelectItem[] | null
+  updateOneInput: (args: {
+    donationLinkId: string
+    address?: string
+    donationProviderId?: string
+  }) => void
+  deleteItem: () => void
+}) {
+  return (
+    <div
+      className="grid grid-cols-6 items-center gap-4"
+      key={userDonation.donationLinkId}
+    >
+      <div className="col-span-1">
+        <Logo
+          topic="donationProviderId"
+          logoIdForAccess={userDonation.logoId}
+        />
+      </div>
+
+      <div className="col-span-1">
+        <DonationProviderSelect
+          onSelect={(selectedProviderId) => {
+            updateOneInput({
+              donationLinkId: userDonation.donationLinkId,
+              donationProviderId: selectedProviderId,
+            })
+          }}
+          donationProviders={donationProviders ?? null}
+          initialItem={{
+            donationProviderId: userDonation.donationProviderId,
+            name: userDonation.donationProviderName,
+          }}
+        />
+      </div>
+
+      <div className="col-span-3">
+        <FormInput
+          inputId={`${formId}-${userDonation.donationLinkId}-link`}
+          placeholder="Link.."
+          initialValue={userDonation.donationAddress}
+          onChange={(input) =>
+            updateOneInput({
+              donationLinkId: userDonation.donationLinkId,
+              address: input,
+            })
+          }
+          autoFocus={false}
+          formId={formId}
+        />
+      </div>
+
+      <div className="col-span-1">
+        <ButtonRemove onClick={deleteItem} />
+      </div>
+    </div>
+  )
+}
+
 function UserDonationsUpdates({
   userId,
   userDonations,
@@ -130,9 +196,10 @@ function UserDonationsUpdates({
   const [inputs, setInputs] = useState<Inputs>()
   const [inputCreate, setInputCreate] = useState<InputCreate>()
 
-  function resetInputs() {
+  function resetInputs(shouldResetInputCreate: boolean) {
     setInputs(undefined)
-    setInputCreate(undefined)
+
+    shouldResetInputCreate && setInputCreate(undefined)
   }
 
   function updateOneInput({
@@ -152,6 +219,12 @@ function UserDonationsUpdates({
           donationProviderId,
         },
       }
+    })
+  }
+
+  function deleteOneItem(userDonation: UserDonation) {
+    deleteOne.mutate({
+      donationLinkId: userDonation.donationLinkId,
     })
   }
 
@@ -181,9 +254,12 @@ function UserDonationsUpdates({
           donationProviderId: inputCreate.newItemProviderId,
         },
       })
-    }
 
-    resetInputs()
+      resetInputs(true)
+    } else {
+      // keep "create" input in case we submitted without the creation (e.g. when provider was missing)
+      resetInputs(false)
+    }
   }
 
   return (
@@ -193,59 +269,13 @@ function UserDonationsUpdates({
       className="mx-auto mb-10 w-full space-y-4"
     >
       {userDonations.map((userDonation) => (
-        <div
-          className="grid grid-cols-6 items-center gap-4"
+        <UserDonationUpdateRow
           key={userDonation.donationLinkId}
-        >
-          <div className="col-span-1">
-            <Logo
-              topic="donationProviderId"
-              logoIdForAccess={userDonation.logoId}
-            />
-          </div>
-
-          <div className="col-span-1">
-            <DonationProviderSelect
-              onSelect={(selectedProviderId) => {
-                updateOneInput({
-                  donationLinkId: userDonation.donationLinkId,
-                  donationProviderId: selectedProviderId,
-                })
-              }}
-              donationProviders={donationProviders ?? null}
-              initialItem={{
-                donationProviderId: userDonation.donationProviderId,
-                name: userDonation.donationProviderName,
-              }}
-            />
-          </div>
-
-          <div className="col-span-3">
-            <FormInput
-              inputId={`${formId}-${userDonation.donationLinkId}-link`}
-              placeholder="Link.."
-              initialValue={userDonation.donationAddress}
-              onChange={(input) =>
-                updateOneInput({
-                  donationLinkId: userDonation.donationLinkId,
-                  address: input,
-                })
-              }
-              autoFocus={false}
-              formId={formId}
-            />
-          </div>
-
-          <div className="col-span-1">
-            <ButtonRemove
-              onClick={() =>
-                deleteOne.mutate({
-                  donationLinkId: userDonation.donationLinkId,
-                })
-              }
-            />
-          </div>
-        </div>
+          userDonation={userDonation}
+          donationProviders={donationProviders ?? null}
+          updateOneInput={updateOneInput}
+          deleteItem={() => deleteOneItem(userDonation)}
+        />
       ))}
 
       {/* NEW LINK */}
@@ -295,6 +325,10 @@ function UserDonationsUpdates({
       <div className="flex items-center justify-center space-x-4">
         <Button
           isSubmit
+          disabled={
+            !inputs &&
+            (!inputCreate?.newItemAddress || !inputCreate?.newItemProviderId)
+          }
           onClick={() => {
             // TODO placeholder, remove when we have FormSubmit button
           }}
