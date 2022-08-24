@@ -3,14 +3,12 @@ import { useOnClickOutside } from '../util/use-on-click-outside'
 import { IconAdd, IconSize, IconTrash } from './Icon'
 
 interface ButtonProps {
-  onClick: (e: MouseEvent<HTMLButtonElement>) => void
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void
   children?: ReactNode
   disabled?: boolean
   onClickOutside?: () => void
   isSubmit?: boolean
 }
-
-type ButtonOnClickEvent = Parameters<ButtonProps['onClick']>[0]
 
 export function Button({
   onClick,
@@ -59,11 +57,11 @@ export function ButtonAdd({
 export function ButtonRemove(props: ButtonProps): JSX.Element {
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
 
-  function handleClick(e: ButtonOnClickEvent) {
+  function handleClick(e: MouseEvent<HTMLButtonElement>) {
     if (!showRemoveConfirmation) {
       setShowRemoveConfirmation(true)
     } else {
-      props.onClick(e)
+      props.onClick?.(e)
     }
   }
 
