@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, FormEvent } from 'react'
-import { Button, ButtonAdd, ButtonRemove } from '../../Button'
+import { Button, ButtonAddSpecial, ButtonRemove } from '../../Button'
 import { FormInput } from '../../FormInput'
 import { IconCheck, IconX } from '../../Icon'
 import { usePost } from '../../../data/use-post'
@@ -261,7 +261,7 @@ export function PostSegment({
               ) : (
                 <div className="flex flex-col space-y-4">
                   <div>
-                    <ButtonAdd
+                    <ButtonAddSpecial
                       size="big"
                       onClick={() => setShowNewItemInput(true)}
                     />

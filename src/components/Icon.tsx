@@ -15,8 +15,10 @@ import {
 import {
   BookmarkAltIcon,
   HeartIcon as HeartIconOutline,
+  CheckCircleIcon as CheckCircleIconOutline,
   PlusCircleIcon as PlusCircleIconOutline,
   MinusCircleIcon as MinusCircleIconOutline,
+  QuestionMarkCircleIcon as QuestionMarkCircleIconOutline,
 } from '@heroicons/react/outline'
 import { MouseEvent } from 'react'
 
@@ -48,7 +50,7 @@ function createClassNames({
 
 export type IconSize = keyof typeof sizes
 
-interface IconProps {
+export interface IconProps {
   size?: IconSize
   // based on the prop type of Heroicons
   className?: Parameters<typeof PlusIcon>[0]['className']
@@ -390,6 +392,50 @@ export function IconArrowDown({
 }: IconProps): JSX.Element {
   return (
     <ChevronDownIconSolid
+      className={createClassNames({
+        size,
+        className,
+        isClickable: !!onClick,
+      })}
+      onClick={(event: MouseEvent) => {
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
+      }}
+    />
+  )
+}
+
+export function IconOkCircle({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <CheckCircleIconOutline
+      className={createClassNames({
+        size,
+        className,
+        isClickable: !!onClick,
+      })}
+      onClick={(event: MouseEvent) => {
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
+      }}
+    />
+  )
+}
+
+export function IconQuestionMarkCircle({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <QuestionMarkCircleIconOutline
       className={createClassNames({
         size,
         className,

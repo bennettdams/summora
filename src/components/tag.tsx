@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { useOnClickOutside } from '../util/use-on-click-outside'
-import { ButtonAdd } from './Button'
+import { ButtonAddSpecial } from './Button'
 import { IconTrash } from './Icon'
 
 type TagTagslist = {
@@ -34,7 +34,7 @@ export function TagsList({
       ))}
       {showAddButton && onAddButtonClick && (
         <div className="ml-2 flex flex-row items-center justify-center">
-          <ButtonAdd onClick={onAddButtonClick} />
+          <ButtonAddSpecial onClick={onAddButtonClick} />
         </div>
       )}
     </div>

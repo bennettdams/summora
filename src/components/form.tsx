@@ -1,5 +1,6 @@
 import { forwardRef, ReactNode } from 'react'
-import { Button } from './Button'
+import { Button, ButtonProps } from './Button'
+import { IconOkCircle } from './Icon'
 
 export function FormLabel({
   ...props
@@ -15,20 +16,14 @@ export function FormLabel({
 }
 
 export type FormSubmitProps = {
+  isLoading: boolean
   isValid: boolean
   isValidating: boolean
   isSubmitted: boolean
   isSubmitting: boolean
-  //   icon?: ButtonProps['icon']
+  icon?: ButtonProps['icon']
   children?: ReactNode
-} & /** If we show loading on click, we needed to hide the loading animation in case the submission was not successful.
- * This is e.g. used for the sign in, where a successful sign in attempt will
- * start a navigation (that's why it needs `showLoadingOnClick = true`), but the attempt could fail (e.g. wrong password).
- * Without this check (`hasErrorAfterSubmit`), we'd show a loading animation indefinitely.
- */ (
-  | { showLoadingOnClick: true; hasErrorAfterSubmit: boolean }
-  | { showLoadingOnClick?: never; hasErrorAfterSubmit?: never }
-)
+}
 
 export function FormSubmit(props: FormSubmitProps): JSX.Element {
   // we ignore the "invalid" status for a form that has not been submitted yet
@@ -39,11 +34,8 @@ export function FormSubmit(props: FormSubmitProps): JSX.Element {
     <Button
       disabled={!isValidForm || props.isSubmitting}
       isSubmit={true}
-      // isLoading={props.isSubmitting}
-      //   icon={props.icon ?? <IconCheck />}
-      //   showLoadingOnClick={
-      //     props.showLoadingOnClick === true ? !props.hasErrorAfterSubmit : false
-      //   }
+      icon={props.icon ?? <IconOkCircle />}
+      showLoading={props.isLoading}
     >
       <span>{props.children ?? 'Submit'}</span>
       <input className="hidden" type="submit" />

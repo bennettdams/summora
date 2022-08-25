@@ -254,8 +254,8 @@ function CreatePostModal() {
 
   return (
     <>
-      <Button onClick={open}>
-        <IconEdit /> <span className="ml-2">Create Post</span>
+      <Button onClick={open} icon={<IconEdit />}>
+        Create Post
       </Button>
 
       <Modal
