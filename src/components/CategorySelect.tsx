@@ -5,7 +5,7 @@ import { DropdownItem, DropdownSelect } from './DropdownSelect'
 import { IconCategory } from './Icon'
 
 function createDropdownItem(category: PostCategory): DropdownItem {
-  return { id: category.id, label: category.name }
+  return { itemId: category.id, label: category.name }
 }
 
 /**

@@ -3,7 +3,7 @@ import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
 import { Fragment, useEffect, useState } from 'react'
 
 export interface DropdownItem {
-  id: string
+  itemId: string
   label: string
 }
 
@@ -58,7 +58,7 @@ export function DropdownSelect({
             ) : (
               items.map((item) => (
                 <Listbox.Option
-                  key={item.id}
+                  key={item.itemId}
                   className={({ active }) =>
                     `${active && 'bg-dorange text-white'}
                       relative cursor-default select-none py-2 pl-10 pr-4`

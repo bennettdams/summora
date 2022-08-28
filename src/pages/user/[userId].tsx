@@ -67,6 +67,7 @@ export const getStaticProps: GetStaticProps<
       await ssg.prefetchQuery('donationLink.byUserId', {
         userId,
       })
+      await ssg.prefetchQuery('donationProvider.all')
 
       const client = hydrationHandlerUser.createClient()
       prefillServerUser(client, userId, user)

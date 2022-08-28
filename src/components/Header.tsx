@@ -309,7 +309,7 @@ function CreatePostModal() {
                   onSelect={(selectedCategory) =>
                     setInputs((prev) => ({
                       ...prev,
-                      categoryId: selectedCategory.id,
+                      categoryId: selectedCategory.itemId,
                     }))
                   }
                   shouldShowDropdown={true}

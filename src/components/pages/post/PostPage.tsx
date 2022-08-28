@@ -121,7 +121,7 @@ function PostPageInternal({
     setIsShownCategoryDropdown(false)
 
     const postToUpdate: ApiPostUpdateRequestBody = {
-      categoryId: newCategory.id,
+      categoryId: newCategory.itemId,
     }
 
     await updatePost({
