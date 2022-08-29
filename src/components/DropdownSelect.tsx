@@ -11,36 +11,60 @@ export function DropdownSelect({
   items,
   initialItem,
   onChange,
+  onChangeSelection,
   unselectedLabel,
   shouldReset,
+  selectedItemIdExternal,
 }: {
   items: DropdownItem[] | null
-  initialItem?: DropdownItem
-  onChange: (newItem: DropdownItem) => void
   unselectedLabel?: string
-  shouldReset?: boolean
-}): JSX.Element {
-  const [selected, setSelected] = useState(initialItem)
+} & ( // the selection is either handled in the parent or in this component
+  | {
+      selectedItemIdExternal: string | null
+      onChangeSelection: (newItem: string) => void
+      onChange?: never
+      initialItem?: never
+      shouldReset?: never
+    }
+  | {
+      selectedItemIdExternal?: never
+      onChangeSelection?: never
+      onChange: (newItem: DropdownItem) => void
+      initialItem: DropdownItem | null
+      shouldReset: boolean
+    }
+)): JSX.Element {
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(
+    selectedItemIdExternal ?? initialItem?.itemId ?? null
+  )
 
   useEffect(() => {
-    if (shouldReset) setSelected(initialItem)
+    if (shouldReset) setSelectedItemId(initialItem?.itemId ?? null)
   }, [shouldReset, initialItem])
 
-  function handleSelect(newItem: DropdownItem) {
-    setSelected(newItem)
-    onChange(newItem)
+  function handleSelect(newItemId: string) {
+    setSelectedItemId(newItemId)
+
+    if (onChangeSelection) {
+      onChangeSelection(newItemId)
+    } else {
+      const itemSelected = items?.find((item) => item.itemId === newItemId)
+      if (itemSelected) onChange(itemSelected)
+    }
   }
 
   return (
-    <Listbox value={selected} onChange={handleSelect}>
+    <Listbox value={selectedItemId} onChange={handleSelect}>
       <div className="relative mt-1">
         <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-dorange sm:text-sm">
-          {!selected ? (
+          {!selectedItemId ? (
             <span className="block truncate italic">
               {unselectedLabel ?? 'Please select an item.'}
             </span>
           ) : (
-            <span className="block truncate">{selected.label}</span>
+            <span className="block truncate">
+              {items?.find((item) => item.itemId === selectedItemId)?.label}
+            </span>
           )}
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
             <SelectorIcon className="h-5 w-5 text-dorange" aria-hidden="true" />
@@ -63,9 +87,9 @@ export function DropdownSelect({
                     `${active && 'bg-dorange text-white'}
                       relative cursor-default select-none py-2 pl-10 pr-4`
                   }
-                  value={item}
+                  value={item.itemId}
                 >
-                  {({ selected, active }) => (
+                  {({ active, selected }) => (
                     <>
                       <span
                         className={`${
