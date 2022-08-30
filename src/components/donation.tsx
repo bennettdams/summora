@@ -1,10 +1,14 @@
 import { Popover, Transition } from '@headlessui/react'
-import { FormEvent, Fragment, useState } from 'react'
-import { InferMutationInput, trpc } from '../util/trpc'
-import { Button, ButtonRemove } from './Button'
+import { Fragment, ReactNode } from 'react'
+import { Controller, useFieldArray } from 'react-hook-form'
+import { z } from 'zod'
+import { schemaUpdateDonationLink } from '../lib/schemas'
+import { trpc } from '../util/trpc'
+import { useZodForm } from '../util/use-zod-form'
+import { ButtonRemove } from './Button'
 import { DropdownSelect } from './DropdownSelect'
-import { FormInput } from './FormInput'
-import { IconDonate, IconArrowDown, IconCheck, IconX } from './Icon'
+import { Form, FormLabel, FormSubmit, Input } from './form'
+import { IconDonate, IconArrowDown } from './Icon'
 import { LinkExternal } from './link'
 import { Logo } from './Logo'
 
@@ -35,46 +39,6 @@ function DonationLink({
   )
 }
 
-type DonationProviderSelectItem = { donationProviderId: string; name: string }
-
-function DonationProviderSelect({
-  donationProviders,
-  onSelect,
-  initialItem,
-  shouldReset,
-}: {
-  donationProviders: DonationProviderSelectItem[] | null
-  onSelect: (selectedProviderId: string) => void
-  initialItem?: DonationProviderSelectItem
-  shouldReset?: boolean
-}): JSX.Element {
-  return (
-    <DropdownSelect
-      unselectedLabel="Please select a provider."
-      shouldReset={shouldReset}
-      initialItem={
-        !initialItem
-          ? undefined
-          : {
-              id: initialItem.donationProviderId,
-              label: initialItem.name,
-            }
-      }
-      items={
-        !donationProviders
-          ? null
-          : donationProviders?.map((provider) => ({
-              id: provider.donationProviderId,
-              label: provider.name,
-            }))
-      }
-      onChange={(newItem) => {
-        onSelect(newItem.id)
-      }}
-    />
-  )
-}
-
 type UserDonation = {
   donationLinkId: string
   donationProviderId: string
@@ -83,44 +47,91 @@ type UserDonation = {
   donationAddress: string
 }
 
-type DonationLinkInput = InferMutationInput<'donationLink.edit'>['data']
-type Inputs = {
-  [donationLinkId: string]: DonationLinkInput
-}
+// type DonationLinkInput = InferMutationInput<'donationLink.edit'>['data']
+// type Inputs = {
+//   [donationLinkId: string]: DonationLinkInput
+// }
 
-type DonationLinkCreateInput =
-  InferMutationInput<'donationLink.addByUserId'>['data']
-type InputCreate = {
-  newItemAddress?: DonationLinkCreateInput['address']
-  newItemProviderId?: DonationLinkCreateInput['donationProviderId']
-}
+// type DonationLinkCreateInput =
+//   InferMutationInput<'donationLink.addByUserId'>['data']
+// type InputCreate = {
+//   newItemAddress?: DonationLinkCreateInput['address']
+//   newItemProviderId?: DonationLinkCreateInput['donationProviderId']
+// }
 
-const formId = 'form-donation-links'
+// function UserDonationUpdateRow({
+// userDonation,
+// inputDonationProviderId,
+// donationProviders,
+//   updateOneInput,
+//   deleteItem,
+// }: {
+// userDonation: UserDonation
+// inputDonationProviderId: string | null
+// donationProviders: (DonationProviderSelectItem & { logoId: string })[] | null
+//   updateOneInput: (args: {
+//     donationLinkId: string
+//     address?: string
+//     donationProviderId?: string
+//   }) => void
+//   deleteItem: () => void
+// }) {
+// const logoIdFromInput = donationProviders?.find(
+//   (prov) => prov.donationProviderId === inputDonationProviderId
+// )?.logoId
+
+//   return (
+// <div
+//   className="grid grid-cols-6 items-center gap-4"
+//   key={userDonation.donationLinkId}
+// >
+//   <div className="col-span-1">
+//     <DonationProviderSelect
+//       onSelect={(selectedProviderId) => {
+//         updateOneInput({
+//           donationLinkId: userDonation.donationLinkId,
+//           donationProviderId: selectedProviderId,
+//         })
+//       }}
+//       donationProviders={donationProviders ?? null}
+//       initialItem={{
+//         donationProviderId: userDonation.donationProviderId,
+//         name: userDonation.donationProviderName,
+//       }}
+//     />
+//   </div>
+// </div>
+//   )
+// }
 
 function UserDonationUpdateRow({
   userDonation,
   inputDonationProviderId,
   donationProviders,
-  updateOneInput,
   deleteItem,
+  donationProviderSelect,
+  children,
 }: {
   userDonation: UserDonation
   inputDonationProviderId: string | null
-  donationProviders: (DonationProviderSelectItem & { logoId: string })[] | null
-  updateOneInput: (args: {
-    donationLinkId: string
-    address?: string
-    donationProviderId?: string
-  }) => void
+  donationProviders: {
+    logoId: string
+    donationProviderId: string
+    donationProviderName: string
+  }[]
   deleteItem: () => void
-}) {
-  const logoIdFromInput = donationProviders?.find(
+  donationProviderSelect: ReactNode
+  children: ReactNode
+}): JSX.Element {
+  const logoIdFromInput = donationProviders.find(
     (prov) => prov.donationProviderId === inputDonationProviderId
   )?.logoId
 
+  if (!userDonation) return <div>No user donation available..</div>
+
   return (
     <div
-      className="grid grid-cols-6 items-center gap-4"
+      className="grid grid-cols-7 items-center gap-4"
       key={userDonation.donationLinkId}
     >
       <div className="col-span-1">
@@ -130,37 +141,9 @@ function UserDonationUpdateRow({
         />
       </div>
 
-      <div className="col-span-1">
-        <DonationProviderSelect
-          onSelect={(selectedProviderId) => {
-            updateOneInput({
-              donationLinkId: userDonation.donationLinkId,
-              donationProviderId: selectedProviderId,
-            })
-          }}
-          donationProviders={donationProviders ?? null}
-          initialItem={{
-            donationProviderId: userDonation.donationProviderId,
-            name: userDonation.donationProviderName,
-          }}
-        />
-      </div>
+      <div className="col-span-2">{donationProviderSelect}</div>
 
-      <div className="col-span-3">
-        <FormInput
-          inputId={`${formId}-${userDonation.donationLinkId}-link`}
-          placeholder="Link.."
-          initialValue={userDonation.donationAddress}
-          onChange={(input) =>
-            updateOneInput({
-              donationLinkId: userDonation.donationLinkId,
-              address: input,
-            })
-          }
-          autoFocus={false}
-          formId={formId}
-        />
-      </div>
+      <div className="col-span-3">{children}</div>
 
       <div className="col-span-1">
         <ButtonRemove onClick={deleteItem} />
@@ -168,6 +151,8 @@ function UserDonationUpdateRow({
     </div>
   )
 }
+
+type SchemaUpdateDonationLink = z.infer<typeof schemaUpdateDonationLink>
 
 function UserDonationsUpdates({
   userId,
@@ -183,7 +168,7 @@ function UserDonationsUpdates({
   }
 
   const utils = trpc.useContext()
-  const updateOne = trpc.useMutation('donationLink.edit', {
+  const updateMany = trpc.useMutation('donationLink.editMany', {
     async onSuccess() {
       invalidate()
     },
@@ -193,99 +178,208 @@ function UserDonationsUpdates({
       invalidate()
     },
   })
-  const createOne = trpc.useMutation('donationLink.addByUserId', {
-    async onSuccess() {
-      invalidate()
-    },
+  // const createOne = trpc.useMutation('donationLink.addByUserId', {
+  //   async onSuccess() {
+  //     invalidate()
+  //   },
+  // })
+
+  function deleteOneItem(donationLinkId: string) {
+    deleteOne.mutate({
+      donationLinkId: donationLinkId,
+    })
+  }
+
+  // async function handleSubmit(e: FormEvent) {
+  //   e.preventDefault()
+
+  //   if (inputs) {
+  //     for (const [donationLinkId, inputNew] of Object.entries(inputs)) {
+  //       const inputData: InferMutationInput<'donationLink.edit'>['data'] = {
+  //         donationProviderId: inputNew.donationProviderId,
+  //         address: inputNew.address,
+  //       }
+
+  //       await updateOne.mutateAsync({ donationLinkId, data: inputData })
+  //     }
+  //   }
+
+  //   if (
+  //     inputCreate &&
+  //     inputCreate.newItemAddress &&
+  //     inputCreate.newItemProviderId
+  //   ) {
+  //     await createOne.mutateAsync({
+  //       userId,
+  //       data: {
+  //         address: inputCreate.newItemAddress,
+  //         donationProviderId: inputCreate.newItemProviderId,
+  //       },
+  //     })
+
+  //     resetInputs(true)
+  //   } else {
+  //     // keep "create" input in case we submitted without the creation (e.g. when provider was missing)
+  //     resetInputs(false)
+  //   }
+  // }
+
+  const defaultValuesInitial: SchemaUpdateDonationLink = {
+    donationLinksToUpdate: userDonations.map((userDonation) => ({
+      donationLinkId: userDonation.donationLinkId,
+      address: userDonation.donationAddress,
+      donationProviderId: userDonation.donationProviderId,
+    })),
+  }
+
+  const { handleSubmit, register, control, formState, reset, watch } =
+    useZodForm({
+      schema: schemaUpdateDonationLink,
+      defaultValues: defaultValuesInitial,
+      mode: 'onChange',
+    })
+
+  // const { fields, append, remove } = useFieldArray({
+  const { fields, remove } = useFieldArray({
+    name: 'donationLinksToUpdate',
+    control,
   })
 
-  const [inputs, setInputs] = useState<Inputs>()
-  const [inputCreate, setInputCreate] = useState<InputCreate>()
-
-  function resetInputs(shouldResetInputCreate: boolean) {
-    setInputs(undefined)
-
-    shouldResetInputCreate && setInputCreate(undefined)
-  }
-
-  function updateOneInput({
-    donationLinkId,
-    address,
-    donationProviderId,
-  }: {
-    donationLinkId: string
-    address?: string
-    donationProviderId?: string
-  }) {
-    setInputs((prev) => {
-      return {
-        ...prev,
-        [donationLinkId]: {
-          address,
-          donationProviderId,
-        },
-      }
-    })
-  }
-
-  function deleteOneItem(userDonation: UserDonation) {
-    deleteOne.mutate({
-      donationLinkId: userDonation.donationLinkId,
-    })
-  }
-
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-
-    if (inputs) {
-      for (const [donationLinkId, inputNew] of Object.entries(inputs)) {
-        const inputData: InferMutationInput<'donationLink.edit'>['data'] = {
-          donationProviderId: inputNew.donationProviderId,
-          address: inputNew.address,
-        }
-
-        await updateOne.mutateAsync({ donationLinkId, data: inputData })
-      }
-    }
-
-    if (
-      inputCreate &&
-      inputCreate.newItemAddress &&
-      inputCreate.newItemProviderId
-    ) {
-      await createOne.mutateAsync({
-        userId,
-        data: {
-          address: inputCreate.newItemAddress,
-          donationProviderId: inputCreate.newItemProviderId,
-        },
-      })
-
-      resetInputs(true)
-    } else {
-      // keep "create" input in case we submitted without the creation (e.g. when provider was missing)
-      resetInputs(false)
-    }
-  }
+  const errors = formState.errors
+  const dirtyFields = formState.dirtyFields
 
   return (
-    <form
-      id={formId}
-      onSubmit={handleSubmit}
-      className="mx-auto mb-10 w-full space-y-4"
-    >
-      {userDonations.map((userDonation) => (
-        <UserDonationUpdateRow
-          key={userDonation.donationLinkId}
-          userDonation={userDonation}
-          inputDonationProviderId={
-            inputs?.[userDonation.donationLinkId]?.donationProviderId ?? null
+    <div>
+      <Form
+        className="mx-auto mb-10 w-full space-y-4"
+        onSubmit={handleSubmit((data) => {
+          /** We only want to submit dirty fields, so we don't have to update all in the DB. */
+          const donationLinksDirty = data.donationLinksToUpdate.filter(
+            (_, index) => dirtyFields.donationLinksToUpdate?.at(index)
+          )
+
+          updateMany.mutate({
+            donationLinksToUpdate: donationLinksDirty,
+          })
+
+          /*
+           * Reset the default values to our new data.
+           * This is done to "set" the validation to the newly
+           * updated values.
+           * See: https://react-hook-form.com/api/useform/reset
+           */
+          reset(data)
+        })}
+      >
+        {/* this needs to match whatever is rendered in the form row */}
+        <div className="grid grid-cols-7 items-center gap-4">
+          <div className="col-span-1"></div>
+
+          <div className="col-span-2">
+            <FormLabel>Donation provider</FormLabel>
+          </div>
+
+          <div className="col-span-3">
+            <FormLabel>Address</FormLabel>
+          </div>
+
+          <div className="col-span-1"></div>
+        </div>
+
+        {fields.map((field, index) => {
+          const errorForField = errors?.donationLinksToUpdate?.[index]?.address
+          const userDonation =
+            userDonations.find(
+              (userDonation) =>
+                userDonation.donationLinkId === field.donationLinkId
+            ) ?? null
+
+          if (!userDonation) return <p>No donation link available..</p>
+          if (!donationProviders)
+            return <p>No donation providers available..</p>
+
+          const inputDonationProviderId = watch('donationLinksToUpdate').at(
+            index
+          )?.donationProviderId
+
+          return (
+            <UserDonationUpdateRow
+              key={field.id}
+              userDonation={userDonation}
+              deleteItem={() => {
+                deleteOneItem(field.donationLinkId)
+                remove(index)
+              }}
+              inputDonationProviderId={inputDonationProviderId ?? null}
+              donationProviders={donationProviders.map((dP) => ({
+                donationProviderId: dP.donationProviderId,
+                donationProviderName: dP.name,
+                logoId: dP.logoId,
+              }))}
+              donationProviderSelect={
+                <Controller
+                  // if this does not work, we could also use register(..), which returns e.g. `name`
+                  name={
+                    `donationLinksToUpdate.${index}.donationProviderId` as const
+                  }
+                  control={control}
+                  render={({ field: fieldSelection }) => (
+                    <DropdownSelect
+                      unselectedLabel="Please select a provider."
+                      selectedItemIdExternal={fieldSelection.value ?? null}
+                      items={donationProviders.map((provider) => ({
+                        itemId: provider.donationProviderId,
+                        label: provider.name,
+                      }))}
+                      onChangeSelection={(selectedItemId) => {
+                        fieldSelection.onChange(selectedItemId)
+                      }}
+                    />
+                  )}
+                />
+              }
+            >
+              <Input
+                {...register(
+                  `donationLinksToUpdate.${index}.address` as const,
+                  {
+                    required: true,
+                  }
+                )}
+                placeholder="Enter an address.."
+                defaultValue={field.address}
+                validationErrorMessage={errorForField?.message}
+              />
+            </UserDonationUpdateRow>
+          )
+        })}
+
+        <button
+          type="button"
+          className="mx-auto block bg-blue-300 p-4"
+          onClick={() =>
+            // append({
+            //   postId: 'new',
+            //   text: '',
+            // })
+            console.log('§app')
           }
-          donationProviders={donationProviders ?? null}
-          updateOneInput={updateOneInput}
-          deleteItem={() => deleteOneItem(userDonation)}
+        >
+          Append
+        </button>
+
+        <FormSubmit
+          isValid={formState.isValid}
+          isSubmitted={formState.isSubmitted}
+          isSubmitting={formState.isSubmitting}
+          isValidating={formState.isValidating}
+          isLoading={updateMany.isLoading}
         />
-      ))}
+
+        <div>RESET</div>
+      </Form>
+
+      <div>NEW Link</div>
 
       {/* NEW LINK */}
       <p className="text-center text-xl text-dlila">
@@ -294,67 +388,51 @@ function UserDonationsUpdates({
           : '..or add a new link:'}
       </p>
 
-      <div className="grid grid-cols-6 items-center gap-4">
-        <div className="col-span-1">
-          {inputCreate?.newItemProviderId && (
-            <Logo
-              topic="donationProviderId"
-              logoIdForAccess={inputCreate.newItemProviderId}
+      {/* <form
+        id={formId}
+        onSubmit={handleSubmit}
+        className="mx-auto mb-10 w-full space-y-4"
+      >
+        NEW LINK
+        <div className="grid grid-cols-6 items-center gap-4">
+          <div className="col-span-1">
+            {inputCreate?.newItemProviderId && (
+              <Logo
+                topic="donationProviderId"
+                logoIdForAccess={inputCreate.newItemProviderId}
+              />
+            )}
+          </div>
+
+          <div className="col-span-1">
+            <DonationProviderSelect
+              shouldReset={!inputCreate?.newItemProviderId}
+              onSelect={(selectedProviderId) => {
+                setInputCreate((prev) => ({
+                  ...prev,
+                  newItemProviderId: selectedProviderId,
+                }))
+              }}
+              initialItem={undefined}
+              donationProviders={donationProviders ?? null}
             />
-          )}
+          </div>
+
+          <div className="col-span-3">
+            <FormInput
+              placeholder="New link.."
+              formId={formId}
+              inputId={`${formId}-new-link`}
+              initialValue={inputCreate?.newItemAddress ?? undefined}
+              onChange={(input) =>
+                setInputCreate((prev) => ({ ...prev, newItemAddress: input }))
+              }
+            />
+          </div>
         </div>
 
-        <div className="col-span-1">
-          <DonationProviderSelect
-            shouldReset={!inputCreate?.newItemProviderId}
-            onSelect={(selectedProviderId) => {
-              setInputCreate((prev) => ({
-                ...prev,
-                newItemProviderId: selectedProviderId,
-              }))
-            }}
-            initialItem={undefined}
-            donationProviders={donationProviders ?? null}
-          />
-        </div>
-
-        <div className="col-span-3">
-          <FormInput
-            placeholder="New link.."
-            formId={formId}
-            inputId={`${formId}-new-link`}
-            initialValue={inputCreate?.newItemAddress ?? undefined}
-            onChange={(input) =>
-              setInputCreate((prev) => ({ ...prev, newItemAddress: input }))
-            }
-          />
-        </div>
-      </div>
-
-      <div className="flex items-center justify-center space-x-4">
-        <Button
-          isSubmit
-          disabled={
-            !inputs &&
-            (!inputCreate?.newItemAddress || !inputCreate?.newItemProviderId)
-          }
-          onClick={() => {
-            // TODO placeholder, remove when we have FormSubmit button
-          }}
-        >
-          <IconCheck /> Save
-        </Button>
-        <Button
-          onClick={(e) => {
-            // prevent form submit
-            e.preventDefault()
-            // resetEditMode()
-          }}
-        >
-          <IconX /> Cancel
-        </Button>
-      </div>
-    </form>
+      </form> */}
+    </div>
   )
 }
 

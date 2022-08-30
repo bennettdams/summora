@@ -5,6 +5,7 @@
 import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
+import { addressSchema, schemaUpdateDonationLink } from '../../lib/schemas'
 import { checkAuthTRPC, ensureAuthorTRPC } from '../../lib/api-security'
 import { ContextTRPC, createRouter } from '../context'
 
@@ -44,8 +45,6 @@ async function ensureAuthor(ctx: ContextTRPC, donationLinkId: string) {
     },
   })
 }
-
-const addressSchema = z.string().min(1).max(128)
 
 export const donationLinkRouter = createRouter()
   // CREATE
@@ -98,38 +97,33 @@ export const donationLinkRouter = createRouter()
       }
     },
   })
-  // UPDATE
-  .mutation('edit', {
-    input: z.object({
-      donationLinkId: z.string().cuid(),
-      data: z
-        .object({
-          donationProviderId: z.string().min(1).optional(),
-          address: addressSchema.optional(),
-        })
-        .refine(
-          (data) => !!data.address || !!data.donationProviderId,
-          'Either address or donation provider ID should be filled in.'
-        ),
-    }),
+  //  UPDATE MANY
+  .mutation('editMany', {
+    input: schemaUpdateDonationLink,
     async resolve({ input, ctx }) {
-      const { data, donationLinkId } = input
-      const { donationProviderId, address } = data
+      const { donationLinksToUpdate } = input
 
-      await ensureAuthor(ctx, donationLinkId)
+      await Promise.all(
+        donationLinksToUpdate.map(async (donationLinkToUpdate) => {
+          const { donationLinkId, address, donationProviderId } =
+            donationLinkToUpdate
 
-      return ctx.prisma.donationLink.update({
-        where: { donationLinkId },
-        data: {
-          address: address,
-          donationProvider: !donationProviderId
-            ? undefined
-            : {
-                connect: { donationProviderId },
-              },
-        },
-        select: defaultDonationLinkSelect,
-      })
+          await ensureAuthor(ctx, donationLinkId)
+
+          return ctx.prisma.donationLink.update({
+            where: { donationLinkId },
+            data: {
+              address: address,
+              donationProvider: !donationProviderId
+                ? undefined
+                : {
+                    connect: { donationProviderId },
+                  },
+            },
+            select: defaultDonationLinkSelect,
+          })
+        })
+      )
     },
   })
   // DELETE
