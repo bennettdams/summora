@@ -7,7 +7,7 @@ import { trpc } from '../util/trpc'
 import { useZodForm } from '../util/use-zod-form'
 import { ButtonRemove } from './Button'
 import { DropdownSelect } from './DropdownSelect'
-import { Form, FormLabel, FormSubmit, Input } from './form'
+import { Form, FormLabel, FormSelect, FormSubmit, Input } from './form'
 import { IconDonate, IconArrowDown } from './Icon'
 import { LinkExternal } from './link'
 import { Logo } from './Logo'
@@ -271,7 +271,7 @@ function UserDonationsUpdates({
           reset(data)
         })}
       >
-        {/* this needs to match whatever is rendered in the form row */}
+        {/* This needs to match whatever is rendered in the form row. */}
         <div className="grid grid-cols-7 items-center gap-4">
           <div className="col-span-1"></div>
 
@@ -287,7 +287,7 @@ function UserDonationsUpdates({
         </div>
 
         {fields.map((field, index) => {
-          const errorForField = errors?.donationLinksToUpdate?.[index]?.address
+          const errorForField = errors?.donationLinksToUpdate?.at?.(2)?.address
           const userDonation =
             userDonations.find(
               (userDonation) =>
@@ -317,25 +317,16 @@ function UserDonationsUpdates({
                 logoId: dP.logoId,
               }))}
               donationProviderSelect={
-                <Controller
-                  // if this does not work, we could also use register(..), which returns e.g. `name`
+                <FormSelect
+                  control={control}
                   name={
                     `donationLinksToUpdate.${index}.donationProviderId` as const
                   }
-                  control={control}
-                  render={({ field: fieldSelection }) => (
-                    <DropdownSelect
-                      unselectedLabel="Please select a provider."
-                      selectedItemIdExternal={fieldSelection.value ?? null}
-                      items={donationProviders.map((provider) => ({
-                        itemId: provider.donationProviderId,
-                        label: provider.name,
-                      }))}
-                      onChangeSelection={(selectedItemId) => {
-                        fieldSelection.onChange(selectedItemId)
-                      }}
-                    />
-                  )}
+                  items={donationProviders.map((provider) => ({
+                    itemId: provider.donationProviderId,
+                    label: provider.name,
+                  }))}
+                  unselectedLabel="Please select a provider."
                 />
               }
             >

@@ -1,5 +1,7 @@
 import { forwardRef, ReactNode } from 'react'
+import { Control, Controller, FieldPath, FieldValues } from 'react-hook-form'
 import { Button, ButtonProps } from './Button'
+import { DropdownItem, DropdownSelect } from './DropdownSelect'
 import { IconOkCircle } from './Icon'
 
 export function FormLabel({
@@ -116,5 +118,34 @@ export function Form(
     <form className={props.className ?? 'inline-block w-full'} {...props}>
       {props.children}
     </form>
+  )
+}
+
+export function FormSelect<TFieldValues extends FieldValues>({
+  control,
+  name,
+  items,
+  unselectedLabel,
+}: {
+  control: Control<TFieldValues>
+  name: FieldPath<TFieldValues>
+  items: DropdownItem[]
+  unselectedLabel: string
+}): JSX.Element {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field: fieldSelection }) => (
+        <DropdownSelect
+          unselectedLabel={unselectedLabel}
+          selectedItemIdExternal={fieldSelection.value ?? null}
+          items={items}
+          onChangeSelection={(selectedItemId) => {
+            fieldSelection.onChange(selectedItemId)
+          }}
+        />
+      )}
+    />
   )
 }
