@@ -331,12 +331,7 @@ function UserDonationsUpdates({
               }
             >
               <Input
-                {...register(
-                  `donationLinksToUpdate.${index}.address` as const,
-                  {
-                    required: true,
-                  }
-                )}
+                {...register(`donationLinksToUpdate.${index}.address` as const)}
                 placeholder="Enter an address.."
                 defaultValue={field.address}
                 validationErrorMessage={errorForField?.message}
@@ -366,18 +361,7 @@ function UserDonationsUpdates({
           isValidating={formState.isValidating}
           isLoading={updateMany.isLoading}
         />
-
-        <div>RESET</div>
       </Form>
-
-      <div>NEW Link</div>
-
-      {/* NEW LINK */}
-      <p className="text-center text-xl text-dlila">
-        {userDonations.length === 0
-          ? 'Add a new link:'
-          : '..or add a new link:'}
-      </p>
 
       {/* <form
         id={formId}

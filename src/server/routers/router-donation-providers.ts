@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client'
-import { TRPCError } from '@trpc/server'
 import { createRouter } from '../context'
 
 const defaultDonationProvidersSelect =
@@ -18,13 +17,6 @@ export const donationProviderRouter = createRouter()
         orderBy: { name: 'asc' },
       })
 
-      if (donationProviders.length === 0) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'No donation providers available.',
-        })
-      } else {
-        return donationProviders
-      }
+      return donationProviders
     },
   })
