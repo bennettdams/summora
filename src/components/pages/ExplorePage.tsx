@@ -69,7 +69,7 @@ export function ExplorePage({
         <ul>
           {postsLikes.map((post) => (
             <li key={post.id}>
-              <PostExplorePage title={post.title} noOfX={post.noOfLikes} />
+              <PostExplorePage title={post.title} noOfX={post._count.likedBy} />
             </li>
           ))}
         </ul>

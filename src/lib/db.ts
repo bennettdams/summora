@@ -14,33 +14,20 @@ export async function dbFindUser(userId: string) {
 export type DbFindPosts = Prisma.PromiseReturnType<typeof dbFindPosts>
 export async function dbFindPosts() {
   try {
-    return (
-      await prisma.post.findMany({
-        take: 20,
-        orderBy: { createdAt: 'asc' },
-        include: {
-          author: {
-            select: { username: true, imageId: true, imageBlurDataURL: true },
-          },
-          category: true,
-          segments: { orderBy: { createdAt: 'asc' } },
-          tags: { select: { id: true, label: true } },
-          /*
-           * TODO
-           * Using _count for implicit Many-To-Many relations does not work right now,
-           * that's why we can't use it for "likedBy".
-           * Prisma v3.12.0
-           * https://github.com/prisma/prisma/issues/9880
-           */
-          // _count: { select: { comments: true, likedBy: true } },
-          _count: { select: { comments: true } },
-          likedBy: { select: { userId: true } },
+    return await prisma.post.findMany({
+      take: 20,
+      orderBy: { createdAt: 'asc' },
+      include: {
+        author: {
+          select: { username: true, imageId: true, imageBlurDataURL: true },
         },
-      })
-    ).map((post) => ({
-      ...post,
-      noOfLikes: post.likedBy.length,
-    }))
+        category: true,
+        segments: { orderBy: { createdAt: 'asc' } },
+        tags: { select: { id: true, label: true } },
+        _count: { select: { comments: true, likedBy: true } },
+        likedBy: { select: { userId: true } },
+      },
+    })
   } catch (error) {
     throw new Error(`Error finding posts: ${error}`)
   }
@@ -121,37 +108,25 @@ export async function dbCreatePost(
 export type DbFindUserPosts = Prisma.PromiseReturnType<typeof dbFindUserPosts>
 export async function dbFindUserPosts(userId: string) {
   try {
-    return (
-      await prisma.post.findMany({
-        where: { authorId: userId },
-        take: 10,
-        orderBy: { createdAt: 'desc' },
-        include: {
-          author: {
-            select: {
-              username: true,
-              imageId: true,
-              imageBlurDataURL: true,
-            },
+    return await prisma.post.findMany({
+      where: { authorId: userId },
+      take: 10,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        author: {
+          select: {
+            username: true,
+            imageId: true,
+            imageBlurDataURL: true,
           },
-          category: true,
-          segments: { orderBy: { createdAt: 'asc' } },
-          tags: { select: { id: true, label: true } },
-          /*
-           * TODO
-           * Using _count for implicit Many-To-Many relations does not work right now (30.11.2021),
-           * that's why we can't use it for "likedBy".
-           * https://github.com/prisma/prisma/issues/9880
-           */
-          // _count: { select: { comments: true, likedBy: true } },
-          _count: { select: { comments: true } },
-          likedBy: { select: { userId: true } },
         },
-      })
-    ).map((post) => ({
-      ...post,
-      noOfLikes: post.likedBy.length,
-    }))
+        category: true,
+        segments: { orderBy: { createdAt: 'asc' } },
+        tags: { select: { id: true, label: true } },
+        _count: { select: { comments: true, likedBy: true } },
+        likedBy: { select: { userId: true } },
+      },
+    })
   } catch (error) {
     throw new Error(`Error finding posts for user ${userId}: ${error}`)
   }

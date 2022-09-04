@@ -31,22 +31,15 @@ async function findPostsLikes(prisma: PrismaClient) {
   try {
     return (
       await prisma.post.findMany({
-        /*
-         * TODO
-         * Using _count for implicit Many-To-Many relations does not work right now (30.11.2021),
-         * that's why we can't use it for "likedBy".
-         * https://github.com/prisma/prisma/issues/9880
-         */
         // take: 5,
         include: {
-          likedBy: { select: { userId: true } },
+          _count: { select: { likedBy: true } },
           author: { select: { username: true, imageId: true } },
         },
       })
     )
-      .sort((a, z) => z.likedBy.length - a.likedBy.length)
+      .sort((a, z) => z._count.likedBy - a._count.likedBy)
       .slice(0, 5)
-      .map((post) => ({ ...post, noOfLikes: post.likedBy.length }))
   } catch (error) {
     throw new Error(`Error finding posts: ${error}`)
   }

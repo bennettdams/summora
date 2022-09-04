@@ -87,7 +87,7 @@ export const getStaticProps: GetStaticProps<
       const noOfPostsCreated = statisticsQuery?._count.posts ?? 0
       const noOfCommentsWritten = statisticsQuery?._count.PostComment ?? 0
       const noOfLikesReceived = userPosts.reduce(
-        (acc, post) => acc + post.noOfLikes,
+        (acc, post) => acc + post._count.likedBy,
         0
       )
       const noOfViewsReceived = userPosts.reduce(
