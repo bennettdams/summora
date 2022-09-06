@@ -224,7 +224,7 @@ function UserDonationsUpdates({
   //   }
   // }
 
-  const defaultValuesInitial: SchemaUpdateDonationLink = {
+  const defaultValuesUpdate: SchemaUpdateDonationLink = {
     donationLinksToUpdate: userDonations.map((userDonation) => ({
       donationLinkId: userDonation.donationLinkId,
       address: userDonation.donationAddress,
@@ -232,30 +232,36 @@ function UserDonationsUpdates({
     })),
   }
 
-  const { handleSubmit, register, control, formState, reset, watch } =
-    useZodForm({
-      schema: schemaUpdateDonationLink,
-      defaultValues: defaultValuesInitial,
-      mode: 'onChange',
-    })
-
-  // const { fields, append, remove } = useFieldArray({
-  const { fields, remove } = useFieldArray({
-    name: 'donationLinksToUpdate',
-    control,
+  const {
+    handleSubmit: handleSubmitUpdate,
+    register: registerUpdate,
+    control: controlUpdate,
+    formState: formStateUpdate,
+    reset: resetUpdate,
+    watch: watchUpdate,
+  } = useZodForm({
+    schema: schemaUpdateDonationLink,
+    defaultValues: defaultValuesUpdate,
+    mode: 'onChange',
   })
 
-  const errors = formState.errors
-  const dirtyFields = formState.dirtyFields
+  const { fields, remove } = useFieldArray({
+    name: 'donationLinksToUpdate',
+    control: controlUpdate,
+  })
+  })
+
+  const errorsUpdate = formStateUpdate.errors
+  const dirtyFieldsUpdate = formStateUpdate.dirtyFields
 
   return (
     <div>
       <Form
         className="mx-auto mb-10 w-full space-y-4"
-        onSubmit={handleSubmit((data) => {
+        onSubmit={handleSubmitUpdate((data) => {
           /** We only want to submit dirty fields, so we don't have to update all in the DB. */
           const donationLinksDirty = data.donationLinksToUpdate.filter(
-            (_, index) => dirtyFields.donationLinksToUpdate?.at(index)
+            (_, index) => dirtyFieldsUpdate.donationLinksToUpdate?.at(index)
           )
 
           updateMany.mutate({
@@ -268,11 +274,11 @@ function UserDonationsUpdates({
            * updated values.
            * See: https://react-hook-form.com/api/useform/reset
            */
-          reset(data)
+          resetUpdate(data)
         })}
       >
         {/* This needs to match whatever is rendered in the form row. */}
-        <div className="grid grid-cols-7 items-center gap-4">
+        <div className="grid grid-cols-7 place-items-start gap-4">
           <div className="col-span-1"></div>
 
           <div className="col-span-2">
@@ -287,7 +293,8 @@ function UserDonationsUpdates({
         </div>
 
         {fields.map((field, index) => {
-          const errorForField = errors?.donationLinksToUpdate?.at?.(2)?.address
+          const errorForField =
+            errorsUpdate?.donationLinksToUpdate?.at?.(index)?.address
           const userDonation =
             userDonations.find(
               (userDonation) =>
@@ -298,9 +305,9 @@ function UserDonationsUpdates({
           if (!donationProviders)
             return <p>No donation providers available..</p>
 
-          const inputDonationProviderId = watch('donationLinksToUpdate').at(
-            index
-          )?.donationProviderId
+          const inputDonationProviderId = watchUpdate(
+            'donationLinksToUpdate'
+          ).at(index)?.donationProviderId
 
           return (
             <UserDonationUpdateRow
@@ -318,7 +325,7 @@ function UserDonationsUpdates({
               }))}
               donationProviderSelect={
                 <FormSelect
-                  control={control}
+                  control={controlUpdate}
                   name={
                     `donationLinksToUpdate.${index}.donationProviderId` as const
                   }
@@ -331,7 +338,9 @@ function UserDonationsUpdates({
               }
             >
               <Input
-                {...register(`donationLinksToUpdate.${index}.address` as const)}
+                {...registerUpdate(
+                  `donationLinksToUpdate.${index}.address` as const
+                )}
                 placeholder="Enter an address.."
                 defaultValue={field.address}
                 validationErrorMessage={errorForField?.message}
@@ -340,14 +349,22 @@ function UserDonationsUpdates({
           )
         })}
 
-        <button
-          type="button"
-          className="mx-auto block bg-blue-300 p-4"
-          onClick={() =>
-            // append({
-            //   postId: 'new',
-            //   text: '',
-            // })
+        <FormFieldError
+          fieldName="donationLinksToUpdate"
+          errors={errorsUpdate}
+        />
+
+        <FormSubmit
+          isInitiallySubmittable={false}
+          isValid={formStateUpdate.isValid}
+          isDirty={formStateUpdate.isDirty}
+          isSubmitted={formStateUpdate.isSubmitted}
+          isSubmitting={formStateUpdate.isSubmitting}
+          isValidating={formStateUpdate.isValidating}
+          isLoading={updateMany.isLoading}
+        />
+      </Form>
+
             console.log('§app')
           }
         >
