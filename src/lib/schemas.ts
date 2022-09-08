@@ -19,3 +19,13 @@ export const schemaUpdateDonationLink = z.object({
       })
   ),
 })
+
+export const schemaCreateDonationLink = z
+  .object({
+    address: addressSchema,
+    donationProviderId: donationProviderIdSchema,
+  })
+  .refine((data) => !!data && !!data.address && !!data.donationProviderId, {
+    message: 'Both address and donation provider should be filled in.',
+    path: [generalFormErrorKey],
+  })

@@ -5,8 +5,11 @@
 import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { addressSchema, schemaUpdateDonationLink } from '../../lib/schemas'
 import { checkAuthTRPC, ensureAuthorTRPC } from '../../lib/api-security'
+import {
+  schemaCreateDonationLink,
+  schemaUpdateDonationLink,
+} from '../../lib/schemas'
 import { ContextTRPC, createRouter } from '../context'
 
 /**
@@ -48,26 +51,22 @@ async function ensureAuthor(ctx: ContextTRPC, donationLinkId: string) {
 
 export const donationLinkRouter = createRouter()
   // CREATE
-  .mutation('addByUserId', {
+  .mutation('createByUserId', {
     input: z.object({
-      userId: z.string().uuid(),
-      data: z.object({
-        donationProviderId: z.string().min(1),
-        address: addressSchema,
-      }),
+      newDonationLink: schemaCreateDonationLink,
     }),
     async resolve({ input, ctx }) {
-      const { userId, data } = input
+      const { newDonationLink } = input
 
-      await checkAuthTRPC(ctx)
+      const userIdAuth = await checkAuthTRPC(ctx)
 
-      await ctx.prisma.donationLink.create({
+      return await ctx.prisma.donationLink.create({
         data: {
-          address: data.address,
+          address: newDonationLink.address,
           donationProvider: {
-            connect: { donationProviderId: data.donationProviderId },
+            connect: { donationProviderId: newDonationLink.donationProviderId },
           },
-          User: { connect: { userId } },
+          User: { connect: { userId: userIdAuth } },
         },
         select: defaultDonationLinkSelect,
       })
