@@ -32,6 +32,7 @@ export type FormSubmitProps = {
   isSubmitted: boolean
   isSubmitting: boolean
   icon?: ButtonProps['icon']
+  isBig?: boolean
   /** By default, we allow submitting initially without changes to trigger validation. This can be disabled herewith. */
   isInitiallySubmittable?: boolean
   children?: ReactNode
@@ -52,6 +53,7 @@ export function FormSubmit(props: FormSubmitProps): JSX.Element {
       isSubmit={true}
       icon={props.icon ?? <IconOkCircle />}
       showLoading={props.isLoading}
+      isBig={props.isBig}
     >
       <span>{props.children ?? 'Save'}</span>
       <input className="hidden" type="submit" />

@@ -1,14 +1,23 @@
 import { Popover, Transition } from '@headlessui/react'
 import { Fragment, ReactNode } from 'react'
-import { Controller, useFieldArray } from 'react-hook-form'
+import { useFieldArray } from 'react-hook-form'
 import { z } from 'zod'
-import { schemaUpdateDonationLink } from '../lib/schemas'
+import {
+  schemaCreateDonationLink,
+  schemaUpdateDonationLink,
+} from '../lib/schemas'
 import { trpc } from '../util/trpc'
 import { useZodForm } from '../util/use-zod-form'
 import { ButtonRemove } from './Button'
-import { DropdownSelect } from './DropdownSelect'
-import { Form, FormLabel, FormSelect, FormSubmit, Input } from './form'
-import { IconDonate, IconArrowDown } from './Icon'
+import {
+  Form,
+  FormFieldError,
+  FormLabel,
+  FormSelect,
+  FormSubmit,
+  Input,
+} from './form'
+import { IconArrowDown, IconDonate } from './Icon'
 import { LinkExternal } from './link'
 import { Logo } from './Logo'
 
@@ -134,7 +143,7 @@ function UserDonationUpdateRow({
       className="grid grid-cols-7 items-center gap-4"
       key={userDonation.donationLinkId}
     >
-      <div className="col-span-1">
+      <div className="col-span-1 flex justify-end">
         <Logo
           topic="donationProviderId"
           logoIdForAccess={logoIdFromInput ?? userDonation.logoId}
@@ -184,51 +193,16 @@ function UserDonationsUpdates({
       invalidate()
     },
   })
-  // const createOne = trpc.useMutation('donationLink.addByUserId', {
-  //   async onSuccess() {
-  //     invalidate()
-  //   },
-  // })
-
+  const createOne = trpc.useMutation('donationLink.createByUserId', {
+    async onSuccess() {
+      invalidate()
+    },
+  })
   function deleteOneItem(donationLinkId: string) {
     deleteOne.mutate({
       donationLinkId: donationLinkId,
     })
   }
-
-  // async function handleSubmit(e: FormEvent) {
-  //   e.preventDefault()
-
-  //   if (inputs) {
-  //     for (const [donationLinkId, inputNew] of Object.entries(inputs)) {
-  //       const inputData: InferMutationInput<'donationLink.edit'>['data'] = {
-  //         donationProviderId: inputNew.donationProviderId,
-  //         address: inputNew.address,
-  //       }
-
-  //       await updateOne.mutateAsync({ donationLinkId, data: inputData })
-  //     }
-  //   }
-
-  //   if (
-  //     inputCreate &&
-  //     inputCreate.newItemAddress &&
-  //     inputCreate.newItemProviderId
-  //   ) {
-  //     await createOne.mutateAsync({
-  //       userId,
-  //       data: {
-  //         address: inputCreate.newItemAddress,
-  //         donationProviderId: inputCreate.newItemProviderId,
-  //       },
-  //     })
-
-  //     resetInputs(true)
-  //   } else {
-  //     // keep "create" input in case we submitted without the creation (e.g. when provider was missing)
-  //     resetInputs(false)
-  //   }
-  // }
 
   const defaultValuesUpdate: SchemaUpdateDonationLink = {
     donationLinksToUpdate: userDonations.map((userDonation) => ({
@@ -251,14 +225,33 @@ function UserDonationsUpdates({
     mode: 'onChange',
   })
 
-  const { fields, remove } = useFieldArray({
+  const {
+    fields: fieldsUpdate,
+    remove: removeUpdate,
+    append: appendUpdate,
+  } = useFieldArray({
     name: 'donationLinksToUpdate',
     control: controlUpdate,
   })
+
+  const {
+    handleSubmit: handleSubmitCreate,
+    register: registerCreate,
+    control: controlCreate,
+    formState: formStateCreate,
+    reset: resetCreate,
+    watch: watchCreate,
+  } = useZodForm({
+    schema: schemaCreateDonationLink,
+    defaultValues: defaultValuesCreate,
+    mode: 'onChange',
   })
 
   const errorsUpdate = formStateUpdate.errors
+  const errorsCreate = formStateCreate.errors
   const dirtyFieldsUpdate = formStateUpdate.dirtyFields
+
+  const newProviderIdFromInput = watchCreate('donationProviderId')
 
   return (
     <div>
@@ -298,7 +291,7 @@ function UserDonationsUpdates({
           <div className="col-span-1"></div>
         </div>
 
-        {fields.map((field, index) => {
+        {fieldsUpdate.map((field, index) => {
           const errorForField =
             errorsUpdate?.donationLinksToUpdate?.at?.(index)?.address
           const userDonation =
@@ -307,9 +300,11 @@ function UserDonationsUpdates({
                 userDonation.donationLinkId === field.donationLinkId
             ) ?? null
 
-          // this case is especially true when adding a new link (via `append`), as those have no donation link ID
-          if (!userDonation)
-            return <p key={field.id}>No donation link available..</p>
+          /*
+           * This case is true when adding a new link (via `append`), as those exist in the field (because we take the response from creation to append),
+           * but the `userDonations` have not been fetched yet, so the new link is not available.
+           */
+          if (!userDonation) return null
           if (!donationProviders)
             return <p key={field.id}>No donation providers available..</p>
 
@@ -323,7 +318,7 @@ function UserDonationsUpdates({
               userDonation={userDonation}
               deleteItem={() => {
                 deleteOneItem(field.donationLinkId)
-                remove(index)
+                removeUpdate(index)
               }}
               inputDonationProviderId={inputDonationProviderId ?? null}
               donationProviders={donationProviders.map((dP) => ({
@@ -366,6 +361,7 @@ function UserDonationsUpdates({
 
         <div className="grid place-items-center">
           <FormSubmit
+            isBig={true}
             isInitiallySubmittable={false}
             isValid={formStateUpdate.isValid}
             isDirty={formStateUpdate.isDirty}
@@ -377,65 +373,102 @@ function UserDonationsUpdates({
         </div>
       </Form>
 
-            console.log('§app')
-          }
-        >
-          Append
-        </button>
+      {/* NEW LINK */}
+      <p className="mb-20 text-center text-xl text-dlila">
+        {userDonations.length === 0
+          ? 'Add a new link:'
+          : '..or add a new link:'}
+      </p>
 
-        <FormSubmit
-          isValid={formState.isValid}
-          isSubmitted={formState.isSubmitted}
-          isSubmitting={formState.isSubmitting}
-          isValidating={formState.isValidating}
-          isLoading={updateMany.isLoading}
-        />
-      </Form>
+      <Form
+        onSubmit={handleSubmitCreate((data) => {
+          createOne.mutate(
+            { newDonationLink: data },
+            {
+              onSuccess: async (createdDonationLink) => {
+                const { donationLinkId, address, donationProvider } =
+                  createdDonationLink
+                /**
+                 * After creation, we append the link to the existing links. Here, we take the default values of the links
+                 * as a baseline type and require all fields.
+                 */
+                const createdTransformed: Required<
+                  typeof defaultValuesUpdate['donationLinksToUpdate'][number]
+                > = {
+                  donationLinkId,
+                  address,
+                  donationProviderId: donationProvider.donationProviderId,
+                }
+                appendUpdate(createdTransformed)
 
-      {/* <form
-        id={formId}
-        onSubmit={handleSubmit}
-        className="mx-auto mb-10 w-full space-y-4"
+                // reset default values - see other `reset` comment
+                resetCreate(defaultValuesCreate)
+              },
+            }
+          )
+        })}
       >
-        NEW LINK
-        <div className="grid grid-cols-6 items-center gap-4">
-          <div className="col-span-1">
-            {inputCreate?.newItemProviderId && (
+        <div className="grid grid-cols-7 items-center gap-4">
+          <div className="col-span-1 flex justify-end">
+            {newProviderIdFromInput && (
               <Logo
                 topic="donationProviderId"
-                logoIdForAccess={inputCreate.newItemProviderId}
+                logoIdForAccess={newProviderIdFromInput}
               />
             )}
           </div>
 
-          <div className="col-span-1">
-            <DonationProviderSelect
-              shouldReset={!inputCreate?.newItemProviderId}
-              onSelect={(selectedProviderId) => {
-                setInputCreate((prev) => ({
-                  ...prev,
-                  newItemProviderId: selectedProviderId,
-                }))
-              }}
-              initialItem={undefined}
-              donationProviders={donationProviders ?? null}
-            />
+          <div className="col-span-2">
+            {!donationProviders ? (
+              <p>No donation providers available..</p>
+            ) : (
+              <FormSelect
+                // we throw away the component after a successful submit to reset the selection
+                key={formStateCreate.isSubmitSuccessful + ''}
+                control={controlCreate}
+                name="donationProviderId"
+                items={donationProviders.map((provider) => ({
+                  itemId: provider.donationProviderId,
+                  label: provider.name,
+                }))}
+                unselectedLabel="Please select a provider."
+                validationErrorMessage={
+                  errorsCreate.donationProviderId?.message
+                }
+              />
+            )}
           </div>
 
           <div className="col-span-3">
-            <FormInput
-              placeholder="New link.."
-              formId={formId}
-              inputId={`${formId}-new-link`}
-              initialValue={inputCreate?.newItemAddress ?? undefined}
-              onChange={(input) =>
-                setInputCreate((prev) => ({ ...prev, newItemAddress: input }))
-              }
+            <Input
+              {...registerCreate('address')}
+              placeholder="Enter an address.."
+              defaultValue=""
+              validationErrorMessage={errorsCreate.address?.message}
             />
+          </div>
+
+          <div className="col-span-1">
+            <FormSubmit
+              isValid={formStateCreate.isValid}
+              isDirty={formStateCreate.isDirty}
+              isSubmitted={formStateCreate.isSubmitted}
+              isSubmitting={formStateCreate.isSubmitting}
+              isValidating={formStateCreate.isValidating}
+              isLoading={updateMany.isLoading}
+            >
+              Add
+            </FormSubmit>
           </div>
         </div>
 
-      </form> */}
+        <div className="mt-10">
+          <FormFieldError
+            fieldName="general-form-error-key"
+            errors={errorsCreate}
+          />
+        </div>
+      </Form>
     </div>
   )
 }

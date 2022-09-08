@@ -1,25 +1,25 @@
 import {
-  PencilIcon,
-  CheckIcon,
-  XIcon,
-  TrashIcon,
-  PlusIcon,
-  ReplyIcon,
-  CalendarIcon,
+  BookmarkAltIcon,
+  CheckCircleIcon as CheckCircleIconOutline,
+  HeartIcon as HeartIconOutline,
+  MinusCircleIcon as MinusCircleIconOutline,
+  PlusCircleIcon as PlusCircleIconOutline,
+} from '@heroicons/react/outline'
+import {
   AnnotationIcon,
-  EyeIcon,
-  HeartIcon as HeartIconSolid,
+  CalendarIcon,
+  CheckIcon,
   ChevronDownIcon as ChevronDownIconSolid,
   CurrencyDollarIcon as CurrencyDollarIconSolid,
+  EyeIcon,
+  HeartIcon as HeartIconSolid,
+  PencilIcon,
+  PlusIcon,
+  QuestionMarkCircleIcon as QuestionMarkCircleIconSolid,
+  ReplyIcon,
+  TrashIcon,
+  XIcon,
 } from '@heroicons/react/solid'
-import {
-  BookmarkAltIcon,
-  HeartIcon as HeartIconOutline,
-  CheckCircleIcon as CheckCircleIconOutline,
-  PlusCircleIcon as PlusCircleIconOutline,
-  MinusCircleIcon as MinusCircleIconOutline,
-  QuestionMarkCircleIcon as QuestionMarkCircleIconOutline,
-} from '@heroicons/react/outline'
 import { MouseEvent } from 'react'
 
 const sizes = {
@@ -435,7 +435,7 @@ export function IconQuestionMarkCircle({
   onClick,
 }: IconProps): JSX.Element {
   return (
-    <QuestionMarkCircleIconOutline
+    <QuestionMarkCircleIconSolid
       className={createClassNames({
         size,
         className,
