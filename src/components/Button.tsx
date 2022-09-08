@@ -34,7 +34,8 @@ export function Button({
   onClickOutside,
   showLoading = false,
   isSubmit = false,
-}: ButtonProps): JSX.Element {
+  isBig = false,
+}: ButtonProps & { isBig?: boolean }): JSX.Element {
   const buttonRef = useRef<HTMLButtonElement>(null)
   useOnClickOutside(buttonRef, onClickOutside ?? (() => undefined))
 
@@ -45,8 +46,9 @@ export function Button({
       ref={buttonRef}
       type={isSubmit ? 'submit' : 'button'}
       className={
-        'group rounded py-2 px-2 shadow-md outline-none focus:outline-none disabled:cursor-not-allowed' +
-        ' bg-dlila bg-gradient-to-r from-pink-700 to-dlila text-white ring-orange-500 hover:bg-pink-800 hover:bg-none active:bg-dlila/40 disabled:text-gray-300'
+        'group shadow-md outline-none focus:outline-none disabled:cursor-not-allowed' +
+        ' bg-dlila bg-gradient-to-r from-pink-700 to-dlila text-white ring-orange-500 hover:bg-pink-800 hover:bg-none active:bg-dlila/40 disabled:text-gray-300' +
+        ` ${!isBig ? 'rounded py-2 px-2' : 'rounded-xl px-8 py-6 text-xl'}`
       }
     >
       <div className="flex items-center justify-center">

@@ -115,7 +115,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 
 function FormError({ message }: { message: string | undefined }): JSX.Element {
   return (
-    <p className="text-left text-sm text-yellow-500">
+    <p className="text-sm text-yellow-500">
       {message ?? <span className="opacity-0">&nbsp;</span>}
     </p>
   )

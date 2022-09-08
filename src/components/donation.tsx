@@ -153,6 +153,12 @@ function UserDonationUpdateRow({
 }
 
 type SchemaUpdateDonationLink = z.infer<typeof schemaUpdateDonationLink>
+type SchemaCreateDonationLink = z.infer<typeof schemaCreateDonationLink>
+
+const defaultValuesCreate: SchemaCreateDonationLink = {
+  address: '',
+  donationProviderId: '',
+}
 
 function UserDonationsUpdates({
   userId,
@@ -301,9 +307,11 @@ function UserDonationsUpdates({
                 userDonation.donationLinkId === field.donationLinkId
             ) ?? null
 
-          if (!userDonation) return <p>No donation link available..</p>
+          // this case is especially true when adding a new link (via `append`), as those have no donation link ID
+          if (!userDonation)
+            return <p key={field.id}>No donation link available..</p>
           if (!donationProviders)
-            return <p>No donation providers available..</p>
+            return <p key={field.id}>No donation providers available..</p>
 
           const inputDonationProviderId = watchUpdate(
             'donationLinksToUpdate'
@@ -349,20 +357,24 @@ function UserDonationsUpdates({
           )
         })}
 
-        <FormFieldError
-          fieldName="donationLinksToUpdate"
-          errors={errorsUpdate}
-        />
+        <div className="text-center">
+          <FormFieldError
+            fieldName="donationLinksToUpdate"
+            errors={errorsUpdate}
+          />
+        </div>
 
-        <FormSubmit
-          isInitiallySubmittable={false}
-          isValid={formStateUpdate.isValid}
-          isDirty={formStateUpdate.isDirty}
-          isSubmitted={formStateUpdate.isSubmitted}
-          isSubmitting={formStateUpdate.isSubmitting}
-          isValidating={formStateUpdate.isValidating}
-          isLoading={updateMany.isLoading}
-        />
+        <div className="grid place-items-center">
+          <FormSubmit
+            isInitiallySubmittable={false}
+            isValid={formStateUpdate.isValid}
+            isDirty={formStateUpdate.isDirty}
+            isSubmitted={formStateUpdate.isSubmitted}
+            isSubmitting={formStateUpdate.isSubmitting}
+            isValidating={formStateUpdate.isValidating}
+            isLoading={updateMany.isLoading}
+          />
+        </div>
       </Form>
 
             console.log('§app')
