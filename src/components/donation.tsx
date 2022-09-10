@@ -1,3 +1,4 @@
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Popover, Transition } from '@headlessui/react'
 import { Fragment, ReactNode } from 'react'
 import { useFieldArray } from 'react-hook-form'
@@ -253,6 +254,8 @@ function UserDonationsUpdates({
 
   const newProviderIdFromInput = watchCreate('donationProviderId')
 
+  const [parent] = useAutoAnimate<HTMLDivElement>()
+
   return (
     <div>
       <Form
@@ -291,66 +294,68 @@ function UserDonationsUpdates({
           <div className="col-span-1"></div>
         </div>
 
-        {fieldsUpdate.map((field, index) => {
-          const errorForField =
-            errorsUpdate?.donationLinksToUpdate?.at?.(index)?.address
-          const userDonation =
-            userDonations.find(
-              (userDonation) =>
-                userDonation.donationLinkId === field.donationLinkId
-            ) ?? null
+        <div ref={parent} className="w-full space-y-4">
+          {fieldsUpdate.map((field, index) => {
+            const errorForField =
+              errorsUpdate?.donationLinksToUpdate?.at?.(index)?.address
+            const userDonation =
+              userDonations.find(
+                (userDonation) =>
+                  userDonation.donationLinkId === field.donationLinkId
+              ) ?? null
 
-          /*
-           * This case is true when adding a new link (via `append`), as those exist in the field (because we take the response from creation to append),
-           * but the `userDonations` have not been fetched yet, so the new link is not available.
-           */
-          if (!userDonation) return null
-          if (!donationProviders)
-            return <p key={field.id}>No donation providers available..</p>
+            /*
+             * This case is true when adding a new link (via `append`), as those exist in the field (because we take the response from creation to append),
+             * but the `userDonations` have not been fetched yet, so the new link is not available.
+             */
+            if (!userDonation) return null
+            if (!donationProviders)
+              return <p key={field.id}>No donation providers available..</p>
 
-          const inputDonationProviderId = watchUpdate(
-            'donationLinksToUpdate'
-          ).at(index)?.donationProviderId
+            const inputDonationProviderId = watchUpdate(
+              'donationLinksToUpdate'
+            ).at(index)?.donationProviderId
 
-          return (
-            <UserDonationUpdateRow
-              key={field.id}
-              userDonation={userDonation}
-              deleteItem={() => {
-                deleteOneItem(field.donationLinkId)
-                removeUpdate(index)
-              }}
-              inputDonationProviderId={inputDonationProviderId ?? null}
-              donationProviders={donationProviders.map((dP) => ({
-                donationProviderId: dP.donationProviderId,
-                donationProviderName: dP.name,
-                logoId: dP.logoId,
-              }))}
-              donationProviderSelect={
-                <FormSelect
-                  control={controlUpdate}
-                  name={
-                    `donationLinksToUpdate.${index}.donationProviderId` as const
-                  }
-                  items={donationProviders.map((provider) => ({
-                    itemId: provider.donationProviderId,
-                    label: provider.name,
-                  }))}
-                  unselectedLabel="Please select a provider."
+            return (
+              <UserDonationUpdateRow
+                key={field.id}
+                userDonation={userDonation}
+                deleteItem={() => {
+                  deleteOneItem(field.donationLinkId)
+                  removeUpdate(index)
+                }}
+                inputDonationProviderId={inputDonationProviderId ?? null}
+                donationProviders={donationProviders.map((dP) => ({
+                  donationProviderId: dP.donationProviderId,
+                  donationProviderName: dP.name,
+                  logoId: dP.logoId,
+                }))}
+                donationProviderSelect={
+                  <FormSelect
+                    control={controlUpdate}
+                    name={
+                      `donationLinksToUpdate.${index}.donationProviderId` as const
+                    }
+                    items={donationProviders.map((provider) => ({
+                      itemId: provider.donationProviderId,
+                      label: provider.name,
+                    }))}
+                    unselectedLabel="Please select a provider."
+                  />
+                }
+              >
+                <Input
+                  {...registerUpdate(
+                    `donationLinksToUpdate.${index}.address` as const
+                  )}
+                  placeholder="Enter an address.."
+                  defaultValue={field.address}
+                  validationErrorMessage={errorForField?.message}
                 />
-              }
-            >
-              <Input
-                {...registerUpdate(
-                  `donationLinksToUpdate.${index}.address` as const
-                )}
-                placeholder="Enter an address.."
-                defaultValue={field.address}
-                validationErrorMessage={errorForField?.message}
-              />
-            </UserDonationUpdateRow>
-          )
-        })}
+              </UserDonationUpdateRow>
+            )
+          })}
+        </div>
 
         <div className="text-center">
           <FormFieldError
