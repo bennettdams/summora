@@ -1,38 +1,38 @@
-import { useState, useRef, useEffect, FormEvent } from 'react'
-import { Box } from '../../Box'
-import { Button } from '../../Button'
-import { DropdownItem } from '../../DropdownSelect'
-import { FormInput } from '../../FormInput'
-import { IconCheck, IconX, IconTrash, IconReply, IconDate } from '../../Icon'
-import { LoadingAnimation } from '../../LoadingAnimation'
-import { Page, PageSection } from '../../Page'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 import { usePost } from '../../../data/use-post'
-import { useHover } from '../../../util/use-hover'
-import { useOnClickOutside } from '../../../util/use-on-click-outside'
-import { useDebounce } from '../../../util/use-debounce'
-import { ViewsIcon } from '../../ViewsIcon'
-import { CommentsIcon } from '../../CommentsIcon'
-import { PostPageProps } from '../../../pages/post/[postId]'
-import { PostSegment } from './PostSegment'
 import { useSearchTags } from '../../../data/use-search-tags'
-import { Avatar } from '../../Avatar'
+import { PostPageProps } from '../../../pages/post/[postId]'
 import {
   apiIncrementPostViews,
   ApiPostSegmentCreateRequestBody,
   ApiPostUpdateRequestBody,
 } from '../../../services/api-service'
-import { Tag, TagsList } from '../../tag'
 import { useAuth } from '../../../services/auth-service'
-import { StepList } from '../../StepList'
-import { PostLikes } from '../../post'
-import { Link } from '../../link'
-import { VoteIcon } from '../../VoteIcon'
-import { EditOverlay } from '../../EditOverlay'
-import { CategorySelect } from '../../CategorySelect'
 import { ROUTES } from '../../../services/routing'
-import { NoContent } from '../../NoContent'
-import { DonateButton } from '../../donation'
+import { useDebounce } from '../../../util/use-debounce'
+import { useHover } from '../../../util/use-hover'
+import { useOnClickOutside } from '../../../util/use-on-click-outside'
+import { Avatar } from '../../Avatar'
+import { Box } from '../../Box'
+import { Button } from '../../Button'
+import { CategorySelect } from '../../CategorySelect'
+import { CommentsIcon } from '../../CommentsIcon'
 import { DateTime } from '../../DateTime'
+import { DonateButton } from '../../donation'
+import { DropdownItem } from '../../DropdownSelect'
+import { EditOverlay } from '../../EditOverlay'
+import { FormInput } from '../../FormInput'
+import { IconCheck, IconDate, IconReply, IconTrash, IconX } from '../../Icon'
+import { Link } from '../../link'
+import { LoadingAnimation } from '../../LoadingAnimation'
+import { NoContent } from '../../NoContent'
+import { Page, PageSection } from '../../Page'
+import { PostLikes } from '../../post'
+import { StepList } from '../../StepList'
+import { Tag, TagsList } from '../../tag'
+import { ViewsIcon } from '../../ViewsIcon'
+import { VoteIcon } from '../../VoteIcon'
+import { PostSegment } from './PostSegment'
 
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
@@ -256,21 +256,23 @@ function PostPageInternal({
             >
               <div className="flex items-center">
                 <Button
+                  icon={<IconCheck />}
                   isSubmit
                   onClick={() => {
                     // TODO placeholder, remove when we have FormSubmit button
                   }}
                 >
-                  <IconCheck /> Save
+                  Save
                 </Button>
                 <Button
+                  icon={<IconX />}
                   onClick={(e) => {
                     // prevent form submit
                     e.preventDefault()
                     resetEditMode()
                   }}
                 >
-                  <IconX /> Cancel
+                  Cancel
                 </Button>
               </div>
 

@@ -1,22 +1,22 @@
-import { useAuth } from '../services/auth-service'
-import { useRouteChange } from '../util/use-route-change'
-import { Avatar } from './Avatar'
-import { Button } from './Button'
-import { LoadingAnimation } from './LoadingAnimation'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { MenuIcon, XIcon, BellIcon } from '@heroicons/react/outline'
+import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 import { useRouter } from 'next/router'
 import { FormEvent, useState } from 'react'
-import { IconEdit } from './Icon'
-import { FormInput } from './FormInput'
 import {
   apiCreatePost,
   ApiPostsCreateRequestBody,
 } from '../services/api-service'
-import { CategorySelect } from './CategorySelect'
-import { Modal, useModal } from './modal'
+import { useAuth } from '../services/auth-service'
 import { ROUTES } from '../services/routing'
+import { useRouteChange } from '../util/use-route-change'
+import { Avatar } from './Avatar'
+import { Button } from './Button'
+import { CategorySelect } from './CategorySelect'
+import { FormInput } from './FormInput'
+import { IconEdit } from './Icon'
 import { Link } from './link'
+import { LoadingAnimation } from './LoadingAnimation'
+import { Modal, useModal } from './modal'
 
 const NAV_ROUTES = [
   { name: 'home', href: ROUTES.home },
@@ -318,7 +318,7 @@ function CreatePostModal() {
             </div>
 
             <div className="mx-auto grid place-items-center">
-              <Button isSubmit onClick={handleSubmit}>
+              <Button isSubmit isBig onClick={handleSubmit}>
                 Create
               </Button>
             </div>

@@ -142,34 +142,3 @@ export const donationLinkRouter = createRouter()
       }
     },
   })
-// .mutation('editMany', {
-//   input: z.object({
-//     data: z.array(
-//       z.object({
-//         donationLinkId: z.string().cuid(),
-//         donationProviderId: z.string(),
-//         address: z.string(),
-//       })
-//     ),
-//   }),
-//   async resolve({ input, ctx }) {
-//     const { data } = input
-
-//     const donationLinksUpdated = await ctx.prisma.$transaction(
-//       data.map((donationLink) => {
-//         const { donationLinkId, donationProviderId, address } = donationLink
-
-//         return ctx.prisma.donationLink.update({
-//           where: { donationLinkId },
-//           data: {
-//             address,
-//             donationProvider: { connect: { donationProviderId } },
-//           },
-//           select: defaultDonationLinkSelect,
-//         })
-//       })
-//     )
-
-//     return donationLinksUpdated
-//   },
-// })

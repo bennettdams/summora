@@ -1,18 +1,18 @@
-import { useState, useEffect, useRef, FormEvent } from 'react'
-import { Button, ButtonAddSpecial, ButtonRemove } from '../../Button'
-import { FormInput } from '../../FormInput'
-import { IconCheck, IconX } from '../../Icon'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 import { usePost } from '../../../data/use-post'
-import { useOnClickOutside } from '../../../util/use-on-click-outside'
-import { PostSegmentItem } from './PostSegmentItem'
 import {
   ApiPostSegmentItemCreateRequestBody,
   ApiPostSegmentItemUpdateRequestBody,
   ApiPostSegmentUpdateRequestBody,
 } from '../../../services/api-service'
-import { SegmentPostPage } from './PostPage'
-import { PostSegmentImage } from '../../PostSegmentImage'
+import { useOnClickOutside } from '../../../util/use-on-click-outside'
+import { Button, ButtonAddSpecial, ButtonRemove } from '../../Button'
 import { EditOverlay } from '../../EditOverlay'
+import { FormInput } from '../../FormInput'
+import { IconCheck, IconX } from '../../Icon'
+import { PostSegmentImage } from '../../PostSegmentImage'
+import { SegmentPostPage } from './PostPage'
+import { PostSegmentItem } from './PostSegmentItem'
 
 export function PostSegment({
   postSegmentId,
@@ -270,21 +270,23 @@ export function PostSegment({
                   {isSegmentEditMode && (
                     <div>
                       <Button
+                        icon={<IconCheck />}
                         isSubmit
                         onClick={() => {
                           // TODO placeholder, remove when we have FormSubmit button
                         }}
                       >
-                        <IconCheck /> Save
+                        Save
                       </Button>
                       <Button
+                        icon={<IconX />}
                         onClick={(e) => {
                           // prevent form submit
                           e.preventDefault()
                           resetEditMode()
                         }}
                       >
-                        <IconX /> Cancel
+                        Cancel
                       </Button>
                     </div>
                   )}
