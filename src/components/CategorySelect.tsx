@@ -31,11 +31,12 @@ export function CategorySelect({
       {shouldShowDropdown ? (
         <div className="inline-block w-full">
           <DropdownSelect
+            shouldSyncInitialItem={true}
             unselectedLabel="Please select a category."
             onChange={onSelect}
             items={postCategories.map(createDropdownItem)}
             initialItem={
-              !categoryInitial ? undefined : createDropdownItem(categoryInitial)
+              !categoryInitial ? null : createDropdownItem(categoryInitial)
             }
           />
         </div>

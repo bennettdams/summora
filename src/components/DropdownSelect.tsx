@@ -13,7 +13,7 @@ export function DropdownSelect({
   onChange,
   onChangeSelection,
   unselectedLabel,
-  shouldReset,
+  shouldSyncInitialItem,
   selectedItemIdExternal,
 }: {
   items: DropdownItem[] | null
@@ -24,14 +24,14 @@ export function DropdownSelect({
       onChangeSelection: (newItem: string) => void
       onChange?: never
       initialItem?: never
-      shouldReset?: never
+      shouldSyncInitialItem?: never
     }
   | {
       selectedItemIdExternal?: never
       onChangeSelection?: never
       onChange: (newItem: DropdownItem) => void
       initialItem: DropdownItem | null
-      shouldReset: boolean
+      shouldSyncInitialItem: boolean
     }
 )): JSX.Element {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(
@@ -39,8 +39,8 @@ export function DropdownSelect({
   )
 
   useEffect(() => {
-    if (shouldReset) setSelectedItemId(initialItem?.itemId ?? null)
-  }, [shouldReset, initialItem])
+    if (shouldSyncInitialItem) setSelectedItemId(initialItem?.itemId ?? null)
+  }, [shouldSyncInitialItem, initialItem])
 
   function handleSelect(newItemId: string) {
     setSelectedItemId(newItemId)

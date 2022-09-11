@@ -135,8 +135,10 @@ export function FormFieldError<TFieldValues extends FieldValues>({
   const errorForField = errors[fieldName]
   return (
     <div className={!noMargin ? 'mt-12' : ''}>
-      <p key={fieldName + ''} className="text-center text-yellow-500">
-        {errorForField?.message ?? <span className="opacity-0">&nbsp;</span>}
+      <p key={String(fieldName)} className="text-center text-yellow-500">
+        {<span>{errorForField?.message}</span> ?? (
+          <span className="opacity-0">&nbsp;</span>
+        )}
       </p>
     </div>
   )

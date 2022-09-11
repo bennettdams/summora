@@ -57,7 +57,7 @@ export function Button({
             {showLoading ? (
               <LoadingAnimation size="small" />
             ) : // overwrite the icon color for the appropiate text color of the button
-            isValidElement(icon) ? (
+            isValidElement<IconProps>(icon) ? (
               cloneElement<IconProps>(icon, {
                 className: 'text-current',
               })
