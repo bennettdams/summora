@@ -1,19 +1,18 @@
-import { useState } from 'react'
-import { Link } from './link'
-import { ViewsIcon } from './ViewsIcon'
-import { CommentsIcon } from './CommentsIcon'
-import { Box } from './Box'
-import { Avatar } from './Avatar'
-import { Button } from './Button'
-import { TagsList } from './tag'
 import { usePost } from '../data/use-post'
 import { useAuth } from '../services/auth-service'
-import { LikesIcon } from './LikesIcon'
-import { IconSize } from './Icon'
-import { useHasMounted } from '../util/use-has-mounted'
 import { ROUTES } from '../services/routing'
-import { NoContent } from './NoContent'
+import { useHasMounted } from '../util/use-has-mounted'
+import { Avatar } from './Avatar'
+import { Box } from './Box'
+import { ChoiceSelect, useChoiceSelect } from './ChoiceSelect'
+import { CommentsIcon } from './CommentsIcon'
 import { DateTime } from './DateTime'
+import { IconLong, IconShort, IconSize } from './Icon'
+import { LikesIcon } from './LikesIcon'
+import { Link } from './link'
+import { NoContent } from './NoContent'
+import { TagsList } from './tag'
+import { ViewsIcon } from './ViewsIcon'
 
 type PostsPostsList =
   | null
@@ -40,19 +39,31 @@ type PostsPostsList =
 type PostPostsList = NonNullable<PostsPostsList>[number]
 
 export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
-  const [showLongPost, setShowLongPost] = useState(true)
   const { userId } = useAuth()
+
+  const choiceSelectControl = useChoiceSelect(
+    [
+      {
+        choiceId: 'long',
+        label: 'Long',
+        icon: <IconLong />,
+      },
+      { choiceId: 'short', label: 'Short', icon: <IconShort /> },
+    ],
+    'long'
+  )
 
   return (
     <div>
-      <Button onClick={() => setShowLongPost(true)}>long</Button>
-      <Button onClick={() => setShowLongPost(false)}>short</Button>
+      <div className="w-3/4 sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5">
+        <ChoiceSelect control={choiceSelectControl} />
+      </div>
 
       {!posts ? (
         <div>Error while getting posts :(</div>
       ) : posts.length === 0 ? (
         <div>No posts yet.</div>
-      ) : showLongPost ? (
+      ) : choiceSelectControl.selected.choiceId === 'long' ? (
         <div className="mt-10 grid w-full grid-cols-1 gap-20 xl:grid-cols-2">
           {posts.map((post) => (
             <PostsListItem key={post.id} post={post} userId={userId} />
