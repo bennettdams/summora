@@ -1,16 +1,16 @@
+import { httpBatchLink } from '@trpc/client/links/httpBatchLink'
+import { loggerLink } from '@trpc/client/links/loggerLink'
+import { withTRPC } from '@trpc/next'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
-import { withTRPC } from '@trpc/next'
+import superjson from 'superjson'
+import { ErrorBoundary } from '../components/error'
 import { Footer } from '../components/Footer'
 import { Header } from '../components/Header'
+import { AppRouter } from '../server/routers/_app'
 import { AuthContextProvider } from '../services/auth-service'
 import { supabase } from '../services/supabase/supabase-service'
 import '../styles/globals.css'
-import { ErrorBoundary } from '../components/error'
-import superjson from 'superjson'
-import { AppRouter } from '../server/routers/_app'
-import { httpBatchLink } from '@trpc/client/links/httpBatchLink'
-import { loggerLink } from '@trpc/client/links/loggerLink'
 
 function App({ Component, pageProps }: AppProps): JSX.Element {
   return (
@@ -28,6 +28,7 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
             <main className="h-full">
               {/* boundary to catch errors where we can still show some UI (like the header and footer) */}
               <ErrorBoundary>
+                {/* <TailwindCSSBreakpoint /> */}
                 <Component {...pageProps} />
               </ErrorBoundary>
             </main>

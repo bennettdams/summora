@@ -18,6 +18,8 @@ import {
   QuestionMarkCircleIcon as QuestionMarkCircleIconSolid,
   ReplyIcon,
   TrashIcon,
+  ViewGridAddIcon,
+  ViewGridIcon,
   XIcon,
 } from '@heroicons/react/solid'
 import { MouseEvent } from 'react'
@@ -436,6 +438,50 @@ export function IconQuestionMarkCircle({
 }: IconProps): JSX.Element {
   return (
     <QuestionMarkCircleIconSolid
+      className={createClassNames({
+        size,
+        className,
+        isClickable: !!onClick,
+      })}
+      onClick={(event: MouseEvent) => {
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
+      }}
+    />
+  )
+}
+
+export function IconShort({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <ViewGridIcon
+      className={createClassNames({
+        size,
+        className,
+        isClickable: !!onClick,
+      })}
+      onClick={(event: MouseEvent) => {
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
+      }}
+    />
+  )
+}
+
+export function IconLong({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <ViewGridAddIcon
       className={createClassNames({
         size,
         className,
