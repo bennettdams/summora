@@ -1,3 +1,4 @@
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useRef, useState } from 'react'
 import { useOnClickOutside } from '../util/use-on-click-outside'
 import { ButtonAddSpecial } from './Button'
@@ -22,8 +23,9 @@ export function TagsList({
   onAddButtonClick?: () => void
   onRemoveClick?: (tagIdToRemove: string) => void
 }): JSX.Element {
+  const [animateTagsRef] = useAutoAnimate<HTMLDivElement>()
   return (
-    <div className="flex flex-wrap items-center">
+    <div ref={animateTagsRef} className="flex flex-wrap items-center">
       {tags.map((tag) => (
         <Tag
           key={tag.id}

@@ -1,3 +1,4 @@
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { usePost } from '../../../data/use-post'
 import {
@@ -51,6 +52,8 @@ export function PostSegment({
   )
   const refNewItem = useRef<HTMLDivElement>(null)
   useOnClickOutside(refNewItem, () => setShowNewItemInput(false))
+
+  const [animateRef] = useAutoAnimate<HTMLDivElement>()
 
   const [inputs, setInputs] = useState<{
     title?: string | null
@@ -207,7 +210,8 @@ export function PostSegment({
             </div>
 
             {/* SEGMENT ITEMS */}
-            <div className="mt-2 space-y-2">
+            {/* `relative` here needed for auto-animate. Without it, the edit overlay is shown loosely below the list, instead of overlaying the list. */}
+            <div ref={animateRef} className="relative mt-2 space-y-2">
               {segment.items.map((item, index) => (
                 <div className="w-full" key={item.id}>
                   <PostSegmentItem

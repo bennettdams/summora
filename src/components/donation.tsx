@@ -254,7 +254,7 @@ function UserDonationsUpdates({
 
   const newProviderIdFromInput = watchCreate('donationProviderId')
 
-  const [parent] = useAutoAnimate<HTMLDivElement>()
+  const [animateRef] = useAutoAnimate<HTMLDivElement>()
 
   return (
     <div>
@@ -294,7 +294,7 @@ function UserDonationsUpdates({
           <div className="col-span-1"></div>
         </div>
 
-        <div ref={parent} className="w-full space-y-4">
+        <div ref={animateRef} className="w-full space-y-4">
           {fieldsUpdate.map((field, index) => {
             const errorForField =
               errorsUpdate?.donationLinksToUpdate?.at?.(index)?.address

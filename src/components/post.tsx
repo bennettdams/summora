@@ -1,3 +1,4 @@
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { usePost } from '../data/use-post'
 import { useAuth } from '../services/auth-service'
 import { ROUTES } from '../services/routing'
@@ -53,6 +54,8 @@ export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
     'long'
   )
 
+  const [animateRef] = useAutoAnimate<HTMLDivElement>()
+
   return (
     <div>
       <div className="w-3/4 sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5">
@@ -64,13 +67,19 @@ export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
       ) : posts.length === 0 ? (
         <div>No posts yet.</div>
       ) : choiceSelectControl.selected.choiceId === 'long' ? (
-        <div className="mt-10 grid w-full grid-cols-1 gap-20 xl:grid-cols-2">
+        <div
+          ref={animateRef}
+          className="mt-10 grid w-full grid-cols-1 gap-20 xl:grid-cols-2"
+        >
           {posts.map((post) => (
             <PostsListItem key={post.id} post={post} userId={userId} />
           ))}
         </div>
       ) : (
-        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:gap-12">
+        <div
+          ref={animateRef}
+          className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:gap-12"
+        >
           {posts.map((post) => (
             <PostsListItemShort key={post.id} post={post} userId={userId} />
           ))}

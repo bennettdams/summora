@@ -1,3 +1,4 @@
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { usePost } from '../../../data/use-post'
 import { useSearchTags } from '../../../data/use-search-tags'
@@ -241,6 +242,8 @@ function PostPageInternal({
   async function removeComment(commentId: string) {
     await deletePostComment(commentId)
   }
+
+  const [animateRef] = useAutoAnimate<HTMLDivElement>()
 
   return (
     <Page>
@@ -488,7 +491,7 @@ function PostPageInternal({
 
           {/* POST SEGMENTS */}
           <div className="md:w-4/6">
-            <div className="space-y-16">
+            <div ref={animateRef} className="space-y-16">
               {post.segments.length === 0 ? (
                 <NoContent>No segments yet</NoContent>
               ) : (
@@ -639,6 +642,8 @@ function Comment({
   const refCommentInput = useRef<HTMLFormElement>(null)
   useOnClickOutside(refCommentInput, () => setShowCommentInput(false))
 
+  const [animateRef] = useAutoAnimate<HTMLDivElement>()
+
   return (
     <>
       <div
@@ -772,18 +777,20 @@ function Comment({
           </form>
         )}
 
-        {comment.commentChilds.map((comment) => (
-          <Comment
-            key={comment.commentId}
-            isRoot={false}
-            comment={comment}
-            userId={userId}
-            onAdd={onAdd}
-            onRemove={onRemove}
-            onUpvote={onUpvote}
-            onDownvote={onDownvote}
-          />
-        ))}
+        <div ref={animateRef}>
+          {comment.commentChilds.map((comment) => (
+            <Comment
+              key={comment.commentId}
+              isRoot={false}
+              comment={comment}
+              userId={userId}
+              onAdd={onAdd}
+              onRemove={onRemove}
+              onUpvote={onUpvote}
+              onDownvote={onDownvote}
+            />
+          ))}
+        </div>
       </div>
     </>
   )
@@ -813,8 +820,10 @@ export function PostComments({
   )
   useEffect(() => setRootComments(createRootComments(comments)), [comments])
 
+  const [animateRef] = useAutoAnimate<HTMLDivElement>()
+
   return (
-    <div className="w-full space-y-12">
+    <div ref={animateRef} className="w-full space-y-12">
       {/* For the root level tree, we use "null" as comment ID. See "createCommentTree" docs. */}
       {createCommentTree(rootComments, null).map((comment) => (
         <Comment
