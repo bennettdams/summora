@@ -43,8 +43,8 @@ export function PostSegmentImage({
   return (
     <div className="relative inline-grid h-full w-full place-items-center">
       {isEditable && (
-        <div className="group absolute z-10 h-full w-full rounded-xl hover:cursor-pointer hover:bg-dbrown hover:bg-opacity-50">
-          <span className="invisible grid h-full w-full place-items-center group-hover:visible">
+        <div className="absolute z-10 h-full w-full rounded-xl hover:cursor-pointer hover:bg-dbrown hover:bg-opacity-50">
+          <span className="grid h-full w-full place-items-center">
             <ImageUpload
               inputId={postSegmentId}
               uploadFn={async (file) => {
