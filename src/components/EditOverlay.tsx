@@ -13,7 +13,7 @@ export function EditOverlay({
   return !isEnabled ? (
     <>{children}</>
   ) : (
-    <div className="group relative">
+    <div className="group relative z-10">
       {children}
       <div
         onClick={() => isEnabled && onClick()}
