@@ -1,11 +1,17 @@
+import { User } from '@prisma/client'
+import { SupabaseClient } from '@supabase/supabase-js'
 import {
+  createContext,
+  ReactNode,
+  useContext,
   useEffect,
   useState,
-  createContext,
-  useContext,
-  ReactNode,
 } from 'react'
-import { SupabaseClient } from '@supabase/supabase-js'
+import { z } from 'zod'
+import { GetServerSidePropsContextRequest } from '../types/GetServerSidePropsContextRequest = GetServerSidePropsContext'
+import { Session } from '../types/Session'
+import { UserAuth } from '../types/UserAuth'
+import { apiFetchUser, apiUsersSignUp } from './api-service'
 import {
   getUserByCookieSupabase,
   setUpSSRAuthSupabase,
@@ -13,11 +19,6 @@ import {
   signOutSupabase,
   signUpSupabase,
 } from './supabase/supabase-service'
-import { UserAuth } from '../types/UserAuth'
-import { Session } from '../types/Session'
-import { apiFetchUser, apiUsersSignUp } from './api-service'
-import { GetServerSidePropsContextRequest } from '../types/GetServerSidePropsContextRequest = GetServerSidePropsContext'
-import { User } from '@prisma/client'
 
 export interface AuthState {
   userAuth: UserAuth | null
@@ -126,16 +127,25 @@ export function AuthContextProvider({
   )
 }
 
+export const signInSchema = z.object({
+  email: z.string().min(2, 'Username must contain at least 2 characters.'),
+  password: z.string().min(6, 'Password must contain at least 6 characters.'),
+})
+
 export function useAuth() {
   const authState = useAuthContext()
 
-  async function signInWithEmailAndPassword(
-    email: string,
+  async function signInWithEmailAndPassword({
+    email,
+    password,
+  }: {
+    email: string
     password: string
-  ): Promise<void> {
+  }): Promise<void> {
     try {
+      const parsed = signInSchema.parse({ email, password })
       // setAuthState({ ...authState, isLoading: true })
-      const { error } = await signInSupabase(email, password)
+      const { error } = await signInSupabase(parsed)
       if (error) {
         console.error(error.message)
       } else {

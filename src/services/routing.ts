@@ -5,3 +5,5 @@ export const ROUTES = {
   user: (userId: string) => `/user/${userId}`,
   post: (postId: string) => `/post/${postId}`,
 } as const
+
+export const landingPageRoute = ROUTES.home

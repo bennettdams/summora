@@ -13,7 +13,7 @@ import { Avatar } from './Avatar'
 import { Button } from './Button'
 import { CategorySelect } from './CategorySelect'
 import { FormInput } from './FormInput'
-import { IconEdit } from './Icon'
+import { IconEdit, IconSignIn } from './Icon'
 import { Link } from './link'
 import { LoadingAnimation } from './LoadingAnimation'
 import { Modal, useModal } from './modal'
@@ -38,7 +38,10 @@ function UserNavbar() {
         ) : userAuth === null && !isLoadingAuth ? (
           <Link to={ROUTES.signIn}>
             {/* TODO Should be a ButtonNav */}
-            <Button onClick={() => console.info('Signing in..')}>
+            <Button
+              icon={<IconSignIn />}
+              onClick={() => console.info('Signing in..')}
+            >
               Sign in
             </Button>
           </Link>

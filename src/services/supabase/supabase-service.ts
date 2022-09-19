@@ -85,10 +85,13 @@ export async function getUserByCookieSupabase(
   return await supabase.auth.api.getUserByCookie(req)
 }
 
-export async function signInSupabase(
-  email: string,
+export async function signInSupabase({
+  email,
+  password,
+}: {
+  email: string
   password: string
-): Promise<ReturnType<typeof supabase.auth.signIn>> {
+}): Promise<ReturnType<typeof supabase.auth.signIn>> {
   return await supabase.auth.signIn({ email, password })
 }
 

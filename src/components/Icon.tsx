@@ -2,6 +2,7 @@ import {
   BookmarkAltIcon,
   CheckCircleIcon as CheckCircleIconOutline,
   HeartIcon as HeartIconOutline,
+  LoginIcon as LoginIconOutline,
   MinusCircleIcon as MinusCircleIconOutline,
   PlusCircleIcon as PlusCircleIconOutline,
 } from '@heroicons/react/outline'
@@ -482,6 +483,28 @@ export function IconLong({
 }: IconProps): JSX.Element {
   return (
     <ViewGridAddIcon
+      className={createClassNames({
+        size,
+        className,
+        isClickable: !!onClick,
+      })}
+      onClick={(event: MouseEvent) => {
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
+      }}
+    />
+  )
+}
+
+export function IconSignIn({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <LoginIconOutline
       className={createClassNames({
         size,
         className,
