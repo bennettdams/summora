@@ -370,7 +370,7 @@ function UserDonationsUpdates({
             isInitiallySubmittable={false}
             isValid={formStateUpdate.isValid}
             isDirty={formStateUpdate.isDirty}
-            isSubmitted={formStateUpdate.isSubmitted}
+            submitCount={formStateUpdate.submitCount}
             isSubmitting={formStateUpdate.isSubmitting}
             isValidating={formStateUpdate.isValidating}
             isLoading={updateMany.isLoading}
@@ -457,7 +457,7 @@ function UserDonationsUpdates({
             <FormSubmit
               isValid={formStateCreate.isValid}
               isDirty={formStateCreate.isDirty}
-              isSubmitted={formStateCreate.isSubmitted}
+              submitCount={formStateCreate.submitCount}
               isSubmitting={formStateCreate.isSubmitting}
               isValidating={formStateCreate.isValidating}
               isLoading={updateMany.isLoading}

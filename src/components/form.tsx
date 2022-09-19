@@ -29,8 +29,8 @@ export type FormSubmitProps = {
   isValid: boolean
   isDirty: boolean
   isValidating: boolean
-  isSubmitted: boolean
   isSubmitting: boolean
+  submitCount: number
   icon?: ButtonProps['icon']
   isBig?: boolean
   /** By default, we allow submitting initially without changes to trigger validation. This can be disabled herewith. */
@@ -42,10 +42,13 @@ export function FormSubmit(props: FormSubmitProps): JSX.Element {
   // we ignore the "invalid" status for a form that has not been submitted yet
   const isValidForm = props.isValid && !props.isValidating
 
+  const isInitialSubmit =
+    props.isInitiallySubmittable && props.submitCount === 0
+
   const isEnabled =
-    isValidForm &&
+    (isValidForm || isInitialSubmit) &&
     !props.isSubmitting &&
-    (!!props.isDirty || props.isInitiallySubmittable)
+    (!!props.isDirty || isInitialSubmit)
 
   return (
     <Button
