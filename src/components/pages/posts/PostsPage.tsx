@@ -1,13 +1,15 @@
-import Head from 'next/head'
+import { LightningBoltIcon } from '@heroicons/react/outline'
 import ErrorPage from 'next/error'
+import Head from 'next/head'
+import Image from 'next/image'
+import img from '../../../../public/assets/homepage-hero.jpg'
+import { usePostCategories } from '../../../data/use-post-categories'
+import { usePosts } from '../../../data/use-posts'
 import { PostsPageProps } from '../../../pages'
 import { Box } from '../../Box'
 import { Page, PageSection } from '../../Page'
-import { LightningBoltIcon } from '@heroicons/react/outline'
-import { usePosts } from '../../../data/use-posts'
 import { PostsList } from '../../post'
 import { StatisticsCard } from '../../StatisticsCard'
-import { usePostCategories } from '../../../data/use-post-categories'
 
 export function PostsPage({
   noOfPosts,
@@ -23,14 +25,25 @@ export function PostsPage({
       pageHeader={
         <div className="mt-20 grid place-items-center text-center">
           <div>
-            <div className="text-center text-4xl font-extrabold leading-none tracking-tight">
-              <p className="bg-gradient-to-b from-dorange to-orange-300 decoration-clone bg-clip-text text-8xl uppercase text-transparent">
+            <div className="relative grid h-96 place-items-center text-center text-4xl font-extrabold leading-none tracking-tight">
+              <p className="z-10 bg-gradient-to-b from-dorange to-orange-300 decoration-clone bg-clip-text text-8xl uppercase text-transparent">
                 Condun
               </p>
-              <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-dlila sm:text-4xl">
-                Everything, but summarized.
-              </p>
+
+              <div className="absolute z-0">
+                <Image
+                  className="z-0 inline-block aspect-square rounded-full"
+                  width={300}
+                  height={300}
+                  src={img}
+                  alt="Homepage header image"
+                />
+              </div>
             </div>
+
+            <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-dlila sm:text-4xl">
+              Everything, but summarized.
+            </p>
           </div>
         </div>
       }
@@ -79,7 +92,7 @@ export function PostsPage({
       </PageSection>
 
       <PageSection>
-        <div className="grid grid-cols-2 grid-rows-2 gap-8">
+        <div className="grid grid-cols-2 grid-rows-2 gap-8 md:px-44">
           <div className="justify-left flex items-center">
             <LightningBoltIcon
               className="h-12 w-12 rounded-md bg-dorange p-2 text-white"
