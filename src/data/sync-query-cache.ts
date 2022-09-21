@@ -1,13 +1,17 @@
-import { QueryClient } from 'react-query'
+import { QueryClient, QueryKey } from 'react-query'
 import { ApiPosts } from '../pages/api/posts'
 import { ApiUserPosts } from '../pages/api/users/[userId]/posts'
-import { queryKey } from './use-posts'
-import { createQueryKey } from './use-user-posts'
+import { queryKey as queryKeyPosts } from './use-posts'
+import { createQueryKey as createQueryKeyUserPosts } from './use-user-posts'
 
 type QueryData = ApiPosts | ApiUserPosts
 
-function createQueryKeys(userId: string) {
-  return [queryKey, createQueryKey(userId)]
+/**
+ * This returns a query key array, because we don't want to use it as a query key.
+ * Rather, we want to have an array of queries that are both synced - here: posts and user posts.
+ */
+function createQueryKeys(userId: string): QueryKey[] {
+  return [queryKeyPosts, createQueryKeyUserPosts(userId)]
 }
 
 /**

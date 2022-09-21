@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   QueryClient,
   QueryKey,
@@ -5,6 +6,7 @@ import {
   useQuery,
   useQueryClient,
 } from 'react-query'
+import { ApiPost } from '../pages/api/posts/[postId]'
 import {
   apiCreatePostComment,
   apiCreatePostSegment,
@@ -23,17 +25,14 @@ import {
   apiUpvotePostComment,
   transformApiPost,
 } from '../services/api-service'
-import { ApiPost } from '../pages/api/posts/[postId]'
-import { useState } from 'react'
-import { createHydrationHandler } from '../services/hydration-service'
 import { useAuth } from '../services/auth-service'
+import { createHydrationHandler } from '../services/hydration-service'
 import { syncPostsLikedData } from './sync-query-cache'
 
-const queryKeyPostBase = 'post'
 type QueryData = ApiPost
 
 function createQueryKey(postId: string): QueryKey {
-  return [queryKeyPostBase, postId]
+  return ['post', postId]
 }
 
 export const hydrationHandler = createHydrationHandler<QueryData>((data) =>
@@ -148,7 +147,7 @@ export function usePost(postId: string, enabled = true) {
 function usePostMutation(postId: string) {
   const { userId } = useAuth()
   const queryClient = useQueryClient()
-  const [queryKey] = useState(() => createQueryKey(postId))
+  const [queryKey] = useState<QueryKey>(() => createQueryKey(postId))
 
   // POST
   const updatePostMutation = useMutation(apiUpdatePost, {

@@ -1,10 +1,10 @@
+import type { ReactNode } from 'react'
+import type { DehydratedState as DehydratedStateReactQuery } from 'react-query'
 import {
   dehydrate as dehydrateReactQuery,
   Hydrate,
   QueryClient,
 } from 'react-query'
-import type { DehydratedState as DehydratedStateReactQuery } from 'react-query'
-import type { ReactNode } from 'react'
 
 export type DehydratedState = DehydratedStateReactQuery
 type QueryData = null | Record<string, unknown> | Record<string, unknown>[]

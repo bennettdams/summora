@@ -1,9 +1,9 @@
-import { QueryClient, useQuery } from 'react-query'
+import { QueryClient, QueryKey, useQuery } from 'react-query'
 import { ApiPostCategories } from '../pages/api/post-categories'
 import { apiFetchPostCategories } from '../services/api-service'
 import { createHydrationHandler } from '../services/hydration-service'
 
-const queryKey = 'post-categories'
+const queryKey: QueryKey = ['post-categories']
 type QueryData = ApiPostCategories
 
 export const hydrationHandler = createHydrationHandler<QueryData>((data) =>

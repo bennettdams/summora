@@ -1,9 +1,10 @@
 import Image from 'next/image'
-import { ImageUpload } from './ImageUpload'
 import { useState } from 'react'
-import { useCloudStorage } from '../services/use-cloud-storage'
+import { QueryKey } from 'react-query'
 import { useUser } from '../data/use-user'
+import { useCloudStorage } from '../services/use-cloud-storage'
 import { useImage } from '../services/use-image'
+import { ImageUpload } from './ImageUpload'
 
 /*
  * For the love of god, this file is very similar to "PostSegmentImage".
@@ -21,6 +22,9 @@ const SIZES = {
 export type AvatarSize = keyof typeof SIZES
 
 const queryKeyPostBase = 'avatar-image'
+function createQueryKey(userId: string): QueryKey {
+  return [queryKeyPostBase, userId]
+}
 
 type ColorVariant = 'brown' | 'orange'
 
@@ -70,7 +74,7 @@ export function Avatar({
   const { refetch, imageURL } = useImage({
     hasImage: !!imageId,
     imageId,
-    queryKey: [queryKeyPostBase, userId],
+    queryKey: createQueryKey(userId),
     downloadFn: (imageIdNotNull) =>
       downloadAvatar({
         userId,

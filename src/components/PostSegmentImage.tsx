@@ -1,10 +1,20 @@
 import Image from 'next/image'
+import { QueryKey } from 'react-query'
 import { usePost } from '../data/use-post'
 import { useCloudStorage } from '../services/use-cloud-storage'
 import { useImage } from '../services/use-image'
 import { ImageUpload } from './ImageUpload'
 
 const queryKeyPostBase = 'post-segment-image'
+function createQueryKey({
+  postId,
+  postSegmentId,
+}: {
+  postId: string
+  postSegmentId: string
+}): QueryKey {
+  return [queryKeyPostBase, postId, postSegmentId]
+}
 
 export function PostSegmentImage({
   postId,
@@ -25,7 +35,7 @@ export function PostSegmentImage({
   const { refetch, imageURL } = useImage({
     hasImage: !!imageId,
     imageId,
-    queryKey: [queryKeyPostBase, postId, postSegmentId],
+    queryKey: createQueryKey({ postId, postSegmentId }),
     downloadFn: (imageIdNotNull) =>
       downloadPostSegmentImage({
         postId,

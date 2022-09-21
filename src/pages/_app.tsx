@@ -13,8 +13,13 @@ import { supabase } from '../services/supabase/supabase-service'
 import '../styles/globals.css'
 
 function App({ Component, pageProps }: AppProps): JSX.Element {
+  // const [queryClient] = useState(() => new QueryClient())
+
   return (
     <ErrorBoundary>
+      {/* tRPC already brings the `QueryClientProvider` */}
+      {/* https://github.com/trpc/trpc/discussions/1594#discussioncomment-2303573 */}
+      {/* <QueryClientProvider client={queryClient}> */}
       <AuthContextProvider supabaseClient={supabase}>
         <Head>
           <title>Condun</title>
@@ -37,6 +42,7 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
           <Footer />
         </div>
       </AuthContextProvider>
+      {/* </QueryClientProvider> */}
     </ErrorBoundary>
   )
 }

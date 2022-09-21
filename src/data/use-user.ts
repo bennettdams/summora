@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   QueryClient,
   QueryKey,
@@ -6,14 +7,13 @@ import {
   useQueryClient,
 } from 'react-query'
 import { ApiUser } from '../pages/api/users/[userId]'
-import { createHydrationHandler } from '../services/hydration-service'
 import {
   apiFetchUser,
   apiImageUploadAvatars,
   apiUpdateUser,
   transformApiUser,
 } from '../services/api-service'
-import { useState } from 'react'
+import { createHydrationHandler } from '../services/hydration-service'
 
 const queryKeyUserBase = 'user'
 type QueryData = ApiUser
@@ -66,7 +66,7 @@ export function useUser(userId: string) {
 
 function useUserMutation(userId: string) {
   const queryClient = useQueryClient()
-  const [queryKey] = useState(createQueryKey(userId))
+  const [queryKey] = useState<QueryKey>(createQueryKey(userId))
 
   const updateUserImageIdMutation = useMutation(apiImageUploadAvatars, {
     onSuccess: (data) => {

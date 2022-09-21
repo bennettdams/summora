@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery } from 'react-query'
+import { QueryKey, useQuery } from 'react-query'
 
 type QueryData = string | null
 
@@ -12,7 +12,7 @@ export function useImage({
 }: {
   hasImage: boolean
   imageId: string | null
-  queryKey: string[]
+  queryKey: QueryKey
   downloadFn: (imagIedNotNull: string) => Promise<Blob | null>
   getPublicImageURL: (imagIedNotNull: string) => string | null
 }) {

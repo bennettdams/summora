@@ -1,9 +1,9 @@
-import { QueryClient, useQuery } from 'react-query'
+import { QueryClient, QueryKey, useQuery } from 'react-query'
 import { ApiPosts } from '../pages/api/posts'
 import { apiFetchPosts, transformApiPosts } from '../services/api-service'
 import { createHydrationHandler } from '../services/hydration-service'
 
-export const queryKey = 'posts'
+export const queryKey: QueryKey = ['posts']
 
 type QueryData = ApiPosts
 
@@ -12,7 +12,7 @@ export const hydrationHandler =
 
 export function prefillServer(queryClient: QueryClient, posts: ApiPosts): void {
   const postsSerialized = hydrationHandler.serialize(posts)
-  queryClient.setQueryData([queryKey], postsSerialized)
+  queryClient.setQueryData(queryKey, postsSerialized)
 }
 
 /**
@@ -20,7 +20,7 @@ export function prefillServer(queryClient: QueryClient, posts: ApiPosts): void {
  */
 export function usePosts() {
   const { isLoading, data } = useQuery<QueryData>(
-    [queryKey],
+    queryKey,
     async () => (await apiFetchPosts()).result ?? [],
     {
       refetchOnMount: false,
