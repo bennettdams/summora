@@ -26,7 +26,7 @@ export function PostsPage({
         <div className="mt-20 grid place-items-center text-center">
           <div>
             <div className="relative grid h-96 place-items-center text-center text-4xl font-extrabold leading-none tracking-tight">
-              <p className="z-10 bg-gradient-to-b from-dorange to-orange-300 decoration-clone bg-clip-text text-8xl uppercase text-transparent">
+              <p className="z-10 bg-gradient-to-b from-dorange to-orange-300 decoration-clone bg-clip-text text-8xl uppercase text-transparent drop-shadow-md">
                 Condun
               </p>
 

@@ -1,7 +1,7 @@
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 import { useRouter } from 'next/router'
-import { FormEvent, useState } from 'react'
+import { FormEvent, Fragment, useState } from 'react'
 import {
   apiCreatePost,
   ApiPostsCreateRequestBody,
@@ -192,30 +192,40 @@ export function Header(): JSX.Element {
           </div>
 
           {/* Navbar items mobile */}
-          <Disclosure.Panel className="sm:hidden">
-            <div className="grid place-items-center">
-              <CreatePostModal />
-            </div>
+          <Transition
+            as={Fragment}
+            enter="duration-200 ease-out"
+            enterFrom="opacity-0 scale-90"
+            enterTo="opacity-100 scale-100"
+            leave="duration-100 ease-in"
+            leaveFrom="opacity-100 scale-100"
+            leaveTo="opacity-0 scale-95"
+          >
+            <Disclosure.Panel className="sm:hidden">
+              <div className="grid place-items-center">
+                <CreatePostModal />
+              </div>
 
-            <div className="space-y-1 px-2 pt-2 pb-3">
-              {NAV_ROUTES.map((route) => (
-                <Disclosure.Button
-                  key={route.name}
-                  as="a"
-                  href={route.href}
-                  className={classNames(
-                    route.href === asPath
-                      ? 'rounded-md bg-dorange'
-                      : 'hover:rounded-md hover:bg-dorange',
-                    'block px-3 py-2 text-base font-semibold'
-                  )}
-                  aria-current={route.href === asPath ? 'page' : undefined}
-                >
-                  {route.name}
-                </Disclosure.Button>
-              ))}
-            </div>
-          </Disclosure.Panel>
+              <div className="space-y-1 px-2 pt-2 pb-3">
+                {NAV_ROUTES.map((route) => (
+                  <Disclosure.Button
+                    key={route.name}
+                    as="a"
+                    href={route.href}
+                    className={classNames(
+                      route.href === asPath
+                        ? 'rounded-md bg-dorange'
+                        : 'hover:rounded-md hover:bg-dorange',
+                      'block px-3 py-2 text-base font-semibold'
+                    )}
+                    aria-current={route.href === asPath ? 'page' : undefined}
+                  >
+                    {route.name}
+                  </Disclosure.Button>
+                ))}
+              </div>
+            </Disclosure.Panel>
+          </Transition>
         </>
       )}
     </Disclosure>
