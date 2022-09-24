@@ -1,5 +1,5 @@
+import { QueryKey, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { QueryKey, useQuery } from 'react-query'
 
 type QueryData = string | null
 

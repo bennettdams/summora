@@ -1,11 +1,11 @@
-import { useState } from 'react'
 import {
   QueryClient,
   QueryKey,
   useMutation,
   useQuery,
   useQueryClient,
-} from 'react-query'
+} from '@tanstack/react-query'
+import { useState } from 'react'
 import { ApiUser } from '../pages/api/users/[userId]'
 import {
   apiFetchUser,

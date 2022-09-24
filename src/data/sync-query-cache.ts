@@ -1,4 +1,4 @@
-import { QueryClient, QueryKey } from 'react-query'
+import { QueryClient, QueryKey } from '@tanstack/react-query'
 import { ApiPosts } from '../pages/api/posts'
 import { ApiUserPosts } from '../pages/api/users/[userId]/posts'
 import { queryKey as queryKeyPosts } from './use-posts'

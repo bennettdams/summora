@@ -1,4 +1,4 @@
-import { QueryKey, useQuery } from 'react-query'
+import { QueryKey, useQuery } from '@tanstack/react-query'
 import { ApiTagsSearch } from '../pages/api/tags/search'
 import { apiCreateTagsSearch } from '../services/api-service'
 

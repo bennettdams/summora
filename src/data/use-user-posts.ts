@@ -1,4 +1,4 @@
-import { QueryClient, QueryKey, useQuery } from 'react-query'
+import { QueryClient, QueryKey, useQuery } from '@tanstack/react-query'
 import { ApiUserPosts } from '../pages/api/users/[userId]/posts'
 import { apiFetchUserPosts, transformApiPosts } from '../services/api-service'
 import { createHydrationHandler } from '../services/hydration-service'

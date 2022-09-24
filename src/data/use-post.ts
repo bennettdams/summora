@@ -1,11 +1,11 @@
-import { useState } from 'react'
 import {
   QueryClient,
   QueryKey,
   useMutation,
   useQuery,
   useQueryClient,
-} from 'react-query'
+} from '@tanstack/react-query'
+import { useState } from 'react'
 import { ApiPost } from '../pages/api/posts/[postId]'
 import {
   apiCreatePostComment,

@@ -1,4 +1,4 @@
-import { DehydratedState } from 'react-query'
+import { DehydratedState } from '@tanstack/react-query'
 
 /**
  * Every Next.js page could have these props.

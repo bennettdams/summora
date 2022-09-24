@@ -1,5 +1,5 @@
+import { QueryKey } from '@tanstack/react-query'
 import Image from 'next/image'
-import { QueryKey } from 'react-query'
 import { usePost } from '../data/use-post'
 import { useCloudStorage } from '../services/use-cloud-storage'
 import { useImage } from '../services/use-image'

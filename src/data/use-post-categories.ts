@@ -1,4 +1,4 @@
-import { QueryClient, QueryKey, useQuery } from 'react-query'
+import { QueryClient, QueryKey, useQuery } from '@tanstack/react-query'
 import { ApiPostCategories } from '../pages/api/post-categories'
 import { apiFetchPostCategories } from '../services/api-service'
 import { createHydrationHandler } from '../services/hydration-service'
