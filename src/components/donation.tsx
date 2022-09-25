@@ -177,28 +177,30 @@ function UserDonationsUpdates({
   userId: string
   userDonations: UserDonation[]
 }) {
-  const { data: donationProviders } = trpc.useQuery(['donationProvider.all'])
-
-  async function invalidate() {
-    await utils.invalidateQueries(['donationLink.byUserId', { userId }])
-  }
+  const { data: donationProviders } = trpc.donationProvider.all.useQuery()
 
   const utils = trpc.useContext()
-  const updateMany = trpc.useMutation('donationLink.editMany', {
-    async onSuccess() {
+
+  async function invalidate() {
+    await utils.donationLink.byUserId.invalidate({ userId })
+  }
+
+  const updateMany = trpc.donationLink.editMany.useMutation({
+    onSuccess: () => {
       invalidate()
     },
   })
-  const deleteOne = trpc.useMutation('donationLink.delete', {
-    async onSuccess() {
+  const deleteOne = trpc.donationLink.delete.useMutation({
+    onSuccess: () => {
       invalidate()
     },
   })
-  const createOne = trpc.useMutation('donationLink.createByUserId', {
-    async onSuccess() {
+  const createOne = trpc.donationLink.createByUserId.useMutation({
+    onSuccess: () => {
       invalidate()
     },
   })
+
   function deleteOneItem(donationLinkId: string) {
     deleteOne.mutate({
       donationLinkId: donationLinkId,

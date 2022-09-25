@@ -1,15 +1,15 @@
+import { useUser } from '../../data/use-user'
+import { useUserPosts } from '../../data/use-user-posts'
 import { UserPageProps } from '../../pages/user/[userId]'
-import { Page, PageSection } from '../Page'
+import { useAuth } from '../../services/auth-service'
+import { trpc } from '../../util/trpc'
 import { Avatar } from '../Avatar'
 import { Box } from '../Box'
-import { useUser } from '../../data/use-user'
+import { DateTime } from '../DateTime'
+import { UserDonations } from '../donation'
+import { Page, PageSection } from '../Page'
 import { PostsList } from '../post'
 import { StatisticsCard } from '../StatisticsCard'
-import { useUserPosts } from '../../data/use-user-posts'
-import { UserDonations } from '../donation'
-import { DateTime } from '../DateTime'
-import { trpc } from '../../util/trpc'
-import { useAuth } from '../../services/auth-service'
 
 type QueryReturn = ReturnType<typeof useUser>
 // exclude null, because the page will return "notFound" if user is null
@@ -43,10 +43,9 @@ function UserPageInternal({
   user: UserUserPage
   posts: UserPostsUserPage
 }): JSX.Element {
-  const { data: donationLinks } = trpc.useQuery([
-    'donationLink.byUserId',
-    { userId },
-  ])
+  const { data: donationLinks } = trpc.donationLink.byUserId.useQuery({
+    userId,
+  })
   const { userAuth } = useAuth()
 
   return (

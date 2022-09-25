@@ -1,5 +1,7 @@
+import { createProxySSGHelpers } from '@trpc/react/ssg'
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import type { ParsedUrlQuery } from 'querystring'
+import superjson from 'superjson'
 import { UserPage } from '../../components/pages/UserPage'
 import {
   hydrationHandler as hydrationHandlerUser,
@@ -11,7 +13,8 @@ import {
 } from '../../data/use-user-posts'
 import { dbFindUser, dbFindUserPosts } from '../../lib/db'
 import { prisma } from '../../prisma/prisma'
-import { createPrefetchHelpers } from '../../server/prefetch-helpers'
+import { createContextTRPC } from '../../server/context-trpc'
+import { appRouter } from '../../server/routers/_app'
 import { ServerPageProps } from '../../types/PageProps'
 import { ApiUser } from '../api/users/[userId]'
 import { ApiUserPosts } from '../api/users/[userId]/posts'
@@ -59,15 +62,16 @@ export const getStaticProps: GetStaticProps<
     const userId = params.userId
     const user: ApiUser = await dbFindUser(userId)
 
-    const ssg = await createPrefetchHelpers()
-
     if (!user) {
       return { notFound: true }
     } else {
-      await ssg.prefetchQuery('donationLink.byUserId', {
-        userId,
+      const ssg = createProxySSGHelpers({
+        router: appRouter,
+        ctx: await createContextTRPC(),
+        transformer: superjson,
       })
-      await ssg.prefetchQuery('donationProvider.all')
+      await ssg.donationLink.byUserId.prefetch({ userId })
+      await ssg.donationProvider.all.prefetch()
 
       const client = hydrationHandlerUser.createClient()
       prefillServerUser(client, userId, user)
