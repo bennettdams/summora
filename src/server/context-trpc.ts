@@ -3,15 +3,14 @@ import * as trpcNext from '@trpc/server/adapters/next'
 import { prisma } from '../prisma/prisma'
 
 /**
- * Creates context for an incoming request
+ * Creates context for each incoming request.
+ * Will be available in all resolvers.
+ *
  * @link https://trpc.io/docs/context
  */
-export const createContext = async (
+export async function createContextTRPC(
   opts?: trpcNext.CreateNextContextOptions
-) => {
-  const req = opts?.req
-  const res = opts?.res
-
+) {
   /**
    * We could check the session here, but it would occur on every request,
    * and we don't need that.
@@ -33,6 +32,9 @@ export const createContext = async (
   // userIdAuth = result.user?.id ?? null
   // }
 
+  const req = opts?.req
+  const res = opts?.res
+
   return {
     req,
     res,
@@ -41,9 +43,4 @@ export const createContext = async (
   }
 }
 
-export type ContextTRPC = trpc.inferAsyncReturnType<typeof createContext>
-
-/**
- * Helper function to create a router with context.
- */
-export const createRouter = () => trpc.router<ContextTRPC>()
+export type ContextTRPC = trpc.inferAsyncReturnType<typeof createContextTRPC>

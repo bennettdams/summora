@@ -1,21 +1,60 @@
-import { createReactQueryHooks } from '@trpc/react'
-import type { inferProcedureOutput, inferProcedureInput } from '@trpc/server'
-import { AppRouter } from '../server/routers/_app'
+import { httpBatchLink, loggerLink } from '@trpc/client'
+import { createTRPCNext } from '@trpc/next'
+import superjson from 'superjson'
+import type { AppRouter } from '../server/routers/_app'
 
-export const trpc = createReactQueryHooks<AppRouter>()
+function getBaseUrl() {
+  if (typeof window !== 'undefined')
+    // browser should use relative path
+    return ''
+  if (process.env.VERCEL_URL)
+    // reference for vercel.com
+    return `https://${process.env.VERCEL_URL}`
+  if (process.env.RENDER_INTERNAL_HOSTNAME)
+    // reference for render.com
+    return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`
+  // assume localhost
+  return `http://localhost:${process.env.PORT ?? 3000}`
+}
 
-export type InferQueryOutput<
-  TRouteKey extends keyof AppRouter['_def']['queries']
-> = inferProcedureOutput<AppRouter['_def']['queries'][TRouteKey]>
-
-export type InferQueryInput<
-  TRouteKey extends keyof AppRouter['_def']['queries']
-> = inferProcedureInput<AppRouter['_def']['queries'][TRouteKey]>
-
-export type InferMutationOutput<
-  TRouteKey extends keyof AppRouter['_def']['mutations']
-> = inferProcedureOutput<AppRouter['_def']['mutations'][TRouteKey]>
-
-export type InferMutationInput<
-  TRouteKey extends keyof AppRouter['_def']['mutations']
-> = inferProcedureInput<AppRouter['_def']['mutations'][TRouteKey]>
+export const trpc = createTRPCNext<AppRouter>({
+  config({ ctx }) {
+    return {
+      links: [
+        // adds pretty logs to console in development and logs errors in production
+        loggerLink({
+          enabled: (opts) =>
+            process.env.NODE_ENV === 'development' ||
+            (opts.direction === 'down' && opts.result instanceof Error),
+        }),
+        httpBatchLink({
+          /**
+           * If you want to use SSR, you need to use the server's full URL
+           * @link https://trpc.io/docs/ssr
+           **/
+          url: `${getBaseUrl()}/api/trpc`,
+        }),
+      ],
+      /**
+       * @link https://react-query.tanstack.com/reference/QueryClient
+       */
+      queryClientConfig: {
+        defaultOptions: {
+          queries: {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            refetchInterval: false,
+          },
+        },
+      },
+      /**
+       * @link https://trpc.io/docs/data-transformers
+       */
+      transformer: superjson,
+    }
+  },
+  /**
+   * @link https://trpc.io/docs/ssr
+   **/
+  ssr: false,
+})

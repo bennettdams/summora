@@ -10,7 +10,8 @@ import {
   schemaCreateDonationLink,
   schemaUpdateDonationLink,
 } from '../../lib/schemas'
-import { ContextTRPC, createRouter } from '../context'
+import { ContextTRPC } from '../context-trpc'
+import { t } from '../trpc'
 
 /**
  * It's important to always explicitly say which fields you want to return in order to not leak extra information
@@ -49,13 +50,15 @@ async function ensureAuthor(ctx: ContextTRPC, donationLinkId: string) {
   })
 }
 
-export const donationLinkRouter = createRouter()
+export const donationLinkRouter = t.router({
   // CREATE
-  .mutation('createByUserId', {
-    input: z.object({
-      newDonationLink: schemaCreateDonationLink,
-    }),
-    async resolve({ input, ctx }) {
+  createByUserId: t.procedure
+    .input(
+      z.object({
+        newDonationLink: schemaCreateDonationLink,
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
       const { newDonationLink } = input
 
       const userIdAuth = await checkAuthTRPC(ctx)
@@ -70,14 +73,15 @@ export const donationLinkRouter = createRouter()
         },
         select: defaultDonationLinkSelect,
       })
-    },
-  })
-  // READ
-  .query('byUserId', {
-    input: z.object({
-      userId: z.string().uuid(),
     }),
-    async resolve({ input, ctx }) {
+  // READ
+  byUserId: t.procedure
+    .input(
+      z.object({
+        userId: z.string().uuid(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
       const { userId } = input
 
       const donationLinks = await ctx.prisma.donationLink.findMany({
@@ -94,12 +98,11 @@ export const donationLinkRouter = createRouter()
       } else {
         return donationLinks
       }
-    },
-  })
+    }),
   //  UPDATE MANY
-  .mutation('editMany', {
-    input: schemaUpdateDonationLink,
-    async resolve({ input, ctx }) {
+  editMany: t.procedure
+    .input(schemaUpdateDonationLink)
+    .mutation(async ({ input, ctx }) => {
       const { donationLinksToUpdate } = input
 
       await Promise.all(
@@ -123,14 +126,15 @@ export const donationLinkRouter = createRouter()
           })
         })
       )
-    },
-  })
-  // DELETE
-  .mutation('delete', {
-    input: z.object({
-      donationLinkId: z.string().cuid(),
     }),
-    async resolve({ input, ctx }) {
+  // DELETE
+  delete: t.procedure
+    .input(
+      z.object({
+        donationLinkId: z.string().cuid(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
       const { donationLinkId } = input
 
       await ensureAuthor(ctx, donationLinkId)
@@ -140,5 +144,5 @@ export const donationLinkRouter = createRouter()
       return {
         donationLinkId,
       }
-    },
-  })
+    }),
+})

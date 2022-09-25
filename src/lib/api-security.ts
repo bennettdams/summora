@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { ContextTRPC } from '../server/context'
+import { ContextTRPC } from '../server/context-trpc'
 import { getUserByCookie } from '../services/auth-service'
 
 /**

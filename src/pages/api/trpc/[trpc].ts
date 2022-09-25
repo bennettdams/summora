@@ -1,16 +1,20 @@
 /**
  * This file contains tRPC's HTTP response handler.
  */
+
+import { createContextTRPC } from '../../../server/context-trpc'
+
 import * as trpcNext from '@trpc/server/adapters/next'
-import { createContext } from '../../../server/context'
 import { appRouter } from '../../../server/routers/_app'
 
+// export API handler
 export default trpcNext.createNextApiHandler({
   router: appRouter,
   /**
    * @link https://trpc.io/docs/context
    */
-  createContext,
+  createContext: createContextTRPC,
+  batching: { enabled: true },
   /**
    * @link https://trpc.io/docs/error-handling
    */
@@ -19,16 +23,4 @@ export default trpcNext.createNextApiHandler({
       console.error('Something went wrong', error)
     }
   },
-  /**
-   * Enable query batching.
-   */
-  batching: {
-    enabled: true,
-  },
-  /**
-   * @link https://trpc.io/docs/caching#api-response-caching
-   */
-  // responseMeta() {
-  //   // ...
-  // },
 })

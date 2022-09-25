@@ -20,7 +20,7 @@ import {
 } from './form'
 import { IconArrowDown, IconDonate } from './Icon'
 import { LinkExternal } from './link'
-import { Logo } from './Logo'
+import { Logo } from './logo'
 
 function DonationLink({
   userDonation,

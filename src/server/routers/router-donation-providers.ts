@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client'
-import { createRouter } from '../context'
+import { t } from '../trpc'
 
 const defaultDonationProvidersSelect =
   Prisma.validator<Prisma.DonationProviderSelect>()({
@@ -8,15 +8,14 @@ const defaultDonationProvidersSelect =
     logoId: true,
   })
 
-export const donationProviderRouter = createRouter()
+export const donationProviderRouter = t.router({
   // READ ALL
-  .query('all', {
-    async resolve({ ctx }) {
-      const donationProviders = await ctx.prisma.donationProvider.findMany({
-        select: defaultDonationProvidersSelect,
-        orderBy: { name: 'asc' },
-      })
+  all: t.procedure.query(async ({ ctx }) => {
+    const donationProviders = await ctx.prisma.donationProvider.findMany({
+      select: defaultDonationProvidersSelect,
+      orderBy: { name: 'asc' },
+    })
 
-      return donationProviders
-    },
-  })
+    return donationProviders
+  }),
+})
