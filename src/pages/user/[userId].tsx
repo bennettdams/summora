@@ -1,7 +1,6 @@
 import { createProxySSGHelpers } from '@trpc/react/ssg'
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import type { ParsedUrlQuery } from 'querystring'
-import superjson from 'superjson'
 import { UserPage } from '../../components/pages/UserPage'
 import {
   hydrationHandler as hydrationHandlerUser,
@@ -13,8 +12,7 @@ import {
 } from '../../data/use-user-posts'
 import { dbFindUser, dbFindUserPosts } from '../../lib/db'
 import { prisma } from '../../prisma/prisma'
-import { createContextTRPC } from '../../server/context-trpc'
-import { appRouter } from '../../server/routers/_app'
+import { createPrefetchHelpersArgs } from '../../server/prefetch-helpers'
 import { ServerPageProps } from '../../types/PageProps'
 import { ApiUser } from '../api/users/[userId]'
 import { ApiUserPosts } from '../api/users/[userId]/posts'
@@ -65,11 +63,7 @@ export const getStaticProps: GetStaticProps<
     if (!user) {
       return { notFound: true }
     } else {
-      const ssg = createProxySSGHelpers({
-        router: appRouter,
-        ctx: await createContextTRPC(),
-        transformer: superjson,
-      })
+      const ssg = createProxySSGHelpers(await createPrefetchHelpersArgs())
       await ssg.donationLink.byUserId.prefetch({ userId })
       await ssg.donationProvider.all.prefetch()
 

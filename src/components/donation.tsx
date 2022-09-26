@@ -57,63 +57,6 @@ type UserDonation = {
   donationAddress: string
 }
 
-// type DonationLinkInput = InferMutationInput<'donationLink.edit'>['data']
-// type Inputs = {
-//   [donationLinkId: string]: DonationLinkInput
-// }
-
-// type DonationLinkCreateInput =
-//   InferMutationInput<'donationLink.addByUserId'>['data']
-// type InputCreate = {
-//   newItemAddress?: DonationLinkCreateInput['address']
-//   newItemProviderId?: DonationLinkCreateInput['donationProviderId']
-// }
-
-// function UserDonationUpdateRow({
-// userDonation,
-// inputDonationProviderId,
-// donationProviders,
-//   updateOneInput,
-//   deleteItem,
-// }: {
-// userDonation: UserDonation
-// inputDonationProviderId: string | null
-// donationProviders: (DonationProviderSelectItem & { logoId: string })[] | null
-//   updateOneInput: (args: {
-//     donationLinkId: string
-//     address?: string
-//     donationProviderId?: string
-//   }) => void
-//   deleteItem: () => void
-// }) {
-// const logoIdFromInput = donationProviders?.find(
-//   (prov) => prov.donationProviderId === inputDonationProviderId
-// )?.logoId
-
-//   return (
-// <div
-//   className="grid grid-cols-6 items-center gap-4"
-//   key={userDonation.donationLinkId}
-// >
-//   <div className="col-span-1">
-//     <DonationProviderSelect
-//       onSelect={(selectedProviderId) => {
-//         updateOneInput({
-//           donationLinkId: userDonation.donationLinkId,
-//           donationProviderId: selectedProviderId,
-//         })
-//       }}
-//       donationProviders={donationProviders ?? null}
-//       initialItem={{
-//         donationProviderId: userDonation.donationProviderId,
-//         name: userDonation.donationProviderName,
-//       }}
-//     />
-//   </div>
-// </div>
-//   )
-// }
-
 function UserDonationUpdateRow({
   userDonation,
   inputDonationProviderId,

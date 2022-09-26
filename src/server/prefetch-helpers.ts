@@ -11,3 +11,11 @@ export async function createPrefetchHelpers() {
     transformer: superjson,
   })
 }
+
+export async function createPrefetchHelpersArgs() {
+  return {
+    router: appRouter,
+    ctx: await createContextTRPC(),
+    transformer: superjson,
+  }
+}
