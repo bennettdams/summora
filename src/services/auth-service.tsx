@@ -2,16 +2,19 @@ import { User } from '@prisma/client'
 import { SupabaseClient } from '@supabase/supabase-js'
 import {
   createContext,
+  Dispatch,
   ReactNode,
+  SetStateAction,
   useContext,
   useEffect,
   useState,
 } from 'react'
 import { z } from 'zod'
+import { useUser } from '../data/use-user'
 import { GetServerSidePropsContextRequest } from '../types/GetServerSidePropsContextRequest = GetServerSidePropsContext'
 import { Session } from '../types/Session'
 import { UserAuth } from '../types/UserAuth'
-import { apiFetchUser, apiUsersSignUp } from './api-service'
+import { apiUsersSignUp } from './api-service'
 import {
   getUserByCookieSupabase,
   setUpSSRAuthSupabase,
@@ -29,6 +32,25 @@ export interface AuthState {
 }
 
 const AuthContext = createContext<AuthState | null>(null)
+
+/** Wrapper to fetch user details (e.g. for avatar image URL). It is used so `userId` is not null. */
+function UserDetailsWrapper({
+  userId,
+  setAuthState,
+  children,
+}: {
+  userId: string
+  setAuthState: Dispatch<SetStateAction<AuthState>>
+  children: ReactNode
+}): JSX.Element {
+  const { user } = useUser(userId)
+
+  useEffect(() => {
+    if (user) setAuthState((prev) => ({ ...prev, isLoading: false, user }))
+  }, [user, setAuthState])
+
+  return <>{children}</>
+}
 
 export function AuthContextProvider({
   supabaseClient,
@@ -64,7 +86,7 @@ export function AuthContextProvider({
     if (!userId) {
       throw new Error('Session exists, but user auth/user ID does not.')
     } else {
-      // local session, don't have to wait for user from API
+      // set session without user details
       setAuthState({
         session,
         userAuth,
@@ -72,33 +94,29 @@ export function AuthContextProvider({
         user: null,
         userId,
       })
-
-      // user profile from API
-      const response = await apiFetchUser(userId)
-      setAuthState((prev) => ({
-        ...prev,
-        isLoading: false,
-        user: response.result ?? null,
-      }))
     }
   }
 
   useEffect(() => {
     // #########
     // auth state for initial page load
-    const session = supabaseClient.auth.session()
+    let isInitialized = false
 
     // initially fetch our user if session exists
-    if (session) {
-      fillAuth(session)
-    } else {
-      setAuthState((prev) => ({ ...prev, isLoading: false }))
+    if (!isInitialized) {
+      const sessionLocal: Session | null = supabaseClient.auth.session()
+      if (sessionLocal) {
+        fillAuth(sessionLocal)
+      } else {
+        setAuthState((prev) => ({ ...prev, isLoading: false }))
+      }
+      isInitialized = true
     }
     // #########
 
     // Supabase will not execute this on the initial render when the session already exists
     const { data: authListener } = supabaseClient.auth.onAuthStateChange(
-      async (event, session) => {
+      async (event, sessionNew) => {
         if (event === 'SIGNED_OUT') {
           setAuthState({
             isLoading: false,
@@ -108,12 +126,13 @@ export function AuthContextProvider({
             userId: null,
           })
         } else {
-          if (session) {
-            fillAuth(session)
+          if (!isInitialized && sessionNew) {
+            fillAuth(sessionNew)
           }
         }
+
         // TODO needed for initial render? right now only executed on auth change
-        await setUpSSRAuthSupabase(session, event)
+        await setUpSSRAuthSupabase(sessionNew, event)
       }
     )
 
@@ -123,7 +142,18 @@ export function AuthContextProvider({
   }, [supabaseClient.auth])
 
   return (
-    <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={authState}>
+      {authState.userId ? (
+        <UserDetailsWrapper
+          userId={authState.userId}
+          setAuthState={setAuthState}
+        >
+          {children}
+        </UserDetailsWrapper>
+      ) : (
+        children
+      )}
+    </AuthContext.Provider>
   )
 }
 
