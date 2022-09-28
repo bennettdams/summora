@@ -22,7 +22,7 @@ export function prefillServer({
   userId: string
 }): void {
   const postsSerialized = hydrationHandler.serialize(posts)
-  queryClient.setQueryData(createQueryKey(userId), postsSerialized)
+  queryClient.setQueryData<QueryData>(createQueryKey(userId), postsSerialized)
 }
 
 /**

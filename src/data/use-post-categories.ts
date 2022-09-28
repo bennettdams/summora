@@ -14,7 +14,7 @@ export function prefillServer(
   queryClient: QueryClient,
   postCategories: QueryData
 ): void {
-  queryClient.setQueryData(queryKey, postCategories)
+  queryClient.setQueryData<QueryData>(queryKey, postCategories)
 }
 
 /**

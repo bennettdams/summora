@@ -32,7 +32,7 @@ export function prefillServer(
   user: ApiUser
 ): void {
   const userSerialized = !user ? null : hydrationHandler.serialize(user)
-  queryClient.setQueryData(createQueryKey(userId), userSerialized)
+  queryClient.setQueryData<QueryData>(createQueryKey(userId), userSerialized)
 }
 
 export function useUser(userId: string) {
@@ -43,6 +43,7 @@ export function useUser(userId: string) {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchInterval: false,
+      keepPreviousData: true,
     }
   )
 

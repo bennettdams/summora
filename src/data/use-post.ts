@@ -45,7 +45,7 @@ export function prefillServer(
   post: ApiPost
 ): void {
   const postSerialized = !post ? null : hydrationHandler.serialize(post)
-  queryClient.setQueryData(createQueryKey(postId), postSerialized)
+  queryClient.setQueryData<QueryData>(createQueryKey(postId), postSerialized)
 }
 
 /**
