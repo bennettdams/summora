@@ -107,10 +107,10 @@ export function AuthContextProvider({
       const sessionLocal: Session | null = supabaseClient.auth.session()
       if (sessionLocal) {
         fillAuth(sessionLocal)
+        isInitialized = true
       } else {
         setAuthState((prev) => ({ ...prev, isLoading: false }))
       }
-      isInitialized = true
     }
     // #########
 
@@ -125,10 +125,8 @@ export function AuthContextProvider({
             userAuth: null,
             userId: null,
           })
-        } else {
-          if (!isInitialized && sessionNew) {
-            fillAuth(sessionNew)
-          }
+        } else if (!isInitialized && sessionNew) {
+          fillAuth(sessionNew)
         }
 
         // TODO needed for initial render? right now only executed on auth change
