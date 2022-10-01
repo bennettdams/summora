@@ -3,18 +3,13 @@ import type { GetStaticPaths, GetStaticProps } from 'next'
 import type { ParsedUrlQuery } from 'querystring'
 import { UserPage } from '../../components/pages/UserPage'
 import {
-  hydrationHandler as hydrationHandlerUser,
-  prefillServer as prefillServerUser,
-} from '../../data/use-user'
-import {
   hydrationHandler as hydrationHandlerPosts,
   prefillServer as prefillServerPosts,
 } from '../../data/use-user-posts'
-import { dbFindUser, dbFindUserPosts } from '../../lib/db'
+import { dbFindUserPosts } from '../../lib/db'
 import { prisma } from '../../prisma/prisma'
 import { createPrefetchHelpersArgs } from '../../server/prefetch-helpers'
 import { ServerPageProps } from '../../types/PageProps'
-import { ApiUser } from '../api/users/[userId]'
 import { ApiUserPosts } from '../api/users/[userId]/posts'
 
 type UserStatistics = {
@@ -46,8 +41,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 const revalidateInSeconds = 5 * 60
 
-type UserPageServerProps = UserPageProps &
-  ServerPageProps & { dehydratedState2: ServerPageProps['dehydratedState'] }
+type UserPageServerProps = UserPageProps & ServerPageProps
 
 export const getStaticProps: GetStaticProps<
   UserPageServerProps,
@@ -58,17 +52,14 @@ export const getStaticProps: GetStaticProps<
     return { notFound: true }
   } else {
     const userId = params.userId
-    const user: ApiUser = await dbFindUser(userId)
+    const ssg = createProxySSGHelpers(await createPrefetchHelpersArgs())
+    const user = await ssg.user.byUserId.fetch({ userId })
 
     if (!user) {
       return { notFound: true }
     } else {
-      const ssg = createProxySSGHelpers(await createPrefetchHelpersArgs())
       await ssg.donationLink.byUserId.prefetch({ userId })
       await ssg.donationProvider.all.prefetch()
-
-      const client = hydrationHandlerUser.createClient()
-      prefillServerUser(client, userId, user)
 
       const userPosts: ApiUserPosts = await dbFindUserPosts(userId)
 
@@ -96,8 +87,7 @@ export const getStaticProps: GetStaticProps<
       return {
         props: {
           trpcState: ssg.dehydrate(),
-          dehydratedState: hydrationHandlerUser.dehydrate(client),
-          dehydratedState2: hydrationHandlerPosts.dehydrate(clientPosts),
+          dehydratedState: hydrationHandlerPosts.dehydrate(clientPosts),
           userId,
           userStatistics: {
             noOfPostsCreated,
@@ -112,15 +102,12 @@ export const getStaticProps: GetStaticProps<
   }
 }
 
-const HydrateUser = hydrationHandlerUser.Hydrate
 const HydratePosts = hydrationHandlerPosts.Hydrate
 
 export default function _UserPage(props: UserPageServerProps): JSX.Element {
   return (
-    <HydrateUser dehydratedState={props.dehydratedState}>
-      <HydratePosts dehydratedState={props.dehydratedState2}>
-        <UserPage userId={props.userId} userStatistics={props.userStatistics} />
-      </HydratePosts>
-    </HydrateUser>
+    <HydratePosts dehydratedState={props.dehydratedState}>
+      <UserPage userId={props.userId} userStatistics={props.userStatistics} />
+    </HydratePosts>
   )
 }

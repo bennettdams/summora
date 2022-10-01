@@ -22,7 +22,6 @@ import { ApiPostIncrementViews } from '../pages/api/posts/[postId]/increment-vie
 import { ApiPostLikeUnlikePost } from '../pages/api/posts/[postId]/like-unlike'
 import { ApiTagsSearch } from '../pages/api/tags/search'
 import { ApiUsersSignUp } from '../pages/api/users/signup'
-import { ApiUser, ApiUserUpdate } from '../pages/api/users/[userId]'
 import { ApiUserPosts } from '../pages/api/users/[userId]/posts'
 import { OmitStrict } from '../types/util-types'
 import {
@@ -116,47 +115,6 @@ export async function apiImageUploadPostSegments({
     ROUTES_API.IMAGE_UPLOAD_POST_SEGMENTS({ postId, postSegmentId }),
     postSegmentImageFile
   )
-}
-
-// #########################################
-
-export async function apiFetchUser(
-  userId: string
-): Promise<HttpResponse<ApiUser>> {
-  return await get<ApiUser>(ROUTES_API.USER(userId))
-}
-
-export type ApiUserUpdateRequestBody = {
-  donationLinks?: {
-    donationLinkId?: string
-    donationProviderId: string
-    address: string
-  }[]
-}
-
-export async function apiUpdateUser({
-  userId,
-  userToUpdate,
-}: {
-  userId: string
-  userToUpdate: ApiUserUpdateRequestBody
-}): Promise<HttpResponse<ApiUserUpdate>> {
-  const response = await put<ApiUserUpdate>(
-    ROUTES_API.USER(userId),
-    userToUpdate
-  )
-  if (response.result) response.result = transformApiUser(response.result)
-  return response
-}
-
-export function transformApiUser(
-  user: NonNullable<ApiUser>
-): NonNullable<ApiUser> {
-  return {
-    ...user,
-    createdAt: new Date(user.createdAt),
-    updatedAt: new Date(user.updatedAt),
-  }
 }
 
 // #########################################

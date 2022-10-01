@@ -2,15 +2,6 @@ import { Prisma } from '@prisma/client'
 import { prisma } from '../prisma/prisma'
 import { ApiPostsCreateRequestBody } from '../services/api-service'
 
-export type DbFindUser = Prisma.PromiseReturnType<typeof dbFindUser>
-export async function dbFindUser(userId: string) {
-  return await prisma.user.findUnique({
-    where: {
-      userId,
-    },
-  })
-}
-
 export type DbFindPosts = Prisma.PromiseReturnType<typeof dbFindPosts>
 export async function dbFindPosts() {
   try {
