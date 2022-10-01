@@ -1,20 +1,8 @@
-import { QueryKey } from '@tanstack/react-query'
 import Image from 'next/image'
 import { usePost } from '../data/use-post'
 import { useCloudStorage } from '../services/use-cloud-storage'
-import { useImage } from '../services/use-image'
+import { useImageURL } from '../services/use-image-url'
 import { ImageUpload } from './ImageUpload'
-
-const queryKeyPostBase = 'post-segment-image'
-function createQueryKey({
-  postId,
-  postSegmentId,
-}: {
-  postId: string
-  postSegmentId: string
-}): QueryKey {
-  return [queryKeyPostBase, postId, postSegmentId]
-}
 
 export function PostSegmentImage({
   postId,
@@ -30,19 +18,10 @@ export function PostSegmentImage({
   isEditable?: boolean
 }): JSX.Element {
   const { updatePostSegmentImageId } = usePost(postId)
-  const { downloadPostSegmentImage, getPublicURLPostSegmentImage } =
-    useCloudStorage()
-  const { refetch, imageURL } = useImage({
-    hasImage: !!imageId,
+  const { getPublicURLPostSegmentImage } = useCloudStorage()
+  const { imageURL, replaceImage } = useImageURL({
     imageId,
-    queryKey: createQueryKey({ postId, postSegmentId }),
-    downloadFn: (imageIdNotNull) =>
-      downloadPostSegmentImage({
-        postId,
-        authorId,
-        imageId: imageIdNotNull,
-      }),
-    getPublicImageURL: (imageIdNotNull) =>
+    getPublicURL: (imageIdNotNull) =>
       getPublicURLPostSegmentImage({
         postId,
         authorId,
@@ -57,13 +36,19 @@ export function PostSegmentImage({
           <span className="grid h-full w-full place-items-center">
             <ImageUpload
               inputId={postSegmentId}
-              uploadFn={async (file) => {
-                await updatePostSegmentImageId({
-                  postId,
-                  postSegmentId,
-                  postSegmentImageFile: file,
-                })
-                await refetch()
+              onUpload={async (fileToUpload) => {
+                await updatePostSegmentImageId(
+                  {
+                    postId,
+                    postSegmentId,
+                    postSegmentImageFile: fileToUpload,
+                  },
+                  {
+                    onSuccess: async (data) => {
+                      replaceImage(data.result?.imageId ?? null)
+                    },
+                  }
+                )
               }}
             />
           </span>

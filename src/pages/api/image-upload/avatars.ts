@@ -1,14 +1,14 @@
+import { Prisma } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { getPlaiceholder } from 'plaiceholder'
+import { prisma } from '../../../prisma/prisma'
 import { ApiImageUploadAvatarsRequestBody } from '../../../services/api-service'
 import { getUserByCookie } from '../../../services/auth-service'
-import { uploadAvatarSupabase } from '../../../services/supabase/supabase-service'
-import { logAPI } from '../../../util/logger'
-import { prisma } from '../../../prisma/prisma'
 import { convertImageForUpload } from '../../../services/image-upload-service'
-import { Prisma } from '@prisma/client'
-import { createRandomId } from '../../../util/random-id'
-import { getPlaiceholder } from 'plaiceholder'
+import { uploadAvatarSupabase } from '../../../services/supabase/supabase-service'
 import { deleteAvatarInStorage } from '../../../services/use-cloud-storage'
+import { logAPI } from '../../../util/logger'
+import { createRandomId } from '../../../util/random-id'
 
 export type ApiAvatarsUpload = Prisma.PromiseReturnType<typeof updateUserImage>
 
@@ -27,6 +27,10 @@ async function updateUserImage({
       data: {
         imageId,
         imageBlurDataURL,
+      },
+      select: {
+        imageId: true,
+        imageBlurDataURL: true,
       },
     })
   } catch (error) {
@@ -106,14 +110,14 @@ export default async function _apiImageUploadAvatars(
               fileForUpload
             )
 
-            const userUpdated = await updateUserImage({
+            const newImageData = await updateUserImage({
               userId,
               imageId: imageIdNew,
               imageBlurDataURL,
             })
 
             console.info(`[API] Uploaded avatar image for ${userId}`)
-            return res.status(200).json(userUpdated)
+            return res.status(200).json(newImageData)
           }
         } catch (error) {
           console.error(

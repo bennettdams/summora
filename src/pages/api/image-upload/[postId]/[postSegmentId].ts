@@ -1,13 +1,13 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { getUserByCookie } from '../../../../services/auth-service'
-import { uploadPostSegmentImageSupabase } from '../../../../services/supabase/supabase-service'
-import { logAPI } from '../../../../util/logger'
-import { prisma } from '../../../../prisma/prisma'
-import { convertImageForUpload } from '../../../../services/image-upload-service'
-import { ApiImageUploadPostSegmentsRequestBody } from '../../../../services/api-service'
-import { createRandomId } from '../../../../util/random-id'
 import { Prisma } from '@prisma/client'
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { prisma } from '../../../../prisma/prisma'
+import { ApiImageUploadPostSegmentsRequestBody } from '../../../../services/api-service'
+import { getUserByCookie } from '../../../../services/auth-service'
+import { convertImageForUpload } from '../../../../services/image-upload-service'
+import { uploadPostSegmentImageSupabase } from '../../../../services/supabase/supabase-service'
 import { deletePostSegmentImageInStorage } from '../../../../services/use-cloud-storage'
+import { logAPI } from '../../../../util/logger'
+import { createRandomId } from '../../../../util/random-id'
 
 export type ApiImageUploadPostSegment = Prisma.PromiseReturnType<
   typeof updatePostSegmentImageId
@@ -26,10 +26,9 @@ async function updatePostSegmentImageId({
       data: {
         imageId,
       },
-      include: {
-        items: {
-          orderBy: { createdAt: 'asc' },
-        },
+      select: {
+        id: true,
+        imageId: true,
       },
     })
   } catch (error) {
@@ -121,7 +120,7 @@ export default async function _apiImageUploadPostSegment(
                 req,
               })
 
-              const segmentUpdated = await updatePostSegmentImageId({
+              const segmentUpdatedNewImageId = await updatePostSegmentImageId({
                 postSegmentId,
                 imageId: imageIdNew,
               })
@@ -129,7 +128,7 @@ export default async function _apiImageUploadPostSegment(
               console.info(
                 `[API] Uploaded post segment image for ${postSegmentId}`
               )
-              return res.status(200).json(segmentUpdated)
+              return res.status(200).json(segmentUpdatedNewImageId)
             }
           } catch (error) {
             console.error(

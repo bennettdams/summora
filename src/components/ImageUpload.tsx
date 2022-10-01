@@ -6,9 +6,9 @@ export const validExtensions = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG']
 
 export function ImageUpload({
   inputId,
-  uploadFn,
+  onUpload,
 }: {
-  uploadFn: (file: File) => Promise<void>
+  onUpload: (fileToUpload: File) => Promise<void>
   inputId: string
 }): JSX.Element {
   const [isUploading, setIsUploading] = useState(false)
@@ -32,7 +32,7 @@ export function ImageUpload({
               `You provided a ${fileExtension} file, but only ${validExtensions} are allowed.`
             )
           } else {
-            await uploadFn(file)
+            await onUpload(file)
           }
         }
       }

@@ -1,9 +1,8 @@
-import { QueryKey } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useState } from 'react'
 import { useUser } from '../data/use-user'
 import { useCloudStorage } from '../services/use-cloud-storage'
-import { useImage } from '../services/use-image'
+import { useImageURL } from '../services/use-image-url'
 import { ImageUpload } from './ImageUpload'
 
 /*
@@ -20,11 +19,6 @@ const SIZES = {
 } as const
 
 export type AvatarSize = keyof typeof SIZES
-
-const queryKeyPostBase = 'avatar-image'
-function createQueryKey(userId: string): QueryKey {
-  return [queryKeyPostBase, userId]
-}
 
 type ColorVariant = 'brown' | 'orange'
 
@@ -51,15 +45,7 @@ function AvatarPlaceholder({
   )
 }
 
-export function Avatar({
-  userId,
-  username,
-  imageId,
-  imageBlurDataURL,
-  size = 'medium',
-  isEditable = false,
-  placeholderColorVariant = 'brown',
-}: {
+type Props = {
   userId: string
   username: string
   imageId: string | null
@@ -67,20 +53,28 @@ export function Avatar({
   size: AvatarSize
   isEditable?: boolean
   placeholderColorVariant?: ColorVariant
-}): JSX.Element {
+}
+
+export function Avatar(props: Props): JSX.Element {
+  // image ID as key to be sure to throw the component away when changing the image
+  return <AvatarInternal key={props.imageId} {...props} />
+}
+
+function AvatarInternal({
+  userId,
+  username,
+  imageId,
+  imageBlurDataURL,
+  size = 'medium',
+  isEditable = false,
+  placeholderColorVariant = 'brown',
+}: Props): JSX.Element {
   const [sizePixels] = useState(SIZES[size])
   const { updateUserImageId } = useUser(userId)
-  const { downloadAvatar, getPublicURLAvatar } = useCloudStorage()
-  const { refetch, imageURL } = useImage({
-    hasImage: !!imageId,
+  const { getPublicURLAvatar } = useCloudStorage()
+  const { imageURL, replaceImage } = useImageURL({
     imageId,
-    queryKey: createQueryKey(userId),
-    downloadFn: (imageIdNotNull) =>
-      downloadAvatar({
-        userId,
-        imageId: imageIdNotNull,
-      }),
-    getPublicImageURL: (imageIdNotNull) =>
+    getPublicURL: (imageIdNotNull) =>
       getPublicURLAvatar({
         userId,
         imageId: imageIdNotNull,
@@ -91,12 +85,15 @@ export function Avatar({
     <div className="relative inline-grid h-full w-full place-items-center">
       {isEditable && (
         <div className="group absolute z-30 h-full w-full rounded-full hover:cursor-pointer hover:bg-dbrown hover:bg-opacity-50">
-          <span className="invisible grid h-full w-full place-items-center group-hover:visible">
+          <span className="grid h-full w-full place-items-center">
             <ImageUpload
               inputId={userId}
-              uploadFn={async (file) => {
-                await updateUserImageId(file)
-                await refetch()
+              onUpload={async (fileToUpload) => {
+                await updateUserImageId(fileToUpload, {
+                  onSuccess: async (data) => {
+                    replaceImage(data.result?.imageId ?? null)
+                  },
+                })
               }}
             />
           </span>

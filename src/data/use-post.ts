@@ -261,14 +261,16 @@ function usePostMutation(postId: string) {
     {
       onSuccess: (data) => {
         if (data.result) {
-          const segmentUpdated = data.result
+          const segmentNewImageId = data.result
           queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
             !prevData
               ? null
               : {
                   ...prevData,
                   segments: prevData.segments.map((segment) =>
-                    segment.id === segmentUpdated.id ? segmentUpdated : segment
+                    segment.id === segmentNewImageId.id
+                      ? { ...segment, imageId: segmentNewImageId.imageId }
+                      : segment
                   ),
                 }
           )
