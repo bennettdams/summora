@@ -1,6 +1,5 @@
 import { NextApiRequest } from 'next'
 import { useCallback } from 'react'
-import { apiImageUploadAvatars } from './api-service'
 import {
   deleteAvatarSupabase,
   deletePostSegmentImageSupabase,
@@ -28,9 +27,9 @@ export async function deleteAvatarInStorage(params: {
 }
 
 export function useCloudStorage() {
-  const uploadAvatar = useCallback(async (picture: File) => {
-    return await apiImageUploadAvatars(picture)
-  }, [])
+  // const uploadAvatar = useCallback(async (picture: File) => {
+  //   return await apiImageUploadAvatars(picture)
+  // }, [])
 
   const downloadAvatar = useCallback(
     async ({ userId, imageId }: { userId: string; imageId: string }) => {
@@ -81,7 +80,7 @@ export function useCloudStorage() {
   )
 
   return {
-    uploadAvatar,
+    // uploadAvatar,
     downloadAvatar,
     getPublicURLAvatar,
     downloadPostSegmentImage,

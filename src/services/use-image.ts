@@ -3,19 +3,20 @@ import { useState } from 'react'
 
 type QueryData = string | null
 
-export function useImage({
-  hasImage,
-  imageId,
-  queryKey,
-  downloadFn,
-  getPublicImageURL,
-}: {
-  hasImage: boolean
-  imageId: string | null
-  queryKey: QueryKey
-  downloadFn: (imagIedNotNull: string) => Promise<Blob | null>
-  getPublicImageURL: (imagIedNotNull: string) => string | null
-}) {
+export function useImage(
+  imageId: string | null,
+  {
+    hasImage,
+    queryKey,
+    downloadFn,
+    getPublicImageURL,
+  }: {
+    hasImage: boolean
+    queryKey: QueryKey
+    downloadFn: (imagIedNotNull: string) => Promise<Blob | null>
+    getPublicImageURL: (imagIedNotNull: string) => string | null
+  }
+) {
   const {
     data,
     isLoading,
@@ -23,7 +24,7 @@ export function useImage({
     isFetching,
     refetch: refetchQuery,
   } = useQuery<QueryData>(
-    queryKey,
+    [queryKey, imageId],
     async () => {
       if (!imageId) {
         throw Error('Trying to fetch image, but no image ID.')
@@ -42,7 +43,7 @@ export function useImage({
     },
     {
       // only execute query via "refetch", needed when user uploads a new image
-      keepPreviousData: true,
+      keepPreviousData: false,
       refetchOnWindowFocus: false,
       refetchInterval: false,
       enabled: false,

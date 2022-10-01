@@ -60,6 +60,7 @@ export function ImageUpload({
           <IconAdd className="duration-200 group-hover:scale-125" size="huge" />
         )}
       </label>
+
       <input
         type="file"
         id={inputId}
