@@ -11,10 +11,6 @@ import { Page, PageSection } from '../Page'
 import { PostsList } from '../post'
 import { StatisticsCard } from '../StatisticsCard'
 
-type QueryReturn = ReturnType<typeof useUser>
-// exclude null, because the page will return "notFound" if user is null
-type UserUserPage = Exclude<QueryReturn['user'], null>
-
 type QueryReturnPosts = ReturnType<typeof useUserPosts>
 type UserPostsUserPage = QueryReturnPosts['posts']
 
@@ -26,7 +22,7 @@ export function UserPage(props: UserPageProps): JSX.Element {
     <p>No user</p>
   ) : (
     <UserPageInternal
-      user={user}
+      {...user}
       userId={props.userId}
       posts={posts}
       userStatistics={props.userStatistics}
@@ -35,18 +31,27 @@ export function UserPage(props: UserPageProps): JSX.Element {
 }
 
 function UserPageInternal({
-  user,
   userId,
+  username,
+  createdAt,
+  updatedAt,
+  imageId,
+  imageBlurDataURL,
   posts,
   userStatistics,
 }: UserPageProps & {
-  user: UserUserPage
+  userId: string
+  username: string
+  createdAt: Date
+  updatedAt: Date
+  imageId: string | null
+  imageBlurDataURL: string | null
   posts: UserPostsUserPage
 }): JSX.Element {
   const { data: donationLinks } = trpc.donationLink.byUserId.useQuery({
     userId,
   })
-  const { userAuth } = useAuth()
+  const { userId: userIdAuth } = useAuth()
 
   return (
     <Page>
@@ -54,18 +59,18 @@ function UserPageInternal({
         <Box>
           <div className="flex">
             <div className="grow">
-              <h2 className="text-3xl">{user.username}</h2>
+              <h2 className="text-3xl">{username}</h2>
               <p className="mt-8">User ID {userId}</p>
               <p>
                 <span>Member since</span>
                 <span className="ml-2 text-lg">
-                  <DateTime format="MM-DD hh:mm" date={user.createdAt} />
+                  <DateTime format="MM-DD hh:mm" date={createdAt} />
                 </span>
               </p>
               <p>
                 <span>Last update</span>
                 <span className="ml-2 text-lg">
-                  <DateTime format="MM-DD hh:mm" date={user.updatedAt} />
+                  <DateTime format="MM-DD hh:mm" date={updatedAt} />
                 </span>
               </p>
             </div>
@@ -73,9 +78,9 @@ function UserPageInternal({
               <Avatar
                 isEditable
                 userId={userId}
-                username={user.username}
-                imageId={user.imageId}
-                imageBlurDataURL={user.imageBlurDataURL}
+                username={username}
+                imageId={imageId}
+                imageBlurDataURL={imageBlurDataURL}
                 size="large"
               />
             </div>
@@ -107,7 +112,7 @@ function UserPageInternal({
       <PageSection label="Donation links">
         <div className="mx-auto w-full md:px-10 lg:px-20">
           <UserDonations
-            isEditMode={userId === userAuth?.id}
+            isEditMode={userId === userIdAuth}
             userId={userId}
             userDonations={
               !donationLinks
@@ -123,6 +128,51 @@ function UserPageInternal({
             }
           />
         </div>
+      </PageSection>
+
+      <PageSection>
+        <Box>
+          <h1 className="text-lg">Preview your avatar</h1>
+
+          <div className="grid auto-rows-min grid-cols-3 text-center">
+            <div className="col-start-1">
+              <div className="grid h-full place-items-center">
+                <Avatar
+                  userId={userId}
+                  username={username}
+                  imageId={imageId}
+                  imageBlurDataURL={imageBlurDataURL}
+                  size="small"
+                />
+              </div>
+              <p>Small</p>
+            </div>
+            <div className="col-start-2">
+              <div className="grid h-full place-items-center">
+                <Avatar
+                  userId={userId}
+                  username={username}
+                  imageId={imageId}
+                  imageBlurDataURL={imageBlurDataURL}
+                  size="medium"
+                />
+              </div>
+              <p>Medium</p>
+            </div>
+            <div className="col-start-3">
+              <div className="grid h-full place-items-center">
+                <Avatar
+                  userId={userId}
+                  username={username}
+                  imageId={imageId}
+                  imageBlurDataURL={imageBlurDataURL}
+                  size="large"
+                />
+              </div>
+              <p>Large</p>
+            </div>
+          </div>
+        </Box>
       </PageSection>
 
       <PageSection label="Posts">
@@ -151,51 +201,6 @@ function UserPageInternal({
                 }))
           }
         />
-      </PageSection>
-
-      <PageSection>
-        <Box>
-          <h1 className="text-lg">Preview your avatar</h1>
-
-          <div className="grid auto-rows-min grid-cols-3 text-center">
-            <div className="col-start-1">
-              <div className="grid h-full place-items-center">
-                <Avatar
-                  userId={userId}
-                  username={user.username}
-                  imageId={user.imageId}
-                  imageBlurDataURL={user.imageBlurDataURL}
-                  size="small"
-                />
-              </div>
-              <p>Small</p>
-            </div>
-            <div className="col-start-2">
-              <div className="grid h-full place-items-center">
-                <Avatar
-                  userId={userId}
-                  username={user.username}
-                  imageId={user.imageId}
-                  imageBlurDataURL={user.imageBlurDataURL}
-                  size="medium"
-                />
-              </div>
-              <p>Medium</p>
-            </div>
-            <div className="col-start-3">
-              <div className="grid h-full place-items-center">
-                <Avatar
-                  userId={userId}
-                  username={user.username}
-                  imageId={user.imageId}
-                  imageBlurDataURL={user.imageBlurDataURL}
-                  size="large"
-                />
-              </div>
-              <p>Large</p>
-            </div>
-          </div>
-        </Box>
       </PageSection>
     </Page>
   )

@@ -31,6 +31,7 @@ export function PostSegmentImage({
 
   return (
     <div className="relative inline-grid h-full w-full place-items-center">
+      {/* TODO use EditOverlay instead */}
       {isEditable && (
         <div className="absolute z-10 h-full w-full rounded-xl hover:cursor-pointer hover:bg-dbrown hover:bg-opacity-50">
           <span className="grid h-full w-full place-items-center">

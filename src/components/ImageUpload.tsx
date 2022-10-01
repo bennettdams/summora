@@ -55,7 +55,9 @@ export function ImageUpload({
         htmlFor={inputId}
       >
         {isUploading ? (
-          <LoadingAnimation />
+          <div className="grid h-full w-full place-items-center rounded-full bg-dbrown bg-opacity-80 p-4">
+            <LoadingAnimation />
+          </div>
         ) : (
           <IconAdd className="duration-200 group-hover:scale-125" size="huge" />
         )}
