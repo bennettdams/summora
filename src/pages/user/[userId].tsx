@@ -2,15 +2,9 @@ import { createProxySSGHelpers } from '@trpc/react/ssg'
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import type { ParsedUrlQuery } from 'querystring'
 import { UserPage } from '../../components/pages/UserPage'
-import {
-  hydrationHandler as hydrationHandlerPosts,
-  prefillServer as prefillServerPosts,
-} from '../../data/use-user-posts'
-import { dbFindUserPosts } from '../../lib/db'
 import { prisma } from '../../prisma/prisma'
 import { createPrefetchHelpersArgs } from '../../server/prefetch-helpers'
-import { ServerPageProps } from '../../types/PageProps'
-import { ApiUserPosts } from '../api/users/[userId]/posts'
+import { PageProps } from '../../types/PageProps'
 
 type UserStatistics = {
   noOfPostsCreated: number
@@ -41,7 +35,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 const revalidateInSeconds = 5 * 60
 
-type UserPageServerProps = UserPageProps & ServerPageProps
+type UserPageServerProps = UserPageProps & PageProps
 
 export const getStaticProps: GetStaticProps<
   UserPageServerProps,
@@ -60,11 +54,7 @@ export const getStaticProps: GetStaticProps<
     } else {
       await ssg.donationLink.byUserId.prefetch({ userId })
       await ssg.donationProvider.all.prefetch()
-
-      const userPosts: ApiUserPosts = await dbFindUserPosts(userId)
-
-      const clientPosts = hydrationHandlerPosts.createClient()
-      prefillServerPosts({ queryClient: clientPosts, userId, posts: userPosts })
+      const userPosts = await ssg.userPosts.byUserId.fetch({ userId })
 
       // STATISTICS
       const statisticsQuery = await prisma.user.findUnique({
@@ -87,7 +77,6 @@ export const getStaticProps: GetStaticProps<
       return {
         props: {
           trpcState: ssg.dehydrate(),
-          dehydratedState: hydrationHandlerPosts.dehydrate(clientPosts),
           userId,
           userStatistics: {
             noOfPostsCreated,
@@ -102,12 +91,8 @@ export const getStaticProps: GetStaticProps<
   }
 }
 
-const HydratePosts = hydrationHandlerPosts.Hydrate
-
 export default function _UserPage(props: UserPageServerProps): JSX.Element {
   return (
-    <HydratePosts dehydratedState={props.dehydratedState}>
-      <UserPage userId={props.userId} userStatistics={props.userStatistics} />
-    </HydratePosts>
+    <UserPage userId={props.userId} userStatistics={props.userStatistics} />
   )
 }

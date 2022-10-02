@@ -1,37 +1,32 @@
-import { QueryClient, QueryKey } from '@tanstack/react-query'
-import { ApiPosts } from '../pages/api/posts'
-import { ApiUserPosts } from '../pages/api/users/[userId]/posts'
-import { queryKey as queryKeyPosts } from './use-posts'
-import { createQueryKey as createQueryKeyUserPosts } from './use-user-posts'
-
-type QueryData = ApiPosts | ApiUserPosts
-
-/**
- * This returns a query key array, because we don't want to use it as a query key.
- * Rather, we want to have an array of queries that are both synced - here: posts and user posts.
- */
-function createQueryKeys(userId: string): QueryKey[] {
-  return [queryKeyPosts, createQueryKeyUserPosts(userId)]
-}
+import { QueryClient } from '@tanstack/react-query'
+import { trpc } from '../util/trpc'
+import {
+  QueryData as QueryDataPosts,
+  queryKey as queryKeyPosts,
+} from './use-posts'
 
 /**
  * Liking/unliking a post is done via the `usePost` data hook.
- * This helper is used to keep the query "like" data of `usePosts`'s in sync.
+ * This helper syncs this new "like" data with `usePosts` and `useUserPosts`.
  */
-export function syncPostsLikedData({
-  queryClient,
-  postId,
-  userId,
-  likedByUpdated,
-}: {
-  queryClient: QueryClient
-  postId: string
-  userId: string
-  likedByUpdated: QueryData[number]['likedBy']
-}) {
-  const keys = createQueryKeys(userId)
-  keys.forEach((queryKey) => {
-    queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
+export function useSyncLikedData() {
+  const utils = trpc.useContext()
+
+  function syncPostsLikedData({
+    queryClient,
+    postId,
+    userId,
+    likedByUpdated,
+  }: {
+    queryClient: QueryClient
+    postId: string
+    userId: string
+    likedByUpdated: {
+      userId: string
+    }[]
+  }) {
+    // POSTS
+    queryClient.setQueryData<QueryDataPosts>(queryKeyPosts, (prevData) =>
       !prevData
         ? []
         : prevData.map((post) =>
@@ -40,9 +35,34 @@ export function syncPostsLikedData({
               : {
                   ...post,
                   likedBy: likedByUpdated,
-                  noOfLikes: likedByUpdated.length,
+                  _count: {
+                    ...post._count,
+                    likedBy: likedByUpdated.length,
+                  },
                 }
           )
     )
-  })
+
+    // USER POSTS
+    utils.userPosts.byUserId.setData(
+      (prevData) =>
+        !prevData
+          ? []
+          : prevData.map((post) =>
+              post.id !== postId
+                ? post
+                : {
+                    ...post,
+                    likedBy: likedByUpdated,
+                    _count: {
+                      ...post._count,
+                      likedBy: likedByUpdated.length,
+                    },
+                  }
+            ),
+      { userId }
+    )
+  }
+
+  return { syncPostsLikedData }
 }

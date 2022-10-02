@@ -22,7 +22,6 @@ import { ApiPostIncrementViews } from '../pages/api/posts/[postId]/increment-vie
 import { ApiPostLikeUnlikePost } from '../pages/api/posts/[postId]/like-unlike'
 import { ApiTagsSearch } from '../pages/api/tags/search'
 import { ApiUsersSignUp } from '../pages/api/users/signup'
-import { ApiUserPosts } from '../pages/api/users/[userId]/posts'
 import { OmitStrict } from '../types/util-types'
 import {
   deleteHTTP,
@@ -163,14 +162,6 @@ export function transformApiPost(
 
 export async function apiFetchPosts(): Promise<HttpResponse<ApiPosts>> {
   const response = await get<ApiPosts>(ROUTES_API.POSTS)
-  if (response.result) response.result = transformApiPosts(response.result)
-  return response
-}
-
-export async function apiFetchUserPosts(
-  userId: string
-): Promise<HttpResponse<ApiUserPosts>> {
-  const response = await get<ApiUserPosts>(ROUTES_API.USER_POSTS(userId))
   if (response.result) response.result = transformApiPosts(response.result)
   return response
 }

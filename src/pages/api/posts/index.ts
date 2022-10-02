@@ -1,9 +1,9 @@
+import { Prisma } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { logAPI } from '../../../util/logger'
 import { dbCreatePost, dbFindPosts, DbFindPosts } from '../../../lib/db'
 import { ApiPostsCreateRequestBody } from '../../../services/api-service'
-import { Prisma } from '@prisma/client'
 import { getUserByCookie } from '../../../services/auth-service'
+import { logAPI } from '../../../util/logger'
 
 export type ApiPosts = DbFindPosts
 export type ApiPostsCreate = Prisma.PromiseReturnType<typeof dbCreatePost>

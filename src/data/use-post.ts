@@ -27,7 +27,7 @@ import {
 } from '../services/api-service'
 import { useAuth } from '../services/auth-service'
 import { createHydrationHandler } from '../services/hydration-service'
-import { syncPostsLikedData } from './sync-query-cache'
+import { useSyncLikedData } from './sync-query-cache'
 
 type QueryData = ApiPost
 
@@ -148,6 +148,7 @@ function usePostMutation(postId: string) {
   const { userId } = useAuth()
   const queryClient = useQueryClient()
   const [queryKey] = useState<QueryKey>(() => createQueryKey(postId))
+  const { syncPostsLikedData } = useSyncLikedData()
 
   // POST
   const updatePostMutation = useMutation(apiUpdatePost, {
