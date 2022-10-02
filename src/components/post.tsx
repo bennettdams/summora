@@ -26,7 +26,6 @@ type PostsPostsList =
       updatedAt: Date
       noOfViews: number
       noOfComments: number
-      noOfLikes: number
       likedBy: { userId: string }[]
       author: {
         id: string
@@ -106,7 +105,6 @@ function PostsListItem({
                 postId={post.id}
                 userId={userId}
                 postLikedByUserIds={post.likedBy}
-                noOfLikes={post.noOfLikes}
                 iconSize="big"
               />
             </div>
@@ -201,7 +199,6 @@ function PostsListItemShort({
               postId={post.id}
               userId={userId}
               postLikedByUserIds={post.likedBy}
-              noOfLikes={post.noOfLikes}
             />
             <ViewsIcon noOfViews={post.noOfViews} />
             <CommentsIcon noOfComments={post.noOfComments} />
@@ -219,14 +216,12 @@ export function PostLikes({
   postId,
   userId,
   postLikedByUserIds,
-  noOfLikes,
   isLikeUnlikeEnabled = true,
   iconSize = 'medium',
 }: {
   postId: string
   userId: string | null
   postLikedByUserIds: { userId: string }[]
-  noOfLikes: number
   /**
    * e.g. use for a list of posts, where we want to show a "liked" icon all the time
    */
@@ -257,7 +252,7 @@ export function PostLikes({
     <div className="flex">
       {hasMounted && (
         <LikesIcon
-          noOfLikes={noOfLikes}
+          noOfLikes={postLikedByUserIds.length}
           isLiked={isLiked}
           size={iconSize}
           onClick={async () =>

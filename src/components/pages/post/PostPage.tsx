@@ -317,7 +317,6 @@ function PostPageInternal({
                   <PostLikes
                     iconSize="big"
                     postId={postId}
-                    noOfLikes={post.likedBy.length}
                     postLikedByUserIds={post.likedBy}
                     userId={userId}
                   />

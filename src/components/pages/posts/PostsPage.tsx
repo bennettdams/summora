@@ -197,7 +197,6 @@ export function PostsPage({
                     },
                     noOfViews: post.noOfViews,
                     noOfComments: post._count.comments,
-                    noOfLikes: post._count.likedBy,
                     likedBy: post.likedBy,
                     segments: post.segments,
                     tags: post.tags,

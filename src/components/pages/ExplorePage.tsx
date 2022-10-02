@@ -56,10 +56,8 @@ export function ExplorePage({
             segments: [],
             tags: [],
             noOfComments: 0,
-            noOfLikes: 0,
             likedBy: [],
             // noOfComments: post._count?.comments ?? 0,
-            // noOfLikes: post.noOfLikes,
             // likedBy: post.likedBy,
           }))}
         />
