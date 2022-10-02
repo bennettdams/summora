@@ -32,7 +32,8 @@
     "check-updates": "npx npm-check-updates -u",
     "cu": "npm run check-updates",
     "check": "npm run tc && npm run lint",
-    "clean-install": "rm -rf .next && rm -rf node_modules && npm i"
+    "clean-install": "rm -rf .next && rm -rf node_modules && npm i",
+    "depcheck": "npx depcheck"
   },
   "dependencies": {
     "@formkit/auto-animate": "^1.0.0-beta.3",
