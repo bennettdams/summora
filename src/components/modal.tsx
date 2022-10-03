@@ -1,5 +1,6 @@
-import { Transition, Dialog } from '@headlessui/react'
-import { useState, Fragment, ReactNode, KeyboardEvent, useRef } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
+import { Fragment, KeyboardEvent, ReactNode, useRef, useState } from 'react'
+import { OmitStrict } from '../types/util-types'
 import { Button } from './Button'
 import { Title } from './Title'
 
@@ -52,8 +53,8 @@ export function Modal({
   buttonSecondaryText,
   onClickSecondaryButton,
   isSubmit,
-}: ModalControl & {
-  title: string
+}: OmitStrict<ModalControl, 'open'> & {
+  title?: string
   children: ReactNode
   onConfirm?: () => Promise<void>
   subtitle?: string
@@ -137,9 +138,11 @@ export function Modal({
                 }
                 style={{ maxHeight: '90vh' }}
               >
-                <Dialog.Title as="div" className="text-center">
-                  <Title>{title}</Title>
-                </Dialog.Title>
+                {title && (
+                  <Dialog.Title as="div" className="text-center">
+                    <Title>{title}</Title>
+                  </Dialog.Title>
+                )}
 
                 {subtitle && (
                   <div className="w-full text-center">

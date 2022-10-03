@@ -3,6 +3,7 @@ import { usePost } from '../data/use-post'
 import { useCloudStorage } from '../services/use-cloud-storage'
 import { useImageURL } from '../services/use-image-url'
 import { ImageUpload } from './ImageUpload'
+import { Modal, useModal } from './modal'
 
 export function PostSegmentImage({
   postId,
@@ -29,8 +30,14 @@ export function PostSegmentImage({
       }),
   })
 
+  const modalControls = useModal()
+
   return (
-    <div className="relative inline-grid h-full w-full place-items-center">
+    <div
+      className={`relative inline-grid h-full w-full place-items-center ${
+        !!imageURL && 'cursor-pointer'
+      }`}
+    >
       {/* TODO use EditOverlay instead */}
       {isEditable && (
         <div className="absolute z-10 h-full w-full rounded-xl hover:cursor-pointer hover:bg-dbrown hover:bg-opacity-50">
@@ -57,7 +64,31 @@ export function PostSegmentImage({
       )}
 
       {imageURL && (
-        <Image src={imageURL} alt="" layout="fill" objectFit="contain" />
+        <>
+          <Image
+            onClick={modalControls.open}
+            src={imageURL}
+            alt=""
+            layout="fill"
+            objectFit="contain"
+          />
+          <Modal
+            forceFullWidth
+            forceFullHeight
+            isOpen={modalControls.isOpen}
+            close={modalControls.close}
+          >
+            <div className="relative h-full w-full">
+              <Image
+                onClick={modalControls.close}
+                alt="Post segment image"
+                src={imageURL}
+                layout="fill"
+                objectFit="contain"
+              />
+            </div>
+          </Modal>
+        </>
       )}
     </div>
   )

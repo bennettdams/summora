@@ -273,7 +273,6 @@ function CreatePostModal() {
 
       <Modal
         isOpen={isOpen}
-        open={open}
         close={close}
         title="Create a post"
         forceHalfWidth
