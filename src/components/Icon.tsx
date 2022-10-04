@@ -8,6 +8,8 @@ import {
 } from '@heroicons/react/outline'
 import {
   AnnotationIcon,
+  ArrowCircleDownIcon,
+  ArrowCircleRightIcon,
   CalendarIcon,
   CheckIcon,
   ChevronDownIcon as ChevronDownIconSolid,
@@ -505,6 +507,50 @@ export function IconSignIn({
 }: IconProps): JSX.Element {
   return (
     <LoginIconOutline
+      className={createClassNames({
+        size,
+        className,
+        isClickable: !!onClick,
+      })}
+      onClick={(event: MouseEvent) => {
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
+      }}
+    />
+  )
+}
+
+export function IconArrowCircleRight({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <ArrowCircleRightIcon
+      className={createClassNames({
+        size,
+        className,
+        isClickable: !!onClick,
+      })}
+      onClick={(event: MouseEvent) => {
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
+      }}
+    />
+  )
+}
+
+export function IconArrowCircleDown({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <ArrowCircleDownIcon
       className={createClassNames({
         size,
         className,

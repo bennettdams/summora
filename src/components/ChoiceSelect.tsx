@@ -18,6 +18,10 @@ type ChoiceSelectControl<
   choices: TChoices
 }
 
+/**
+ * FIXME the returned `selected` item does not have the string literal as `choiceId`,
+ * instead it is of type `string`.
+ */
 export function useChoiceSelect<
   TChoices extends Choice<TChoiceId>[],
   TChoiceId extends string
@@ -70,7 +74,7 @@ export function ChoiceSelect<
                 checked
                   ? 'bg-dlila bg-gradient-to-r from-pink-700 to-dlila text-white ring-orange-500 hover:bg-pink-800 hover:bg-none active:bg-dlila/40'
                   : 'bg-white'
-              } relative flex w-full cursor-pointer rounded-lg px-5 py-4 shadow-md focus:outline-none`
+              } relative flex w-full cursor-pointer rounded-lg py-2 px-5 shadow-md focus:outline-none`
             }
           >
             {({ checked }) => (
