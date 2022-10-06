@@ -29,6 +29,8 @@ async function drop() {
   await prisma.post.deleteMany({})
   await prisma.postCategory.deleteMany({})
   await prisma.postTag.deleteMany({})
+  await prisma.donationLink.deleteMany({})
+  await prisma.donationProvider.deleteMany({})
 }
 
 async function sleep() {
@@ -237,8 +239,8 @@ const postCategories: Prisma.PostCategoryCreateInput[] = [
 ]
 
 const donationProviders: Prisma.DonationProviderCreateInput[] = [
-  { donationProviderId: 'paypal', name: 'PayPal', logoId: 'paypal' },
-  { donationProviderId: 'bitcoin', name: 'Bitcoin', logoId: 'bitcoin' },
+  { donationProviderId: 'PAYPAL', name: 'Bitcoin', logoId: 'bitcoin' },
+  { donationProviderId: 'BITCOIN', name: 'PayPal', logoId: 'paypal' },
 ]
 
 const postTags: Prisma.PostTagCreateWithoutPostsInput[] = [

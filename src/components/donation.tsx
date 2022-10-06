@@ -1,5 +1,6 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Popover, Transition } from '@headlessui/react'
+import { DonationProviderId } from '@prisma/client'
 import { Fragment, ReactNode } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import { z } from 'zod'
@@ -51,7 +52,7 @@ function DonationLink({
 
 type UserDonation = {
   donationLinkId: string
-  donationProviderId: string
+  donationProviderId: DonationProviderId
   logoId: string
   donationProviderName: string
   donationAddress: string
@@ -66,7 +67,7 @@ function UserDonationUpdateRow({
   children,
 }: {
   userDonation: UserDonation
-  inputDonationProviderId: string | null
+  inputDonationProviderId: DonationProviderId | null
   donationProviders: {
     logoId: string
     donationProviderId: string
@@ -110,7 +111,7 @@ type SchemaCreateDonationLink = z.infer<typeof schemaCreateDonationLink>
 
 const defaultValuesCreate: SchemaCreateDonationLink = {
   address: '',
-  donationProviderId: '',
+  donationProviderId: null,
 }
 
 function UserDonationsUpdates({

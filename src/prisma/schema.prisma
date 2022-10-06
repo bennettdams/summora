@@ -124,22 +124,27 @@ model User {
 }
 
 model DonationLink {
-  donationLinkId     String           @id @default(cuid())
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
+  donationLinkId     String             @id @default(cuid())
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
   address            String
   // user relation
-  User               User             @relation("UserDonationLinks", fields: [userId], references: [userId])
+  User               User               @relation("UserDonationLinks", fields: [userId], references: [userId])
   userId             String
   // donation provider relation
-  donationProvider   DonationProvider @relation("DonationLink_DonationProvider", fields: [donationProviderId], references: [donationProviderId])
-  donationProviderId String
+  donationProvider   DonationProvider   @relation("DonationLink_DonationProvider", fields: [donationProviderId], references: [donationProviderId])
+  donationProviderId DonationProviderId
+}
+
+enum DonationProviderId {
+  PAYPAL
+  BITCOIN
 }
 
 model DonationProvider {
-  donationProviderId String         @id
+  donationProviderId DonationProviderId @id
   name               String
   logoId             String
   // donation links relation
-  DonationLink       DonationLink[] @relation("DonationLink_DonationProvider")
+  DonationLink       DonationLink[]     @relation("DonationLink_DonationProvider")
 }

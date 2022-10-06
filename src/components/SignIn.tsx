@@ -119,7 +119,17 @@ export function SignIn(): JSX.Element {
           </div>
 
           <div className="grid">
-            <Button>Sign up</Button>
+            <Button
+              onClick={() =>
+                signUpWithEmailAndPassword(
+                  process.env.NEXT_PUBLIC_DEFAULT_USERNAME ?? '',
+                  process.env.NEXT_PUBLIC_DEFAULT_EMAIL ?? '',
+                  process.env.NEXT_PUBLIC_DEFAULT_PASSWORD ?? ''
+                )
+              }
+            >
+              Sign up
+            </Button>
           </div>
 
           <p className="mt-4 text-center text-sm text-gray-600">

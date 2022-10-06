@@ -67,7 +67,10 @@ export const donationLinkRouter = t.router({
         data: {
           address: newDonationLink.address,
           donationProvider: {
-            connect: { donationProviderId: newDonationLink.donationProviderId },
+            connect: {
+              donationProviderId:
+                newDonationLink.donationProviderId ?? undefined,
+            },
           },
           User: { connect: { userId: userIdAuth } },
         },

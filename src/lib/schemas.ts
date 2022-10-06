@@ -1,9 +1,10 @@
+import { DonationProviderId } from '@prisma/client'
 import { z } from 'zod'
 
 export const generalFormErrorKey = 'general-form-error-key'
 
 export const addressSchema = z.string().min(1).max(128)
-const donationProviderIdSchema = z.string().min(1, 'Please select a provider.')
+const donationProviderIdSchema = z.nativeEnum(DonationProviderId)
 
 export const schemaUpdateDonationLink = z.object({
   donationLinksToUpdate: z.array(
@@ -23,7 +24,11 @@ export const schemaUpdateDonationLink = z.object({
 export const schemaCreateDonationLink = z
   .object({
     address: addressSchema,
-    donationProviderId: donationProviderIdSchema,
+    /**
+     * FIXME this is only nullable for the initial form. We don't want to have a default provider selected when
+     * a new donation link is created. This is only implicitly type-safe via the `refine` below.
+     */
+    donationProviderId: donationProviderIdSchema.nullable(),
   })
   .refine((data) => !!data && !!data.address && !!data.donationProviderId, {
     message: 'Both address and donation provider should be filled in.',
