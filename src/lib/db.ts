@@ -44,7 +44,7 @@ export const postInclude = Prisma.validator<Prisma.PostInclude>()({
           donationLinkId: true,
           address: true,
           donationProvider: {
-            select: { donationProviderId: true, logoId: true, name: true },
+            select: { donationProviderId: true, name: true },
           },
         },
       },

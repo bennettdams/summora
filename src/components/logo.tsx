@@ -1,3 +1,4 @@
+import { DonationProviderId } from '@prisma/client'
 import Image from 'next/image'
 
 function createAssetPath(assetId: string): string {
@@ -11,24 +12,28 @@ type AssetInfo = {
 }
 
 /**
- * Logo IDs are not type-safe, as they may come from a string from the database.
- * Therefore we create another prop to access logos, so changing/removing one produces
+ * This is kind of a "mapper" between logo IDs and the real assets.
+ * Using this together with logo IDs makes sure that the right logo is used.
+ * We use this as another prop to access logos, so changing/removing one produces
  * type errors in the code where it is used.
  */
-const TOPIC_IDS = ['donationProviderId', 'topic2'] as const
+const TOPIC_IDS = ['donationProviderId', 'some-other-topic'] as const
 type TopicId = typeof TOPIC_IDS[number]
-const LOGO_IDS = ['paypal', 'bitcoin'] as const
-type LogoId = typeof LOGO_IDS[number]
 
-type Logoinfo = { topics: TopicId[]; assetInfo: AssetInfo }
+/** If you need custom logo IDs, use the following */
+// const LOGO_IDS = ['some-custom-id'] as const
+// type LogoId = typeof LOGO_IDS[number] | DonationProviderId
+type LogoId = DonationProviderId
 
-const LOGOS: Record<LogoId, Logoinfo> = {
-  paypal: {
+type LogoInfo = { topics: TopicId[]; assetInfo: AssetInfo }
+
+const LOGOS: Record<LogoId, LogoInfo> = {
+  PAYPAL: {
     topics: ['donationProviderId'],
     assetInfo: { assetId: 'logo-paypal', width: 72, height: 16 },
   },
-  bitcoin: {
-    topics: ['topic2'],
+  BITCOIN: {
+    topics: ['some-other-topic'],
     assetInfo: { assetId: 'logo-bitcoin', width: 24, height: 24 },
   },
 }
@@ -41,14 +46,14 @@ type TopicChoice = Logos[LogoId]['topics'][number]
  * We create a second version of the logos with looser types (key is a string instead of string literal).
  * That's because the logo ID is not a string literal as well and we want to use it to find the logo.
  */
-const logosForAccess: Record<string, Logoinfo> = LOGOS
+const logosForAccess: Record<string, LogoInfo> = LOGOS
 
 export function Logo({
   topic,
   logoIdForAccess,
 }: {
   topic: TopicChoice
-  logoIdForAccess: string
+  logoIdForAccess: LogoId
 }): JSX.Element {
   const logo = logosForAccess[logoIdForAccess]
   if (!logo) {

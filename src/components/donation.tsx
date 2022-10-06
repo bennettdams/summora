@@ -35,7 +35,7 @@ function DonationLink({
           <div className="grid w-1/2 place-items-center">
             <Logo
               topic="donationProviderId"
-              logoIdForAccess={userDonation.logoId}
+              logoIdForAccess={userDonation.donationProviderId}
             />
           </div>
 
@@ -53,7 +53,6 @@ function DonationLink({
 type UserDonation = {
   donationLinkId: string
   donationProviderId: DonationProviderId
-  logoId: string
   donationProviderName: string
   donationAddress: string
 }
@@ -69,8 +68,7 @@ function UserDonationUpdateRow({
   userDonation: UserDonation
   inputDonationProviderId: DonationProviderId | null
   donationProviders: {
-    logoId: string
-    donationProviderId: string
+    donationProviderId: DonationProviderId
     donationProviderName: string
   }[]
   deleteItem: () => void
@@ -79,7 +77,7 @@ function UserDonationUpdateRow({
 }): JSX.Element {
   const logoIdFromInput = donationProviders.find(
     (prov) => prov.donationProviderId === inputDonationProviderId
-  )?.logoId
+  )?.donationProviderId
 
   if (!userDonation) return <div>No user donation available..</div>
 
@@ -91,7 +89,7 @@ function UserDonationUpdateRow({
       <div className="col-span-1 flex justify-end">
         <Logo
           topic="donationProviderId"
-          logoIdForAccess={logoIdFromInput ?? userDonation.logoId}
+          logoIdForAccess={logoIdFromInput ?? userDonation.donationProviderId}
         />
       </div>
 
@@ -274,7 +272,6 @@ function UserDonationsUpdates({
                 donationProviders={donationProviders.map((dP) => ({
                   donationProviderId: dP.donationProviderId,
                   donationProviderName: dP.name,
-                  logoId: dP.logoId,
                 }))}
                 donationProviderSelect={
                   <FormSelect

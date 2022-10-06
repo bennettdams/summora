@@ -5,7 +5,6 @@ const defaultDonationProvidersSelect =
   Prisma.validator<Prisma.DonationProviderSelect>()({
     name: true,
     donationProviderId: true,
-    logoId: true,
   })
 
 export const donationProviderRouter = t.router({

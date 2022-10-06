@@ -123,7 +123,6 @@ function UserPageInternal({
                       donationLink.donationProvider.donationProviderId,
                     donationProviderName: donationLink.donationProvider.name,
                     donationAddress: donationLink.address,
-                    logoId: donationLink.donationProvider.logoId,
                   }))
             }
           />

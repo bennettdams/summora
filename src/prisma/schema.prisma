@@ -144,7 +144,6 @@ enum DonationProviderId {
 model DonationProvider {
   donationProviderId DonationProviderId @id
   name               String
-  logoId             String
   // donation links relation
   DonationLink       DonationLink[]     @relation("DonationLink_DonationProvider")
 }

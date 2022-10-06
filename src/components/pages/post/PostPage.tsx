@@ -386,7 +386,6 @@ function PostPageInternal({
                     donationLinkId: donationLink.donationLinkId,
                     donationProviderId:
                       donationLink.donationProvider.donationProviderId,
-                    logoId: donationLink.donationProvider.logoId,
                     donationProviderName: donationLink.donationProvider.name,
                     donationAddress: donationLink.address,
                   })

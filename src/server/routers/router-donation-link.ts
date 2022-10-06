@@ -22,7 +22,7 @@ const defaultDonationLinkSelect = Prisma.validator<Prisma.DonationLinkSelect>()(
     donationLinkId: true,
     address: true,
     donationProvider: {
-      select: { name: true, donationProviderId: true, logoId: true },
+      select: { name: true, donationProviderId: true },
     },
   }
 )
