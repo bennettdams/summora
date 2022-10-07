@@ -151,10 +151,6 @@ export function transformApiPost(
         updatedAt: new Date(item.updatedAt),
       })),
     })),
-    comments: post.comments.map((comment) => ({
-      ...comment,
-      createdAt: new Date(comment.createdAt),
-    })),
   }
 }
 

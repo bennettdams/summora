@@ -365,7 +365,7 @@ function PostPageInternal({
             </div>
 
             <div className="flex items-center text-sm">
-              <CommentsIcon noOfComments={post.comments.length} />
+              <CommentsIcon noOfComments={post._count.comments} />
             </div>
 
             <div className="flex items-center text-sm">

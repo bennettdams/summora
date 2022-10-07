@@ -54,15 +54,10 @@ export const postInclude = Prisma.validator<Prisma.PostInclude>()({
     orderBy: { createdAt: 'asc' },
     include: { items: { orderBy: { createdAt: 'asc' } } },
   },
-  comments: {
-    include: {
-      author: {
-        select: { username: true, imageId: true, imageBlurDataURL: true },
-      },
-      upvotedBy: { select: { userId: true } },
-      downvotedBy: { select: { userId: true } },
+  _count: {
+    select: {
+      comments: true,
     },
-    orderBy: { createdAt: 'asc' },
   },
   likedBy: { select: { userId: true } },
 })
