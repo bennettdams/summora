@@ -10,6 +10,7 @@ import {
 } from '../../../services/api-service'
 import { useAuth } from '../../../services/auth-service'
 import { ROUTES } from '../../../services/routing'
+import { AppRouterTypes, trpc } from '../../../util/trpc'
 import { useDebounce } from '../../../util/use-debounce'
 import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
@@ -553,23 +554,12 @@ function PostPageInternal({
 
       <PageSection>
         <PostComments
+          postId={post.id}
           userId={userId}
           onAddComment={addComment}
           onRemoveComment={removeComment}
           onUpvoteComment={upvotePostComment}
           onDownvoteComment={downvotePostComment}
-          comments={post.comments.map((comment) => ({
-            commentId: comment.commentId,
-            commentParentId: comment.commentParentId,
-            text: comment.text,
-            createdAt: comment.createdAt,
-            authorId: comment.authorId,
-            authorUsername: comment.author.username,
-            authorImageId: comment.author.imageId,
-            authorImageBlurDataURL: comment.author.imageBlurDataURL,
-            upvotedBy: comment.upvotedBy,
-            downvotedBy: comment.downvotedBy,
-          }))}
         />
       </PageSection>
     </Page>
@@ -578,13 +568,13 @@ function PostPageInternal({
 
 /**
  * Creates a comment tree from a flat array.
- * For root level comments, use "null" as "commentId".
+ * For root level comments, use "null" as `commentId`.
  *
  * input:
- * [1 | 1.1 | 2 | 3 | 3.1 | 3.2]
+ * `[1 | 1.1 | 2 | 3 | 3.1 | 3.2]`
  *
  * output:
- * [1 [1.1] | 2 | 3 [3.1, 3.2] ]
+ * `[1 [1.1] | 2 | 3 [3.1, 3.2] ]`
  */
 function createCommentTree(
   comments: PostCommentTreeComment[],
@@ -794,47 +784,60 @@ function Comment({
   )
 }
 
-function createRootComments(comments: PostComment[]): PostCommentTreeComment[] {
-  return comments.map((comm) => ({ ...comm, commentChilds: [] }))
+function createRootComments(
+  comments: AppRouterTypes['postComments']['byPostId']['output']
+): PostCommentTreeComment[] {
+  return comments.map((comm) => ({
+    ...comm,
+    authorId: comm.author.userId,
+    authorUsername: comm.author.username,
+    authorImageId: comm.author.imageId,
+    authorImageBlurDataURL: comm.author.imageBlurDataURL,
+    commentChilds: [],
+  }))
 }
 
 export function PostComments({
+  postId,
   userId,
-  comments,
   onAddComment,
   onRemoveComment,
   onUpvoteComment,
   onDownvoteComment,
 }: {
+  postId: string
   userId: string | null
-  comments: PostComment[]
   onAddComment: (commentParentId: string, text: string) => void
   onRemoveComment: (commentId: string) => void
   onUpvoteComment: (commentId: string) => void
   onDownvoteComment: (commentId: string) => void
 }): JSX.Element {
-  const [rootComments, setRootComments] = useState<PostCommentTreeComment[]>(
-    createRootComments(comments)
-  )
-  useEffect(() => setRootComments(createRootComments(comments)), [comments])
-
   const [animateRef] = useAutoAnimate<HTMLDivElement>()
+  const { data: comments, isLoading } = trpc.postComments.byPostId.useQuery({
+    postId,
+  })
 
   return (
     <div ref={animateRef} className="w-full space-y-12">
-      {/* For the root level tree, we use "null" as comment ID. See "createCommentTree" docs. */}
-      {createCommentTree(rootComments, null).map((comment) => (
-        <Comment
-          key={comment.commentId}
-          isRoot={true}
-          comment={comment}
-          userId={userId}
-          onAdd={onAddComment}
-          onRemove={onRemoveComment}
-          onUpvote={onUpvoteComment}
-          onDownvote={onDownvoteComment}
-        />
-      ))}
+      {isLoading ? (
+        <LoadingAnimation />
+      ) : !comments ? (
+        <p>No comments</p>
+      ) : (
+        // For the root level tree, we use "null" as comment ID. See "createCommentTree" docs.
+        createCommentTree(createRootComments(comments), null).map((comment) => (
+          <Comment
+            key={comment.commentId}
+            isRoot={true}
+            comment={comment}
+            userId={userId}
+            onAdd={onAddComment}
+            onRemove={onRemoveComment}
+            onUpvote={onUpvoteComment}
+            onDownvote={onDownvoteComment}
+          />
+        ))
+      )}
     </div>
   )
 }

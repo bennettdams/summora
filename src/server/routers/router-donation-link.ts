@@ -77,7 +77,7 @@ export const donationLinkRouter = t.router({
         select: defaultDonationLinkSelect,
       })
     }),
-  // READ
+  // READ MANY
   byUserId: t.procedure
     .input(
       z.object({
@@ -93,14 +93,7 @@ export const donationLinkRouter = t.router({
         orderBy: { createdAt: 'asc' },
       })
 
-      if (!donationLinks) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: `No donation links for user id '${userId}'`,
-        })
-      } else {
-        return donationLinks
-      }
+      return donationLinks
     }),
   //  UPDATE MANY
   editMany: t.procedure
