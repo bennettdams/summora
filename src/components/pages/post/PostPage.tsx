@@ -602,6 +602,7 @@ type PostComment = {
   commentId: string
   commentParentId: string | null
   text: string
+  isDeleted: boolean
   createdAt: Date
   authorId: string
   authorUsername: string
@@ -660,7 +661,11 @@ function Comment({
             </p>
           </div>
           <div className="ml-2 grow">
-            <span>{comment.text}</span>
+            {comment.isDeleted ? (
+              <span className="line-through">deleted</span>
+            ) : (
+              <span>{comment.text}</span>
+            )}
           </div>
         </div>
 

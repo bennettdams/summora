@@ -9,6 +9,7 @@ const defaultPostCommentSelect = Prisma.validator<Prisma.PostCommentSelect>()({
   commentId: true,
   commentParentId: true,
   text: true,
+  isDeleted: true,
   createdAt: true,
   upvotedBy: { select: { userId: true } },
   downvotedBy: true,
@@ -103,7 +104,7 @@ export const postCommentsRouter = t.router({
 
       await ctx.prisma.postComment.update({
         where: { commentId },
-        data: { text: '' },
+        data: { text: '', isDeleted: true },
       })
     }),
 })
