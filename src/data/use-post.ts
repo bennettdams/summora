@@ -8,10 +8,8 @@ import {
 import { useState } from 'react'
 import { ApiPost } from '../pages/api/posts/[postId]'
 import {
-  apiCreatePostComment,
   apiCreatePostSegment,
   apiCreatePostSegmentItem,
-  apiDeletePostComment,
   apiDeletePostSegment,
   apiDeletePostSegmentItem,
   apiDownvotePostComment,
@@ -77,8 +75,6 @@ export function usePost(postId: string, enabled = true) {
     updatePostSegmentItemMutation,
     deletePostSegmentItemMutation,
     // comment
-    createPostCommentMutation,
-    deletePostCommentMutation,
     upvotePostCommentMutation,
     downvotePostCommentMutation,
   } = usePostMutation(postId)
@@ -100,8 +96,6 @@ export function usePost(postId: string, enabled = true) {
       updatePostSegmentItemMutation.isLoading ||
       deletePostSegmentItemMutation.isLoading ||
       // comment
-      createPostCommentMutation.isLoading ||
-      deletePostCommentMutation.isLoading ||
       upvotePostCommentMutation.isLoading ||
       downvotePostCommentMutation.isLoading,
     isError:
@@ -119,8 +113,6 @@ export function usePost(postId: string, enabled = true) {
       updatePostSegmentItemMutation.isError ||
       deletePostSegmentItemMutation.isError ||
       // comment
-      createPostCommentMutation.isError ||
-      deletePostCommentMutation.isError ||
       upvotePostCommentMutation.isError ||
       downvotePostCommentMutation.isError,
     // TODO really mutateAsync?
@@ -137,8 +129,6 @@ export function usePost(postId: string, enabled = true) {
     updatePostSegmentItem: updatePostSegmentItemMutation.mutateAsync,
     deletePostSegmentItem: deletePostSegmentItemMutation.mutateAsync,
     // comment
-    createPostComment: createPostCommentMutation.mutateAsync,
-    deletePostComment: deletePostCommentMutation.mutateAsync,
     upvotePostComment: upvotePostCommentMutation.mutateAsync,
     downvotePostComment: downvotePostCommentMutation.mutateAsync,
   }
@@ -350,21 +340,6 @@ function usePostMutation(postId: string) {
   })
 
   // COMMENT
-  const createPostCommentMutation = useMutation(apiCreatePostComment, {
-    onSuccess: (data) => {
-      if (data.result) {
-        const commentNew = data.result
-        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
-          !prevData
-            ? null
-            : {
-                ...prevData,
-                comments: [...prevData.comments, commentNew],
-              }
-        )
-      }
-    },
-  })
 
   // nearly identical to downvote
   const upvotePostCommentMutation = useMutation(apiUpvotePostComment, {
@@ -544,24 +519,6 @@ function usePostMutation(postId: string) {
     },
   })
 
-  const deletePostCommentMutation = useMutation(apiDeletePostComment, {
-    onSuccess: (data, deletedCommentCommendId) => {
-      // true = comment was deleted
-      if (data.result === true) {
-        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
-          !prevData
-            ? null
-            : {
-                ...prevData,
-                comments: prevData.comments.filter(
-                  (comment) => comment.commentId !== deletedCommentCommendId
-                ),
-              }
-        )
-      }
-    },
-  })
-
   // LIKE / UNLIKE
   const likeUnlikePostMutation = useMutation(apiLikeUnlikePost, {
     onMutate: async () => {
@@ -643,8 +600,6 @@ function usePostMutation(postId: string) {
     updatePostSegmentItemMutation,
     deletePostSegmentItemMutation,
     // comment
-    createPostCommentMutation,
-    deletePostCommentMutation,
     upvotePostCommentMutation,
     downvotePostCommentMutation,
   }

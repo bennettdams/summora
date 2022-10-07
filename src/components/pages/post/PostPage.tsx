@@ -84,12 +84,28 @@ function PostPageInternal({
   const {
     updatePost,
     createPostSegment,
-    createPostComment,
-    deletePostComment,
     upvotePostComment,
     downvotePostComment,
     isLoading,
   } = usePost(postId)
+
+  const utils = trpc.useContext()
+
+  async function invalidate() {
+    await utils.postComments.byPostId.invalidate({ postId })
+  }
+
+  const createOne = trpc.postComments.create.useMutation({
+    onSuccess: () => {
+      invalidate()
+    },
+  })
+  const deleteOne = trpc.postComments.delete.useMutation({
+    onSuccess: () => {
+      invalidate()
+    },
+  })
+
   const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
   const [isPostEditable, setIsPostEditable] = useState(userId === post.authorId)
   useEffect(
@@ -231,17 +247,11 @@ function PostPageInternal({
     commentParentId: string | null,
     text: string
   ) {
-    await createPostComment({
-      postId,
-      commentParentId,
-      postCommentToCreate: {
-        text: text,
-      },
-    })
+    createOne.mutate({ postId, commentParentId, text })
   }
 
   async function removeComment(commentId: string) {
-    await deletePostComment(commentId)
+    deleteOne.mutate({ commentId })
   }
 
   const [animateRef] = useAutoAnimate<HTMLDivElement>()
