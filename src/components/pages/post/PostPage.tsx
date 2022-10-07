@@ -689,7 +689,7 @@ function Comment({
             />
           </div>
           <Link to={ROUTES.user(comment.authorId)} disablePrefetch>
-            <div className="flex hover:underline">
+            <div className="group flex">
               <div className="bold flex w-10 flex-col items-center text-center leading-none">
                 <Avatar
                   size="tiny"
@@ -700,7 +700,7 @@ function Comment({
                 />
               </div>
 
-              <div className="flex items-center space-x-2 leading-none text-dlila">
+              <div className="flex items-center space-x-2 leading-none text-dlila group-hover:underline">
                 <span className="ml-2">{comment.authorUsername}</span>
               </div>
             </div>

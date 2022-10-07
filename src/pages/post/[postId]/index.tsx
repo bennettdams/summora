@@ -1,20 +1,22 @@
-import { GetStaticPaths, GetStaticProps } from 'next'
-import { prisma } from '../../../prisma/prisma'
 import { PrismaClient } from '.prisma/client'
-import { PostPage } from '../../../components/pages/post/PostPage'
 import { Prisma } from '@prisma/client'
+import { createProxySSGHelpers } from '@trpc/react/ssg'
+import { GetStaticPaths, GetStaticProps } from 'next'
 import type { ParsedUrlQuery } from 'querystring'
-import { ServerPageProps } from '../../../types/PageProps'
+import { PostPage } from '../../../components/pages/post/PostPage'
 import {
   hydrationHandler as hydrationHandlerPost,
   prefillServer as prefillServerPost,
 } from '../../../data/use-post'
 import {
-  prefillServer as prefillServerCategories,
   hydrationHandler as hydrationHandlerCategories,
+  prefillServer as prefillServerCategories,
 } from '../../../data/use-post-categories'
-import { ApiPost } from '../../api/posts/[postId]'
 import { dbFindPost, dbFindPostCategories } from '../../../lib/db'
+import { prisma } from '../../../prisma/prisma'
+import { createPrefetchHelpersArgs } from '../../../server/prefetch-helpers'
+import { ServerPageProps } from '../../../types/PageProps'
+import { ApiPost } from '../../api/posts/[postId]'
 
 export interface PostPageProps {
   postId: string
@@ -85,6 +87,14 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
     if (!post) {
       return { notFound: true }
     } else {
+      const ssg = createProxySSGHelpers(await createPrefetchHelpersArgs())
+      await ssg.user.byUserId.prefetch({ userId: post.authorId })
+      await ssg.postComments.byPostId.prefetch({ postId })
+      // we could prefetch the user data here, but this only impacts the avatar in the post comments
+      // const commentAuthorIds = (await postComments).map(
+      //   (comm) => comm.author.userId
+      // )
+
       const client = hydrationHandlerPost.createClient()
       prefillServerPost(client, postId, post)
 
@@ -100,6 +110,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
 
       return {
         props: {
+          trpcState: ssg.dehydrate(),
           dehydratedState: hydrationHandlerPost.dehydrate(client),
           dehydratedState2:
             hydrationHandlerCategories.dehydrate(clientCategories),

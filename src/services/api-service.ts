@@ -2,8 +2,6 @@ import type { Prisma } from '@prisma/client'
 import { ApiAvatarsUpload } from '../pages/api/image-upload/avatars'
 import { ApiImageUploadPostSegment } from '../pages/api/image-upload/[postId]/[postSegmentId]'
 import { ApiPostCategories } from '../pages/api/post-categories'
-import { ApiPostCommentCreate } from '../pages/api/post-comments'
-import { ApiPostCommentDelete } from '../pages/api/post-comments/[commentId]'
 import { ApiPostCommentDownvote } from '../pages/api/post-comments/[commentId]/downvote'
 import { ApiPostCommentUpvote } from '../pages/api/post-comments/[commentId]/upvote'
 import { ApiPostSegmentItemCreate } from '../pages/api/post-segment-items'
@@ -22,7 +20,6 @@ import { ApiPostIncrementViews } from '../pages/api/posts/[postId]/increment-vie
 import { ApiPostLikeUnlikePost } from '../pages/api/posts/[postId]/like-unlike'
 import { ApiTagsSearch } from '../pages/api/tags/search'
 import { ApiUsersSignUp } from '../pages/api/users/signup'
-import { OmitStrict } from '../types/util-types'
 import {
   deleteHTTP,
   get,
@@ -349,21 +346,6 @@ export async function apiCreatePostSegmentItem(
 // #########################################
 // POST COMMENT
 
-export type ApiPostCommentCreateRequestBody = {
-  postId: string
-  /**
-   * Null for root level comments.
-   */
-  commentParentId: string | null
-  /**
-   * Exclude author, as this is added server-sided via the request.
-   */
-  postCommentToCreate: OmitStrict<
-    Prisma.PostCommentCreateWithoutPostInput,
-    'author'
-  >
-}
-
 function transformApiPostComment(
   comment: NonNullable<ApiPostCommentCreate>
 ): NonNullable<ApiPostCommentCreate> {
@@ -371,18 +353,6 @@ function transformApiPostComment(
     ...comment,
     createdAt: new Date(comment.createdAt),
   }
-}
-
-export async function apiCreatePostComment(
-  input: ApiPostCommentCreateRequestBody
-): Promise<HttpResponse<ApiPostCommentCreate>> {
-  const response = await post<ApiPostCommentCreate>(
-    ROUTES_API.POST_COMMENTS,
-    input
-  )
-  if (response.result)
-    response.result = transformApiPostComment(response.result)
-  return response
 }
 
 export async function apiUpvotePostComment(
@@ -405,15 +375,6 @@ export async function apiDownvotePostComment(
   )
   if (response.result)
     response.result = transformApiPostComment(response.result)
-  return response
-}
-
-export async function apiDeletePostComment(
-  commentId: string
-): Promise<HttpResponse<ApiPostCommentDelete>> {
-  const response = await deleteHTTP<ApiPostCommentDelete>(
-    ROUTES_API.POST_COMMENT(commentId)
-  )
   return response
 }
 
