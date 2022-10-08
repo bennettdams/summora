@@ -1,7 +1,7 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-import { usePost } from '../data/use-post'
 import { useAuth } from '../services/auth-service'
 import { ROUTES } from '../services/routing'
+import { trpc } from '../util/trpc'
 import { useHasMounted } from '../util/use-has-mounted'
 import { Avatar } from './Avatar'
 import { Box } from './Box'
@@ -11,6 +11,7 @@ import { DateTime } from './DateTime'
 import { IconLong, IconShort, IconSize } from './Icon'
 import { LikesIcon } from './LikesIcon'
 import { Link } from './link'
+import { LoadingAnimation } from './LoadingAnimation'
 import { NoContent } from './NoContent'
 import { TagsList } from './tag'
 import { ViewsIcon } from './ViewsIcon'
@@ -26,7 +27,6 @@ type PostsPostsList =
       updatedAt: Date
       noOfViews: number
       noOfComments: number
-      likedBy: { userId: string }[]
       author: {
         id: string
         username: string
@@ -101,12 +101,7 @@ function PostsListItem({
         <Link to={ROUTES.post(post.id)}>
           <div className="relative">
             <div className="absolute top-0 left-0 inline">
-              <PostLikes
-                postId={post.id}
-                userId={userId}
-                postLikedByUserIds={post.likedBy}
-                iconSize="big"
-              />
+              <PostLikes postId={post.id} userId={userId} iconSize="big" />
             </div>
             <h2 className="text-xs font-semibold tracking-widest text-dorange">
               {post.categoryTitle}
@@ -195,11 +190,7 @@ function PostsListItemShort({
           </h1>
           <p className="mt-3 leading-relaxed text-dbrown">{post.subtitle}</p>
           <div className="absolute bottom-0 mt-2 flex w-full justify-center space-x-4 py-3 text-center leading-none">
-            <PostLikes
-              postId={post.id}
-              userId={userId}
-              postLikedByUserIds={post.likedBy}
-            />
+            <PostLikes postId={post.id} userId={userId} />
             <ViewsIcon noOfViews={post.noOfViews} />
             <CommentsIcon noOfComments={post.noOfComments} />
             <span className="inline-flex items-center text-sm leading-none">
@@ -215,28 +206,29 @@ function PostsListItemShort({
 export function PostLikes({
   postId,
   userId,
-  postLikedByUserIds,
   isLikeUnlikeEnabled = true,
   iconSize = 'medium',
 }: {
   postId: string
   userId: string | null
-  postLikedByUserIds: { userId: string }[]
   /**
    * e.g. use for a list of posts, where we want to show a "liked" icon all the time
    */
   isLikeUnlikeEnabled?: boolean
   iconSize?: IconSize
 }): JSX.Element {
-  const { likeUnlikePost } = usePost(postId, false)
+  const utils = trpc.useContext()
 
-  const isLiked = !isLikeUnlikeEnabled
-    ? true
-    : !userId
-    ? false
-    : postLikedByUserIds.some(
-        (userLikesPost) => userLikesPost.userId === userId
-      )
+  const { data: postLikedByUserIds, isLoading } =
+    trpc.postLikes.byPostId.useQuery({
+      postId,
+    })
+
+  const toggleLike = trpc.postLikes.toggleLike.useMutation({
+    onSuccess: () => {
+      utils.postLikes.byPostId.invalidate({ postId })
+    },
+  })
 
   /**
    * We need to wait for the component to mount on the client before rendering the likes.
@@ -248,15 +240,27 @@ export function PostLikes({
    */
   const hasMounted = useHasMounted()
 
+  if (isLoading) return <LoadingAnimation size="small" />
+
+  const isLiked = !isLikeUnlikeEnabled
+    ? true
+    : !userId
+    ? false
+    : !postLikedByUserIds
+    ? false
+    : postLikedByUserIds.some(
+        (userLikesPost) => userLikesPost.userId === userId
+      )
+
   return (
     <div className="flex">
       {hasMounted && (
         <LikesIcon
-          noOfLikes={postLikedByUserIds.length}
+          noOfLikes={postLikedByUserIds?.length ?? 0}
           isLiked={isLiked}
           size={iconSize}
           onClick={async () =>
-            !!isLikeUnlikeEnabled && (await likeUnlikePost(postId))
+            !!isLikeUnlikeEnabled && toggleLike.mutate({ postId })
           }
         />
       )}

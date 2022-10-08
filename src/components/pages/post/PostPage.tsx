@@ -315,12 +315,7 @@ function PostPageInternal({
               <div className="relative">
                 {/* LIKES */}
                 <div className="absolute right-0 z-10 mr-10 grid h-full place-items-center md:mr-20">
-                  <PostLikes
-                    iconSize="big"
-                    postId={postId}
-                    postLikedByUserIds={post.likedBy}
-                    userId={userId}
-                  />
+                  <PostLikes iconSize="big" postId={postId} userId={userId} />
                 </div>
 
                 {/* POST TITLE */}
@@ -819,6 +814,7 @@ export function PostComments({
   const utils = trpc.useContext()
 
   function invalidate() {
+    // TODO We could only invalidate the comment (or root comment?) instead of all comments
     utils.postComments.byPostId.invalidate()
   }
 

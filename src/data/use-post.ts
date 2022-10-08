@@ -14,16 +14,13 @@ import {
   apiDeletePostSegmentItem,
   apiFetchPost,
   apiImageUploadPostSegments,
-  apiLikeUnlikePost,
   ApiPostUpdateRequestBody,
   apiUpdatePost,
   apiUpdatePostSegment,
   apiUpdatePostSegmentItem,
   transformApiPost,
 } from '../services/api-service'
-import { useAuth } from '../services/auth-service'
 import { createHydrationHandler } from '../services/hydration-service'
-import { useSyncLikedData } from './sync-query-cache'
 
 type QueryData = ApiPost
 
@@ -62,7 +59,6 @@ export function usePost(postId: string, enabled = true) {
   const {
     // post
     updatePostMutation,
-    likeUnlikePostMutation,
     // segment
     createPostSegmentMutation,
     updatePostSegmentMutation,
@@ -80,7 +76,6 @@ export function usePost(postId: string, enabled = true) {
       isLoading ||
       // post
       updatePostMutation.isLoading ||
-      likeUnlikePostMutation.isLoading ||
       // segment
       createPostSegmentMutation.isLoading ||
       updatePostSegmentMutation.isLoading ||
@@ -94,7 +89,6 @@ export function usePost(postId: string, enabled = true) {
       isError ||
       // post
       updatePostMutation.isError ||
-      likeUnlikePostMutation.isError ||
       // segment
       createPostSegmentMutation.isError ||
       updatePostSegmentMutation.isError ||
@@ -107,7 +101,6 @@ export function usePost(postId: string, enabled = true) {
     // TODO really mutateAsync?
     // post
     updatePost: updatePostMutation.mutateAsync,
-    likeUnlikePost: likeUnlikePostMutation.mutateAsync,
     // segment
     createPostSegment: createPostSegmentMutation.mutateAsync,
     updatePostSegment: updatePostSegmentMutation.mutateAsync,
@@ -121,10 +114,8 @@ export function usePost(postId: string, enabled = true) {
 }
 
 function usePostMutation(postId: string) {
-  const { userId } = useAuth()
   const queryClient = useQueryClient()
   const [queryKey] = useState<QueryKey>(() => createQueryKey(postId))
-  const { syncPostsLikedData } = useSyncLikedData()
 
   // POST
   const updatePostMutation = useMutation(apiUpdatePost, {
@@ -325,77 +316,9 @@ function usePostMutation(postId: string) {
     },
   })
 
-  // LIKE / UNLIKE
-  const likeUnlikePostMutation = useMutation(apiLikeUnlikePost, {
-    onMutate: async () => {
-      // cancel any outgoing refetches (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries(queryKey)
-
-      // snapshot the previous value
-      const postBeforeMutation = queryClient.getQueryData<QueryData>(queryKey)
-
-      if (userId) {
-        // optimistically update to the new value
-        if (postBeforeMutation) {
-          const postForOptimisticUpdate: QueryData = {
-            ...postBeforeMutation,
-          }
-          const isLiked = postForOptimisticUpdate.likedBy.some(
-            (like) => like.userId === userId
-          )
-          if (isLiked) {
-            postForOptimisticUpdate.likedBy =
-              postForOptimisticUpdate.likedBy.filter(
-                (like) => like.userId !== userId
-              )
-          } else {
-            postForOptimisticUpdate.likedBy = [
-              ...postForOptimisticUpdate.likedBy,
-              { userId },
-            ]
-          }
-
-          queryClient.setQueryData<QueryData>(queryKey, postForOptimisticUpdate)
-        }
-      }
-
-      /*
-       * This return will be used in `onError` as `context`.
-       * We put the post before the mutation here, so it can be used to reset
-       * the state when an error occurs.
-       */
-      return { postBeforeMutation }
-    },
-    onError: (err, _, context) => {
-      const postBeforeMutation = context?.postBeforeMutation
-      if (postBeforeMutation) {
-        queryClient.setQueryData<QueryData>(queryKey, postBeforeMutation)
-      }
-      console.error('Error while liking/unliking post:', err)
-    },
-    // `postId` coming from apiLikeUnlikePost
-    onSuccess: (data, postId) => {
-      if (data.result) {
-        const { likedBy: likedByUpdated, authorId } = data.result
-
-        queryClient.setQueryData<QueryData>(queryKey, (prevData) => {
-          return !prevData ? null : { ...prevData, likedBy: likedByUpdated }
-        })
-
-        syncPostsLikedData({
-          queryClient,
-          postId,
-          userId: authorId,
-          likedByUpdated,
-        })
-      }
-    },
-  })
-
   return {
     // post
     updatePostMutation,
-    likeUnlikePostMutation,
     // segment
     createPostSegmentMutation,
     updatePostSegmentMutation,

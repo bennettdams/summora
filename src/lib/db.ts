@@ -16,7 +16,6 @@ export async function dbFindPosts() {
         segments: { orderBy: { createdAt: 'asc' } },
         tags: { select: { id: true, label: true } },
         _count: { select: { comments: true, likedBy: true } },
-        likedBy: { select: { userId: true } },
       },
     })
   } catch (error) {
@@ -59,7 +58,6 @@ export const postInclude = Prisma.validator<Prisma.PostInclude>()({
       comments: true,
     },
   },
-  likedBy: { select: { userId: true } },
 })
 
 export type DbFindPost = Prisma.PromiseReturnType<typeof dbFindPost>

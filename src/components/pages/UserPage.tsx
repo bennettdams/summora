@@ -193,7 +193,6 @@ function UserPageInternal({
                   },
                   noOfViews: post.noOfViews,
                   noOfComments: post._count.comments,
-                  likedBy: post.likedBy,
                   segments: post.segments,
                   tags: post.tags,
                 }))

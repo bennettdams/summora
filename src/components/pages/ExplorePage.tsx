@@ -56,9 +56,7 @@ export function ExplorePage({
             segments: [],
             tags: [],
             noOfComments: 0,
-            likedBy: [],
             // noOfComments: post._count?.comments ?? 0,
-            // likedBy: post.likedBy,
           }))}
         />
       </PageSection>

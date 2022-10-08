@@ -15,7 +15,6 @@ import {
 import { ApiPosts, ApiPostsCreate } from '../pages/api/posts'
 import { ApiPost, ApiPostUpdate } from '../pages/api/posts/[postId]'
 import { ApiPostIncrementViews } from '../pages/api/posts/[postId]/increment-views'
-import { ApiPostLikeUnlikePost } from '../pages/api/posts/[postId]/like-unlike'
 import { ApiTagsSearch } from '../pages/api/tags/search'
 import { ApiUsersSignUp } from '../pages/api/users/signup'
 import {
@@ -33,7 +32,6 @@ export const ROUTES_API = {
   POSTS: 'posts',
   POST: (postId: string) => `posts/${postId}`,
   POST_INCREMENT_VIEWS: (postId: string) => `posts/${postId}/increment-views`,
-  POST_LIKE_UNLIKE: (postId: string) => `posts/${postId}/like-unlike`,
   TAGS_SEARCH: 'tags/search',
   POST_SEGMENTS: 'post-segments',
   POST_SEGMENT: (postSegmentId: string) => `post-segments/${postSegmentId}`,
@@ -356,19 +354,6 @@ function transformApiTagsSearch(
     createdAt: new Date(tag.createdAt),
     updatedAt: new Date(tag.updatedAt),
   }))
-}
-
-// #########################################
-// POST LIKE UNLIKE
-
-export async function apiLikeUnlikePost(
-  postId: string
-): Promise<HttpResponse<ApiPostLikeUnlikePost>> {
-  const response = await put<ApiPostLikeUnlikePost>(
-    ROUTES_API.POST_LIKE_UNLIKE(postId),
-    null
-  )
-  return response
 }
 
 // #########################################
