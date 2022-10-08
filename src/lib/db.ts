@@ -89,33 +89,6 @@ export async function dbCreatePost(
   }
 }
 
-export type DbFindUserPosts = Prisma.PromiseReturnType<typeof dbFindUserPosts>
-export async function dbFindUserPosts(userId: string) {
-  try {
-    return await prisma.post.findMany({
-      where: { authorId: userId },
-      take: 10,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        author: {
-          select: {
-            username: true,
-            imageId: true,
-            imageBlurDataURL: true,
-          },
-        },
-        category: true,
-        segments: { orderBy: { createdAt: 'asc' } },
-        tags: { select: { id: true, label: true } },
-        _count: { select: { comments: true, likedBy: true } },
-        likedBy: { select: { userId: true } },
-      },
-    })
-  } catch (error) {
-    throw new Error(`Error finding posts for user ${userId}: ${error}`)
-  }
-}
-
 export type DbFindPostCategories = Prisma.PromiseReturnType<
   typeof dbFindPostCategories
 >

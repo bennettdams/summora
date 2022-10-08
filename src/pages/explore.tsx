@@ -1,7 +1,7 @@
-import { GetStaticProps } from 'next'
-import { prisma } from '../prisma/prisma'
 import { Prisma, PrismaClient } from '@prisma/client'
+import { GetStaticProps } from 'next'
 import { ExplorePage } from '../components/pages/ExplorePage'
+import { prisma } from '../prisma/prisma'
 
 export type ExplorePageProps = {
   postsViews: Prisma.PromiseReturnType<typeof findPostsViews>
