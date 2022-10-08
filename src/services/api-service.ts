@@ -2,8 +2,6 @@ import type { Prisma } from '@prisma/client'
 import { ApiAvatarsUpload } from '../pages/api/image-upload/avatars'
 import { ApiImageUploadPostSegment } from '../pages/api/image-upload/[postId]/[postSegmentId]'
 import { ApiPostCategories } from '../pages/api/post-categories'
-import { ApiPostCommentDownvote } from '../pages/api/post-comments/[commentId]/downvote'
-import { ApiPostCommentUpvote } from '../pages/api/post-comments/[commentId]/upvote'
 import { ApiPostSegmentItemCreate } from '../pages/api/post-segment-items'
 import {
   ApiPostSegmentItemDelete,
@@ -31,8 +29,6 @@ import {
 
 export const ROUTES_API = {
   USERS_SIGN_UP: 'users/signup',
-  USER: (userId: string) => `users/${userId}`,
-  USER_POSTS: (userId: string) => `users/${userId}/posts`,
   POST_CATEGORIES: 'post-categories',
   POSTS: 'posts',
   POST: (postId: string) => `posts/${postId}`,
@@ -44,12 +40,6 @@ export const ROUTES_API = {
   POST_SEGMENT_ITEMS: 'post-segment-items',
   POST_SEGMENT_ITEM: (postSegmentItemId: string) =>
     `post-segment-items/${postSegmentItemId}`,
-  POST_COMMENTS: 'post-comments',
-  POST_COMMENT: (commentId: string) => `post-comments/${commentId}`,
-  POST_COMMENT_UPVOTE: (postCommentId: string) =>
-    `post-comments/${postCommentId}/upvote`,
-  POST_COMMENT_DOWNVOTE: (postCommentId: string) =>
-    `post-comments/${postCommentId}/downvote`,
   IMAGE_UPLOAD_AVATARS: 'image-upload/avatars',
   IMAGE_UPLOAD_POST_SEGMENTS: ({
     postId,
@@ -340,41 +330,6 @@ export async function apiCreatePostSegmentItem(
   )
   if (response.result)
     response.result = transformApiPostSegmentItem(response.result)
-  return response
-}
-
-// #########################################
-// POST COMMENT
-
-function transformApiPostComment(
-  comment: NonNullable<ApiPostCommentCreate>
-): NonNullable<ApiPostCommentCreate> {
-  return {
-    ...comment,
-    createdAt: new Date(comment.createdAt),
-  }
-}
-
-export async function apiUpvotePostComment(
-  postCommentId: string
-): Promise<HttpResponse<ApiPostCommentUpvote>> {
-  const response = await put<ApiPostCommentUpvote>(
-    ROUTES_API.POST_COMMENT_UPVOTE(postCommentId),
-    null
-  )
-  if (response.result)
-    response.result = transformApiPostComment(response.result)
-  return response
-}
-export async function apiDownvotePostComment(
-  postCommentId: string
-): Promise<HttpResponse<ApiPostCommentDownvote>> {
-  const response = await put<ApiPostCommentDownvote>(
-    ROUTES_API.POST_COMMENT_DOWNVOTE(postCommentId),
-    null
-  )
-  if (response.result)
-    response.result = transformApiPostComment(response.result)
   return response
 }
 

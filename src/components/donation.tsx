@@ -128,19 +128,13 @@ function UserDonationsUpdates({
   }
 
   const updateMany = trpc.donationLink.editMany.useMutation({
-    onSuccess: () => {
-      invalidate()
-    },
+    onSuccess: invalidate,
   })
   const deleteOne = trpc.donationLink.delete.useMutation({
-    onSuccess: () => {
-      invalidate()
-    },
+    onSuccess: invalidate,
   })
   const createOne = trpc.donationLink.createByUserId.useMutation({
-    onSuccess: () => {
-      invalidate()
-    },
+    onSuccess: invalidate,
   })
 
   function deleteOneItem(donationLinkId: string) {

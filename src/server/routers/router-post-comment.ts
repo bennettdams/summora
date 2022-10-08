@@ -60,7 +60,11 @@ export const postCommentsRouter = t.router({
       const postComments = await ctx.prisma.postComment.findMany({
         where: { postId },
         select: defaultPostCommentSelect,
-        orderBy: { upvotedBy: { _count: 'asc' } },
+        orderBy: [
+          { upvotedBy: { _count: 'desc' } },
+          { downvotedBy: { _count: 'asc' } },
+          { createdAt: 'asc' },
+        ],
       })
 
       return postComments
@@ -106,5 +110,89 @@ export const postCommentsRouter = t.router({
         where: { commentId },
         data: { text: '', isDeleted: true },
       })
+    }),
+  upvote: t.procedure
+    .input(
+      z.object({
+        commentId: z.string().cuid(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { commentId } = input
+
+      const userIdAuth = await checkAuthTRPC(ctx)
+
+      const isAlreadyUpvoted = !!(await ctx.prisma.postComment.findFirst({
+        where: { commentId, upvotedBy: { some: { userId: userIdAuth } } },
+      }))
+
+      if (isAlreadyUpvoted) {
+        await ctx.prisma.postComment.update({
+          where: {
+            commentId,
+          },
+          data: {
+            upvotedBy: {
+              disconnect: { userId: userIdAuth },
+            },
+          },
+        })
+      } else {
+        await ctx.prisma.postComment.update({
+          where: {
+            commentId,
+          },
+          data: {
+            upvotedBy: {
+              connect: { userId: userIdAuth },
+            },
+            downvotedBy: {
+              disconnect: { userId: userIdAuth },
+            },
+          },
+        })
+      }
+    }),
+  downvote: t.procedure
+    .input(
+      z.object({
+        commentId: z.string().cuid(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { commentId } = input
+
+      const userIdAuth = await checkAuthTRPC(ctx)
+
+      const isAlreadyDownvoted = !!(await ctx.prisma.postComment.findFirst({
+        where: { commentId, downvotedBy: { some: { userId: userIdAuth } } },
+      }))
+
+      if (isAlreadyDownvoted) {
+        await ctx.prisma.postComment.update({
+          where: {
+            commentId,
+          },
+          data: {
+            downvotedBy: {
+              disconnect: { userId: userIdAuth },
+            },
+          },
+        })
+      } else {
+        await ctx.prisma.postComment.update({
+          where: {
+            commentId,
+          },
+          data: {
+            upvotedBy: {
+              disconnect: { userId: userIdAuth },
+            },
+            downvotedBy: {
+              connect: { userId: userIdAuth },
+            },
+          },
+        })
+      }
     }),
 })

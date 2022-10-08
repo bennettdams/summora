@@ -81,13 +81,7 @@ function PostPageInternal({
   post: PostPostPage
   userId: string | null
 }): JSX.Element {
-  const {
-    updatePost,
-    createPostSegment,
-    upvotePostComment,
-    downvotePostComment,
-    isLoading,
-  } = usePost(postId)
+  const { updatePost, createPostSegment, isLoading } = usePost(postId)
 
   const utils = trpc.useContext()
 
@@ -96,14 +90,10 @@ function PostPageInternal({
   }
 
   const createOne = trpc.postComments.create.useMutation({
-    onSuccess: () => {
-      invalidate()
-    },
+    onSuccess: invalidate,
   })
   const deleteOne = trpc.postComments.delete.useMutation({
-    onSuccess: () => {
-      invalidate()
-    },
+    onSuccess: invalidate,
   })
 
   const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
@@ -568,8 +558,6 @@ function PostPageInternal({
           userId={userId}
           onAddComment={addComment}
           onRemoveComment={removeComment}
-          onUpvoteComment={upvotePostComment}
-          onDownvoteComment={downvotePostComment}
         />
       </PageSection>
     </Page>
@@ -817,19 +805,28 @@ export function PostComments({
   userId,
   onAddComment,
   onRemoveComment,
-  onUpvoteComment,
-  onDownvoteComment,
 }: {
   postId: string
   userId: string | null
   onAddComment: (commentParentId: string, text: string) => void
   onRemoveComment: (commentId: string) => void
-  onUpvoteComment: (commentId: string) => void
-  onDownvoteComment: (commentId: string) => void
 }): JSX.Element {
   const [animateRef] = useAutoAnimate<HTMLDivElement>()
   const { data: comments, isLoading } = trpc.postComments.byPostId.useQuery({
     postId,
+  })
+
+  const utils = trpc.useContext()
+
+  function invalidate() {
+    utils.postComments.byPostId.invalidate()
+  }
+
+  const upvote = trpc.postComments.upvote.useMutation({
+    onSuccess: invalidate,
+  })
+  const downvote = trpc.postComments.downvote.useMutation({
+    onSuccess: invalidate,
   })
 
   return (
@@ -848,8 +845,8 @@ export function PostComments({
             userId={userId}
             onAdd={onAddComment}
             onRemove={onRemoveComment}
-            onUpvote={onUpvoteComment}
-            onDownvote={onDownvoteComment}
+            onUpvote={(commentId) => upvote.mutate({ commentId })}
+            onDownvote={(commentId) => downvote.mutate({ commentId })}
           />
         ))
       )}
