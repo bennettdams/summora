@@ -93,7 +93,7 @@ model PostCategory {
 }
 
 model PostTag {
-  id          String   @id @default(cuid())
+  tagId       String   @id @default(cuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   label       String

@@ -77,7 +77,7 @@ async function fill() {
         data: {
           tags: {
             connect: [...new Array(getRandomNumberForRange(1, 15))].map(() => ({
-              id: getRandomElementOfArray(postTagsCreated).id,
+              tagId: getRandomElementOfArray(postTagsCreated).tagId,
             })),
           },
           segments: {
