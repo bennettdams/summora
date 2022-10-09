@@ -88,14 +88,3 @@ export async function dbCreatePost(
     throw new Error(`Error while creating post: ${error}`)
   }
 }
-
-export type DbFindPostCategories = Prisma.PromiseReturnType<
-  typeof dbFindPostCategories
->
-export async function dbFindPostCategories() {
-  try {
-    return await prisma.postCategory.findMany()
-  } catch (error) {
-    throw new Error(`Error finding post categories: ${error}`)
-  }
-}

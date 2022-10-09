@@ -8,11 +8,7 @@ import {
   hydrationHandler as hydrationHandlerPost,
   prefillServer as prefillServerPost,
 } from '../../../data/use-post'
-import {
-  hydrationHandler as hydrationHandlerCategories,
-  prefillServer as prefillServerCategories,
-} from '../../../data/use-post-categories'
-import { dbFindPost, dbFindPostCategories } from '../../../lib/db'
+import { dbFindPost } from '../../../lib/db'
 import { prisma } from '../../../prisma/prisma'
 import { createPrefetchHelpersArgs } from '../../../server/prefetch-helpers'
 import { ServerPageProps } from '../../../types/PageProps'
@@ -71,8 +67,7 @@ interface Params extends ParsedUrlQuery {
 
 const revalidateInSeconds = 5 * 60
 
-type Props = PostPageProps &
-  ServerPageProps & { dehydratedState2: ServerPageProps['dehydratedState'] }
+type Props = PostPageProps & ServerPageProps
 
 export const getStaticProps: GetStaticProps<Props, Params> = async ({
   params,
@@ -98,10 +93,6 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
       const client = hydrationHandlerPost.createClient()
       prefillServerPost(client, postId, post)
 
-      const clientCategories = hydrationHandlerCategories.createClient()
-      const postCategories = await dbFindPostCategories()
-      prefillServerCategories(clientCategories, postCategories)
-
       const tagsSorted = await findTagsForPost(prisma)
       const tagsSortedForCategory = await findTagsForPostByCategory(
         prisma,
@@ -112,8 +103,6 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
         props: {
           trpcState: ssg.dehydrate(),
           dehydratedState: hydrationHandlerPost.dehydrate(client),
-          dehydratedState2:
-            hydrationHandlerCategories.dehydrate(clientCategories),
           postId,
           tagsSorted,
           tagsSortedForCategory,
@@ -125,18 +114,15 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
 }
 
 const HydratePost = hydrationHandlerPost.Hydrate
-const HydrateCategories = hydrationHandlerCategories.Hydrate
 
 export default function _PostPage(props: Props): JSX.Element {
   return (
     <HydratePost dehydratedState={props.dehydratedState}>
-      <HydrateCategories dehydratedState={props.dehydratedState2}>
-        <PostPage
-          postId={props.postId}
-          tagsSorted={props.tagsSorted}
-          tagsSortedForCategory={props.tagsSortedForCategory}
-        />
-      </HydrateCategories>
+      <PostPage
+        postId={props.postId}
+        tagsSorted={props.tagsSorted}
+        tagsSortedForCategory={props.tagsSortedForCategory}
+      />
     </HydratePost>
   )
 }

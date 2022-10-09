@@ -4,6 +4,7 @@
 import { t } from '../trpc'
 import { donationLinkRouter } from './router-donation-link'
 import { donationProviderRouter } from './router-donation-providers'
+import { postCategoriesRouter } from './router-post-categories'
 import { postCommentsRouter } from './router-post-comment'
 import { postLikesRouter } from './router-post-likes'
 import { userRouter } from './router-user'
@@ -15,6 +16,7 @@ import { userPostsRouter } from './router-user-posts'
  */
 export const appRouter = t.router({
   postLikes: postLikesRouter,
+  postCategories: postCategoriesRouter,
   user: userRouter,
   userPosts: userPostsRouter,
   donationLink: donationLinkRouter,

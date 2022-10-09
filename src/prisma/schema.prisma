@@ -20,7 +20,7 @@ model Post {
   // segments
   segments       PostSegment[]
   // category
-  category       PostCategory  @relation(fields: [postCategoryId], references: [id])
+  category       PostCategory  @relation("Post_PostCategory", fields: [postCategoryId], references: [id])
   postCategoryId String
   //
   // tags
@@ -89,7 +89,7 @@ model PostCategory {
   id          String @id
   name        String
   description String
-  Post        Post[]
+  Post        Post[] @relation("Post_PostCategory")
 }
 
 model PostTag {

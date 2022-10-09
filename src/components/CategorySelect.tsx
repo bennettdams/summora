@@ -1,18 +1,10 @@
 import { PostCategory } from '@prisma/client'
 import { MutableRefObject } from 'react'
-import { usePostCategories } from '../data/use-post-categories'
+import { trpc } from '../util/trpc'
 import { DropdownItem, DropdownSelect } from './DropdownSelect'
 import { IconCategory } from './Icon'
+import { LoadingAnimation } from './LoadingAnimation'
 
-function createDropdownItem(category: PostCategory): DropdownItem {
-  return { itemId: category.id, label: category.name }
-}
-
-/**
- * Wherever this component is used, it would be wise to fill the cache
- * on the client with the categories, so the data hook does not need to fetch
- * it on the client.
- */
 export function CategorySelect({
   categoryInitial,
   shouldShowDropdown,
@@ -24,19 +16,28 @@ export function CategorySelect({
   refExternal?: MutableRefObject<HTMLDivElement>
   onSelect: (selectedItem: DropdownItem) => void
 }): JSX.Element {
-  const { postCategories } = usePostCategories()
+  const { data: postCategories, isLoading } = trpc.postCategories.all.useQuery()
 
   return (
     <div className="flex items-center text-sm" ref={refExternal}>
-      {shouldShowDropdown ? (
+      {isLoading ? (
+        <LoadingAnimation />
+      ) : !postCategories ? (
+        <p>No categories</p>
+      ) : shouldShowDropdown ? (
         <div className="inline-block w-full">
           <DropdownSelect
             shouldSyncInitialItem={true}
             unselectedLabel="Please select a category."
             onChange={onSelect}
-            items={postCategories.map(createDropdownItem)}
+            items={postCategories.map((category) => ({
+              itemId: category.id,
+              label: category.name,
+            }))}
             initialItem={
-              !categoryInitial ? null : createDropdownItem(categoryInitial)
+              !categoryInitial
+                ? null
+                : { itemId: categoryInitial.id, label: categoryInitial.name }
             }
           />
         </div>

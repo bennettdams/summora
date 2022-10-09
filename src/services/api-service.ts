@@ -1,7 +1,6 @@
 import type { Prisma } from '@prisma/client'
 import { ApiAvatarsUpload } from '../pages/api/image-upload/avatars'
 import { ApiImageUploadPostSegment } from '../pages/api/image-upload/[postId]/[postSegmentId]'
-import { ApiPostCategories } from '../pages/api/post-categories'
 import { ApiPostSegmentItemCreate } from '../pages/api/post-segment-items'
 import {
   ApiPostSegmentItemDelete,
@@ -28,7 +27,6 @@ import {
 
 export const ROUTES_API = {
   USERS_SIGN_UP: 'users/signup',
-  POST_CATEGORIES: 'post-categories',
   POSTS: 'posts',
   POST: (postId: string) => `posts/${postId}`,
   POST_INCREMENT_VIEWS: (postId: string) => `posts/${postId}/increment-views`,
@@ -99,14 +97,6 @@ export async function apiImageUploadPostSegments({
     ROUTES_API.IMAGE_UPLOAD_POST_SEGMENTS({ postId, postSegmentId }),
     postSegmentImageFile
   )
-}
-
-// #########################################
-
-export async function apiFetchPostCategories(): Promise<
-  HttpResponse<ApiPostCategories>
-> {
-  return await get<ApiPostCategories>(ROUTES_API.POST_CATEGORIES)
 }
 
 // #########################################

@@ -3,10 +3,11 @@ import ErrorPage from 'next/error'
 import Head from 'next/head'
 import Image from 'next/image'
 import img from '../../../../public/assets/homepage-hero.jpg'
-import { usePostCategories } from '../../../data/use-post-categories'
 import { usePosts } from '../../../data/use-posts'
 import { PostsPageProps } from '../../../pages'
+import { trpc } from '../../../util/trpc'
 import { Box } from '../../Box'
+import { LoadingAnimation } from '../../LoadingAnimation'
 import { Page, PageSection } from '../../Page'
 import { PostsList } from '../../post'
 import { StatisticsCard } from '../../StatisticsCard'
@@ -18,7 +19,7 @@ export function PostsPage({
   noOfCommentsCreatedLast24Hours,
 }: PostsPageProps): JSX.Element {
   const { posts } = usePosts()
-  const { postCategories } = usePostCategories()
+  const { data: postCategories, isLoading } = trpc.postCategories.all.useQuery()
 
   return (
     <Page
@@ -141,15 +142,23 @@ export function PostsPage({
       </PageSection>
 
       <PageSection label="Find by category">
-        <div className="grid grid-cols-2 gap-6 text-center text-lg md:grid-cols-4">
-          {postCategories.map((category) => (
-            <Box padding="small" key={category.id}>
-              <span className="hover:font-bold cursor-pointer">
-                {category.name}
-              </span>
-            </Box>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="placeitece grid">
+            <LoadingAnimation />
+          </div>
+        ) : !postCategories ? (
+          <p className="text-center">No categories</p>
+        ) : (
+          <div className="grid grid-cols-2 gap-6 text-center text-lg md:grid-cols-4">
+            {postCategories.map((category) => (
+              <Box padding="small" key={category.id}>
+                <span className="hover:font-bold cursor-pointer">
+                  {category.name}
+                </span>
+              </Box>
+            ))}
+          </div>
+        )}
       </PageSection>
 
       <PageSection>
