@@ -21,6 +21,7 @@ import {
 } from './form'
 import { IconArrowDown, IconDonate } from './Icon'
 import { LinkExternal } from './link'
+import { LoadingAnimation } from './LoadingAnimation'
 import { Logo } from './logo'
 
 function DonationLink({
@@ -441,12 +442,9 @@ export function UserDonations({
   )
 }
 
-export function DonateButton({
-  userDonations,
-}: {
-  userDonations: UserDonation[]
-}): JSX.Element {
-  const hasDonationLinks = userDonations.length > 0
+export function DonateButton({ userId }: { userId: string }): JSX.Element {
+  const { data: donationLinks, isLoading } =
+    trpc.donationLink.byUserId.useQuery({ userId })
 
   return (
     <Popover>
@@ -479,13 +477,25 @@ export function DonateButton({
             <Popover.Panel className="absolute left-1/2 z-20 mt-3 w-screen max-w-sm -translate-x-1/2 transform px-4 sm:px-0 lg:max-w-xl">
               <div className="overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
                 <div className="relative p-7">
-                  {hasDonationLinks ? (
+                  {isLoading ? (
+                    <div className="grid place-items-center">
+                      <LoadingAnimation />
+                    </div>
+                  ) : !!donationLinks && donationLinks.length > 0 ? (
                     <>
                       <p className="mb-4 text-center text-xl text-dlila">
                         Donate via..
                       </p>
 
-                      <UserDonations userDonations={userDonations} />
+                      <UserDonations
+                        userDonations={donationLinks.map((dL) => ({
+                          donationLinkId: dL.donationLinkId,
+                          donationAddress: dL.address,
+                          donationProviderId:
+                            dL.donationProvider.donationProviderId,
+                          donationProviderName: dL.donationProvider.name,
+                        }))}
+                      />
                     </>
                   ) : (
                     <p className="text-center">

@@ -376,17 +376,7 @@ function PostPageInternal({
             {/* DONATION */}
             {/* margin bottom to align the row vertically with the avatar image */}
             <div className="mr-4 mb-10">
-              <DonateButton
-                userDonations={post.author.donationLinks.map(
-                  (donationLink) => ({
-                    donationLinkId: donationLink.donationLinkId,
-                    donationProviderId:
-                      donationLink.donationProvider.donationProviderId,
-                    donationProviderName: donationLink.donationProvider.name,
-                    donationAddress: donationLink.address,
-                  })
-                )}
-              />
+              <DonateButton userId={post.authorId} />
             </div>
 
             {/* AVATAR */}
