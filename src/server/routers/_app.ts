@@ -7,6 +7,7 @@ import { donationProviderRouter } from './router-donation-providers'
 import { postCategoriesRouter } from './router-post-categories'
 import { postCommentsRouter } from './router-post-comment'
 import { postLikesRouter } from './router-post-likes'
+import { postTagsRouter } from './router-post-tags'
 import { userRouter } from './router-user'
 import { userPostsRouter } from './router-user-posts'
 
@@ -16,6 +17,7 @@ import { userPostsRouter } from './router-user-posts'
  */
 export const appRouter = t.router({
   postLikes: postLikesRouter,
+  postTags: postTagsRouter,
   postCategories: postCategoriesRouter,
   user: userRouter,
   userPosts: userPostsRouter,

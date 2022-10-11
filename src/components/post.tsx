@@ -33,7 +33,6 @@ type PostsPostsList =
         imageId: string | null
         imageBlurDataURL: string | null
       }
-      tags: { id: string; label: string }[]
     }[]
 
 type PostPostsList = NonNullable<PostsPostsList>[number]
@@ -95,6 +94,11 @@ function PostsListItem({
   post: PostPostsList
   userId: string | null
 }): JSX.Element {
+  const { data: tags, isLoading: isLoadingTags } =
+    trpc.postTags.byPostId.useQuery({
+      postId: post.id,
+    })
+
   return (
     <Box padding="small" shadow="xxl">
       <div className="text-center">
@@ -132,7 +136,11 @@ function PostsListItem({
 
         <div className="flex h-14 text-center">
           <div className="w-1/2 overflow-y-hidden">
-            <TagsList tags={post.tags} />
+            {isLoadingTags ? (
+              <LoadingAnimation />
+            ) : (
+              <TagsList tags={tags ?? null} />
+            )}
           </div>
 
           <div className="flex h-full w-1/2 justify-end space-x-4 leading-none">

@@ -41,7 +41,7 @@ type QueryReturn = ReturnType<typeof usePost>
 type PostPostPage = Exclude<QueryReturn['post'], null>
 export type SegmentPostPage = PostPostPage['segments'][number]
 export type SegmentItemPostPage = SegmentPostPage['items'][number]
-export type TagPostPage = PostPostPage['tags'][number]
+type TagPostPage = AppRouterTypes['postTags']['byPostId']['output'][number]
 
 export function PostPage(props: PostPageProps): JSX.Element {
   const { post } = usePost(props.postId)
@@ -56,15 +56,9 @@ export function PostPage(props: PostPageProps): JSX.Element {
   }, [hasViewsBeenIncremented, props.postId])
 
   return !post ? (
-    <p>no post</p>
+    <NoContent>No post</NoContent>
   ) : (
-    <PostPageInternal
-      post={post}
-      postId={props.postId}
-      tagsSorted={props.tagsSorted}
-      tagsSortedForCategory={props.tagsSortedForCategory}
-      userId={userId}
-    />
+    <PostPageInternal post={post} postId={props.postId} userId={userId} />
   )
 }
 
@@ -74,8 +68,6 @@ export function PostPage(props: PostPageProps): JSX.Element {
 function PostPageInternal({
   postId,
   post,
-  tagsSorted,
-  tagsSortedForCategory,
   userId,
 }: PostPageProps & {
   post: PostPostPage
@@ -181,17 +173,29 @@ function PostPageInternal({
   }
 
   // TAGS
+  const { data: tags, isLoading: isLoadingTags } =
+    trpc.postTags.byPostId.useQuery({
+      postId,
+    })
+  const { data: tagsPopular, isLoading: isLoadingTagsPopular } =
+    trpc.postTags.popularOverall.useQuery()
+  const {
+    data: tagsPopularByCategory,
+    isLoading: isLoadingTagsPopularByCategory,
+  } = trpc.postTags.popularByCategoryId.useQuery({
+    categoryId: post.postCategoryId,
+  })
   const [isShownTagSelection, setIsShownTagSelection] = useState(false)
   const refTagSelection = useRef<HTMLDivElement>(null)
   useOnClickOutside(refTagSelection, () => setIsShownTagSelection(false))
 
   async function handleRemoveTag(tagIdToRemove: string): Promise<void> {
-    const tagsNew: TagPostPage[] = post.tags.filter(
-      (tag) => tag.id !== tagIdToRemove
+    const tagsNew: TagPostPage[] = tags.filter(
+      (tag) => tag.tagId !== tagIdToRemove
     )
 
     const postToUpdate: ApiPostUpdateRequestBody = {
-      tagIds: tagsNew.map((tag) => tag.id),
+      tagIds: tagsNew.map((tag) => tag.tagId),
     }
 
     await updatePost({
@@ -204,11 +208,11 @@ function PostPageInternal({
   const { tagsSearched, isFetching } = useSearchTags(inputTagSearchDebounced)
 
   async function handleAddTag(tagId: string): Promise<void> {
-    const alreadyIncluded = post.tags.some((tag) => tag.id === tagId)
+    const alreadyIncluded = tags.some((tag) => tag.tagId === tagId)
 
     if (!alreadyIncluded) {
       const postToUpdate: ApiPostUpdateRequestBody = {
-        tagIds: [...post.tags.map((tag) => tag.id), tagId],
+        tagIds: [...tags.map((tag) => tag.tagId), tagId],
       }
 
       await updatePost({
@@ -222,9 +226,11 @@ function PostPageInternal({
    * Removes tags which are already included in a post from a list of tags.
    */
   function filterTags(tagsToFilter: TagPostPage[]): TagPostPage[] {
-    return tagsToFilter.filter(
-      (tagToFilter) => !post.tags.some((tag) => tag.id === tagToFilter.id)
-    )
+    return !tags
+      ? tagsToFilter
+      : tagsToFilter.filter(
+          (tagToFilter) => !tags.some((tag) => tag.tagId === tagToFilter.tagId)
+        )
   }
 
   // COMMENTS
@@ -402,12 +408,16 @@ function PostPageInternal({
       </PageSection>
 
       <PageSection hideTopMargin>
-        <TagsList
-          tags={post.tags.map((tag) => ({ id: tag.id, label: tag.label }))}
-          onAddButtonClick={() => setIsShownTagSelection(true)}
-          onRemoveClick={(tagIdToRemove) => handleRemoveTag(tagIdToRemove)}
-          showAddButton={isPostEditable && !isShownTagSelection}
-        />
+        {isLoadingTags ? (
+          <LoadingAnimation />
+        ) : (
+          <TagsList
+            tags={tags ?? null}
+            onAddButtonClick={() => setIsShownTagSelection(true)}
+            onRemoveClick={(tagIdToRemove) => handleRemoveTag(tagIdToRemove)}
+            showAddButton={isPostEditable && !isShownTagSelection}
+          />
+        )}
       </PageSection>
 
       {isShownTagSelection && (
@@ -430,7 +440,7 @@ function PostPageInternal({
                 <div className="-m-1 mt-2 flex flex-wrap">
                   {tagsSearched &&
                     filterTags(tagsSearched).map((tag) => (
-                      <Tag key={tag.id} tag={tag} onClick={handleAddTag} />
+                      <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
                     ))}
                 </div>
               </Box>
@@ -439,9 +449,15 @@ function PostPageInternal({
               <Box inline>
                 <p className="italic">Popular overall</p>
                 <div className="-m-1 mt-2 flex flex-wrap">
-                  {filterTags(tagsSorted).map((tag) => (
-                    <Tag key={tag.id} tag={tag} onClick={handleAddTag} />
-                  ))}
+                  {isLoadingTagsPopular ? (
+                    <LoadingAnimation />
+                  ) : !tagsPopular ? (
+                    <NoContent>No tags</NoContent>
+                  ) : (
+                    filterTags(tagsPopular).map((tag) => (
+                      <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
+                    ))
+                  )}
                 </div>
               </Box>
             </div>
@@ -449,9 +465,15 @@ function PostPageInternal({
               <Box inline>
                 <p className="italic">Popular for this category</p>
                 <div className="-m-1 mt-2 flex flex-1 flex-wrap">
-                  {filterTags(tagsSortedForCategory).map((tag) => (
-                    <Tag key={tag.id} tag={tag} onClick={handleAddTag} />
-                  ))}
+                  {isLoadingTagsPopularByCategory ? (
+                    <LoadingAnimation />
+                  ) : !tagsPopularByCategory ? (
+                    <NoContent>No tags</NoContent>
+                  ) : (
+                    filterTags(tagsPopularByCategory).map((tag) => (
+                      <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
+                    ))
+                  )}
                 </div>
               </Box>
             </div>
@@ -820,7 +842,7 @@ export function PostComments({
       {isLoading ? (
         <LoadingAnimation />
       ) : !comments ? (
-        <p>No comments</p>
+        <NoContent>No comments</NoContent>
       ) : (
         // For the root level tree, we use "null" as comment ID. See "createCommentTree" docs.
         createCommentTree(createRootComments(comments), null).map((comment) => (

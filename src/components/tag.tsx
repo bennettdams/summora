@@ -3,9 +3,10 @@ import { useRef, useState } from 'react'
 import { useOnClickOutside } from '../util/use-on-click-outside'
 import { ButtonAddSpecial } from './Button'
 import { IconTrash } from './Icon'
+import { NoContent } from './NoContent'
 
 type TagTagslist = {
-  id: string
+  tagId: string
   label: string
 }
 
@@ -18,17 +19,20 @@ export function TagsList({
   onAddButtonClick,
   onRemoveClick,
 }: {
-  tags: TagTagslist[]
+  tags: TagTagslist[] | null
   showAddButton?: boolean
   onAddButtonClick?: () => void
   onRemoveClick?: (tagIdToRemove: string) => void
 }): JSX.Element {
   const [animateTagsRef] = useAutoAnimate<HTMLDivElement>()
-  return (
+
+  return !tags ? (
+    <NoContent>No tags</NoContent>
+  ) : (
     <div ref={animateTagsRef} className="flex flex-wrap items-center">
       {tags.map((tag) => (
         <Tag
-          key={tag.id}
+          key={tag.tagId}
           tag={tag}
           onClick={onRemoveClick}
           handleRemoving={!!onRemoveClick}
@@ -65,9 +69,9 @@ export function Tag({
       className={`m-1 inline rounded bg-dbrown py-0.5 px-1.5 leading-none text-white hover:bg-dorange ${
         onClick && 'cursor-pointer'
       }`}
-      key={tag.id}
+      key={tag.tagId}
       // Don't execute on click when this tag is supposed to handle removing - this happens further down then.
-      onClick={() => !handleRemoving && onClick?.(tag.id)}
+      onClick={() => !handleRemoving && onClick?.(tag.tagId)}
     >
       {!handleRemoving || !showRemoveConfirmation ? (
         <span
@@ -79,7 +83,7 @@ export function Tag({
       ) : (
         <div
           className="flex"
-          onClick={() => !!handleRemoving && onClick?.(tag.id)}
+          onClick={() => !!handleRemoving && onClick?.(tag.tagId)}
         >
           <IconTrash size="small" />
           <span className="inline-block text-xs font-semibold uppercase tracking-widest">

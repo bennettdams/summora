@@ -14,7 +14,6 @@ export async function dbFindPosts() {
         },
         category: true,
         segments: { orderBy: { createdAt: 'asc' } },
-        tags: { select: { id: true, label: true } },
         _count: { select: { comments: true, likedBy: true } },
       },
     })
@@ -26,13 +25,6 @@ export async function dbFindPosts() {
 /** Reusable `post include` statement, e.g. for "find" or "update" methods. */
 export const postInclude = Prisma.validator<Prisma.PostInclude>()({
   category: true,
-  tags: {
-    select: {
-      id: true,
-      label: true,
-      description: true,
-    },
-  },
   author: {
     select: {
       username: true,

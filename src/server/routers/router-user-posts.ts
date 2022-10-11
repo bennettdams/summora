@@ -26,7 +26,6 @@ export const userPostsRouter = t.router({
           },
           category: true,
           segments: { orderBy: { createdAt: 'asc' } },
-          tags: { select: { id: true, label: true } },
           _count: { select: { comments: true, likedBy: true } },
         },
       })
