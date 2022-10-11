@@ -4,6 +4,7 @@ import { trpc } from '../util/trpc'
 import { DropdownItem, DropdownSelect } from './DropdownSelect'
 import { IconCategory } from './Icon'
 import { LoadingAnimation } from './LoadingAnimation'
+import { NoContent } from './NoContent'
 
 export function CategorySelect({
   categoryInitial,
@@ -23,7 +24,7 @@ export function CategorySelect({
       {isLoading ? (
         <LoadingAnimation />
       ) : !postCategories ? (
-        <p>No categories</p>
+        <NoContent>No categories</NoContent>
       ) : shouldShowDropdown ? (
         <div className="inline-block w-full">
           <DropdownSelect

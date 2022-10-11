@@ -23,6 +23,7 @@ import { IconArrowDown, IconDonate } from './Icon'
 import { LinkExternal } from './link'
 import { LoadingAnimation } from './LoadingAnimation'
 import { Logo } from './logo'
+import { NoContent } from './NoContent'
 
 function DonationLink({
   userDonation,
@@ -80,7 +81,12 @@ function UserDonationUpdateRow({
     (prov) => prov.donationProviderId === inputDonationProviderId
   )?.donationProviderId
 
-  if (!userDonation) return <div>No user donation available..</div>
+  if (!userDonation)
+    return (
+      <div>
+        <NoContent>No user donation available..</NoContent>
+      </div>
+    )
 
   return (
     <div
@@ -249,7 +255,11 @@ function UserDonationsUpdates({
              */
             if (!userDonation) return null
             if (!donationProviders)
-              return <p key={field.id}>No donation providers available..</p>
+              return (
+                <NoContent key={field.id}>
+                  No donation providers available..
+                </NoContent>
+              )
 
             const inputDonationProviderId = watchUpdate(
               'donationLinksToUpdate'
@@ -363,7 +373,7 @@ function UserDonationsUpdates({
 
           <div className="col-span-2">
             {!donationProviders ? (
-              <p>No donation providers available..</p>
+              <NoContent>No donation providers available..</NoContent>
             ) : (
               <FormSelect
                 // we throw away the component after a successful submit to reset the selection

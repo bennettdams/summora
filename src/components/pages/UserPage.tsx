@@ -7,6 +7,7 @@ import { Avatar } from '../Avatar'
 import { Box } from '../Box'
 import { DateTime } from '../DateTime'
 import { UserDonations } from '../donation'
+import { NoContent } from '../NoContent'
 import { Page, PageSection } from '../Page'
 import { PostsList } from '../post'
 import { StatisticsCard } from '../StatisticsCard'
@@ -19,7 +20,7 @@ export function UserPage(props: UserPageProps): JSX.Element {
   const { posts } = useUserPosts(props.userId)
 
   return !user ? (
-    <p>No user</p>
+    <NoContent>No user</NoContent>
   ) : (
     <UserPageInternal
       {...user}
@@ -194,7 +195,6 @@ function UserPageInternal({
                   noOfViews: post.noOfViews,
                   noOfComments: post._count.comments,
                   segments: post.segments,
-                  tags: post.tags,
                 }))
           }
         />

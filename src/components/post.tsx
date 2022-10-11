@@ -61,7 +61,7 @@ export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
       </div>
 
       {!posts ? (
-        <div>Error while getting posts :(</div>
+        <NoContent>No posts</NoContent>
       ) : posts.length === 0 ? (
         <div>No posts yet.</div>
       ) : choiceSelectControl.selected.choiceId === 'long' ? (

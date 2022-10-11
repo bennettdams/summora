@@ -1,5 +1,6 @@
 import { DonationProviderId } from '@prisma/client'
 import Image from 'next/image'
+import { NoContent } from './NoContent'
 
 function createAssetPath(assetId: string): string {
   return `/assets/${assetId}`
@@ -57,7 +58,7 @@ export function Logo({
 }): JSX.Element {
   const logo = logosForAccess[logoIdForAccess]
   if (!logo) {
-    return <span>No logo for topic: {topic}</span>
+    return <NoContent>No logo for topic: {topic}</NoContent>
   } else {
     return (
       <Image

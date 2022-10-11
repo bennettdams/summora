@@ -8,6 +8,7 @@ import { PostsPageProps } from '../../../pages'
 import { trpc } from '../../../util/trpc'
 import { Box } from '../../Box'
 import { LoadingAnimation } from '../../LoadingAnimation'
+import { NoContent } from '../../NoContent'
 import { Page, PageSection } from '../../Page'
 import { PostsList } from '../../post'
 import { StatisticsCard } from '../../StatisticsCard'
@@ -147,7 +148,7 @@ export function PostsPage({
             <LoadingAnimation />
           </div>
         ) : !postCategories ? (
-          <p className="text-center">No categories</p>
+          <NoContent>No categories</NoContent>
         ) : (
           <div className="grid grid-cols-2 gap-6 text-center text-lg md:grid-cols-4">
             {postCategories.map((category) => (
