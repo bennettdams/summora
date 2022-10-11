@@ -1,19 +1,22 @@
 {
   "recommendations": [
     "dbaeumer.vscode-eslint",
-    "ms-azuretools.vscode-docker",
-    "davidanson.vscode-markdownlint",
-    "esbenp.prettier-vscode",
-    "visualstudioexptteam.vscodeintellicode",
     "vscode-icons-team.vscode-icons",
     "mhutchie.git-graph",
     "atlassian.atlascode",
     "mongodb.mongodb-vscode",
     "christian-kohler.npm-intellisense",
     "christian-kohler.path-intellisense",
-    "bradlc.vscode-tailwindcss",
     "wix.vscode-import-cost",
-    "ivory-lab.jenkinsfile-support",
-    "redhat.vscode-xml"
-  ]
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "VisualStudioExptTeam.vscodeintellicode",
+    "ms-azuretools.vscode-docker",
+    "msjsdiag.debugger-for-chrome",
+    "DavidAnson.vscode-markdownlint",
+    "antfu.icons-carbon",
+    "cdonohue.quill-icons"
+  ],
+  // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
+  "unwantedRecommendations": []
 }
