@@ -54,7 +54,6 @@ export function ExplorePage({
             },
             noOfViews: post.noOfViews,
             segments: [],
-            tags: [],
             noOfComments: 0,
             // noOfComments: post._count?.comments ?? 0,
           }))}

@@ -77,15 +77,15 @@ function PostPageInternal({
 
   const utils = trpc.useContext()
 
-  async function invalidate() {
+  async function invalidateComments() {
     await utils.postComments.byPostId.invalidate({ postId })
   }
 
   const createOne = trpc.postComments.create.useMutation({
-    onSuccess: invalidate,
+    onSuccess: invalidateComments,
   })
   const deleteOne = trpc.postComments.delete.useMutation({
-    onSuccess: invalidate,
+    onSuccess: invalidateComments,
   })
 
   const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
@@ -177,6 +177,17 @@ function PostPageInternal({
     trpc.postTags.byPostId.useQuery({
       postId,
     })
+
+  async function invalidateTags() {
+    await utils.postTags.byPostId.invalidate({ postId })
+  }
+  const addToPost = trpc.postTags.addToPost.useMutation({
+    onSuccess: invalidateTags,
+  })
+  const removeFromPost = trpc.postTags.removeFromPost.useMutation({
+    onSuccess: invalidateTags,
+  })
+
   const { data: tagsPopular, isLoading: isLoadingTagsPopular } =
     trpc.postTags.popularOverall.useQuery()
   const {
@@ -185,41 +196,20 @@ function PostPageInternal({
   } = trpc.postTags.popularByCategoryId.useQuery({
     categoryId: post.postCategoryId,
   })
+
   const [isShownTagSelection, setIsShownTagSelection] = useState(false)
   const refTagSelection = useRef<HTMLDivElement>(null)
   useOnClickOutside(refTagSelection, () => setIsShownTagSelection(false))
 
-  async function handleRemoveTag(tagIdToRemove: string): Promise<void> {
-    const tagsNew: TagPostPage[] = tags.filter(
-      (tag) => tag.tagId !== tagIdToRemove
-    )
-
-    const postToUpdate: ApiPostUpdateRequestBody = {
-      tagIds: tagsNew.map((tag) => tag.tagId),
-    }
-
-    await updatePost({
-      postId: post.id,
-      postToUpdate,
-    })
+  async function handleRemoveTag(tagId: string): Promise<void> {
+    removeFromPost.mutate({ postId, tagId })
   }
   const [inputTagSearch, setInputTagSearch] = useState('')
   const inputTagSearchDebounced = useDebounce(inputTagSearch, 500)
   const { tagsSearched, isFetching } = useSearchTags(inputTagSearchDebounced)
 
   async function handleAddTag(tagId: string): Promise<void> {
-    const alreadyIncluded = tags.some((tag) => tag.tagId === tagId)
-
-    if (!alreadyIncluded) {
-      const postToUpdate: ApiPostUpdateRequestBody = {
-        tagIds: [...tags.map((tag) => tag.tagId), tagId],
-      }
-
-      await updatePost({
-        postId: post.id,
-        postToUpdate,
-      })
-    }
+    addToPost.mutate({ postId, tagId })
   }
 
   /**

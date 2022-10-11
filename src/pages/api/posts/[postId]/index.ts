@@ -1,9 +1,9 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '../../../../prisma/prisma'
 import { Prisma } from '@prisma/client'
-import { logAPI } from '../../../../util/logger'
-import { ApiPostUpdateRequestBody } from '../../../../services/api-service'
+import { NextApiRequest, NextApiResponse } from 'next'
 import { dbFindPost, DbFindPost, postInclude } from '../../../../lib/db'
+import { prisma } from '../../../../prisma/prisma'
+import { ApiPostUpdateRequestBody } from '../../../../services/api-service'
+import { logAPI } from '../../../../util/logger'
 
 export type ApiPost = DbFindPost
 export type ApiPostUpdate = Prisma.PromiseReturnType<typeof updatePost>
@@ -31,9 +31,6 @@ async function updatePost(
                 id: postToUpdate.categoryId,
               },
             },
-        tags: !postToUpdate.tagIds
-          ? undefined
-          : { set: postToUpdate.tagIds.map((tagId) => ({ id: tagId })) },
       },
       // same `include` as the usual "get post" fetcher so we can use the same React Query type
       include: postInclude,
