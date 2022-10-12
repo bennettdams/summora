@@ -114,4 +114,28 @@ export const postTagsRouter = t.router({
         },
       })
     }),
+  search: t.procedure
+    .input(
+      z.object({
+        searchInput: z.string().min(1),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const { searchInput } = input
+
+      return await ctx.prisma.postTag.findMany({
+        where: {
+          OR: [
+            {
+              label: { contains: searchInput, mode: 'insensitive' },
+            },
+            {
+              description: { contains: searchInput, mode: 'insensitive' },
+            },
+          ],
+        },
+        orderBy: { posts: { _count: 'desc' } },
+        take: 20,
+      })
+    }),
 })

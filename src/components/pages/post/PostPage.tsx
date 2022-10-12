@@ -1,7 +1,6 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { usePost } from '../../../data/use-post'
-import { useSearchTags } from '../../../data/use-search-tags'
 import { PostPageProps } from '../../../pages/post/[postId]'
 import {
   apiIncrementPostViews,
@@ -206,7 +205,14 @@ function PostPageInternal({
   }
   const [inputTagSearch, setInputTagSearch] = useState('')
   const inputTagSearchDebounced = useDebounce(inputTagSearch, 500)
-  const { tagsSearched, isFetching } = useSearchTags(inputTagSearchDebounced)
+  const { data: tagsSearchResult, isFetching } = trpc.postTags.search.useQuery(
+    { searchInput: inputTagSearchDebounced },
+    {
+      enabled: !!inputTagSearchDebounced && inputTagSearchDebounced.length >= 2,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+    }
+  )
 
   async function handleAddTag(tagId: string): Promise<void> {
     addToPost.mutate({ postId, tagId })
@@ -417,7 +423,7 @@ function PostPageInternal({
               <Box>
                 <div className="flex w-full items-center space-x-3">
                   <span className="italic">Search</span>
-                  <span className="font-bold">{inputTagSearch}</span>
+                  <span className="font-bold text-dlila">{inputTagSearch}</span>
                   {isFetching && <LoadingAnimation size="small" />}
                 </div>
 
@@ -428,8 +434,8 @@ function PostPageInternal({
                 />
 
                 <div className="-m-1 mt-2 flex flex-wrap">
-                  {tagsSearched &&
-                    filterTags(tagsSearched).map((tag) => (
+                  {tagsSearchResult &&
+                    filterTags(tagsSearchResult).map((tag) => (
                       <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
                     ))}
                 </div>

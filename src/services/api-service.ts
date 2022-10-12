@@ -14,7 +14,6 @@ import {
 import { ApiPosts, ApiPostsCreate } from '../pages/api/posts'
 import { ApiPost, ApiPostUpdate } from '../pages/api/posts/[postId]'
 import { ApiPostIncrementViews } from '../pages/api/posts/[postId]/increment-views'
-import { ApiTagsSearch } from '../pages/api/tags/search'
 import { ApiUsersSignUp } from '../pages/api/users/signup'
 import {
   deleteHTTP,
@@ -30,7 +29,6 @@ export const ROUTES_API = {
   POSTS: 'posts',
   POST: (postId: string) => `posts/${postId}`,
   POST_INCREMENT_VIEWS: (postId: string) => `posts/${postId}/increment-views`,
-  TAGS_SEARCH: 'tags/search',
   POST_SEGMENTS: 'post-segments',
   POST_SEGMENT: (postSegmentId: string) => `post-segments/${postSegmentId}`,
   POST_SEGMENT_ITEMS: 'post-segment-items',
@@ -320,30 +318,3 @@ export async function apiCreatePostSegmentItem(
     response.result = transformApiPostSegmentItem(response.result)
   return response
 }
-
-// #########################################
-// TAGS SEARCH
-
-export type ApiTagsSearchCreateRequestBody = {
-  searchInput: string
-}
-
-export async function apiCreateTagsSearch(
-  input: ApiTagsSearchCreateRequestBody
-): Promise<HttpResponse<ApiTagsSearch>> {
-  const response = await post<ApiTagsSearch>(ROUTES_API.TAGS_SEARCH, input)
-  if (response.result) response.result = transformApiTagsSearch(response.result)
-  return response
-}
-
-function transformApiTagsSearch(
-  tags: NonNullable<ApiTagsSearch>
-): NonNullable<ApiTagsSearch> {
-  return tags.map((tag) => ({
-    ...tag,
-    createdAt: new Date(tag.createdAt),
-    updatedAt: new Date(tag.updatedAt),
-  }))
-}
-
-// #########################################
