@@ -23,7 +23,6 @@ type PostsPostsList =
       title: string
       subtitle: string | null
       categoryTitle: string
-      segments: { id: string; title: string }[]
       updatedAt: Date
       noOfViews: number
       noOfComments: number
@@ -98,6 +97,10 @@ function PostsListItem({
     trpc.postTags.byPostId.useQuery({
       postId: post.id,
     })
+  const { data: segments, isLoading: isLoadingSegments } =
+    trpc.postSegments.byPostId.useQuery({
+      postId: post.id,
+    })
 
   return (
     <Box padding="small" shadow="xxl">
@@ -115,17 +118,21 @@ function PostsListItem({
             </h1>
             <p className="mt-3 leading-relaxed text-dorange">{post.subtitle}</p>
 
-            <div className="my-4 flex snap-x flex-row flex-nowrap space-x-4 overflow-y-hidden py-4">
-              {post.segments.length === 0 ? (
+            <div className="my-4 flex h-32 snap-x flex-row flex-nowrap space-x-4 overflow-y-hidden">
+              {isLoadingSegments ? (
+                <LoadingAnimation />
+              ) : !segments || segments.length === 0 ? (
                 <NoContent>No segments yet</NoContent>
               ) : (
-                post.segments.map((segment) => {
+                segments.map((segment) => {
                   return (
                     <div
                       key={segment.id}
-                      className="grid h-32 w-60 flex-none snap-start place-items-center rounded-lg bg-dlight"
+                      className="grid h-32 w-60 flex-none snap-start place-items-center rounded-lg bg-dlight p-5"
                     >
-                      <p className="p-5">{segment.title}</p>
+                      <span className="block truncate whitespace-normal">
+                        {segment.title}
+                      </span>
                     </div>
                   )
                 })

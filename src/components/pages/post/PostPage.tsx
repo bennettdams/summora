@@ -38,7 +38,8 @@ import { PostSegment } from './PostSegment'
 type QueryReturn = ReturnType<typeof usePost>
 // exclude null, because the page will return "notFound" if post is null
 type PostPostPage = Exclude<QueryReturn['post'], null>
-export type SegmentPostPage = PostPostPage['segments'][number]
+export type SegmentPostPage =
+  AppRouterTypes['postSegments']['byPostId']['output'][number]
 export type SegmentItemPostPage = SegmentPostPage['items'][number]
 type TagPostPage = AppRouterTypes['postTags']['byPostId']['output'][number]
 
@@ -73,6 +74,10 @@ function PostPageInternal({
   userId: string | null
 }): JSX.Element {
   const { updatePost, createPostSegment, isLoading } = usePost(postId)
+  const { data: segments, isLoading: isLoadingSegments } =
+    trpc.postSegments.byPostId.useQuery({
+      postId: post.id,
+    })
 
   const utils = trpc.useContext()
 
@@ -480,55 +485,62 @@ function PostPageInternal({
       <PageSection>
         {/* "items-start" to make "sticky" work. Without it, the sticky div has the full height of the flex container. */}
         <div className="w-full items-start md:flex">
-          {/* STEP LIST */}
-          <div className="top-40 pr-10 md:sticky md:w-1/6">
-            <StepList
-              steps={post.segments.map((segment, index) => ({
-                no: index,
-                title: segment.title,
-                subtitle: segment.subtitle,
-              }))}
-            />
-          </div>
-
-          {/* POST SEGMENTS */}
-          <div className="md:w-4/6">
-            <div ref={animateRef} className="space-y-16">
-              {post.segments.length === 0 ? (
-                <NoContent>No segments yet</NoContent>
-              ) : (
-                post.segments.map((segment, index) => (
-                  <PostSegment
-                    postSegmentId={segment.id}
-                    index={index + 1}
-                    postId={post.id}
-                    authorId={post.authorId}
-                    key={segment.id}
-                    segment={segment}
-                    isPostEditable={isPostEditable}
-                    isEditModeInitial={
-                      !hasNewSegmentBeenEdited &&
-                      index === post.segments.length - 1
-                    }
-                    onInitialEdit={() => setHasNewSegmentBeenEdited(true)}
-                  />
-                ))
-              )}
+          {isLoadingSegments ? (
+            <div className="grid w-full place-items-center">
+              <LoadingAnimation />
             </div>
-            {isPostEditable && (
-              <div className="mt-20">
-                <Button
-                  onClick={handleCreateSegment}
-                  disabled={!hasNewSegmentBeenEdited}
-                >
-                  Add segment
-                </Button>
-                {isLoading && <LoadingAnimation />}
+          ) : !segments || segments.length === 0 ? (
+            <div className="grid w-full place-items-center">
+              <NoContent>No post segments</NoContent>
+            </div>
+          ) : (
+            <>
+              {/* STEP LIST */}
+              <div className="top-40 pr-10 md:sticky md:w-1/6">
+                <StepList
+                  steps={segments.map((segment, index) => ({
+                    no: index,
+                    title: segment.title,
+                    subtitle: segment.subtitle,
+                  }))}
+                />
               </div>
-            )}
-          </div>
 
-          <div className="md:w-1/6">&nbsp;</div>
+              {/* POST SEGMENTS */}
+              <div className="md:w-4/6">
+                <div ref={animateRef} className="space-y-16">
+                  {segments.map((segment, index) => (
+                    <PostSegment
+                      postSegmentId={segment.id}
+                      index={index + 1}
+                      postId={post.id}
+                      authorId={post.authorId}
+                      key={segment.id}
+                      segment={segment}
+                      isPostEditable={isPostEditable}
+                      isEditModeInitial={
+                        !hasNewSegmentBeenEdited &&
+                        index === segments.length - 1
+                      }
+                      onInitialEdit={() => setHasNewSegmentBeenEdited(true)}
+                    />
+                  ))}
+                </div>
+                {isPostEditable && (
+                  <div className="mt-20">
+                    <Button
+                      onClick={handleCreateSegment}
+                      disabled={!hasNewSegmentBeenEdited}
+                    >
+                      Add segment
+                    </Button>
+                    {isLoading && <LoadingAnimation />}
+                  </div>
+                )}
+              </div>
+              <div className="md:w-1/6">&nbsp;</div>
+            </>
+          )}
         </div>
       </PageSection>
 

@@ -1,18 +1,19 @@
+import { usePost } from '../../../data/use-post'
 import { Box } from '../../Box'
+import { ButtonRemove } from '../../Button'
 import { FormInput } from '../../FormInput'
 import { LoadingAnimation } from '../../LoadingAnimation'
-import { usePost } from '../../../data/use-post'
-import { SegmentItemPostPage } from './PostPage'
-import { ButtonRemove } from '../../Button'
 
 export function PostSegmentItem({
-  item,
+  postSegmentItemId,
+  itemContent,
   index,
   postId,
   isEditMode = false,
   onChange,
 }: {
-  item: SegmentItemPostPage
+  postSegmentItemId: string
+  itemContent: string
   index: number
   postId: string
   isEditMode: boolean
@@ -21,7 +22,7 @@ export function PostSegmentItem({
   const { deletePostSegmentItem, isLoading } = usePost(postId)
 
   return (
-    <Box key={item.id} padding={false} isHighlighted={isEditMode}>
+    <Box key={postSegmentItemId} padding={false} isHighlighted={isEditMode}>
       <div className="flex items-center space-x-2 p-2">
         <div className="ml-2 inline-flex w-10 items-center italic">
           {isLoading ? (
@@ -34,20 +35,20 @@ export function PostSegmentItem({
         {isEditMode ? (
           <>
             <FormInput
-              inputId={`${item.id}-content`}
-              initialValue={item.content}
+              inputId={`${postSegmentItemId}-content`}
+              initialValue={itemContent}
               placeholder="Add some text.."
               resetOnSubmit
               onChange={onChange}
             />
             <ButtonRemove
               onClick={async () => {
-                await deletePostSegmentItem(item.id)
+                await deletePostSegmentItem(postSegmentItemId)
               }}
             />
           </>
         ) : (
-          <span className="pr-10">{item.content}</span>
+          <span className="pr-10">{itemContent}</span>
         )}
       </div>
     </Box>

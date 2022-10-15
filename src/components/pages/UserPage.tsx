@@ -194,7 +194,6 @@ function UserPageInternal({
                   },
                   noOfViews: post.noOfViews,
                   noOfComments: post._count.comments,
-                  segments: post.segments,
                 }))
           }
         />

@@ -13,7 +13,6 @@ export async function dbFindPosts() {
           select: { username: true, imageId: true, imageBlurDataURL: true },
         },
         category: true,
-        segments: { orderBy: { createdAt: 'asc' } },
         _count: { select: { comments: true, likedBy: true } },
       },
     })

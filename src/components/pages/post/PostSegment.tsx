@@ -237,7 +237,8 @@ export function PostSegment({
                 {segment.items.map((item, index) => (
                   <div className="w-full" key={item.id}>
                     <PostSegmentItem
-                      item={item}
+                      postSegmentItemId={item.id}
+                      itemContent={item.content}
                       postId={postId}
                       index={index}
                       onChange={(input) =>
@@ -336,13 +337,15 @@ export function PostSegment({
           </div>
         )}
 
-        <div className="mt-4 flex flex-row justify-between">
-          <ButtonRemove onClick={() => deletePostSegment(segment.id)}>
-            Remove segment
-          </ButtonRemove>
+        {isPostEditable && (
+          <div className="mt-4 flex flex-row justify-between">
+            <ButtonRemove onClick={() => deletePostSegment(segment.id)}>
+              Remove segment
+            </ButtonRemove>
 
-          <ChoiceSelect control={choiceControl} />
-        </div>
+            <ChoiceSelect control={choiceControl} />
+          </div>
+        )}
       </div>
 
       {/* POST IMAGE */}

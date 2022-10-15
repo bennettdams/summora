@@ -53,7 +53,6 @@ export function ExplorePage({
               imageBlurDataURL: post.author.imageBlurDataURL,
             },
             noOfViews: post.noOfViews,
-            segments: [],
             noOfComments: 0,
             // noOfComments: post._count?.comments ?? 0,
           }))}
