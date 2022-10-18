@@ -136,9 +136,5 @@ export const donationLinkRouter = t.router({
       await ensureAuthor(ctx, donationLinkId)
 
       await ctx.prisma.donationLink.delete({ where: { donationLinkId } })
-
-      return {
-        donationLinkId,
-      }
     }),
 })

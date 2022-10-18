@@ -11,13 +11,10 @@ import {
   apiCreatePostSegment,
   apiCreatePostSegmentItem,
   apiDeletePostSegment,
-  apiDeletePostSegmentItem,
   apiFetchPost,
   apiImageUploadPostSegments,
   ApiPostUpdateRequestBody,
   apiUpdatePost,
-  apiUpdatePostSegment,
-  apiUpdatePostSegmentItem,
   transformApiPost,
 } from '../services/api-service'
 import { createHydrationHandler } from '../services/hydration-service'
@@ -61,13 +58,10 @@ export function usePost(postId: string, enabled = true) {
     updatePostMutation,
     // segment
     createPostSegmentMutation,
-    updatePostSegmentMutation,
     deletePostSegmentMutation,
     updatePostSegmentImageIdMutation,
     // segment item
     createPostSegmentItemMutation,
-    updatePostSegmentItemMutation,
-    deletePostSegmentItemMutation,
   } = usePostMutation(postId)
 
   return {
@@ -78,38 +72,29 @@ export function usePost(postId: string, enabled = true) {
       updatePostMutation.isLoading ||
       // segment
       createPostSegmentMutation.isLoading ||
-      updatePostSegmentMutation.isLoading ||
       deletePostSegmentMutation.isLoading ||
       updatePostSegmentImageIdMutation.isLoading ||
       // segment item
-      createPostSegmentItemMutation.isLoading ||
-      updatePostSegmentItemMutation.isLoading ||
-      deletePostSegmentItemMutation.isLoading,
+      createPostSegmentItemMutation.isLoading,
     isError:
       isError ||
       // post
       updatePostMutation.isError ||
       // segment
       createPostSegmentMutation.isError ||
-      updatePostSegmentMutation.isError ||
       deletePostSegmentMutation.isError ||
       updatePostSegmentImageIdMutation.isError ||
       // segment item
-      createPostSegmentItemMutation.isError ||
-      updatePostSegmentItemMutation.isError ||
-      deletePostSegmentItemMutation.isError,
+      createPostSegmentItemMutation.isError,
     // TODO really mutateAsync?
     // post
     updatePost: updatePostMutation.mutateAsync,
     // segment
     createPostSegment: createPostSegmentMutation.mutateAsync,
-    updatePostSegment: updatePostSegmentMutation.mutateAsync,
     deletePostSegment: deletePostSegmentMutation.mutateAsync,
     updatePostSegmentImageId: updatePostSegmentImageIdMutation.mutateAsync,
     // segment item
     createPostSegmentItem: createPostSegmentItemMutation.mutateAsync,
-    updatePostSegmentItem: updatePostSegmentItemMutation.mutateAsync,
-    deletePostSegmentItem: deletePostSegmentItemMutation.mutateAsync,
   }
 }
 
@@ -187,24 +172,6 @@ function usePostMutation(postId: string) {
     },
   })
 
-  const updatePostSegmentMutation = useMutation(apiUpdatePostSegment, {
-    onSuccess: (data) => {
-      if (data.result) {
-        const segmentUpdated = data.result
-        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
-          !prevData
-            ? null
-            : {
-                ...prevData,
-                segments: prevData.segments.map((segment) =>
-                  segment.id === segmentUpdated.id ? segmentUpdated : segment
-                ),
-              }
-        )
-      }
-    },
-  })
-
   // TODO missing deletion in `usePosts`' cache
   const deletePostSegmentMutation = useMutation(apiDeletePostSegment, {
     onSuccess: (data, deletedPostSegmentId) => {
@@ -268,65 +235,14 @@ function usePostMutation(postId: string) {
     },
   })
 
-  const updatePostSegmentItemMutation = useMutation(apiUpdatePostSegmentItem, {
-    onSuccess: (data) => {
-      if (data.result) {
-        const segmentItemUpdated = data.result
-        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
-          !prevData
-            ? null
-            : {
-                ...prevData,
-                segments: prevData.segments.map((segment) =>
-                  segment.id !== segmentItemUpdated.postSegmentId
-                    ? segment
-                    : {
-                        ...segment,
-                        items: segment.items.map((item) =>
-                          item.id === segmentItemUpdated.id
-                            ? segmentItemUpdated
-                            : item
-                        ),
-                      }
-                ),
-              }
-        )
-      }
-    },
-  })
-
-  const deletePostSegmentItemMutation = useMutation(apiDeletePostSegmentItem, {
-    onSuccess: (data, deletedPostSegmentItemId) => {
-      // true = was deleted
-      if (data.result === true) {
-        queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
-          !prevData
-            ? null
-            : {
-                ...prevData,
-                segments: prevData.segments.map((segment) => ({
-                  ...segment,
-                  items: segment.items.filter(
-                    (item) => item.id !== deletedPostSegmentItemId
-                  ),
-                })),
-              }
-        )
-      }
-    },
-  })
-
   return {
     // post
     updatePostMutation,
     // segment
     createPostSegmentMutation,
-    updatePostSegmentMutation,
     deletePostSegmentMutation,
     updatePostSegmentImageIdMutation,
     // segment item
     createPostSegmentItemMutation,
-    updatePostSegmentItemMutation,
-    deletePostSegmentItemMutation,
   }
 }

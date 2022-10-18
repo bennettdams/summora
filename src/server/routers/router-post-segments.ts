@@ -1,5 +1,9 @@
 import { Prisma } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
+import { ensureAuthorTRPC } from '../../lib/api-security'
+import { schemaUpdatePostSegment } from '../../lib/schemas'
+import { ContextTRPC } from '../context-trpc'
 import { t } from '../trpc'
 
 const defaultPostSegmentSelect = Prisma.validator<Prisma.PostSegmentSelect>()({
@@ -13,6 +17,27 @@ const defaultPostSegmentSelect = Prisma.validator<Prisma.PostSegmentSelect>()({
     orderBy: { createdAt: 'asc' },
   },
 })
+
+async function ensureAuthor(ctx: ContextTRPC, postSegmentId: string) {
+  await ensureAuthorTRPC({
+    topic: 'post segments',
+    ctx,
+    cbQueryEntity: async () => {
+      const postSegment = await ctx.prisma.postSegment.findUnique({
+        where: { id: postSegmentId },
+        select: { Post: { select: { authorId: true } } },
+      })
+      if (!postSegment?.Post.authorId) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'The post segment does not exist.',
+        })
+      } else {
+        return { authorId: postSegment.Post.authorId, entity: null }
+      }
+    },
+  })
+}
 
 export const postSegmentsRouter = t.router({
   // READ BY POST
@@ -28,6 +53,19 @@ export const postSegmentsRouter = t.router({
       return await ctx.prisma.postSegment.findMany({
         where: { postId },
         select: defaultPostSegmentSelect,
+      })
+    }),
+  // EDIT
+  edit: t.procedure
+    .input(schemaUpdatePostSegment)
+    .mutation(async ({ input, ctx }) => {
+      const { postSegmentId, title, subtitle } = input
+
+      await ensureAuthor(ctx, postSegmentId)
+
+      await ctx.prisma.postSegment.update({
+        where: { id: postSegmentId },
+        data: { title, subtitle },
       })
     }),
 })

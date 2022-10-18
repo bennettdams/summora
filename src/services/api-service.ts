@@ -2,10 +2,7 @@ import type { Prisma } from '@prisma/client'
 import { ApiAvatarsUpload } from '../pages/api/image-upload/avatars'
 import { ApiImageUploadPostSegment } from '../pages/api/image-upload/[postId]/[postSegmentId]'
 import { ApiPostSegmentItemCreate } from '../pages/api/post-segment-items'
-import {
-  ApiPostSegmentItemDelete,
-  ApiPostSegmentItemUpdate,
-} from '../pages/api/post-segment-items/[postSegmentItemId]'
+import { ApiPostSegmentItemUpdate } from '../pages/api/post-segment-items/[postSegmentItemId]'
 import { ApiPostSegmentCreate } from '../pages/api/post-segments'
 import {
   ApiPostSegmentDelete,
@@ -201,22 +198,6 @@ export async function apiIncrementPostViews(
 
 export type ApiPostSegmentUpdateRequestBody = Prisma.PostSegmentUpdateInput
 
-export async function apiUpdatePostSegment({
-  postSegmentId,
-  postSegmentToUpdate,
-}: {
-  postSegmentId: string
-  postSegmentToUpdate: ApiPostSegmentUpdateRequestBody
-}): Promise<HttpResponse<ApiPostSegmentUpdate>> {
-  const response = await put<ApiPostSegmentUpdate>(
-    ROUTES_API.POST_SEGMENT(postSegmentId),
-    postSegmentToUpdate
-  )
-  if (response.result)
-    response.result = transformApiPostSegment(response.result)
-  return response
-}
-
 function transformApiPostSegment(
   postSegment: NonNullable<ApiPostSegmentUpdate>
 ): NonNullable<ApiPostSegmentUpdate> {
@@ -246,22 +227,6 @@ export async function apiDeletePostSegment(
 export type ApiPostSegmentItemUpdateRequestBody =
   Prisma.PostSegmentItemUpdateInput
 
-export async function apiUpdatePostSegmentItem({
-  postSegmentItemId,
-  postSegmentItemToUpdate,
-}: {
-  postSegmentItemId: string
-  postSegmentItemToUpdate: ApiPostSegmentItemUpdateRequestBody
-}): Promise<HttpResponse<ApiPostSegmentItemUpdate>> {
-  const response = await put<ApiPostSegmentItemUpdate>(
-    ROUTES_API.POST_SEGMENT_ITEM(postSegmentItemId),
-    postSegmentItemToUpdate
-  )
-  if (response.result)
-    response.result = transformApiPostSegmentItem(response.result)
-  return response
-}
-
 function transformApiPostSegmentItem(
   postSegmentItem: NonNullable<ApiPostSegmentItemUpdate>
 ): NonNullable<ApiPostSegmentItemUpdate> {
@@ -270,15 +235,6 @@ function transformApiPostSegmentItem(
     createdAt: new Date(postSegmentItem.createdAt),
     updatedAt: new Date(postSegmentItem.updatedAt),
   }
-}
-
-export async function apiDeletePostSegmentItem(
-  postSegmentItemId: string
-): Promise<HttpResponse<ApiPostSegmentItemDelete>> {
-  const response = await deleteHTTP<ApiPostSegmentItemDelete>(
-    ROUTES_API.POST_SEGMENT_ITEM(postSegmentItemId)
-  )
-  return response
 }
 
 // #########################################

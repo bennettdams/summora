@@ -34,3 +34,19 @@ export const schemaCreateDonationLink = z
     message: 'Both address and donation provider should be filled in.',
     path: [generalFormErrorKey],
   })
+
+export const schemaUpdatePostSegment = z
+  .object({
+    postSegmentId: z.string().cuid(),
+    title: z.string().min(1).optional(),
+    subtitle: z.string().min(1).optional(),
+  })
+  .refine((data) => !!data.title || !!data.subtitle, {
+    message: 'Either title or subtitle should be changed.',
+    path: [generalFormErrorKey],
+  })
+
+export const schemaUpdatePostSegmentItem = z.object({
+  segmentItemId: z.string().cuid(),
+  content: z.string().min(1),
+})
