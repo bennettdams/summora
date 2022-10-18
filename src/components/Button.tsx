@@ -48,7 +48,7 @@ export function Button({
       className={
         'group shadow-md outline-none focus:outline-none disabled:cursor-not-allowed' +
         // keep in sync with "Choice" component
-        ' bg-dlila bg-gradient-to-r from-pink-700 to-dlila text-white ring-orange-500 hover:bg-pink-800 hover:bg-none active:bg-dlila/40 disabled:text-gray-300' +
+        ' bg-dlila bg-gradient-to-r from-dlila to-dlila/90 text-white ring-orange-500 hover:bg-pink-900 hover:bg-none active:bg-dlila/40 disabled:text-gray-300' +
         ` ${!isBig ? 'rounded py-2 px-2' : 'rounded-xl px-8 py-6 text-xl'}`
       }
     >

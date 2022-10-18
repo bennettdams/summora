@@ -14,9 +14,9 @@ module.exports = {
         sans: ['Nunito', ...defaultTheme.fontFamily.sans],
       },
       colors: {
-        dlight: '#fff6f0',
-        dlila: '#96284b',
-        dorange: '#d1744f',
+        dlight: '#faf2f0',
+        dlila: '#993a58',
+        dorange: '#e08560',
         dbrown: '#d4ad9f',
       },
     },
