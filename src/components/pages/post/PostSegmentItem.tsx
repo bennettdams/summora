@@ -4,7 +4,7 @@ import { trpc } from '../../../util/trpc'
 import { useZodForm } from '../../../util/use-zod-form'
 import { Box } from '../../Box'
 import { ButtonRemove } from '../../Button'
-import { Form, Input, useIsSubmiEnabled } from '../../form'
+import { Form, Input, useIsSubmitEnabled } from '../../form'
 import { LoadingAnimation } from '../../LoadingAnimation'
 
 export function PostSegmentItem({
@@ -40,7 +40,7 @@ export function PostSegmentItem({
     mode: 'onSubmit',
   })
 
-  const isSubmitEnabled = useIsSubmiEnabled({
+  const isSubmitEnabled = useIsSubmitEnabled({
     isInitiallySubmittable: false,
     isValid: formState.isValid,
     isDirty: formState.isDirty,
@@ -52,7 +52,7 @@ export function PostSegmentItem({
 
   return (
     <Box key={postSegmentItemId} padding={false} isHighlighted={isEditMode}>
-      <div className="flex items-center space-x-2 p-2">
+      <div className="flex items-center space-x-2">
         <div className="ml-2 inline-flex w-10 items-center italic">
           {isLoading ? (
             <LoadingAnimation />

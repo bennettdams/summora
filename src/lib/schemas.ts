@@ -50,3 +50,8 @@ export const schemaUpdatePostSegmentItem = z.object({
   segmentItemId: z.string().cuid(),
   content: z.string().min(1),
 })
+
+export const schemaCreatePostSegmentItem = z.object({
+  segmentId: z.string().cuid(),
+  content: z.string().min(1),
+})

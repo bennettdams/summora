@@ -38,7 +38,7 @@ export type FormSubmitProps = {
   children?: ReactNode
 }
 
-export function useIsSubmiEnabled(props: FormSubmitProps) {
+export function useIsSubmitEnabled(props: FormSubmitProps) {
   // we ignore the "invalid" status for a form that has not been submitted yet
   const isValidForm = props.isValid && !props.isValidating
 
@@ -54,7 +54,7 @@ export function useIsSubmiEnabled(props: FormSubmitProps) {
 }
 
 export function FormSubmit(props: FormSubmitProps): JSX.Element {
-  const isEnabled = useIsSubmiEnabled(props)
+  const isEnabled = useIsSubmitEnabled(props)
 
   return (
     <Button

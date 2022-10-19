@@ -61,6 +61,7 @@ export const postSegmentItemsRouter = t.router({
         select: defaultPostSegmentItemSelect,
       })
     }),
+  // DELETE
   delete: t.procedure
     .input(
       z.object({

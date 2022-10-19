@@ -203,128 +203,131 @@ function UserDonationsUpdates({
 
   return (
     <div>
-      <Form
-        className="mx-auto mb-10 w-full space-y-4"
-        onSubmit={handleSubmitUpdate((data) => {
-          /** We only want to submit dirty fields, so we don't have to update all in the DB. */
-          const donationLinksDirty = data.donationLinksToUpdate.filter(
-            (_, index) => dirtyFieldsUpdate.donationLinksToUpdate?.at(index)
-          )
+      {userDonations.length > 0 && (
+        <Form
+          className="mx-auto mb-10 w-full space-y-4"
+          onSubmit={handleSubmitUpdate((data) => {
+            /** We only want to submit dirty fields, so we don't have to update all in the DB. */
+            const donationLinksDirty = data.donationLinksToUpdate.filter(
+              (_, index) => dirtyFieldsUpdate.donationLinksToUpdate?.at(index)
+            )
 
-          updateMany.mutate({
-            donationLinksToUpdate: donationLinksDirty,
-          })
-
-          /*
-           * Reset the default values to our new data.
-           * This is done to "set" the validation to the newly
-           * updated values.
-           * See: https://react-hook-form.com/api/useform/reset
-           */
-          resetUpdate(data)
-        })}
-      >
-        {/* This needs to match whatever is rendered in the form row. */}
-        <div className="grid grid-cols-7 place-items-start gap-4">
-          <div className="col-span-1"></div>
-
-          <div className="col-span-2">
-            <FormLabel>Donation provider</FormLabel>
-          </div>
-
-          <div className="col-span-3">
-            <FormLabel>Address</FormLabel>
-          </div>
-
-          <div className="col-span-1"></div>
-        </div>
-
-        <div ref={animateRef} className="w-full space-y-4">
-          {fieldsUpdate.map((field, index) => {
-            const errorForField =
-              errorsUpdate?.donationLinksToUpdate?.at?.(index)?.address
-            const userDonation =
-              userDonations.find(
-                (userDonation) =>
-                  userDonation.donationLinkId === field.donationLinkId
-              ) ?? null
+            updateMany.mutate({
+              donationLinksToUpdate: donationLinksDirty,
+            })
 
             /*
-             * This case is true when adding a new link (via `append`), as those exist in the field (because we take the response from creation to append),
-             * but the `userDonations` have not been fetched yet, so the new link is not available.
+             * Reset the default values to our new data.
+             * This is done to "set" the validation to the newly
+             * updated values.
+             * See: https://react-hook-form.com/api/useform/reset
              */
-            if (!userDonation) return null
-            if (!donationProviders)
-              return (
-                <NoContent key={field.id}>
-                  No donation providers available..
-                </NoContent>
-              )
-
-            const inputDonationProviderId = watchUpdate(
-              'donationLinksToUpdate'
-            ).at(index)?.donationProviderId
-
-            return (
-              <UserDonationUpdateRow
-                key={field.id}
-                userDonation={userDonation}
-                deleteItem={() => {
-                  deleteOneItem(field.donationLinkId)
-                  removeUpdate(index)
-                }}
-                inputDonationProviderId={inputDonationProviderId ?? null}
-                donationProviders={donationProviders.map((dP) => ({
-                  donationProviderId: dP.donationProviderId,
-                  donationProviderName: dP.name,
-                }))}
-                donationProviderSelect={
-                  <FormSelect
-                    control={controlUpdate}
-                    name={
-                      `donationLinksToUpdate.${index}.donationProviderId` as const
-                    }
-                    items={donationProviders.map((provider) => ({
-                      itemId: provider.donationProviderId,
-                      label: provider.name,
-                    }))}
-                    unselectedLabel="Please select a provider."
-                  />
-                }
-              >
-                <Input
-                  {...registerUpdate(
-                    `donationLinksToUpdate.${index}.address` as const
-                  )}
-                  placeholder="Enter an address.."
-                  defaultValue={field.address}
-                  validationErrorMessage={errorForField?.message}
-                />
-              </UserDonationUpdateRow>
-            )
+            resetUpdate(data)
           })}
-        </div>
+        >
+          {/* This needs to match whatever is rendered in the form row. */}
+          <div className="grid grid-cols-7 place-items-start gap-4">
+            <div className="col-span-1"></div>
 
-        <div className="text-center">
-          <FormFieldError
-            fieldName="donationLinksToUpdate"
-            errors={errorsUpdate}
-          />
-        </div>
+            <div className="col-span-2">
+              <FormLabel>Donation provider</FormLabel>
+            </div>
 
-        <div className="grid place-items-center">
-          <FormSubmit
-            isBig={true}
-            isInitiallySubmittable={false}
-            isValid={formStateUpdate.isValid}
-            isDirty={formStateUpdate.isDirty}
-            submitCount={formStateUpdate.submitCount}
-            isSubmitting={formStateUpdate.isSubmitting}
-            isValidating={formStateUpdate.isValidating}
-            isLoading={updateMany.isLoading}
-          />
-        </div>
-      </Form>
+            <div className="col-span-3">
+              <FormLabel>Address</FormLabel>
+            </div>
+
+            <div className="col-span-1"></div>
+          </div>
+
+          <div ref={animateRef} className="w-full space-y-4">
+            {fieldsUpdate.map((field, index) => {
+              const errorForField =
+                errorsUpdate?.donationLinksToUpdate?.at?.(index)?.address
+              const userDonation =
+                userDonations.find(
+                  (userDonation) =>
+                    userDonation.donationLinkId === field.donationLinkId
+                ) ?? null
+
+              /*
+               * This case is true when adding a new link (via `append`), as those exist in the field (because we take the response from creation to append),
+               * but the `userDonations` have not been fetched yet, so the new link is not available.
+               */
+              if (!userDonation) return null
+              if (!donationProviders)
+                return (
+                  <NoContent key={field.id}>
+                    No donation providers available..
+                  </NoContent>
+                )
+
+              const inputDonationProviderId = watchUpdate(
+                'donationLinksToUpdate'
+              ).at(index)?.donationProviderId
+
+              return (
+                // wirklicu bentötigt? nicht lieber inline? weiß nicht, warum userDonation wirklich verwendet
+                <UserDonationUpdateRow
+                  key={field.id}
+                  userDonation={userDonation}
+                  deleteItem={() => {
+                    deleteOneItem(field.donationLinkId)
+                    removeUpdate(index)
+                  }}
+                  inputDonationProviderId={inputDonationProviderId ?? null}
+                  donationProviders={donationProviders.map((dP) => ({
+                    donationProviderId: dP.donationProviderId,
+                    donationProviderName: dP.name,
+                  }))}
+                  donationProviderSelect={
+                    <FormSelect
+                      control={controlUpdate}
+                      name={
+                        `donationLinksToUpdate.${index}.donationProviderId` as const
+                      }
+                      items={donationProviders.map((provider) => ({
+                        itemId: provider.donationProviderId,
+                        label: provider.name,
+                      }))}
+                      unselectedLabel="Please select a provider."
+                    />
+                  }
+                >
+                  <Input
+                    {...registerUpdate(
+                      `donationLinksToUpdate.${index}.address` as const
+                    )}
+                    placeholder="Enter an address.."
+                    defaultValue={field.address}
+                    validationErrorMessage={errorForField?.message}
+                  />
+                </UserDonationUpdateRow>
+              )
+            })}
+          </div>
+
+          <div className="text-center">
+            <FormFieldError
+              fieldName="donationLinksToUpdate"
+              errors={errorsUpdate}
+            />
+          </div>
+
+          <div className="grid place-items-center">
+            <FormSubmit
+              isBig={true}
+              isInitiallySubmittable={false}
+              isValid={formStateUpdate.isValid}
+              isDirty={formStateUpdate.isDirty}
+              submitCount={formStateUpdate.submitCount}
+              isSubmitting={formStateUpdate.isSubmitting}
+              isValidating={formStateUpdate.isValidating}
+              isLoading={updateMany.isLoading}
+            />
+          </div>
+        </Form>
+      )}
 
       {/* NEW LINK */}
       <p className="mb-20 text-center text-xl text-dlila">

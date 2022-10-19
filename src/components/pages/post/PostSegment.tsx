@@ -2,20 +2,18 @@ import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useEffect, useRef, useState } from 'react'
 import { z } from 'zod'
 import { usePost } from '../../../data/use-post'
-import { schemaUpdatePostSegment } from '../../../lib/schemas'
+import {
+  schemaCreatePostSegmentItem,
+  schemaUpdatePostSegment,
+} from '../../../lib/schemas'
 import { trpc } from '../../../util/trpc'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
 import { useZodForm } from '../../../util/use-zod-form'
-import { Button, ButtonAddSpecial, ButtonRemove } from '../../Button'
+import { ButtonRemove } from '../../Button'
 import { ChoiceSelect, useChoiceSelect } from '../../ChoiceSelect'
 import { EditOverlay } from '../../EditOverlay'
-import { Form, Input, useIsSubmiEnabled } from '../../form'
-import {
-  IconArrowCircleDown,
-  IconArrowCircleRight,
-  IconCheck,
-  IconX,
-} from '../../Icon'
+import { Form, Input, useIsSubmitEnabled } from '../../form'
+import { IconArrowCircleDown, IconArrowCircleRight } from '../../Icon'
 import { PostSegmentImage } from '../../PostSegmentImage'
 import { SegmentPostPage } from './PostPage'
 import { PostSegmentItem } from './PostSegmentItem'
@@ -34,7 +32,7 @@ export function PostSegment({
   index,
   postId,
   authorId,
-  isEditModeInitial = false,
+  isEditModeExternal = false,
   isPostEditable = false,
   onInitialEdit,
 }: {
@@ -43,42 +41,12 @@ export function PostSegment({
   index: number
   postId: string
   authorId: string
-  isEditModeInitial: boolean
+  isEditModeExternal: boolean
   isPostEditable: boolean
   onInitialEdit: () => void
 }): JSX.Element {
   const { deletePostSegment } = usePost(postId)
 
-  const [isSegmentEditMode, setIsSegmentEditMode] = useState(isEditModeInitial)
-  useEffect(() => setIsSegmentEditMode(isEditModeInitial), [isEditModeInitial])
-
-  const [showNewItemInput, setShowNewItemInput] = useState(false)
-
-  const refSegmentEdit = useRef<HTMLFormElement>(null)
-  useOnClickOutside(refSegmentEdit, () =>
-    setIsSegmentEditMode(isEditModeInitial)
-  )
-  const refNewItem = useRef<HTMLDivElement>(null)
-  useOnClickOutside(refNewItem, () => setShowNewItemInput(false))
-
-  const [animateRef] = useAutoAnimate<HTMLDivElement>()
-
-  function resetEditMode() {
-    setIsSegmentEditMode(false)
-    // setInputs(null)
-  }
-
-  const formId = `post-segment-update-${postSegmentId}`
-
-  const choiceControl = useChoiceSelect(
-    [
-      { choiceId: 'right', label: 'Right', icon: <IconArrowCircleRight /> },
-      { choiceId: 'bottom', label: 'Bottom', icon: <IconArrowCircleDown /> },
-    ],
-    'right'
-  )
-
-  // ###########################################
   const utils = trpc.useContext()
 
   async function invalidate() {
@@ -88,6 +56,51 @@ export function PostSegment({
   const updateMany = trpc.postSegments.edit.useMutation({
     onSuccess: invalidate,
   })
+  const createItem = trpc.postSegments.createItem.useMutation({
+    onSuccess: invalidate,
+  })
+
+  const {
+    handleSubmit: handleSubmitCreateItem,
+    register: registerCreateItem,
+    formState: formStateCreateItem,
+    reset: resetCreateItem,
+  } = useZodForm({
+    schema: schemaCreatePostSegmentItem.pick({ content: true }),
+    defaultValues: { content: '' },
+    mode: 'onChange',
+  })
+
+  const isSubmitCreateItemEnabled = useIsSubmitEnabled({
+    isInitiallySubmittable: false,
+    isValid: formStateCreateItem.isValid,
+    isDirty: formStateCreateItem.isDirty,
+    submitCount: formStateCreateItem.submitCount,
+    isSubmitting: formStateCreateItem.isSubmitting,
+    isValidating: formStateCreateItem.isValidating,
+    isLoading: createItem.isLoading,
+  })
+
+  const [isSegmentEditMode, setIsSegmentEditMode] = useState(isEditModeExternal)
+  useEffect(
+    () => setIsSegmentEditMode(isEditModeExternal),
+    [isEditModeExternal]
+  )
+
+  const refSegmentEdit = useRef<HTMLDivElement>(null)
+  useOnClickOutside(refSegmentEdit, () =>
+    setIsSegmentEditMode(isEditModeExternal)
+  )
+
+  const [animateRef] = useAutoAnimate<HTMLDivElement>()
+
+  const choiceControl = useChoiceSelect(
+    [
+      { choiceId: 'right', label: 'Right', icon: <IconArrowCircleRight /> },
+      { choiceId: 'bottom', label: 'Bottom', icon: <IconArrowCircleDown /> },
+    ],
+    'right'
+  )
 
   const defaultValuesUpdate: SchemaUpdateSegment = {
     postSegmentId: segment.id,
@@ -100,19 +113,13 @@ export function PostSegment({
     register: registerUpdate,
     formState: formStateUpdate,
     reset: resetUpdate,
-    watch: watchUpdate,
   } = useZodForm({
     schema: schemaUpdatePostSegment,
     defaultValues: defaultValuesUpdate,
     mode: 'onSubmit',
   })
 
-  const errorsUpdate = formStateUpdate.errors
-  // const errorsCreate = formStateCreate.errors
-
-  // const newProviderIdFromInput = watchCreate('donationProviderId')
-
-  const isSubmitEnabled = useIsSubmiEnabled({
+  const isSubmitEnabled = useIsSubmitEnabled({
     isInitiallySubmittable: false,
     isValid: formStateUpdate.isValid,
     isDirty: formStateUpdate.isDirty,
@@ -124,7 +131,10 @@ export function PostSegment({
 
   return (
     // items-stretch needed for the post image
-    <div className="flex w-full flex-col items-stretch rounded-xl bg-white p-8 shadow-2xl lg:flex-row">
+    <div
+      ref={refSegmentEdit}
+      className="flex w-full flex-col items-stretch rounded-xl bg-white p-8 shadow-2xl lg:flex-row"
+    >
       <div
         className={
           choiceControl.selected.choiceId === 'right' ? 'w-4/5' : 'w-full'
@@ -135,7 +145,7 @@ export function PostSegment({
           isEnabled={isPostEditable && !isSegmentEditMode}
           onClick={() => isPostEditable && setIsSegmentEditMode(true)}
         >
-          <div className="rounded-xl p-2">
+          <div className="rounded-xl">
             <Form
               className="w-full space-y-4"
               onBlur={handleSubmitUpdate((data) => {
@@ -169,13 +179,17 @@ export function PostSegment({
                       {...registerUpdate('title')}
                       placeholder="Enter a title.."
                       defaultValue={defaultValuesUpdate.title}
-                      validationErrorMessage={errorsUpdate.title?.message}
+                      validationErrorMessage={
+                        formStateUpdate.errors.title?.message
+                      }
                     />
                     <Input
                       {...registerUpdate('subtitle')}
                       placeholder="Enter a subtitle.."
                       defaultValue={defaultValuesUpdate.subtitle}
-                      validationErrorMessage={errorsUpdate.subtitle?.message}
+                      validationErrorMessage={
+                        formStateUpdate.errors.subtitle?.message
+                      }
                     />
                   </div>
                 ) : (
@@ -218,62 +232,46 @@ export function PostSegment({
         </EditOverlay>
 
         {/* EDIT ACTIONS */}
-        {isPostEditable && (
+        {isSegmentEditMode && (
           <>
-            <div className="flex items-center" ref={refNewItem}>
-              {/* NEW ITEM */}
-              {showNewItemInput ? (
-                <>
-                  <button className="inline" form={formId} type="submit">
-                    <IconCheck />
-                  </button>
-                  <IconX
-                    onClick={() => setShowNewItemInput(false)}
-                    className="ml-4"
-                  />
-                  <div className="ml-4 w-full">
-                    {/* <FormInput
-                      inputId={`${formId}-new-item`}
-                      key={Math.random()}
-                      placeholder="New item"
-                      formId={formId}
-                      initialValue={inputs?.newItem ?? undefined}
-                      onChange={(input) =>
-                        setInputs((prev) => ({
-                          ...prev,
-                          newItem: input,
-                        }))
-                      }
-                    /> */}
-                  </div>
-                </>
-              ) : (
-                <div className="flex flex-col space-y-4">
-                  <div>
-                    <ButtonAddSpecial
-                      size="big"
-                      onClick={() => setShowNewItemInput(true)}
-                    />
-                  </div>
+            <p className="my-6 text-center text-xl text-dlila">
+              ..or add a new item:
+            </p>
 
-                  {isSegmentEditMode && (
-                    <div>
-                      {/* TODO reset to initial */}
-                      <Button
-                        icon={<IconX />}
-                        onClick={(e) => {
-                          // prevent form submit
-                          e.preventDefault()
-                          resetEditMode()
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+            <Form
+              onBlur={handleSubmitCreateItem((data) => {
+                console.log(
+                  'isSubmitCreateItemEnabled',
+                  isSubmitCreateItemEnabled
+                )
+                // For `onBlur`, RHF does not validate like with `onSubmit`, so we check ourselves.
+                if (isSubmitCreateItemEnabled) {
+                  createItem.mutate({
+                    segmentId: postSegmentId,
+                    content: data.content,
+                  })
+
+                  /*
+                   * Reset the default values to our new data.
+                   * This is done to "set" the validation to the newly
+                   * updated values.
+                   * See: https://react-hook-form.com/api/useform/reset
+                   */
+                  resetCreateItem({ content: '' })
+                }
+              })}
+              className="my-4 flex w-full items-center space-x-4"
+            >
+              <div className="grow">
+                <Input
+                  {...registerCreateItem('content')}
+                  placeholder="Enter some text.."
+                  validationErrorMessage={
+                    formStateCreateItem.errors.content?.message
+                  }
+                />
+              </div>
+            </Form>
           </>
         )}
 

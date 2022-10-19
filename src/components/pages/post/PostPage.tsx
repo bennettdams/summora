@@ -518,7 +518,7 @@ function PostPageInternal({
                       key={segment.id}
                       segment={segment}
                       isPostEditable={isPostEditable}
-                      isEditModeInitial={
+                      isEditModeExternal={
                         !hasNewSegmentBeenEdited &&
                         index === segments.length - 1
                       }
