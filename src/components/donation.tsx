@@ -318,12 +318,8 @@ function UserDonationsUpdates({
             <FormSubmit
               isBig={true}
               isInitiallySubmittable={false}
-              isValid={formStateUpdate.isValid}
-              isDirty={formStateUpdate.isDirty}
-              submitCount={formStateUpdate.submitCount}
-              isSubmitting={formStateUpdate.isSubmitting}
-              isValidating={formStateUpdate.isValidating}
               isLoading={updateMany.isLoading}
+              formState={formStateUpdate}
             />
           </div>
         </Form>
@@ -406,12 +402,8 @@ function UserDonationsUpdates({
 
           <div className="col-span-1">
             <FormSubmit
-              isValid={formStateCreate.isValid}
-              isDirty={formStateCreate.isDirty}
-              submitCount={formStateCreate.submitCount}
-              isSubmitting={formStateCreate.isSubmitting}
-              isValidating={formStateCreate.isValidating}
               isLoading={updateMany.isLoading}
+              formState={formStateCreate}
             >
               Add
             </FormSubmit>

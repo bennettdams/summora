@@ -42,12 +42,8 @@ export function PostSegmentItem({
 
   const isSubmitEnabled = useIsSubmitEnabled({
     isInitiallySubmittable: false,
-    isValid: formState.isValid,
-    isDirty: formState.isDirty,
-    submitCount: formState.submitCount,
-    isSubmitting: formState.isSubmitting,
-    isValidating: formState.isValidating,
     isLoading: update.isLoading,
+    formState,
   })
 
   return (

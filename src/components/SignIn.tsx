@@ -94,12 +94,8 @@ export function SignIn(): JSX.Element {
               <FormSubmit
                 isInitiallySubmittable={true}
                 icon={<IconSignIn />}
-                isValid={formState.isValid}
-                isDirty={formState.isDirty}
-                submitCount={formState.submitCount}
-                isSubmitting={formState.isSubmitting}
-                isValidating={formState.isValidating}
                 isLoading={isLoading}
+                formState={formState}
               >
                 Sign in
               </FormSubmit>

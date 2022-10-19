@@ -5,6 +5,7 @@ import {
   FieldErrors,
   FieldPath,
   FieldValues,
+  FormState,
 } from 'react-hook-form'
 import { generalFormErrorKey } from '../lib/schemas'
 import { Button, ButtonProps } from './Button'
@@ -24,36 +25,40 @@ export function FormLabel({
   )
 }
 
-export type FormSubmitProps = {
+type FormSubmitPropsShared<TFieldValues extends FieldValues> = {
+  formState: FormState<TFieldValues>
   isLoading: boolean
-  isValid: boolean
-  isDirty: boolean
-  isValidating: boolean
-  isSubmitting: boolean
-  submitCount: number
-  icon?: ButtonProps['icon']
-  isBig?: boolean
   /** By default, we allow submitting initially without changes to trigger validation. This can be disabled herewith. */
   isInitiallySubmittable?: boolean
-  children?: ReactNode
 }
 
-export function useIsSubmitEnabled(props: FormSubmitProps) {
+type FormSubmitProps<TFieldValues extends FieldValues> =
+  FormSubmitPropsShared<TFieldValues> & {
+    icon?: ButtonProps['icon']
+    isBig?: boolean
+    children?: ReactNode
+  }
+
+export function useIsSubmitEnabled<TFieldValues extends FieldValues>(
+  props: FormSubmitPropsShared<TFieldValues>
+) {
   // we ignore the "invalid" status for a form that has not been submitted yet
-  const isValidForm = props.isValid && !props.isValidating
+  const isValidForm = props.formState.isValid && !props.formState.isValidating
 
   const isInitialSubmit =
-    props.isInitiallySubmittable && props.submitCount === 0
+    props.isInitiallySubmittable && props.formState.submitCount === 0
 
   const isEnabled =
     (isValidForm || isInitialSubmit) &&
-    !props.isSubmitting &&
-    (!!props.isDirty || isInitialSubmit)
+    !props.formState.isSubmitting &&
+    (!!props.formState.isDirty || isInitialSubmit)
 
   return isEnabled
 }
 
-export function FormSubmit(props: FormSubmitProps): JSX.Element {
+export function FormSubmit<TFieldValues extends FieldValues>(
+  props: FormSubmitProps<TFieldValues>
+): JSX.Element {
   const isEnabled = useIsSubmitEnabled(props)
 
   return (

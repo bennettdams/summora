@@ -73,12 +73,8 @@ export function PostSegment({
 
   const isSubmitCreateItemEnabled = useIsSubmitEnabled({
     isInitiallySubmittable: false,
-    isValid: formStateCreateItem.isValid,
-    isDirty: formStateCreateItem.isDirty,
-    submitCount: formStateCreateItem.submitCount,
-    isSubmitting: formStateCreateItem.isSubmitting,
-    isValidating: formStateCreateItem.isValidating,
     isLoading: createItem.isLoading,
+    formState: formStateCreateItem,
   })
 
   const [isSegmentEditMode, setIsSegmentEditMode] = useState(isEditModeExternal)
@@ -121,12 +117,8 @@ export function PostSegment({
 
   const isSubmitEnabled = useIsSubmitEnabled({
     isInitiallySubmittable: false,
-    isValid: formStateUpdate.isValid,
-    isDirty: formStateUpdate.isDirty,
-    submitCount: formStateUpdate.submitCount,
-    isSubmitting: formStateUpdate.isSubmitting,
-    isValidating: formStateUpdate.isValidating,
     isLoading: updateMany.isLoading,
+    formState: formStateUpdate,
   })
 
   return (
