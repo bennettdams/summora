@@ -55,13 +55,18 @@ export function Button({
     >
       <div className="flex items-center justify-center">
         {icon && (
-          <span className="mr-1 w-6 leading-none text-dbrown group-hover:text-white">
+          <span
+            className={`w-6 leading-none text-dbrown group-hover:text-white ${
+              isBig ? 'mr-3' : 'mr-1'
+            }`}
+          >
             {showLoading ? (
               <LoadingAnimation light size="small" />
             ) : // overwrite the icon color for the appropiate text color of the button
             isValidElement<IconProps>(icon) ? (
               cloneElement<IconProps>(icon, {
                 className: 'text-current',
+                size: isBig ? 'big' : undefined,
               })
             ) : (
               <></>

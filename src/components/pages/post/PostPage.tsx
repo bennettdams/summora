@@ -512,17 +512,13 @@ function PostPageInternal({
                   {segments.map((segment, index) => (
                     <PostSegment
                       postSegmentId={segment.id}
-                      index={index + 1}
+                      sequenceNumber={index + 1}
+                      isLastInSequence={index === segments.length - 1}
                       postId={post.id}
                       authorId={post.authorId}
                       key={segment.id}
                       segment={segment}
                       isPostEditable={isPostEditable}
-                      isEditModeExternal={
-                        !hasNewSegmentBeenEdited &&
-                        index === segments.length - 1
-                      }
-                      onInitialEdit={() => setHasNewSegmentBeenEdited(true)}
                     />
                   ))}
                 </div>

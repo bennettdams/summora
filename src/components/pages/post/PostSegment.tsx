@@ -1,5 +1,5 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { z } from 'zod'
 import {
   schemaCreatePostSegmentItem,
@@ -30,21 +30,19 @@ type SchemaUpdateSegment = z.infer<typeof schemaUpdatePostSegment>
 export function PostSegment({
   postSegmentId,
   segment,
-  index,
+  sequenceNumber,
+  isLastInSequence,
   postId,
   authorId,
-  isEditModeExternal = false,
   isPostEditable = false,
-  onInitialEdit,
 }: {
   postSegmentId: string
   segment: SegmentPostPage
-  index: number
+  sequenceNumber: number
+  isLastInSequence: boolean
   postId: string
   authorId: string
-  isEditModeExternal: boolean
   isPostEditable: boolean
-  onInitialEdit: () => void
 }): JSX.Element {
   const [lastSuccessfulEdit, setLastSuccessfulEdit] = useState<Date | null>(
     null
@@ -89,16 +87,15 @@ export function PostSegment({
     formState: formStateCreateItem,
   })
 
-  const [isSegmentEditMode, setIsSegmentEditMode] = useState(isEditModeExternal)
-  useEffect(
-    () => setIsSegmentEditMode(isEditModeExternal),
-    [isEditModeExternal]
+  const [isSegmentEditMode, setIsSegmentEditMode] = useState(
+    // segments without a title should be considered "new" and are shown in edit mode initially
+    () => !segment.title
   )
 
   const refSegmentEdit = useRef<HTMLDivElement>(null)
   useOnClickOutside(refSegmentEdit, () => {
     setLastSuccessfulEdit(null)
-    setIsSegmentEditMode(isEditModeExternal)
+    setIsSegmentEditMode(false)
   })
 
   const [animateRef] = useAutoAnimate<HTMLDivElement>()
@@ -174,7 +171,7 @@ export function PostSegment({
             >
               <div className="flex w-full flex-row text-xl">
                 <div className="h-full w-20 text-left">
-                  <span className="text-4xl italic">{index}</span>
+                  <span className="text-4xl italic">{sequenceNumber}</span>
                 </div>
 
                 {/* SEGMENT HEADER */}
@@ -183,6 +180,7 @@ export function PostSegment({
                     <Input
                       {...registerUpdate('title')}
                       placeholder="Enter a title.."
+                      autoFocus={!defaultValuesUpdate.title && isLastInSequence}
                       defaultValue={defaultValuesUpdate.title}
                       validationErrorMessage={
                         formStateUpdate.errors.title?.message
