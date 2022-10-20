@@ -13,25 +13,34 @@ export function PostSegmentItem({
   index,
   postId,
   isEditMode = false,
+  setIsLoading,
+  onSuccessfulSubmit,
 }: {
   postSegmentItemId: string
   itemContent: string
   index: number
   postId: string
   isEditMode: boolean
+  setIsLoading(isLoading: boolean): void
+  onSuccessfulSubmit(): void
 }): JSX.Element {
   const { isLoading } = usePost(postId)
   const utils = trpc.useContext()
 
   function invalidate() {
     utils.postSegments.byPostId.invalidate({ postId })
+    onSuccessfulSubmit()
   }
 
   const update = trpc.postSegmentItems.update.useMutation({
     onSuccess: invalidate,
+    onMutate: () => setIsLoading(true),
+    onSettled: () => setIsLoading(false),
   })
   const deleteOne = trpc.postSegmentItems.delete.useMutation({
     onSuccess: invalidate,
+    onMutate: () => setIsLoading(true),
+    onSettled: () => setIsLoading(false),
   })
 
   const { handleSubmit, register, formState, reset } = useZodForm({
@@ -90,6 +99,7 @@ export function PostSegmentItem({
               onClick={() => {
                 deleteOne.mutate({ segmentItemId: postSegmentItemId })
               }}
+              showLoading={deleteOne.isLoading}
             />
           </>
         ) : (

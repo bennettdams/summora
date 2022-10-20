@@ -6,6 +6,7 @@ import {
   schemaCreatePostSegmentItem,
   schemaUpdatePostSegment,
 } from '../../../lib/schemas'
+import { formatDateTime } from '../../../util/date-time'
 import { trpc } from '../../../util/trpc'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
 import { useZodForm } from '../../../util/use-zod-form'
@@ -14,6 +15,7 @@ import { ChoiceSelect, useChoiceSelect } from '../../ChoiceSelect'
 import { EditOverlay } from '../../EditOverlay'
 import { Form, Input, useIsSubmitEnabled } from '../../form'
 import { IconArrowCircleDown, IconArrowCircleRight } from '../../Icon'
+import { LoadingAnimation } from '../../LoadingAnimation'
 import { PostSegmentImage } from '../../PostSegmentImage'
 import { SegmentPostPage } from './PostPage'
 import { PostSegmentItem } from './PostSegmentItem'
@@ -46,14 +48,19 @@ export function PostSegment({
   onInitialEdit: () => void
 }): JSX.Element {
   const { deletePostSegment } = usePost(postId)
+  const [lastSuccessfulEdit, setLastSuccessfulEdit] = useState<Date | null>(
+    null
+  )
+  const [isItemLoading, setIsItemLoading] = useState(false)
 
   const utils = trpc.useContext()
 
   async function invalidate() {
     await utils.postSegments.byPostId.invalidate({ postId })
+    setLastSuccessfulEdit(new Date())
   }
 
-  const updateMany = trpc.postSegments.edit.useMutation({
+  const edit = trpc.postSegments.edit.useMutation({
     onSuccess: invalidate,
   })
   const createItem = trpc.postSegments.createItem.useMutation({
@@ -84,9 +91,10 @@ export function PostSegment({
   )
 
   const refSegmentEdit = useRef<HTMLDivElement>(null)
-  useOnClickOutside(refSegmentEdit, () =>
+  useOnClickOutside(refSegmentEdit, () => {
+    setLastSuccessfulEdit(null)
     setIsSegmentEditMode(isEditModeExternal)
-  )
+  })
 
   const [animateRef] = useAutoAnimate<HTMLDivElement>()
 
@@ -117,7 +125,7 @@ export function PostSegment({
 
   const isSubmitEnabled = useIsSubmitEnabled({
     isInitiallySubmittable: false,
-    isLoading: updateMany.isLoading,
+    isLoading: edit.isLoading,
     formState: formStateUpdate,
   })
 
@@ -128,9 +136,9 @@ export function PostSegment({
       className="flex w-full flex-col items-stretch rounded-xl bg-white p-8 shadow-2xl lg:flex-row"
     >
       <div
-        className={
+        className={`px-4 ${
           choiceControl.selected.choiceId === 'right' ? 'w-4/5' : 'w-full'
-        }
+        }`}
       >
         {/* HEADER & ITEMS */}
         <EditOverlay
@@ -143,7 +151,7 @@ export function PostSegment({
               onBlur={handleSubmitUpdate((data) => {
                 // For `onBlur`, RHF does not validate like with `onSubmit`, so we check ourselves.
                 if (isSubmitEnabled) {
-                  updateMany.mutate({
+                  edit.mutate({
                     postSegmentId,
                     title: data.title,
                     subtitle: data.subtitle,
@@ -217,6 +225,10 @@ export function PostSegment({
                   itemContent={item.content}
                   postId={postId}
                   postSegmentItemId={item.id}
+                  setIsLoading={(isLoadingNew) =>
+                    setIsItemLoading(isLoadingNew)
+                  }
+                  onSuccessfulSubmit={() => setLastSuccessfulEdit(new Date())}
                 />
               ))}
             </div>
@@ -264,6 +276,24 @@ export function PostSegment({
                 />
               </div>
             </Form>
+
+            <div className="my-2 text-center italic">
+              {/* height needed to not make it jump when the loading animation is shown */}
+              <p className="h-6 tracking-tighter">
+                {edit.isLoading || isItemLoading || createItem.isLoading ? (
+                  <LoadingAnimation size="small" />
+                ) : !lastSuccessfulEdit ? (
+                  <span>No changes yet.</span>
+                ) : (
+                  <>
+                    <span>Saved changes</span>
+                    <span className="ml-2 text-gray-400">
+                      {formatDateTime(lastSuccessfulEdit, 'MM-DD hh:mm:ss')}
+                    </span>
+                  </>
+                )}
+              </p>
+            </div>
           </>
         )}
 

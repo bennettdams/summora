@@ -56,7 +56,7 @@ export function Button({
         {icon && (
           <span className="mr-1 w-6 leading-none text-dbrown group-hover:text-white">
             {showLoading ? (
-              <LoadingAnimation size="small" />
+              <LoadingAnimation light size="small" />
             ) : // overwrite the icon color for the appropiate text color of the button
             isValidElement<IconProps>(icon) ? (
               cloneElement<IconProps>(icon, {
