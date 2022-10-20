@@ -86,4 +86,18 @@ export const postSegmentsRouter = t.router({
         },
       })
     }),
+  // DELETE
+  delete: t.procedure
+    .input(
+      z.object({
+        segmentId: z.string().cuid(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { segmentId } = input
+
+      await ensureAuthor(ctx, segmentId)
+
+      await ctx.prisma.postSegment.delete({ where: { id: segmentId } })
+    }),
 })

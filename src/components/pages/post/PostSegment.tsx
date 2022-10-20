@@ -1,7 +1,6 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useEffect, useRef, useState } from 'react'
 import { z } from 'zod'
-import { usePost } from '../../../data/use-post'
 import {
   schemaCreatePostSegmentItem,
   schemaUpdatePostSegment,
@@ -47,7 +46,6 @@ export function PostSegment({
   isPostEditable: boolean
   onInitialEdit: () => void
 }): JSX.Element {
-  const { deletePostSegment } = usePost(postId)
   const [lastSuccessfulEdit, setLastSuccessfulEdit] = useState<Date | null>(
     null
   )
@@ -55,15 +53,22 @@ export function PostSegment({
 
   const utils = trpc.useContext()
 
+  function createSuccessfulEditStatus() {
+    setLastSuccessfulEdit(new Date())
+  }
+
   async function invalidate() {
     await utils.postSegments.byPostId.invalidate({ postId })
-    setLastSuccessfulEdit(new Date())
+    createSuccessfulEditStatus()
   }
 
   const edit = trpc.postSegments.edit.useMutation({
     onSuccess: invalidate,
   })
   const createItem = trpc.postSegments.createItem.useMutation({
+    onSuccess: invalidate,
+  })
+  const deleteSegment = trpc.postSegments.delete.useMutation({
     onSuccess: invalidate,
   })
 
@@ -228,7 +233,7 @@ export function PostSegment({
                   setIsLoading={(isLoadingNew) =>
                     setIsItemLoading(isLoadingNew)
                   }
-                  onSuccessfulSubmit={() => setLastSuccessfulEdit(new Date())}
+                  onSuccessfulSubmit={createSuccessfulEditStatus}
                 />
               ))}
             </div>
@@ -312,7 +317,10 @@ export function PostSegment({
 
         {isPostEditable && (
           <div className="mt-4 flex flex-row justify-between">
-            <ButtonRemove onClick={() => deletePostSegment(segment.id)}>
+            <ButtonRemove
+              showLoading={deleteSegment.isLoading}
+              onClick={() => deleteSegment.mutate({ segmentId: postSegmentId })}
+            >
               Remove segment
             </ButtonRemove>
 
