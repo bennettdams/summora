@@ -69,7 +69,7 @@ export function FormSubmit<TFieldValues extends FieldValues>(
       showLoading={props.isLoading}
       isBig={props.isBig}
     >
-      <span>{props.children ?? 'Save'}</span>
+      {props.children ?? <span>Save</span>}
       <input className="hidden" type="submit" />
     </Button>
   )

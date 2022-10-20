@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { OmitStrict } from '../types/util-types'
 import { useOnClickOutside } from '../util/use-on-click-outside'
 import {
   IconAdd,
@@ -112,6 +113,16 @@ export function ButtonRemove(props: ButtonProps): JSX.Element {
       <div className="group flex items-center">
         {!showRemoveConfirmation ? props.children ?? 'Remove' : 'Confirm'}
       </div>
+    </Button>
+  )
+}
+
+export function ButtonAdd(
+  props: OmitStrict<ButtonProps, 'icon'> & { isBig?: boolean }
+): JSX.Element {
+  return (
+    <Button icon={<IconAdd />} {...props}>
+      {props.children ?? <span>Add</span>}
     </Button>
   )
 }
