@@ -4,7 +4,6 @@ import { usePost } from '../../../data/use-post'
 import { PostPageProps } from '../../../pages/post/[postId]'
 import {
   apiIncrementPostViews,
-  ApiPostSegmentCreateRequestBody,
   ApiPostUpdateRequestBody,
 } from '../../../services/api-service'
 import { useAuth } from '../../../services/auth-service'
@@ -15,7 +14,7 @@ import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
 import { Avatar } from '../../Avatar'
 import { Box } from '../../Box'
-import { Button } from '../../Button'
+import { Button, ButtonAdd } from '../../Button'
 import { CategorySelect } from '../../CategorySelect'
 import { CommentsIcon } from '../../CommentsIcon'
 import { DateTime } from '../../DateTime'
@@ -73,7 +72,7 @@ function PostPageInternal({
   post: PostPostPage
   userId: string | null
 }): JSX.Element {
-  const { updatePost, createPostSegment, isLoading } = usePost(postId)
+  const { updatePost } = usePost(postId)
   const { data: segments, isLoading: isLoadingSegments } =
     trpc.postSegments.byPostId.useQuery({
       postId: post.id,
@@ -84,6 +83,9 @@ function PostPageInternal({
   async function invalidateComments() {
     await utils.postComments.byPostId.invalidate({ postId })
   }
+  async function invalidateSegments() {
+    await utils.postSegments.byPostId.invalidate({ postId })
+  }
 
   const createOne = trpc.postComments.create.useMutation({
     onSuccess: invalidateComments,
@@ -92,27 +94,15 @@ function PostPageInternal({
     onSuccess: invalidateComments,
   })
 
-  const [hasNewSegmentBeenEdited, setHasNewSegmentBeenEdited] = useState(true)
   const [isPostEditable, setIsPostEditable] = useState(userId === post.authorId)
   useEffect(
     () => setIsPostEditable(userId === post.authorId),
     [userId, post.authorId]
   )
 
-  async function handleCreateSegment(): Promise<void> {
-    const postSegmentToCreate: ApiPostSegmentCreateRequestBody['postSegmentToCreate'] =
-      {
-        title: '',
-        subtitle: '',
-      }
-
-    setHasNewSegmentBeenEdited(false)
-
-    await createPostSegment({
-      postId: post.id,
-      postSegmentToCreate,
-    })
-  }
+  const createSegment = trpc.posts.createSegment.useMutation({
+    onSuccess: invalidateSegments,
+  })
 
   // CATEGORY
   const [isShownCategoryDropdown, setIsShownCategoryDropdown] = useState(false)
@@ -523,14 +513,14 @@ function PostPageInternal({
                   ))}
                 </div>
                 {isPostEditable && (
-                  <div className="mt-20">
-                    <Button
-                      onClick={handleCreateSegment}
-                      disabled={!hasNewSegmentBeenEdited}
+                  <div className="my-20 grid place-items-center">
+                    <ButtonAdd
+                      isBig
+                      showLoading={createSegment.isLoading}
+                      onClick={() => createSegment.mutate({ postId })}
                     >
                       Add segment
-                    </Button>
-                    {isLoading && <LoadingAnimation />}
+                    </ButtonAdd>
                   </div>
                 )}
               </div>

@@ -10,6 +10,7 @@ import { postLikesRouter } from './router-post-likes'
 import { postSegmentItemsRouter } from './router-post-segment-items'
 import { postSegmentsRouter } from './router-post-segments'
 import { postTagsRouter } from './router-post-tags'
+import { postsRouter } from './router-posts'
 import { userRouter } from './router-user'
 import { userPostsRouter } from './router-user-posts'
 
@@ -18,6 +19,7 @@ import { userPostsRouter } from './router-user-posts'
  * @link https://trpc.io/docs/router
  */
 export const appRouter = t.router({
+  posts: postsRouter,
   postLikes: postLikesRouter,
   postSegments: postSegmentsRouter,
   postSegmentItems: postSegmentItemsRouter,
