@@ -34,16 +34,17 @@ import { ViewsIcon } from '../../ViewsIcon'
 import { VoteIcon } from '../../VoteIcon'
 import { PostSegment } from './PostSegment'
 
-type QueryReturn = ReturnType<typeof usePost>
-// exclude null, because the page will return "notFound" if post is null
-type PostPostPage = Exclude<QueryReturn['post'], null>
 export type SegmentPostPage =
   AppRouterTypes['postSegments']['byPostId']['output'][number]
 export type SegmentItemPostPage = SegmentPostPage['items'][number]
 type TagPostPage = AppRouterTypes['postTags']['byPostId']['output'][number]
 
 export function PostPage(props: PostPageProps): JSX.Element {
-  const { post } = usePost(props.postId)
+  const { data: post, isLoading: isLoadingPost } = trpc.posts.byPostId.useQuery(
+    {
+      postId: props.postId,
+    }
+  )
   const { userId } = useAuth()
 
   const [hasViewsBeenIncremented, setHasViewBeenIncremented] = useState(
@@ -54,28 +55,37 @@ export function PostPage(props: PostPageProps): JSX.Element {
     else setHasViewBeenIncremented(true)
   }, [hasViewsBeenIncremented, props.postId])
 
-  return !post ? (
-    <NoContent>No post</NoContent>
-  ) : (
-    <PostPageInternal post={post} postId={props.postId} userId={userId} />
+  return (
+    <Page>
+      {isLoadingPost ? (
+        <div className="grid place-items-center">
+          <LoadingAnimation />
+        </div>
+      ) : !post ? (
+        <NoContent>No post</NoContent>
+      ) : (
+        <PostPageInternal post={post} postId={props.postId} userId={userId} />
+      )}
+    </Page>
   )
 }
 
-/*
- * TODO split up into one component for editing & one for viewing
- */
-function PostPageInternal({
+function PostPageInternal<
+  // exclude null - this should be checked in the parent to allow easier hooks usage in this component
+  TPostType extends Exclude<AppRouterTypes['posts']['byPostId']['output'], null>
+>({
   postId,
   post,
   userId,
 }: PostPageProps & {
-  post: PostPostPage
+  post: TPostType
   userId: string | null
 }): JSX.Element {
   const { updatePost } = usePost(postId)
+
   const { data: segments, isLoading: isLoadingSegments } =
     trpc.postSegments.byPostId.useQuery({
-      postId: post.id,
+      postId,
     })
 
   const utils = trpc.useContext()
@@ -119,7 +129,7 @@ function PostPageInternal({
     }
 
     await updatePost({
-      postId: post.id,
+      postId,
       postToUpdate,
     })
   }
@@ -157,7 +167,7 @@ function PostPageInternal({
 
       if (postToUpdate) {
         await updatePost({
-          postId: post.id,
+          postId,
           postToUpdate,
         })
       }
@@ -244,7 +254,7 @@ function PostPageInternal({
   const [animateRef] = useAutoAnimate<HTMLDivElement>()
 
   return (
-    <Page>
+    <>
       {/* POST HEADER */}
       <PageSection hideTopMargin>
         <div className="w-full text-center">
@@ -504,7 +514,7 @@ function PostPageInternal({
                       postSegmentId={segment.id}
                       sequenceNumber={index + 1}
                       isLastInSequence={index === segments.length - 1}
-                      postId={post.id}
+                      postId={postId}
                       authorId={post.authorId}
                       key={segment.id}
                       segment={segment}
@@ -555,13 +565,13 @@ function PostPageInternal({
 
       <PageSection>
         <PostComments
-          postId={post.id}
+          postId={postId}
           userId={userId}
           onAddComment={addComment}
           onRemoveComment={removeComment}
         />
       </PageSection>
-    </Page>
+    </>
   )
 }
 
