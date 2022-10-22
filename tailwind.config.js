@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const defaultTheme = require('tailwindcss/defaultTheme')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-// const colors = require('tailwindcss/colors')
+const colors = require('tailwindcss/colors')
 
 module.exports = {
   content: [
@@ -14,6 +14,7 @@ module.exports = {
         sans: ['Nunito', ...defaultTheme.fontFamily.sans],
       },
       colors: {
+        gray: colors.stone,
         dlight: '#faf2f0',
         dlila: '#993a58',
         dorange: '#e08560',

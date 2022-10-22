@@ -695,7 +695,7 @@ function Comment({
             </div>
           </Link>
 
-          <div className="flex items-center space-x-2 leading-none text-zinc-400">
+          <div className="flex items-center space-x-2 leading-none text-gray-400">
             <span className="ml-2">
               <DateTime format="MM-DD hh:mm" date={comment.createdAt} />
             </span>
