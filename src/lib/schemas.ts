@@ -39,7 +39,7 @@ export const schemaUpdatePostSegment = z
   .object({
     postSegmentId: z.string().cuid(),
     title: z.string().min(1).optional(),
-    subtitle: z.string().min(1).optional(),
+    subtitle: z.string().optional(),
   })
   .refine((data) => !!data.title || !!data.subtitle, {
     message: 'Either title or subtitle should be changed.',

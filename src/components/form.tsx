@@ -78,24 +78,19 @@ export function FormSubmit<TFieldValues extends FieldValues>(
 type InputProps = React.ComponentPropsWithoutRef<'input'> & {
   small?: boolean
   hasLabel?: boolean
-} & (
-    | { canHaveValidationError?: true; validationErrorMessage?: string }
-    | { canHaveValidationError?: false; validationErrorMessage?: never }
-  )
+  validationErrorMessage?: string
+}
 
 /**
  * Additional props:
  * - small?: `boolean`
  * - hasLabel?: `boolean`
- * // use this to show additional vertical space next to the input in case you want to show errors
- * - canHaveValidationError?: `boolean`
  * - validationErrorMessage?: `string`
  */
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     small = false,
     hasLabel = true,
-    canHaveValidationError = true,
     validationErrorMessage = undefined,
     ...props
   },
@@ -120,8 +115,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         ref={ref}
       />
 
-      {canHaveValidationError && (
-        <div className="absolute mt-2">
+      {!!validationErrorMessage && (
+        <div className="absolute mt-1">
           <FormError message={validationErrorMessage} />
         </div>
       )}

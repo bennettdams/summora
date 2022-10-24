@@ -12,7 +12,7 @@ import { useZodForm } from '../../../util/use-zod-form'
 import { ButtonRemove } from '../../Button'
 import { ChoiceSelect, useChoiceSelect } from '../../ChoiceSelect'
 import { EditOverlay } from '../../EditOverlay'
-import { Form, Input, useIsSubmitEnabled } from '../../form'
+import { Form, FormLabel, Input, useIsSubmitEnabled } from '../../form'
 import { IconArrowCircleDown, IconArrowCircleRight } from '../../Icon'
 import { LoadingAnimation } from '../../LoadingAnimation'
 import { PostSegmentImage } from '../../PostSegmentImage'
@@ -20,12 +20,6 @@ import { SegmentPostPage } from './PostPage'
 import { PostSegmentItem } from './PostSegmentItem'
 
 type SchemaUpdateSegment = z.infer<typeof schemaUpdatePostSegment>
-// type SchemaCreateDonationLink = z.infer<typeof schemaCreateDonationLink>
-
-// const defaultValuesCreate: SchemaCreateDonationLink = {
-//   address: '',
-//   donationProviderId: null,
-// }
 
 export function PostSegment({
   postSegmentId,
@@ -176,24 +170,33 @@ export function PostSegment({
 
                 {/* SEGMENT HEADER */}
                 {isSegmentEditMode ? (
-                  <div className="grow space-y-4">
-                    <Input
-                      {...registerUpdate('title')}
-                      placeholder="Enter a title.."
-                      autoFocus={!defaultValuesUpdate.title && isLastInSequence}
-                      defaultValue={defaultValuesUpdate.title}
-                      validationErrorMessage={
-                        formStateUpdate.errors.title?.message
-                      }
-                    />
-                    <Input
-                      {...registerUpdate('subtitle')}
-                      placeholder="Enter a subtitle.."
-                      defaultValue={defaultValuesUpdate.subtitle}
-                      validationErrorMessage={
-                        formStateUpdate.errors.subtitle?.message
-                      }
-                    />
+                  <div className="grow space-y-6">
+                    <div>
+                      <FormLabel>Title</FormLabel>
+                      <Input
+                        {...registerUpdate('title')}
+                        hasLabel
+                        placeholder="Enter a title.."
+                        autoFocus={
+                          !defaultValuesUpdate.title && isLastInSequence
+                        }
+                        defaultValue={defaultValuesUpdate.title}
+                        validationErrorMessage={
+                          formStateUpdate.errors.title?.message
+                        }
+                      />
+                    </div>
+                    <div>
+                      <FormLabel>Subtitle</FormLabel>
+                      <Input
+                        {...registerUpdate('subtitle')}
+                        placeholder="Enter a subtitle.."
+                        defaultValue={defaultValuesUpdate.subtitle}
+                        validationErrorMessage={
+                          formStateUpdate.errors.subtitle?.message
+                        }
+                      />
+                    </div>
                   </div>
                 ) : (
                   <div
@@ -219,7 +222,7 @@ export function PostSegment({
 
             {/* SEGMENT ITEMS */}
             {/* `relative` here needed for auto-animate. Without it, the edit overlay is shown loosely below the list, instead of overlaying the list. */}
-            <div ref={animateRef} className="relative mt-4 space-y-4">
+            <div ref={animateRef} className="relative mt-8 space-y-4">
               {segment.items.map((item, index) => (
                 <PostSegmentItem
                   key={item.id}
