@@ -139,7 +139,7 @@ export function PostSegment({
         {/* HEADER & ITEMS */}
         <EditOverlay
           isEnabled={isPostEditable && !isSegmentEditMode}
-          onClick={() => isPostEditable && setIsSegmentEditMode(true)}
+          onClick={() => setIsSegmentEditMode(true)}
         >
           <div className="rounded-xl">
             <Form
@@ -169,54 +169,59 @@ export function PostSegment({
                 </div>
 
                 {/* SEGMENT HEADER */}
-                {isSegmentEditMode ? (
-                  <div className="grow space-y-6">
-                    <div>
-                      <FormLabel>Title</FormLabel>
-                      <Input
-                        {...registerUpdate('title')}
-                        hasLabel
-                        placeholder="Enter a title.."
-                        autoFocus={
-                          !defaultValuesUpdate.title && isLastInSequence
-                        }
-                        defaultValue={defaultValuesUpdate.title}
-                        validationErrorMessage={
-                          formStateUpdate.errors.title?.message
-                        }
-                      />
-                    </div>
-                    <div>
-                      <FormLabel>Subtitle</FormLabel>
-                      <Input
-                        {...registerUpdate('subtitle')}
-                        placeholder="Enter a subtitle.."
-                        defaultValue={defaultValuesUpdate.subtitle}
-                        validationErrorMessage={
-                          formStateUpdate.errors.subtitle?.message
-                        }
-                      />
-                    </div>
+                {/*
+                 * We use conditional CSS instead of conditional rendering so the children are not re-/mounted.
+                 * This is e.g. needed because there is bug in React where unmounting does not trigger `onBlur`.
+                 * See: https://github.com/facebook/react/issues/12363
+                 */}
+                <div
+                  className={`grow space-y-6 ${
+                    isSegmentEditMode ? 'block' : 'hidden'
+                  }`}
+                >
+                  <div>
+                    <FormLabel>Title</FormLabel>
+                    <Input
+                      {...registerUpdate('title')}
+                      hasLabel
+                      placeholder="Enter a title.."
+                      autoFocus={!defaultValuesUpdate.title && isLastInSequence}
+                      defaultValue={defaultValuesUpdate.title}
+                      validationErrorMessage={
+                        formStateUpdate.errors.title?.message
+                      }
+                    />
                   </div>
-                ) : (
-                  <div
-                    className={`flex grow ${
-                      isPostEditable && 'cursor-pointer'
-                    }`}
-                  >
-                    <div className="ml-2 flex flex-col">
-                      <div className="flex-1 text-dlila">
-                        <span>{segment.title}</span>
-                      </div>
+                  <div>
+                    <FormLabel>Subtitle</FormLabel>
+                    <Input
+                      {...registerUpdate('subtitle')}
+                      placeholder="Enter a subtitle.."
+                      defaultValue={defaultValuesUpdate.subtitle}
+                      validationErrorMessage={
+                        formStateUpdate.errors.subtitle?.message
+                      }
+                    />
+                  </div>
+                </div>
 
-                      <div className="flex-1">
-                        <span className="text-lg italic text-dorange">
-                          {segment.subtitle}
-                        </span>
-                      </div>
+                <div
+                  className={`flex grow ${
+                    isSegmentEditMode ? 'hidden' : 'block'
+                  }`}
+                >
+                  <div className="ml-2 flex flex-col">
+                    <div className="flex-1 text-dlila">
+                      <span>{segment.title}</span>
+                    </div>
+
+                    <div className="flex-1">
+                      <span className="text-lg italic text-dorange">
+                        {segment.subtitle}
+                      </span>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
             </Form>
 
@@ -242,66 +247,60 @@ export function PostSegment({
         </EditOverlay>
 
         {/* EDIT ACTIONS */}
-        {isSegmentEditMode && (
-          <>
-            <p className="my-6 text-center text-xl text-dlila">
-              ..or add a new item:
-            </p>
+        <div className={isSegmentEditMode ? 'block' : 'hidden'}>
+          <p className="my-6 text-center text-xl text-dlila">
+            ..or add a new item:
+          </p>
 
-            <Form
-              onBlur={handleSubmitCreateItem((data) => {
-                console.log(
-                  'isSubmitCreateItemEnabled',
-                  isSubmitCreateItemEnabled
-                )
-                // For `onBlur`, RHF does not validate like with `onSubmit`, so we check ourselves.
-                if (isSubmitCreateItemEnabled) {
-                  createItem.mutate({
-                    segmentId: postSegmentId,
-                    content: data.content,
-                  })
+          <Form
+            onBlur={handleSubmitCreateItem((data) => {
+              // For `onBlur`, RHF does not validate like with `onSubmit`, so we check ourselves.
+              if (isSubmitCreateItemEnabled) {
+                createItem.mutate({
+                  segmentId: postSegmentId,
+                  content: data.content,
+                })
 
-                  /*
-                   * Reset the default values to our new data.
-                   * This is done to "set" the validation to the newly
-                   * updated values.
-                   * See: https://react-hook-form.com/api/useform/reset
-                   */
-                  resetCreateItem({ content: '' })
+                /*
+                 * Reset the default values to our new data.
+                 * This is done to "set" the validation to the newly
+                 * updated values.
+                 * See: https://react-hook-form.com/api/useform/reset
+                 */
+                resetCreateItem({ content: '' })
+              }
+            })}
+            className="my-4 flex w-full items-center space-x-4"
+          >
+            <div className="grow">
+              <Input
+                {...registerCreateItem('content')}
+                placeholder="Enter some text.."
+                validationErrorMessage={
+                  formStateCreateItem.errors.content?.message
                 }
-              })}
-              className="my-4 flex w-full items-center space-x-4"
-            >
-              <div className="grow">
-                <Input
-                  {...registerCreateItem('content')}
-                  placeholder="Enter some text.."
-                  validationErrorMessage={
-                    formStateCreateItem.errors.content?.message
-                  }
-                />
-              </div>
-            </Form>
-
-            <div className="my-2 text-center italic">
-              {/* height needed to not make it jump when the loading animation is shown */}
-              <p className="h-6 tracking-tighter">
-                {edit.isLoading || isItemLoading || createItem.isLoading ? (
-                  <LoadingAnimation size="small" />
-                ) : !lastSuccessfulEdit ? (
-                  <span>No changes yet.</span>
-                ) : (
-                  <>
-                    <span>Saved changes</span>
-                    <span className="ml-2 text-gray-400">
-                      {formatDateTime(lastSuccessfulEdit, 'MM-DD hh:mm:ss')}
-                    </span>
-                  </>
-                )}
-              </p>
+              />
             </div>
-          </>
-        )}
+          </Form>
+
+          <div className="my-2 text-center italic">
+            {/* height needed to not make it jump when the loading animation is shown */}
+            <p className="h-6 tracking-tighter">
+              {edit.isLoading || isItemLoading || createItem.isLoading ? (
+                <LoadingAnimation size="small" />
+              ) : !lastSuccessfulEdit ? (
+                <span>No changes yet.</span>
+              ) : (
+                <>
+                  <span>Saved changes</span>
+                  <span className="ml-2 text-gray-400">
+                    {formatDateTime(lastSuccessfulEdit, 'MM-DD hh:mm:ss')}
+                  </span>
+                </>
+              )}
+            </p>
+          </div>
+        </div>
 
         {/* POST IMAGE */}
         {choiceControl.selected.choiceId === 'bottom' && (
