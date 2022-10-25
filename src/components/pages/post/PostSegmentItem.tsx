@@ -46,7 +46,7 @@ export function PostSegmentItem({
   const { handleSubmit, register, formState, reset } = useZodForm({
     schema: schemaUpdatePostSegmentItem,
     defaultValues: { segmentItemId: postSegmentItemId, content: itemContent },
-    mode: 'onSubmit',
+    mode: 'onBlur',
   })
 
   const isSubmitEnabled = useIsSubmitEnabled({

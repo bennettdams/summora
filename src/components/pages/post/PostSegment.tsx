@@ -72,7 +72,7 @@ export function PostSegment({
   } = useZodForm({
     schema: schemaCreatePostSegmentItem.pick({ content: true }),
     defaultValues: { content: '' },
-    mode: 'onChange',
+    mode: 'onBlur',
   })
 
   const isSubmitCreateItemEnabled = useIsSubmitEnabled({
@@ -116,7 +116,7 @@ export function PostSegment({
   } = useZodForm({
     schema: schemaUpdatePostSegment,
     defaultValues: defaultValuesUpdate,
-    mode: 'onSubmit',
+    mode: 'onBlur',
   })
 
   const isSubmitEnabled = useIsSubmitEnabled({
@@ -184,6 +184,7 @@ export function PostSegment({
                     <Input
                       {...registerUpdate('title')}
                       hasLabel
+                      blurOnEnterPressed
                       placeholder="Enter a title.."
                       autoFocus={!defaultValuesUpdate.title && isLastInSequence}
                       defaultValue={defaultValuesUpdate.title}
@@ -196,6 +197,8 @@ export function PostSegment({
                     <FormLabel>Subtitle</FormLabel>
                     <Input
                       {...registerUpdate('subtitle')}
+                      hasLabel
+                      blurOnEnterPressed
                       placeholder="Enter a subtitle.."
                       defaultValue={defaultValuesUpdate.subtitle}
                       validationErrorMessage={
@@ -249,7 +252,7 @@ export function PostSegment({
         {/* EDIT ACTIONS */}
         <div className={isSegmentEditMode ? 'block' : 'hidden'}>
           <p className="my-6 text-center text-xl text-dlila">
-            ..or add a new item:
+            <span>Add a new item:</span>
           </p>
 
           <Form

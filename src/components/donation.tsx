@@ -190,7 +190,8 @@ function UserDonationsUpdates({
   } = useZodForm({
     schema: schemaCreateDonationLink,
     defaultValues: defaultValuesCreate,
-    mode: 'onChange',
+    mode: 'obSubmit',
+    reValidateMode: 'onChange',
   })
 
   const errorsUpdate = formStateUpdate.errors
@@ -267,7 +268,6 @@ function UserDonationsUpdates({
               ).at(index)?.donationProviderId
 
               return (
-                // wirklicu bentötigt? nicht lieber inline? weiß nicht, warum userDonation wirklich verwendet
                 <UserDonationUpdateRow
                   key={field.id}
                   userDonation={userDonation}

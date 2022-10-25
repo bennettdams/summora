@@ -79,6 +79,8 @@ type InputProps = React.ComponentPropsWithoutRef<'input'> & {
   small?: boolean
   hasLabel?: boolean
   validationErrorMessage?: string
+  /** This is used in forms that should submit on blur. */
+  blurOnEnterPressed?: boolean
 }
 
 /**
@@ -86,12 +88,14 @@ type InputProps = React.ComponentPropsWithoutRef<'input'> & {
  * - small?: `boolean`
  * - hasLabel?: `boolean`
  * - validationErrorMessage?: `string`
+ * - blurOnEnterPressed?: `boolean`
  */
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     small = false,
     hasLabel = true,
     validationErrorMessage = undefined,
+    blurOnEnterPressed = false,
     ...props
   },
   ref
@@ -110,6 +114,16 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
               ? 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
               : 'border-yellow-500 focus:border-yellow-500 focus:ring-yellow-500'
           }`
+        }
+        // TODO Ideally, this is set on the form element and not the single inputs, but not sure about the implementation for that.
+        onKeyDown={
+          !blurOnEnterPressed
+            ? undefined
+            : (e) => {
+                if (e.key === 'Enter') {
+                  e.currentTarget.blur()
+                }
+              }
         }
         {...props}
         ref={ref}
