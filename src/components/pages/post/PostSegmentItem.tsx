@@ -95,6 +95,7 @@ export function PostSegmentItem({
             <Input
               {...register('content')}
               placeholder="Enter some text.."
+              blurOnEnterPressed
               validationErrorMessage={formState.errors.content?.message}
             />
           </Form>

@@ -73,6 +73,7 @@ export function PostSegment({
     schema: schemaCreatePostSegmentItem.pick({ content: true }),
     defaultValues: { content: '' },
     mode: 'onBlur',
+    reValidateMode: 'onBlur',
   })
 
   const isSubmitCreateItemEnabled = useIsSubmitEnabled({
@@ -279,6 +280,7 @@ export function PostSegment({
               <Input
                 {...registerCreateItem('content')}
                 placeholder="Enter some text.."
+                blurOnEnterPressed
                 validationErrorMessage={
                   formStateCreateItem.errors.content?.message
                 }
