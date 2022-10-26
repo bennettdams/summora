@@ -507,38 +507,39 @@ function PostPageInternal<
               </div>
 
               {/* POST SEGMENTS */}
-              <div className="md:w-4/6">
-                <div ref={animateRef} className="space-y-16">
-                  {segments.map((segment, index) => (
-                    <PostSegment
-                      postSegmentId={segment.id}
-                      sequenceNumber={index + 1}
-                      isLastInSequence={index === segments.length - 1}
-                      postId={postId}
-                      authorId={post.authorId}
-                      key={segment.id}
-                      segment={segment}
-                      isPostEditable={isPostEditable}
-                    />
-                  ))}
-                </div>
-                {isPostEditable && (
-                  <div className="my-20 grid place-items-center">
-                    <ButtonAdd
-                      isBig
-                      showLoading={createSegment.isLoading}
-                      onClick={() => createSegment.mutate({ postId })}
-                    >
-                      Add segment
-                    </ButtonAdd>
-                  </div>
-                )}
+              <div ref={animateRef} className="space-y-16 md:w-4/6">
+                {segments.map((segment, index) => (
+                  <PostSegment
+                    postSegmentId={segment.id}
+                    sequenceNumber={index + 1}
+                    isLastInSequence={index === segments.length - 1}
+                    postId={postId}
+                    authorId={post.authorId}
+                    key={segment.id}
+                    segment={segment}
+                    isPostEditable={isPostEditable}
+                  />
+                ))}
               </div>
               <div className="md:w-1/6">&nbsp;</div>
             </>
           )}
         </div>
       </PageSection>
+
+      {isPostEditable && (
+        <PageSection>
+          <div className="my-20 grid place-items-center">
+            <ButtonAdd
+              isBig
+              showLoading={createSegment.isLoading}
+              onClick={() => createSegment.mutate({ postId })}
+            >
+              Add segment
+            </ButtonAdd>
+          </div>
+        </PageSection>
+      )}
 
       <PageSection label="Comments">
         <div className="mx-auto w-2/3">

@@ -190,7 +190,7 @@ function UserDonationsUpdates({
   } = useZodForm({
     schema: schemaCreateDonationLink,
     defaultValues: defaultValuesCreate,
-    mode: 'obSubmit',
+    mode: 'onSubmit',
     reValidateMode: 'onChange',
   })
 
