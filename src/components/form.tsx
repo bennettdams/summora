@@ -28,7 +28,7 @@ export function FormLabel({
 type FormSubmitPropsShared<TFieldValues extends FieldValues> = {
   formState: FormState<TFieldValues>
   isLoading: boolean
-  /** By default, we allow submitting initially without changes to trigger validation. This can be disabled herewith. */
+  /** By default, we don't allow submitting initially without changes to trigger validation. This can be disabled herewith. */
   isInitiallySubmittable?: boolean
 }
 

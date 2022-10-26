@@ -317,7 +317,6 @@ function UserDonationsUpdates({
           <div className="grid place-items-center">
             <FormSubmit
               isBig={true}
-              isInitiallySubmittable={false}
               isLoading={updateMany.isLoading}
               formState={formStateUpdate}
             />

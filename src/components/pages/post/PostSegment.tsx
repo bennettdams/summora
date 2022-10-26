@@ -42,6 +42,7 @@ export function PostSegment({
     null
   )
   const [isItemLoading, setIsItemLoading] = useState(false)
+  const [isNewSegmentItem] = useState(() => !segment.title)
 
   const utils = trpc.useContext()
 
@@ -77,14 +78,13 @@ export function PostSegment({
   })
 
   const isSubmitCreateItemEnabled = useIsSubmitEnabled({
-    isInitiallySubmittable: false,
     isLoading: createItem.isLoading,
     formState: formStateCreateItem,
   })
 
   const [isSegmentEditMode, setIsSegmentEditMode] = useState(
     // segments without a title should be considered "new" and are shown in edit mode initially
-    () => !segment.title
+    () => isNewSegmentItem
   )
 
   const refSegmentEdit = useRef<HTMLDivElement>(null)
@@ -118,10 +118,12 @@ export function PostSegment({
     schema: schemaUpdatePostSegment,
     defaultValues: defaultValuesUpdate,
     mode: 'onBlur',
+    reValidateMode: 'onChange',
   })
 
   const isSubmitEnabled = useIsSubmitEnabled({
-    isInitiallySubmittable: false,
+    // new segments should be able to submit initially, as they don't have any data yet
+    isInitiallySubmittable: !!isNewSegmentItem ?? false,
     isLoading: edit.isLoading,
     formState: formStateUpdate,
   })
