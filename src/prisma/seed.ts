@@ -47,6 +47,16 @@ async function fill() {
   await prisma.donationProvider.createMany({ data: donationProviders })
   // const donationProvidersCreated = await prisma.donationProvider.findMany()
 
+  if ((await prisma.user.findMany()).length === 0) {
+    await prisma.user.createMany({
+      data: [
+        { username: 'bennett-mock' },
+        { username: 'foo-mock' },
+        { username: 'bar-mock' },
+      ],
+    })
+  }
+
   const users = await prisma.user.findMany()
 
   await Promise.all(

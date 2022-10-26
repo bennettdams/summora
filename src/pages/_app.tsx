@@ -7,12 +7,14 @@ import { AuthContextProvider } from '../services/auth-service'
 import { supabase } from '../services/supabase/supabase-service'
 import '../styles/globals.css'
 import { trpc } from '../util/trpc'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 function App({ Component, pageProps }: AppProps): JSX.Element {
   // const [queryClient] = useState(() => new QueryClient())
 
   return (
     <ErrorBoundary>
+      <ReactQueryDevtools initialIsOpen={true} />
       {/* tRPC already brings the `QueryClientProvider` */}
       {/* https://github.com/trpc/trpc/discussions/1594#discussioncomment-2303573 */}
       {/* <QueryClientProvider client={queryClient}> */}
