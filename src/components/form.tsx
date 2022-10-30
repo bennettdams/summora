@@ -42,16 +42,15 @@ type FormSubmitProps<TFieldValues extends FieldValues> =
 export function useIsSubmitEnabled<TFieldValues extends FieldValues>(
   props: FormSubmitPropsShared<TFieldValues>
 ) {
-  // we ignore the "invalid" status for a form that has not been submitted yet
-  const isValidForm = props.formState.isValid && !props.formState.isValidating
+  const isValidForm = !!props.formState.isValid && !props.formState.isValidating
 
+  /** Even an invalid form can be submitted if it has not been submitted yet and if it is initially submittable. */
   const isInitialSubmit =
-    props.isInitiallySubmittable && props.formState.submitCount === 0
+    !!props.isInitiallySubmittable && props.formState.submitCount === 0
 
   const isEnabled =
-    (isValidForm || isInitialSubmit) &&
-    !props.formState.isSubmitting &&
-    (!!props.formState.isDirty || isInitialSubmit)
+    ((isValidForm && !!props.formState.isDirty) || isInitialSubmit) &&
+    !props.formState.isSubmitting
 
   return isEnabled
 }

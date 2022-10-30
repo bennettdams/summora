@@ -1,5 +1,5 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { z } from 'zod'
 import {
   schemaCreatePostSegmentItem,
@@ -20,6 +20,8 @@ import { SegmentPostPage } from './PostPage'
 import { PostSegmentItem } from './PostSegmentItem'
 
 type SchemaUpdateSegment = z.infer<typeof schemaUpdatePostSegment>
+
+const defaultValuesCreate = { content: '' }
 
 export function PostSegment({
   postSegmentId,
@@ -72,12 +74,13 @@ export function PostSegment({
     reset: resetCreateItem,
   } = useZodForm({
     schema: schemaCreatePostSegmentItem.pick({ content: true }),
-    defaultValues: { content: '' },
+    defaultValues: defaultValuesCreate,
     mode: 'onBlur',
     reValidateMode: 'onBlur',
   })
 
   const isSubmitCreateItemEnabled = useIsSubmitEnabled({
+    isInitiallySubmittable: true,
     isLoading: createItem.isLoading,
     formState: formStateCreateItem,
   })
@@ -103,22 +106,24 @@ export function PostSegment({
     'right'
   )
 
-  const defaultValuesUpdate: SchemaUpdateSegment = {
-    postSegmentId: segment.id,
-    title: segment.title,
-    subtitle: segment.subtitle ?? undefined,
-  }
+  const defaultValuesUpdate: SchemaUpdateSegment = useMemo(
+    () => ({
+      postSegmentId: segment.id,
+      title: segment.title,
+      subtitle: segment.subtitle ?? undefined,
+    }),
+    [segment.id, segment.title, segment.subtitle]
+  )
 
   const {
     handleSubmit: handleSubmitUpdate,
     register: registerUpdate,
     formState: formStateUpdate,
-    reset: resetUpdate,
   } = useZodForm({
     schema: schemaUpdatePostSegment,
     defaultValues: defaultValuesUpdate,
     mode: 'onBlur',
-    reValidateMode: 'onChange',
+    reValidateMode: 'onBlur',
   })
 
   const isSubmitEnabled = useIsSubmitEnabled({
@@ -155,14 +160,6 @@ export function PostSegment({
                     title: data.title,
                     subtitle: data.subtitle,
                   })
-
-                  /*
-                   * Reset the default values to our new data.
-                   * This is done to "set" the validation to the newly
-                   * updated values.
-                   * See: https://react-hook-form.com/api/useform/reset
-                   */
-                  resetUpdate(data)
                 }
               })}
             >
@@ -262,18 +259,13 @@ export function PostSegment({
             onBlur={handleSubmitCreateItem((data) => {
               // For `onBlur`, RHF does not validate like with `onSubmit`, so we check ourselves.
               if (isSubmitCreateItemEnabled) {
-                createItem.mutate({
-                  segmentId: postSegmentId,
-                  content: data.content,
-                })
-
-                /*
-                 * Reset the default values to our new data.
-                 * This is done to "set" the validation to the newly
-                 * updated values.
-                 * See: https://react-hook-form.com/api/useform/reset
-                 */
-                resetCreateItem({ content: '' })
+                createItem.mutate(
+                  {
+                    segmentId: postSegmentId,
+                    content: data.content,
+                  },
+                  { onSuccess: () => resetCreateItem() }
+                )
               }
             })}
             className="my-4 flex w-full items-center space-x-4"

@@ -1,7 +1,7 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Popover, Transition } from '@headlessui/react'
 import { DonationProviderId } from '@prisma/client'
-import { Fragment, ReactNode } from 'react'
+import { Fragment, ReactNode, useMemo } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import { z } from 'zod'
 import {
@@ -150,32 +150,30 @@ function UserDonationsUpdates({
     })
   }
 
-  const defaultValuesUpdate: SchemaUpdateDonationLink = {
-    donationLinksToUpdate: userDonations.map((userDonation) => ({
-      donationLinkId: userDonation.donationLinkId,
-      address: userDonation.donationAddress,
-      donationProviderId: userDonation.donationProviderId,
-    })),
-  }
+  const defaultValuesUpdate: SchemaUpdateDonationLink = useMemo(
+    () => ({
+      donationLinksToUpdate: userDonations.map((userDonation) => ({
+        donationLinkId: userDonation.donationLinkId,
+        address: userDonation.donationAddress,
+        donationProviderId: userDonation.donationProviderId,
+      })),
+    }),
+    [userDonations]
+  )
 
   const {
     handleSubmit: handleSubmitUpdate,
     register: registerUpdate,
     control: controlUpdate,
     formState: formStateUpdate,
-    reset: resetUpdate,
     watch: watchUpdate,
   } = useZodForm({
     schema: schemaUpdateDonationLink,
     defaultValues: defaultValuesUpdate,
-    mode: 'onChange',
+    mode: 'onSubmit',
   })
 
-  const {
-    fields: fieldsUpdate,
-    remove: removeUpdate,
-    append: appendUpdate,
-  } = useFieldArray({
+  const { fields: fieldsUpdate, remove: removeUpdate } = useFieldArray({
     name: 'donationLinksToUpdate',
     control: controlUpdate,
   })
@@ -191,7 +189,6 @@ function UserDonationsUpdates({
     schema: schemaCreateDonationLink,
     defaultValues: defaultValuesCreate,
     mode: 'onSubmit',
-    reValidateMode: 'onChange',
   })
 
   const errorsUpdate = formStateUpdate.errors
@@ -216,14 +213,6 @@ function UserDonationsUpdates({
             updateMany.mutate({
               donationLinksToUpdate: donationLinksDirty,
             })
-
-            /*
-             * Reset the default values to our new data.
-             * This is done to "set" the validation to the newly
-             * updated values.
-             * See: https://react-hook-form.com/api/useform/reset
-             */
-            resetUpdate(data)
           })}
         >
           {/* This needs to match whatever is rendered in the form row. */}
@@ -272,8 +261,8 @@ function UserDonationsUpdates({
                   key={field.id}
                   userDonation={userDonation}
                   deleteItem={() => {
-                    deleteOneItem(field.donationLinkId)
                     removeUpdate(index)
+                    deleteOneItem(field.donationLinkId)
                   }}
                   inputDonationProviderId={inputDonationProviderId ?? null}
                   donationProviders={donationProviders.map((dP) => ({
@@ -336,25 +325,7 @@ function UserDonationsUpdates({
           createOne.mutate(
             { newDonationLink: data },
             {
-              onSuccess: async (createdDonationLink) => {
-                const { donationLinkId, address, donationProvider } =
-                  createdDonationLink
-                /**
-                 * After creation, we append the link to the existing links. Here, we take the default values of the links
-                 * as a baseline type and require all fields.
-                 */
-                const createdTransformed: Required<
-                  typeof defaultValuesUpdate['donationLinksToUpdate'][number]
-                > = {
-                  donationLinkId,
-                  address,
-                  donationProviderId: donationProvider.donationProviderId,
-                }
-                appendUpdate(createdTransformed)
-
-                // reset default values - see other `reset` comment
-                resetCreate(defaultValuesCreate)
-              },
+              onSuccess: () => resetCreate(),
             }
           )
         })}
@@ -401,6 +372,7 @@ function UserDonationsUpdates({
 
           <div className="col-span-1">
             <FormSubmit
+              isInitiallySubmittable={true}
               isLoading={updateMany.isLoading}
               formState={formStateCreate}
             >

@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { usePost } from '../../../data/use-post'
 import { schemaUpdatePostSegmentItem } from '../../../lib/schemas'
 import { trpc } from '../../../util/trpc'
@@ -43,10 +44,16 @@ export function PostSegmentItem({
     onSettled: () => setIsLoading(false),
   })
 
-  const { handleSubmit, register, formState, reset } = useZodForm({
+  const defaultValues = useMemo(
+    () => ({ segmentItemId: postSegmentItemId, content: itemContent }),
+    [itemContent, postSegmentItemId]
+  )
+
+  const { handleSubmit, register, formState } = useZodForm({
     schema: schemaUpdatePostSegmentItem,
-    defaultValues: { segmentItemId: postSegmentItemId, content: itemContent },
+    defaultValues,
     mode: 'onBlur',
+    reValidateMode: 'onBlur',
   })
 
   const isSubmitEnabled = useIsSubmitEnabled({
@@ -80,14 +87,6 @@ export function PostSegmentItem({
                   segmentItemId: postSegmentItemId,
                   content: data.content,
                 })
-
-                /*
-                 * Reset the default values to our new data.
-                 * This is done to "set" the validation to the newly
-                 * updated values.
-                 * See: https://react-hook-form.com/api/useform/reset
-                 */
-                reset(data)
               }
             })}
           >
