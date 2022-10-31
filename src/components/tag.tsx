@@ -26,24 +26,28 @@ export function TagsList({
 }): JSX.Element {
   const [animateTagsRef] = useAutoAnimate<HTMLDivElement>()
 
-  return !tags ? (
-    <NoContent>No tags</NoContent>
-  ) : (
-    <div ref={animateTagsRef} className="flex flex-wrap items-center">
-      {tags.map((tag) => (
-        <Tag
-          key={tag.tagId}
-          tag={tag}
-          onClick={onRemoveClick}
-          handleRemoving={!!onRemoveClick}
-        />
-      ))}
-      {showAddButton && onAddButtonClick && (
-        <div className="ml-2 flex flex-row items-center justify-center">
-          <ButtonAddSpecial onClick={onAddButtonClick} />
-        </div>
-      )}
-    </div>
+  return (
+    <>
+      <div ref={animateTagsRef} className="flex flex-wrap items-center">
+        {!tags || tags.length === 0 ? (
+          <NoContent>No tags</NoContent>
+        ) : (
+          tags.map((tag) => (
+            <Tag
+              key={tag.tagId}
+              tag={tag}
+              onClick={onRemoveClick}
+              handleRemoving={!!onRemoveClick}
+            />
+          ))
+        )}
+        {showAddButton && onAddButtonClick && (
+          <div className="ml-2 flex flex-row items-center justify-center">
+            <ButtonAddSpecial onClick={onAddButtonClick} />
+          </div>
+        )}
+      </div>
+    </>
   )
 }
 

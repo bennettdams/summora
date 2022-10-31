@@ -845,7 +845,7 @@ export function PostComments({
     <div ref={animateRef} className="w-full space-y-12">
       {isLoading ? (
         <LoadingAnimation />
-      ) : !comments ? (
+      ) : !comments || comments.length === 0 ? (
         <NoContent>No comments</NoContent>
       ) : (
         // For the root level tree, we use "null" as comment ID. See "createCommentTree" docs.

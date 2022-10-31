@@ -32,6 +32,8 @@ export function PostsPage({
                 Condun
               </p>
 
+              <div className="absolute top-0 h-96 w-96 rounded-full bg-dbrown opacity-80 blur-xl filter"></div>
+
               <div className="absolute z-0">
                 <Image
                   className="z-0 inline-block aspect-square rounded-full"
