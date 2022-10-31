@@ -8,7 +8,7 @@ import {
 } from '../../../services/api-service'
 import { useAuth } from '../../../services/auth-service'
 import { ROUTES } from '../../../services/routing'
-import { AppRouterTypes, trpc } from '../../../util/trpc'
+import { RouterOutput, trpc } from '../../../util/trpc'
 import { useDebounce } from '../../../util/use-debounce'
 import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
@@ -34,10 +34,9 @@ import { ViewsIcon } from '../../ViewsIcon'
 import { VoteIcon } from '../../VoteIcon'
 import { PostSegment } from './PostSegment'
 
-export type SegmentPostPage =
-  AppRouterTypes['postSegments']['byPostId']['output'][number]
+export type SegmentPostPage = RouterOutput['postSegments']['byPostId'][number]
 export type SegmentItemPostPage = SegmentPostPage['items'][number]
-type TagPostPage = AppRouterTypes['postTags']['byPostId']['output'][number]
+type TagPostPage = RouterOutput['postTags']['byPostId'][number]
 
 export function PostPage(props: PostPageProps): JSX.Element {
   const { data: post, isLoading: isLoadingPost } = trpc.posts.byPostId.useQuery(
@@ -72,7 +71,7 @@ export function PostPage(props: PostPageProps): JSX.Element {
 
 function PostPageInternal<
   // exclude null - this should be checked in the parent to allow easier hooks usage in this component
-  TPostType extends Exclude<AppRouterTypes['posts']['byPostId']['output'], null>
+  TPostType extends Exclude<RouterOutput['posts']['byPostId'], null>
 >({
   postId,
   post,
@@ -800,7 +799,7 @@ function Comment({
 }
 
 function createRootComments(
-  comments: AppRouterTypes['postComments']['byPostId']['output']
+  comments: RouterOutput['postComments']['byPostId']
 ): PostCommentTreeComment[] {
   return comments.map((comm) => ({
     ...comm,

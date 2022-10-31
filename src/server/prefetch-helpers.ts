@@ -1,4 +1,4 @@
-import { createProxySSGHelpers as createProxySSGHelpersTRPC } from '@trpc/react/ssg'
+import { createProxySSGHelpers as createProxySSGHelpersTRPC } from '@trpc/react-query/ssg'
 import superjson from 'superjson'
 import { createContextTRPC } from './context-trpc'
 import { appRouter } from './routers/_app'

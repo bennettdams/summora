@@ -1,4 +1,4 @@
-import { createProxySSGHelpers } from '@trpc/react/ssg'
+import { createProxySSGHelpers } from '@trpc/react-query/ssg'
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import type { ParsedUrlQuery } from 'querystring'
 import { UserPage } from '../../components/pages/UserPage'
