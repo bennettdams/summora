@@ -18,6 +18,7 @@ import {
   transformApiPost,
 } from '../services/api-service'
 import { createHydrationHandler } from '../services/hydration-service'
+import { trpc } from '../util/trpc'
 
 type QueryData = ApiPost
 
@@ -99,6 +100,7 @@ export function usePost(postId: string, enabled = true) {
 }
 
 function usePostMutation(postId: string) {
+  const utils = trpc.useContext()
   const queryClient = useQueryClient()
   const [queryKey] = useState<QueryKey>(() => createQueryKey(postId))
 
@@ -194,22 +196,8 @@ function usePostMutation(postId: string) {
   const updatePostSegmentImageIdMutation = useMutation(
     apiImageUploadPostSegments,
     {
-      onSuccess: (data) => {
-        if (data.result) {
-          const segmentNewImageId = data.result
-          queryClient.setQueryData<QueryData>(queryKey, (prevData) =>
-            !prevData
-              ? null
-              : {
-                  ...prevData,
-                  segments: prevData.segments.map((segment) =>
-                    segment.id === segmentNewImageId.id
-                      ? { ...segment, imageId: segmentNewImageId.imageId }
-                      : segment
-                  ),
-                }
-          )
-        }
+      onSuccess: () => {
+        utils.postSegments.byPostId.invalidate({ postId })
       },
     }
   )

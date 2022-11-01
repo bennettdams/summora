@@ -5,6 +5,7 @@ import { useAuth } from '../../services/auth-service'
 import { trpc } from '../../util/trpc'
 import { Avatar } from '../Avatar'
 import { Box } from '../Box'
+import { ButtonRemove } from '../Button'
 import { DateTime } from '../DateTime'
 import { UserDonations } from '../donation'
 import { NoContent } from '../NoContent'
@@ -49,8 +50,12 @@ function UserPageInternal({
   imageBlurDataURL: string | null
   posts: UserPostsUserPage
 }): JSX.Element {
+  const utils = trpc.useContext()
   const { data: donationLinks } = trpc.donationLink.byUserId.useQuery({
     userId,
+  })
+  const deleteAvatar = trpc.user.removeAvatar.useMutation({
+    onSuccess: () => utils.user.invalidate({ userId }),
   })
   const { userId: userIdAuth } = useAuth()
 
@@ -75,6 +80,17 @@ function UserPageInternal({
                 </span>
               </p>
             </div>
+
+            <div className="mr-4 grid place-items-center">
+              {!!imageId && (
+                <ButtonRemove
+                  onClick={() => deleteAvatar.mutate({ userId, imageId })}
+                >
+                  Delete avatar
+                </ButtonRemove>
+              )}
+            </div>
+
             <div>
               <Avatar
                 isEditable

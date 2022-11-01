@@ -43,9 +43,11 @@ export function ImageUpload({
     }
   }
 
+  const formId = `form-image-upload-${inputId}`
+
   return (
     <form
-      id={`form-image-upload-${inputId}`}
+      id={formId}
       className="group h-full w-full"
       method="post"
       encType="multipart/form-data"
@@ -66,6 +68,7 @@ export function ImageUpload({
       <input
         type="file"
         id={inputId}
+        form={formId}
         className="hidden"
         accept="image/jpg, image/jpeg, image/png"
         onChange={handleUpload}

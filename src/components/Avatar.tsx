@@ -2,7 +2,6 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { useUser } from '../data/use-user'
 import { useCloudStorage } from '../services/use-cloud-storage'
-import { useImageURL } from '../services/use-image-url'
 import { ImageUpload } from './ImageUpload'
 
 /*
@@ -72,14 +71,13 @@ function AvatarInternal({
   const [sizePixels] = useState(SIZES[size])
   const { updateUserImageId } = useUser(userId)
   const { getPublicURLAvatar } = useCloudStorage()
-  const { imageURL, replaceImage } = useImageURL({
-    imageId,
-    getPublicURL: (imageIdNotNull) =>
+  const imageURL = !imageId
+    ? null
+    : // This implementation assumes that getting the public URL does not need a remote fetch, as this runs on every rerender.
       getPublicURLAvatar({
         userId,
-        imageId: imageIdNotNull,
-      }),
-  })
+        imageId,
+      })
 
   return (
     <div className="relative inline-grid h-full w-full place-items-center">
@@ -90,11 +88,7 @@ function AvatarInternal({
             <ImageUpload
               inputId={userId}
               onUpload={async (fileToUpload) => {
-                await updateUserImageId(fileToUpload, {
-                  onSuccess: async (data) => {
-                    replaceImage(data.result?.imageId ?? null)
-                  },
-                })
+                await updateUserImageId(fileToUpload)
               }}
             />
           </span>

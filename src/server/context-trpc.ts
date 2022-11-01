@@ -9,7 +9,7 @@ import { prisma } from '../prisma/prisma'
  * @link https://trpc.io/docs/context
  */
 export async function createContextTRPC(
-  opts?: trpcNext.CreateNextContextOptions
+  opts: trpcNext.CreateNextContextOptions
 ) {
   /**
    * We could check the session here, but it would occur on every request,

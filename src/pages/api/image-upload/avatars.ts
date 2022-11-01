@@ -10,6 +10,8 @@ import { deleteAvatarInStorage } from '../../../services/use-cloud-storage'
 import { logAPI } from '../../../util/logger'
 import { createRandomId } from '../../../util/random-id'
 
+export const avatarImageIdPrefix = 'avatar'
+
 export type ApiAvatarsUpload = Prisma.PromiseReturnType<typeof updateUserImage>
 
 async function updateUserImage({
@@ -98,7 +100,7 @@ export default async function _apiImageUploadAvatars(
               })
             }
 
-            const imageIdNew = `avatar-${userId}-${createRandomId()}`
+            const imageIdNew = `${avatarImageIdPrefix}-${userId}-${createRandomId()}`
             await uploadAvatarSupabase({
               userId,
               imageId: imageIdNew,

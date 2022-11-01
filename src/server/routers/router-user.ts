@@ -1,6 +1,32 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
+import { ensureAuthorTRPC } from '../../lib/api-security'
+import { avatarImageIdPrefix } from '../../pages/api/image-upload/avatars'
+import { deleteAvatarInStorage } from '../../services/use-cloud-storage'
+import { ContextTRPC } from '../context-trpc'
 import { t } from '../trpc'
+
+async function ensureAuthor(ctx: ContextTRPC, userId: string) {
+  await ensureAuthorTRPC({
+    topic: 'user',
+    ctx,
+    cbQueryEntity: async () => {
+      const user = await ctx.prisma.user.findUnique({
+        where: { userId },
+        select: { userId: true },
+      })
+
+      if (!user?.userId) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'The user does not exist.',
+        })
+      } else {
+        return { authorId: user.userId, entity: null }
+      }
+    },
+  })
+}
 
 export const userRouter = t.router({
   // READ
@@ -25,5 +51,29 @@ export const userRouter = t.router({
       } else {
         return user
       }
+    }),
+  removeAvatar: t.procedure
+    .input(
+      z.object({
+        userId: z.string().uuid(),
+        // min. 8:   avatar prefix + ID etc.
+        imageId: z.string().startsWith(avatarImageIdPrefix).min(8),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { userId, imageId } = input
+
+      await ensureAuthor(ctx, userId)
+
+      await deleteAvatarInStorage({
+        userId,
+        imageId,
+        req: ctx.req,
+      })
+
+      await ctx.prisma.user.update({
+        where: { userId },
+        data: { imageId: null, imageBlurDataURL: null },
+      })
     }),
 })

@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import { usePost } from '../data/use-post'
 import { useCloudStorage } from '../services/use-cloud-storage'
-import { useImageURL } from '../services/use-image-url'
 import { ImageUpload } from './ImageUpload'
 import { Modal, useModal } from './modal'
 
@@ -20,15 +19,14 @@ export function PostSegmentImage({
 }): JSX.Element {
   const { updatePostSegmentImageId } = usePost(postId)
   const { getPublicURLPostSegmentImage } = useCloudStorage()
-  const { imageURL, replaceImage } = useImageURL({
-    imageId,
-    getPublicURL: (imageIdNotNull) =>
+  const imageURL = !imageId
+    ? null
+    : // This implementation assumes that getting the public URL does not need a remote fetch, as this runs on every rerender.
       getPublicURLPostSegmentImage({
         postId,
         authorId,
-        imageId: imageIdNotNull,
-      }),
-  })
+        imageId,
+      })
 
   const modalControls = useModal()
 
@@ -45,18 +43,11 @@ export function PostSegmentImage({
             <ImageUpload
               inputId={postSegmentId}
               onUpload={async (fileToUpload) => {
-                await updatePostSegmentImageId(
-                  {
-                    postId,
-                    postSegmentId,
-                    postSegmentImageFile: fileToUpload,
-                  },
-                  {
-                    onSuccess: async (data) => {
-                      replaceImage(data.result?.imageId ?? null)
-                    },
-                  }
-                )
+                await updatePostSegmentImageId({
+                  postId,
+                  postSegmentId,
+                  postSegmentImageFile: fileToUpload,
+                })
               }}
             />
           </span>
