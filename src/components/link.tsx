@@ -1,5 +1,5 @@
-import { ReactNode } from 'react'
 import NextLink from 'next/link'
+import { ReactNode } from 'react'
 
 export function Link({
   to,
@@ -19,7 +19,9 @@ export function Link({
     </a>
   ) : (
     <NextLink href={to}>
-      <div className="cursor-pointer">{children}</div>
+      <a href={to}>
+        <div className="cursor-pointer">{children}</div>
+      </a>
     </NextLink>
   )
 }
