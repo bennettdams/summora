@@ -63,13 +63,18 @@ export const donationLinkRouter = t.router({
 
       const userIdAuth = await checkAuthTRPC(ctx)
 
+      if (!newDonationLink.donationProviderId)
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Donation provider is not given.',
+        })
+
       return await ctx.prisma.donationLink.create({
         data: {
           address: newDonationLink.address,
           donationProvider: {
             connect: {
-              donationProviderId:
-                newDonationLink.donationProviderId ?? undefined,
+              donationProviderId: newDonationLink.donationProviderId,
             },
           },
           User: { connect: { userId: userIdAuth } },

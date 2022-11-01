@@ -88,9 +88,11 @@ export const postCommentsRouter = t.router({
         data: {
           Post: { connect: { id: postId } },
           author: { connect: { userId: userIdAuth } },
-          commentParent: {
-            connect: { commentId: commentParentId ?? undefined },
-          },
+          commentParent: !commentParentId
+            ? undefined
+            : {
+                connect: { commentId: commentParentId },
+              },
           text,
         },
       })
