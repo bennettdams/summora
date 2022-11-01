@@ -6,6 +6,17 @@ export const generalFormErrorKey = 'general-form-error-key'
 export const addressSchema = z.string().min(1).max(128)
 const donationProviderIdSchema = z.nativeEnum(DonationProviderId)
 
+export const schemaUpdatePost = z
+  .object({
+    postId: z.string().cuid(),
+    title: z.string().min(1).optional(),
+    subtitle: z.string().optional(),
+  })
+  .refine((data) => !!data.title || !!data.subtitle, {
+    message: 'Either title or subtitle should be changed.',
+    path: [generalFormErrorKey],
+  })
+
 export const schemaUpdateDonationLink = z.object({
   donationLinksToUpdate: z.array(
     z

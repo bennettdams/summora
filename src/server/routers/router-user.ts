@@ -63,6 +63,12 @@ export const userRouter = t.router({
     .mutation(async ({ input, ctx }) => {
       const { userId, imageId } = input
 
+      if (!ctx.req)
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'No request given, cannot determine authentication.',
+        })
+
       await ensureAuthor(ctx, userId)
 
       await deleteAvatarInStorage({

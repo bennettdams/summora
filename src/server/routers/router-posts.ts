@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { ensureAuthorTRPC } from '../../lib/api-security'
+import { schemaUpdatePost } from '../../lib/schemas'
 import { ContextTRPC } from '../context-trpc'
 import { t } from '../trpc'
 
@@ -66,6 +67,17 @@ export const postsRouter = t.router({
         select: defaultPostSelect,
       })
     }),
+  // EDIT
+  edit: t.procedure.input(schemaUpdatePost).mutation(async ({ input, ctx }) => {
+    const { postId, title, subtitle } = input
+
+    await ensureAuthor(ctx, postId)
+
+    await ctx.prisma.post.update({
+      where: { id: postId },
+      data: { title, subtitle },
+    })
+  }),
   // CREATE SEGMENT
   createSegment: t.procedure
     .input(z.object({ postId: z.string().cuid() }))

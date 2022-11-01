@@ -1,6 +1,8 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-import { FormEvent, useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { z } from 'zod'
 import { usePost } from '../../../data/use-post'
+import { schemaUpdatePost } from '../../../lib/schemas'
 import { PostPageProps } from '../../../pages/post/[postId]'
 import {
   apiIncrementPostViews,
@@ -12,17 +14,19 @@ import { RouterOutput, trpc } from '../../../util/trpc'
 import { useDebounce } from '../../../util/use-debounce'
 import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
+import { useZodForm } from '../../../util/use-zod-form'
 import { Avatar } from '../../Avatar'
 import { Box } from '../../Box'
-import { Button, ButtonAdd } from '../../Button'
+import { ButtonAdd } from '../../Button'
 import { CategorySelect } from '../../CategorySelect'
 import { CommentsIcon } from '../../CommentsIcon'
 import { DateTime } from '../../DateTime'
 import { DonateButton } from '../../donation'
 import { DropdownItem } from '../../DropdownSelect'
 import { EditOverlay } from '../../EditOverlay'
+import { Form, FormLabel, Input, useIsSubmitEnabled } from '../../form'
 import { FormInput } from '../../FormInput'
-import { IconCheck, IconDate, IconReply, IconTrash, IconX } from '../../Icon'
+import { IconDate, IconReply, IconTrash } from '../../Icon'
 import { Link } from '../../link'
 import { LoadingAnimation } from '../../LoadingAnimation'
 import { NoContent } from '../../NoContent'
@@ -37,6 +41,8 @@ import { PostSegment } from './PostSegment'
 export type SegmentPostPage = RouterOutput['postSegments']['byPostId'][number]
 export type SegmentItemPostPage = SegmentPostPage['items'][number]
 type TagPostPage = RouterOutput['postTags']['byPostId'][number]
+
+type SchemaUpdate = z.infer<typeof schemaUpdatePost>
 
 export function PostPage(props: PostPageProps): JSX.Element {
   const { data: post, isLoading: isLoadingPost } = trpc.posts.byPostId.useQuery(
@@ -134,46 +140,41 @@ function PostPageInternal<
   }
 
   // POST HEADER
-  const [isPostHeaderEditable, setIsPostHeaderEditable] = useState(false)
-  const refPostHeaderEdit = useRef<HTMLFormElement>(null)
-  useOnClickOutside(refPostHeaderEdit, () => setIsPostHeaderEditable(false))
+  const [isPostHeaderEditMode, setIsPostHeaderEditMode] = useState(false)
+  const refPostHeaderEdit = useRef<HTMLDivElement>(null)
+  useOnClickOutside(refPostHeaderEdit, () => setIsPostHeaderEditMode(false))
 
-  const formId = `formPost-${postId}`
+  const edit = trpc.posts.edit.useMutation({
+    onSuccess: async () => {
+      await utils.posts.byPostId.invalidate({ postId })
+      await utils.userPosts.byUserId.invalidate({ userId: post.authorId })
+    },
+  })
 
-  const [inputs, setInputs] = useState<{
-    title?: string | null
-    subtitle?: string | null
-  } | null>()
+  const defaultValuesUpdate: SchemaUpdate = useMemo(
+    () => ({
+      postId,
+      title: post.title,
+      subtitle: post.subtitle ?? undefined,
+    }),
+    [postId, post.title, post.subtitle]
+  )
 
-  function resetEditMode() {
-    setIsPostHeaderEditable(false)
-    setInputs(null)
-  }
+  const {
+    handleSubmit: handleSubmitUpdate,
+    register: registerUpdate,
+    formState: formStateUpdate,
+  } = useZodForm({
+    schema: schemaUpdatePost,
+    defaultValues: defaultValuesUpdate,
+    mode: 'onBlur',
+    reValidateMode: 'onBlur',
+  })
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-
-    if (inputs) {
-      let postToUpdate: ApiPostUpdateRequestBody | null = null
-      if (inputs.title) {
-        postToUpdate = { title: inputs.title }
-      }
-      if (inputs.subtitle) {
-        postToUpdate = !postToUpdate
-          ? { subtitle: inputs.subtitle }
-          : { ...postToUpdate, subtitle: inputs.subtitle }
-      }
-
-      if (postToUpdate) {
-        await updatePost({
-          postId,
-          postToUpdate,
-        })
-      }
-    }
-
-    resetEditMode()
-  }
+  const isSubmitEnabled = useIsSubmitEnabled({
+    isLoading: edit.isLoading,
+    formState: formStateUpdate,
+  })
 
   // TAGS
   const { data: tags, isLoading: isLoadingTags } =
@@ -257,92 +258,92 @@ function PostPageInternal<
       {/* POST HEADER */}
       <PageSection hideTopMargin>
         <div className="w-full text-center">
-          {isPostHeaderEditable ? (
-            <form
-              ref={refPostHeaderEdit}
-              id={formId}
-              onSubmit={handleSubmit}
-              className="mx-auto mb-10 w-full lg:w-1/2"
+          <EditOverlay
+            isEnabled={isPostEditable && !isPostHeaderEditMode}
+            onClick={() => setIsPostHeaderEditMode(true)}
+          >
+            <Form
+              className="mx-auto mb-10 w-full space-y-4"
+              onBlur={handleSubmitUpdate((data) => {
+                // For `onBlur`, RHF does not validate like with `onSubmit`, so we check ourselves.
+                if (isSubmitEnabled) {
+                  edit.mutate({
+                    postId,
+                    title: data.title,
+                    subtitle: data.subtitle,
+                  })
+                }
+              })}
             >
-              <div className="flex items-center">
-                <Button
-                  icon={<IconCheck />}
-                  isSubmit
-                  onClick={() => {
-                    // TODO placeholder, remove when we have FormSubmit button
-                  }}
-                >
-                  Save
-                </Button>
-                <Button
-                  icon={<IconX />}
-                  onClick={(e) => {
-                    // prevent form submit
-                    e.preventDefault()
-                    resetEditMode()
-                  }}
-                >
-                  Cancel
-                </Button>
-              </div>
-
-              <div className="mt-4 space-y-2">
-                <FormInput
-                  inputId={`${formId}-title`}
-                  placeholder="Title.."
-                  initialValue={post.title}
-                  onChange={(input) =>
-                    setInputs((prev) => ({ ...prev, title: input }))
-                  }
-                  formId={formId}
-                >
-                  Title
-                </FormInput>
-
-                <FormInput
-                  inputId={`${formId}-subtitle`}
-                  placeholder="Subtitle.."
-                  initialValue={post.subtitle ?? ''}
-                  onChange={(input) =>
-                    setInputs((prev) => ({ ...prev, subtitle: input }))
-                  }
-                  autoFocus={false}
-                  formId={formId}
-                >
-                  Subtitle
-                </FormInput>
-              </div>
-            </form>
-          ) : (
-            <EditOverlay
-              isEnabled={isPostEditable}
-              onClick={() => setIsPostHeaderEditable(true)}
-            >
-              <div className="relative">
-                {/* LIKES */}
-                <div className="absolute right-0 z-10 mr-10 grid h-full place-items-center md:mr-20">
-                  <PostLikes iconSize="big" postId={postId} userId={userId} />
-                </div>
-
-                {/* POST TITLE */}
+              <div className="flex w-full flex-row text-xl">
+                {/*
+                 * We use conditional CSS instead of conditional rendering so the children are not re-/mounted.
+                 * This is e.g. needed because there is bug in React where unmounting does not trigger `onBlur`.
+                 * See: https://github.com/facebook/react/issues/12363
+                 */}
                 <div
-                  onClick={() =>
-                    isPostEditable && setIsPostHeaderEditable(true)
-                  }
+                  className={`mx-auto space-y-6 lg:w-1/2 ${
+                    isPostHeaderEditMode ? 'block' : 'hidden'
+                  }`}
+                  ref={refPostHeaderEdit}
                 >
-                  <h2 className="font-bold text-2xl leading-7 sm:text-3xl">
-                    <span className="text-dlila">{post.title}</span>
-                  </h2>
+                  <div>
+                    <FormLabel>Title</FormLabel>
+                    <Input
+                      {...registerUpdate('title')}
+                      hasLabel
+                      blurOnEnterPressed
+                      placeholder="Enter a title.."
+                      autoFocus={!defaultValuesUpdate.title}
+                      defaultValue={defaultValuesUpdate.title}
+                      validationErrorMessage={
+                        formStateUpdate.errors.title?.message
+                      }
+                    />
+                  </div>
+                  <div>
+                    <FormLabel>Subtitle</FormLabel>
+                    <Input
+                      {...registerUpdate('subtitle')}
+                      hasLabel
+                      blurOnEnterPressed
+                      placeholder="Enter a subtitle.."
+                      defaultValue={defaultValuesUpdate.subtitle}
+                      validationErrorMessage={
+                        formStateUpdate.errors.subtitle?.message
+                      }
+                    />
+                  </div>
                 </div>
 
-                <div className="mt-4 flex-1">
-                  {!isPostHeaderEditable && (
+                <div
+                  className={`relative flex grow flex-col justify-center p-4 ${
+                    isPostHeaderEditMode ? 'hidden' : 'block'
+                  }`}
+                >
+                  {/* LIKES */}
+                  <div className="absolute right-0 z-10 grid h-full place-items-center md:mr-14">
+                    <PostLikes
+                      iconSize="huge"
+                      postId={postId}
+                      userId={userId}
+                    />
+                  </div>
+
+                  {/* POST TITLE */}
+                  <div>
+                    <h2 className="font-bold text-2xl leading-7 sm:text-3xl">
+                      <span className="text-dlila">{post.title}</span>
+                    </h2>
+                  </div>
+
+                  <div className="flex-1">
                     <span className="italic text-dorange">{post.subtitle}</span>
-                  )}
+                  </div>
                 </div>
               </div>
-            </EditOverlay>
-          )}
+            </Form>
+          </EditOverlay>
         </div>
       </PageSection>
 
@@ -831,7 +832,7 @@ export function PostComments({
 
   function invalidate() {
     // TODO We could only invalidate the comment (or root comment?) instead of all comments
-    utils.postComments.byPostId.invalidate()
+    utils.postComments.byPostId.invalidate({ postId })
   }
 
   const upvote = trpc.postComments.upvote.useMutation({

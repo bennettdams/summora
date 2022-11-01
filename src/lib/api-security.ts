@@ -54,7 +54,7 @@ export async function checkAuthTRPC(ctx: ContextTRPC): Promise<string> {
   if (!ctx.req) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: 'The request object does not exist.',
+      message: 'No request given, cannot determine authentication.',
     })
   } else {
     const { data, error } = await getUserByCookie(ctx.req)
