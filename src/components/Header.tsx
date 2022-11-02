@@ -1,22 +1,22 @@
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 import { useRouter } from 'next/router'
-import { FormEvent, Fragment, useState } from 'react'
-import {
-  apiCreatePost,
-  ApiPostsCreateRequestBody,
-} from '../services/api-service'
+import { Fragment } from 'react'
+import { z } from 'zod'
+import { FormDefaultValueUndefinable, schemaCreatePost } from '../lib/schemas'
 import { useAuth } from '../services/auth-service'
 import { ROUTES } from '../services/routing'
+import { trpc } from '../util/trpc'
 import { useRouteChange } from '../util/use-route-change'
+import { useZodForm } from '../util/use-zod-form'
 import { Avatar } from './Avatar'
 import { Button } from './Button'
-import { CategorySelect } from './CategorySelect'
-import { FormInput } from './FormInput'
+import { Form, FormFieldError, FormSelect, FormSubmit, Input } from './form'
 import { IconEdit, IconSignIn } from './Icon'
 import { Link } from './link'
 import { LoadingAnimation } from './LoadingAnimation'
 import { Modal, useModal } from './modal'
+import { NoContent } from './NoContent'
 
 const NAV_ROUTES = [
   { name: 'home', href: ROUTES.home },
@@ -232,38 +232,27 @@ export function Header(): JSX.Element {
   )
 }
 
-const formId = 'create-post-form'
+type SchemaCreatePost = z.infer<typeof schemaCreatePost>
+
+const defaultValuesCreate: FormDefaultValueUndefinable<
+  SchemaCreatePost,
+  'categoryId'
+> = { title: '', categoryId: undefined }
 
 function CreatePostModal() {
   const { isOpen, open, close } = useModal()
   const router = useRouter()
 
-  const [inputs, setInputs] = useState<{
-    title: string | null
-    subtitle: string | null
-    categoryId: string | null
-  }>({ title: null, subtitle: null, categoryId: null })
+  const createPost = trpc.posts.create.useMutation()
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
+  const { handleSubmit, register, formState, reset, control } = useZodForm({
+    schema: schemaCreatePost,
+    defaultValues: defaultValuesCreate,
+    mode: 'onSubmit',
+  })
 
-    if (inputs && inputs.title && inputs.subtitle && inputs.categoryId) {
-      const postToCreate: ApiPostsCreateRequestBody = {
-        postToCreate: {
-          title: inputs.title,
-          subtitle: inputs.subtitle,
-          categoryId: inputs.categoryId,
-        },
-      }
-
-      const response = await apiCreatePost(postToCreate)
-      const postCreated = response.result
-      if (postCreated) {
-        close()
-        await router.push(ROUTES.post(postCreated.id))
-      }
-    }
-  }
+  const { data: postCategories, isLoading: isLoadingCategories } =
+    trpc.postCategories.all.useQuery()
 
   return (
     <>
@@ -285,56 +274,74 @@ function CreatePostModal() {
           </p>
         </div>
 
-        <div className="mx-auto mt-10 w-full first-letter:mb-10 lg:w-3/4">
-          <form className="w-full" id={formId} onSubmit={handleSubmit}>
-            <div className="mt-4 space-y-10">
-              <FormInput
-                inputId={`${formId}-title`}
-                placeholder="Title.."
-                initialValue=""
-                onChange={(input) => {
-                  if (input) {
-                    setInputs((prev) => ({ ...prev, title: input }))
-                  }
-                }}
-                formId={formId}
-              >
-                Title
-              </FormInput>
-
-              <FormInput
-                inputId={`${formId}-subtitle`}
-                placeholder="Subtitle.."
-                initialValue=""
-                onChange={(input) =>
-                  setInputs((prev) => ({ ...prev, subtitle: input }))
+        <div className="mx-auto mt-10 mb-10 w-full">
+          <Form
+            onSubmit={handleSubmit((data) => {
+              createPost.mutate(
+                {
+                  title: data.title,
+                  subtitle: data.subtitle,
+                  categoryId: data.categoryId,
+                },
+                {
+                  onSuccess: async (result) => {
+                    close()
+                    reset()
+                    await router.push(ROUTES.post(result.id))
+                  },
                 }
-                autoFocus={false}
-                formId={formId}
-              >
-                Subtitle
-              </FormInput>
+              )
+            })}
+            className="my-4 flex w-full flex-col space-y-8 px-20"
+          >
+            <Input
+              {...register('title')}
+              placeholder="Enter a title.."
+              validationErrorMessage={formState.errors.title?.message}
+            />
+            <Input
+              {...register('subtitle')}
+              placeholder="Enter a subtitle.."
+              validationErrorMessage={formState.errors.subtitle?.message}
+            />
 
-              {/* fixed height to give the dropdown room to grow */}
-              <div className="h-60">
-                <CategorySelect
-                  onSelect={(selectedCategory) =>
-                    setInputs((prev) => ({
-                      ...prev,
-                      categoryId: selectedCategory.itemId,
-                    }))
-                  }
-                  shouldShowDropdown={true}
+            {isLoadingCategories ? (
+              <LoadingAnimation />
+            ) : !postCategories ? (
+              <NoContent>No categories</NoContent>
+            ) : (
+              <>
+                <FormSelect
+                  control={control}
+                  name="categoryId"
+                  items={postCategories.map((category) => ({
+                    itemId: category.id,
+                    label: category.name,
+                  }))}
+                  unselectedLabel="Please select a category."
                 />
-              </div>
-            </div>
+                <FormFieldError
+                  fieldName="categoryId"
+                  errors={formState.errors}
+                />
+                <FormFieldError
+                  fieldName="general-form-error-key"
+                  errors={formState.errors}
+                />
+              </>
+            )}
 
-            <div className="mx-auto grid place-items-center">
-              <Button isSubmit isBig onClick={handleSubmit}>
+            <div className="mx-auto">
+              <FormSubmit
+                isBig={true}
+                isInitiallySubmittable={true}
+                formState={formState}
+                isLoading={createPost.isLoading}
+              >
                 Create
-              </Button>
+              </FormSubmit>
             </div>
-          </form>
+          </Form>
         </div>
       </Modal>
     </>

@@ -17,7 +17,13 @@ export type FormDefaultValueUndefinable<
 export const generalFormErrorKey = 'general-form-error-key'
 
 export const addressSchema = z.string().min(1).max(128)
-const donationProviderIdSchema = z.nativeEnum(DonationProviderId)
+const donationProviderIdSchema = z.nativeEnum(DonationProviderId, {
+  required_error: 'Provider required',
+})
+const postCategorySchema = z
+  .string({ required_error: 'Category required' })
+  .min(1)
+  .max(128)
 
 export const schemaUpdatePost = z
   .object({
@@ -29,6 +35,12 @@ export const schemaUpdatePost = z
     message: 'Either title or subtitle should be changed.',
     path: [generalFormErrorKey],
   })
+
+export const schemaCreatePost = z.object({
+  title: z.string().min(1),
+  subtitle: z.string().optional(),
+  categoryId: postCategorySchema,
+})
 
 export const schemaUpdateDonationLink = z.object({
   donationLinksToUpdate: z.array(
