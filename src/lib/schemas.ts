@@ -1,5 +1,18 @@
 import { DonationProviderId } from '@prisma/client'
 import { z } from 'zod'
+import { OmitStrict, Undefinable } from '../types/util-types'
+
+/**
+ * This is a hack for a schema that needs an `undefined` field on the input which is not allowed to be `undefined` for the output.
+ * This situation e.g. exists on fields of an initial form to create something. e.g. we don't want to have a category selected when
+ * a new post is created, so the field is `undefined`.
+ */
+export type FormDefaultValueUndefinable<
+  TSchema extends z.ZodTypeAny['_output'],
+  TKeyToOverwrite extends keyof TSchema
+> = OmitStrict<TSchema, TKeyToOverwrite> & {
+  [K in keyof TSchema as TKeyToOverwrite]: Undefinable<TSchema[TKeyToOverwrite]>
+}
 
 export const generalFormErrorKey = 'general-form-error-key'
 
