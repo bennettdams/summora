@@ -5,7 +5,7 @@ import { Fragment, ReactNode, useMemo } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import { z } from 'zod'
 import {
-  FormDefaultValueUndefinable,
+  FormDefaultValuesUndefinable,
   schemaCreateDonationLink,
   schemaUpdateDonationLink,
 } from '../lib/schemas'
@@ -115,7 +115,7 @@ function UserDonationUpdateRow({
 type SchemaUpdateDonationLink = z.infer<typeof schemaUpdateDonationLink>
 type SchemaCreateDonationLink = z.infer<typeof schemaCreateDonationLink>
 
-const defaultValuesCreate: FormDefaultValueUndefinable<
+const defaultValuesCreate: FormDefaultValuesUndefinable<
   SchemaCreateDonationLink,
   'donationProviderId'
 > = { address: '', donationProviderId: undefined }

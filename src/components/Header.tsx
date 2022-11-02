@@ -3,7 +3,7 @@ import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 import { useRouter } from 'next/router'
 import { Fragment } from 'react'
 import { z } from 'zod'
-import { FormDefaultValueUndefinable, schemaCreatePost } from '../lib/schemas'
+import { FormDefaultValuesUndefinable, schemaCreatePost } from '../lib/schemas'
 import { useAuth } from '../services/auth-service'
 import { ROUTES } from '../services/routing'
 import { trpc } from '../util/trpc'
@@ -234,7 +234,7 @@ export function Header(): JSX.Element {
 
 type SchemaCreatePost = z.infer<typeof schemaCreatePost>
 
-const defaultValuesCreate: FormDefaultValueUndefinable<
+const defaultValuesCreate: FormDefaultValuesUndefinable<
   SchemaCreatePost,
   'categoryId'
 > = { title: '', categoryId: undefined }

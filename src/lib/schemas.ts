@@ -7,7 +7,7 @@ import { OmitStrict, Undefinable } from '../types/util-types'
  * This situation e.g. exists on fields of an initial form to create something. e.g. we don't want to have a category selected when
  * a new post is created, so the field is `undefined`.
  */
-export type FormDefaultValueUndefinable<
+export type FormDefaultValuesUndefinable<
   TSchema extends z.ZodTypeAny['_output'],
   TKeyToOverwrite extends keyof TSchema
 > = OmitStrict<TSchema, TKeyToOverwrite> & {
@@ -60,13 +60,9 @@ export const schemaUpdateDonationLink = z.object({
 export const schemaCreateDonationLink = z
   .object({
     address: addressSchema,
-    /**
-     * FIXME this is only nullable for the initial form. We don't want to have a default provider selected when
-     * a new donation link is created. This is only implicitly type-safe via the `refine` below.
-     */
-    donationProviderId: donationProviderIdSchema.nullable(),
+    donationProviderId: donationProviderIdSchema,
   })
-  .refine((data) => !!data && !!data.address && !!data.donationProviderId, {
+  .refine((data) => !!data.address && !!data.donationProviderId, {
     message: 'Both address and donation provider should be filled in.',
     path: [generalFormErrorKey],
   })
