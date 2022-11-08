@@ -7,8 +7,9 @@ export const validExtensions = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG']
 export const maxFileSizeInBytes = 5 * 1024 * 1024
 
 const validExtensionsBeautified = validExtensions
-  .map((ext) => ext.toUpperCase())
-  .filter((item, pos) => validExtensions.indexOf(item) == pos)
+  .map((extension) => extension.toUpperCase())
+  // remove duplicates
+  .filter((extension, index, arr) => arr.indexOf(extension) === index)
   .join(' | ')
 
 export function ImageUpload({
