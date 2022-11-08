@@ -55,7 +55,7 @@ function UserPageInternal({
     userId,
   })
   const deleteAvatar = trpc.user.removeAvatar.useMutation({
-    onSuccess: () => utils.user.invalidate({ userId }),
+    onSuccess: () => utils.user.byUserId.invalidate({ userId }),
   })
   const { userId: userIdAuth } = useAuth()
 
