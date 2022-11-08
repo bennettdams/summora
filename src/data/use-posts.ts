@@ -19,15 +19,13 @@ export function prefillServer(queryClient: QueryClient, posts: ApiPosts): void {
  * Provides data of posts from the API.
  */
 export function usePosts() {
-  const { isLoading, data } = useQuery<QueryData>(
+  const { isLoading, data } = useQuery<QueryData>({
     queryKey,
-    async () => (await apiFetchPosts()).result ?? [],
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchInterval: false,
-    }
-  )
+    queryFn: async () => (await apiFetchPosts()).result ?? [],
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchInterval: false,
+  })
 
   return {
     isLoading,

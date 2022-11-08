@@ -43,16 +43,14 @@ export function prefillServer(
  * @param enabled `false` is e.g. used by components that just want to like/unlike a post (to not trigger a fetch)
  */
 export function usePost(postId: string, enabled = true) {
-  const { data, isLoading, isError } = useQuery<QueryData>(
-    createQueryKey(postId),
-    async () => (await apiFetchPost(postId)).result ?? null,
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchInterval: false,
-      enabled,
-    }
-  )
+  const { data, isLoading, isError } = useQuery<QueryData>({
+    queryKey: createQueryKey(postId),
+    queryFn: async () => (await apiFetchPost(postId)).result ?? null,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchInterval: false,
+    enabled,
+  })
 
   const {
     // post

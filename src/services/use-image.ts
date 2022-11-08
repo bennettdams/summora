@@ -23,9 +23,9 @@ export function useImage(
     isError,
     isFetching,
     refetch: refetchQuery,
-  } = useQuery<QueryData>(
-    [queryKey, imageId],
-    async () => {
+  } = useQuery<QueryData>({
+    queryKey: [queryKey, imageId],
+    queryFn: async () => {
       if (!imageId) {
         throw Error('Trying to fetch image, but no image ID.')
       } else {
@@ -41,14 +41,12 @@ export function useImage(
         }
       }
     },
-    {
-      // only execute query via "refetch", needed when user uploads a new image
-      keepPreviousData: false,
-      refetchOnWindowFocus: false,
-      refetchInterval: false,
-      enabled: false,
-    }
-  )
+    // only execute query via "refetch", needed when user uploads a new image
+    keepPreviousData: false,
+    refetchOnWindowFocus: false,
+    refetchInterval: false,
+    enabled: false,
+  })
 
   // This is only executed in one case: The consumer has rendered that already has an existing image ID.
   const [publicURL] = useState<string | null>(
