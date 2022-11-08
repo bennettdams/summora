@@ -3,6 +3,8 @@ import { IconAdd } from '../components/Icon'
 import { LoadingAnimation } from '../components/LoadingAnimation'
 
 export const validExtensions = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG']
+// 5 MB
+export const maxFileSizeInBytes = 5 * 1024 * 1024
 
 export function ImageUpload({
   inputId,
@@ -12,13 +14,15 @@ export function ImageUpload({
   inputId: string
 }): JSX.Element {
   const [isUploading, setIsUploading] = useState(false)
+  const [failedUploadFileSizeInBytes, setFailedUploadFileSizeInBytes] =
+    useState<number | null>(null)
 
   async function handleUpload(event: ChangeEvent<HTMLInputElement>) {
     try {
       setIsUploading(true)
 
       if (!event.target.files || event.target.files.length === 0) {
-        throw new Error('You must select an image to upload.')
+        console.error('You must select an image to upload.')
       } else {
         const file = event.target.files[0]
 
@@ -31,7 +35,10 @@ export function ImageUpload({
             throw new Error(
               `You provided a ${fileExtension} file, but only ${validExtensions} are allowed.`
             )
+          } else if (file.size > maxFileSizeInBytes) {
+            setFailedUploadFileSizeInBytes(file.size)
           } else {
+            setFailedUploadFileSizeInBytes(null)
             await onUpload(file)
           }
         }
@@ -64,6 +71,16 @@ export function ImageUpload({
           <IconAdd className="duration-200 group-hover:scale-125" size="huge" />
         )}
       </label>
+
+      {failedUploadFileSizeInBytes && (
+        <div>
+          <p className="mt-2 rounded bg-red-400 p-2 text-center text-dlight shadow-md">
+            File is too big. Please provide a file with max.{' '}
+            {maxFileSizeInBytes / 1024 / 1024} MB. You provided one with{' '}
+            {Math.round(failedUploadFileSizeInBytes / 1024 / 1024)} MB.
+          </p>
+        </div>
+      )}
 
       <input
         type="file"

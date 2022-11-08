@@ -1,9 +1,9 @@
-import { NextApiRequest } from 'next'
-import fs from 'fs'
 import { Files, IncomingForm } from 'formidable'
-import { FORM_DATA_FILE_KEY } from '../util/http'
+import fs from 'fs'
+import { NextApiRequest } from 'next'
 import sharp from 'sharp'
-import { validExtensions } from '../components/ImageUpload'
+import { maxFileSizeInBytes, validExtensions } from '../components/ImageUpload'
+import { FORM_DATA_FILE_KEY } from '../util/http'
 
 const validMimeTypes = validExtensions.map((extension) => `image/${extension}`)
 
@@ -50,8 +50,7 @@ export async function parseMultipartForm(req: NextApiRequest): Promise<Buffer> {
       const form = new IncomingForm({
         multiples: false,
         allowEmptyFiles: false,
-        // 30 mb
-        maxFileSize: 30 * 1024 * 1024,
+        maxFileSize: maxFileSizeInBytes,
       })
 
       form.onPart = function (part) {

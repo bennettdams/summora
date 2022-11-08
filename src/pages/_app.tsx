@@ -1,3 +1,4 @@
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { ErrorBoundary } from '../components/error'
@@ -7,7 +8,6 @@ import { AuthContextProvider } from '../services/auth-service'
 import { supabase } from '../services/supabase/supabase-service'
 import '../styles/globals.css'
 import { trpc } from '../util/trpc'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 function App({ Component, pageProps }: AppProps): JSX.Element {
   // const [queryClient] = useState(() => new QueryClient())

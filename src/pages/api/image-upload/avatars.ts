@@ -126,7 +126,7 @@ export default async function _apiImageUploadAvatars(
             `[API] Error while uploading avatar image for user ${userId}:`,
             error
           )
-          return res.status(401).json({ error })
+          return res.status(400).json({ error })
         }
       }
       default: {
