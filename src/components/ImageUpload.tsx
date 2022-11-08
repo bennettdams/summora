@@ -6,6 +6,11 @@ export const validExtensions = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG']
 // 5 MB
 export const maxFileSizeInBytes = 5 * 1024 * 1024
 
+const validExtensionsBeautified = validExtensions
+  .map((ext) => ext.toUpperCase())
+  .filter((item, pos) => validExtensions.indexOf(item) == pos)
+  .join(' | ')
+
 export function ImageUpload({
   inputId,
   onUpload,
@@ -14,8 +19,9 @@ export function ImageUpload({
   inputId: string
 }): JSX.Element {
   const [isUploading, setIsUploading] = useState(false)
-  const [failedUploadFileSizeInBytes, setFailedUploadFileSizeInBytes] =
-    useState<number | null>(null)
+  const [failedUploadMessage, setFailedUploadMessage] = useState<string | null>(
+    null
+  )
 
   async function handleUpload(event: ChangeEvent<HTMLInputElement>) {
     try {
@@ -32,13 +38,19 @@ export function ImageUpload({
           const fileExtension = file.name.split('.').pop()
 
           if (!fileExtension || !validExtensions.includes(fileExtension)) {
-            throw new Error(
-              `You provided a ${fileExtension} file, but only ${validExtensions} are allowed.`
+            setFailedUploadMessage(
+              `You provided a ${fileExtension} file, but only the following are allowed: ${validExtensionsBeautified}`
             )
           } else if (file.size > maxFileSizeInBytes) {
-            setFailedUploadFileSizeInBytes(file.size)
+            setFailedUploadMessage(
+              `File is too big. Please provide a file with max. ${
+                maxFileSizeInBytes / 1024 / 1024
+              } MB. You provided one with ${Math.round(
+                file.size / 1024 / 1024
+              )} MB.`
+            )
           } else {
-            setFailedUploadFileSizeInBytes(null)
+            setFailedUploadMessage(null)
             await onUpload(file)
           }
         }
@@ -72,12 +84,10 @@ export function ImageUpload({
         )}
       </label>
 
-      {failedUploadFileSizeInBytes && (
+      {failedUploadMessage && (
         <div>
           <p className="mt-2 rounded bg-red-400 p-2 text-center text-dlight shadow-md">
-            File is too big. Please provide a file with max.{' '}
-            {maxFileSizeInBytes / 1024 / 1024} MB. You provided one with{' '}
-            {Math.round(failedUploadFileSizeInBytes / 1024 / 1024)} MB.
+            {failedUploadMessage}
           </p>
         </div>
       )}
