@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { usePost } from '../../../data/use-post'
 import { schemaUpdatePostSegmentItem } from '../../../lib/schemas'
 import { trpc } from '../../../util/trpc'
 import { useZodForm } from '../../../util/use-zod-form'
@@ -25,7 +24,6 @@ export function PostSegmentItem({
   setIsLoading(isLoading: boolean): void
   onSuccessfulSubmit(): void
 }): JSX.Element {
-  const { isLoading } = usePost(postId)
   const utils = trpc.useContext()
 
   function invalidate() {
@@ -43,6 +41,8 @@ export function PostSegmentItem({
     onMutate: () => setIsLoading(true),
     onSettled: () => setIsLoading(false),
   })
+
+  const isLoading = update.isLoading || deleteOne.isLoading
 
   const defaultValues = useMemo(
     () => ({ segmentItemId: postSegmentItemId, content: itemContent }),

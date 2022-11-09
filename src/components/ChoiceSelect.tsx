@@ -2,7 +2,7 @@ import { RadioGroup } from '@headlessui/react'
 import type { Dispatch, ReactNode, SetStateAction } from 'react'
 import { useState } from 'react'
 
-export type Choice<TChoiceId extends string> = {
+type Choice<TChoiceId extends string> = {
   choiceId: TChoiceId
   label: string
   description?: string

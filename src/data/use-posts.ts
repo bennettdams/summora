@@ -5,7 +5,7 @@ import { createHydrationHandler } from '../services/hydration-service'
 
 export const queryKey: QueryKey = ['posts']
 
-export type QueryData = ApiPosts
+type QueryData = ApiPosts
 
 export const hydrationHandler =
   createHydrationHandler<QueryData>(transformApiPosts)

@@ -11,7 +11,6 @@ import {
   ArrowCircleDownIcon,
   ArrowCircleRightIcon,
   CalendarIcon,
-  CheckIcon,
   ChevronDownIcon as ChevronDownIconSolid,
   CurrencyDollarIcon as CurrencyDollarIconSolid,
   EyeIcon,
@@ -23,7 +22,6 @@ import {
   TrashIcon,
   ViewGridAddIcon,
   ViewGridIcon,
-  XIcon,
 } from '@heroicons/react/solid'
 import { MouseEvent } from 'react'
 
@@ -89,50 +87,6 @@ export function IconEdit({
 }: IconProps): JSX.Element {
   return (
     <PencilIcon
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
-}
-
-export function IconCheck({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <CheckIcon
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
-}
-
-export function IconX({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <XIcon
       className={createClassNames({
         size,
         className,

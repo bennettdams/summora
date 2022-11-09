@@ -39,7 +39,7 @@ const SIZES = {
   large: 180,
 } as const
 
-export type AvatarSize = keyof typeof SIZES
+type AvatarSize = keyof typeof SIZES
 
 type ColorVariant = 'brown' | 'orange'
 

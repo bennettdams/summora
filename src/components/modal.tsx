@@ -4,7 +4,7 @@ import { OmitStrict } from '../types/util-types'
 import { Button } from './Button'
 import { Title } from './Title'
 
-export interface ModalControl {
+interface ModalControl {
   isOpen: boolean
   open: () => void
   close: () => void

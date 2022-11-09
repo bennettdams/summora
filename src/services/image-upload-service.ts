@@ -27,9 +27,7 @@ export async function convertImageForUpload(
  *  - resizes to a max width or max height, based on what exceeds the limit
  *  - converts the image to JPEG with lower quality
  */
-export async function optimizeAndConvertImage(
-  fileParsed: Buffer
-): Promise<Buffer> {
+async function optimizeAndConvertImage(fileParsed: Buffer): Promise<Buffer> {
   return await sharp(fileParsed)
     // resized when width or height exceed limit
     .resize(maxImageWidthPx, maxImageHeightPx, { withoutEnlargement: true })
@@ -43,7 +41,7 @@ export async function optimizeAndConvertImage(
  * Parse file form request payload.
  * This only works for a single file in the form data.
  */
-export async function parseMultipartForm(req: NextApiRequest): Promise<Buffer> {
+async function parseMultipartForm(req: NextApiRequest): Promise<Buffer> {
   try {
     // parse form with a Promise wrapper
     const files = await new Promise<Files>((resolve, reject) => {
