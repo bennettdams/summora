@@ -12,13 +12,11 @@ import {
   apiCreatePostSegmentItem,
   apiDeletePostSegment,
   apiFetchPost,
-  apiImageUploadPostSegments,
   ApiPostUpdateRequestBody,
   apiUpdatePost,
   transformApiPost,
 } from '../services/api-service'
 import { createHydrationHandler } from '../services/hydration-service'
-import { trpc } from '../util/trpc'
 
 type QueryData = ApiPost
 
@@ -58,7 +56,6 @@ export function usePost(postId: string, enabled = true) {
     // segment
     createPostSegmentMutation,
     deletePostSegmentMutation,
-    updatePostSegmentImageIdMutation,
     // segment item
     createPostSegmentItemMutation,
   } = usePostMutation(postId)
@@ -72,7 +69,6 @@ export function usePost(postId: string, enabled = true) {
       // segment
       createPostSegmentMutation.isLoading ||
       deletePostSegmentMutation.isLoading ||
-      updatePostSegmentImageIdMutation.isLoading ||
       // segment item
       createPostSegmentItemMutation.isLoading,
     isError:
@@ -82,7 +78,6 @@ export function usePost(postId: string, enabled = true) {
       // segment
       createPostSegmentMutation.isError ||
       deletePostSegmentMutation.isError ||
-      updatePostSegmentImageIdMutation.isError ||
       // segment item
       createPostSegmentItemMutation.isError,
     // TODO really mutateAsync?
@@ -91,14 +86,12 @@ export function usePost(postId: string, enabled = true) {
     // segment
     createPostSegment: createPostSegmentMutation.mutateAsync,
     deletePostSegment: deletePostSegmentMutation.mutateAsync,
-    updatePostSegmentImageId: updatePostSegmentImageIdMutation.mutateAsync,
     // segment item
     createPostSegmentItem: createPostSegmentItemMutation.mutateAsync,
   }
 }
 
 function usePostMutation(postId: string) {
-  const utils = trpc.useContext()
   const queryClient = useQueryClient()
   const [queryKey] = useState<QueryKey>(() => createQueryKey(postId))
 
@@ -191,15 +184,6 @@ function usePostMutation(postId: string) {
     },
   })
 
-  const updatePostSegmentImageIdMutation = useMutation(
-    apiImageUploadPostSegments,
-    {
-      onSuccess: () => {
-        utils.postSegments.byPostId.invalidate({ postId })
-      },
-    }
-  )
-
   // ITEM
   const createPostSegmentItemMutation = useMutation(apiCreatePostSegmentItem, {
     onSuccess: (data) => {
@@ -227,7 +211,6 @@ function usePostMutation(postId: string) {
     // segment
     createPostSegmentMutation,
     deletePostSegmentMutation,
-    updatePostSegmentImageIdMutation,
     // segment item
     createPostSegmentItemMutation,
   }

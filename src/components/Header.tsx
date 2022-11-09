@@ -3,7 +3,6 @@ import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 import { useRouter } from 'next/router'
 import { Fragment } from 'react'
 import { z } from 'zod'
-import { useOwnUser } from '../data/use-own-user'
 import { FormDefaultValuesUndefinable, schemaCreatePost } from '../lib/schemas'
 import { useAuth } from '../services/auth-service'
 import { ROUTES } from '../services/routing'
@@ -29,7 +28,20 @@ function classNames(...classes: unknown[]) {
 }
 
 function UserNavbarInternal({ userId }: { userId: string }) {
-  const { user, isLoading, isError } = useOwnUser(userId)
+  const {
+    data: user,
+    isLoading,
+    isError,
+  } = trpc.user.byUserId.useQuery(
+    { userId },
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchInterval: false,
+      keepPreviousData: true,
+    }
+  )
+
   return (
     <Menu.Button className="flex rounded-full text-sm hover:bg-dorange focus:outline-none focus:ring-2 focus:ring-dlight">
       <div className="flex flex-row items-center text-white">
@@ -39,7 +51,7 @@ function UserNavbarInternal({ userId }: { userId: string }) {
           <p>Error loading user.</p>
         ) : (
           <>
-            <p className="hidden px-2 sm:block">{user?.username}</p>
+            <p className="hidden px-2 sm:block">{user.username}</p>
             <div className="flex items-center sm:ml-2">
               <Avatar
                 userId={userId}

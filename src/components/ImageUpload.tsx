@@ -15,9 +15,11 @@ const validExtensionsBeautified = validExtensions
 export function ImageUpload({
   inputId,
   onUpload,
+  isLoadingUpload = false,
 }: {
   onUpload: (fileToUpload: File) => Promise<void>
   inputId: string
+  isLoadingUpload: boolean
 }): JSX.Element {
   const [isUploading, setIsUploading] = useState(false)
   const [failedUploadMessage, setFailedUploadMessage] = useState<string | null>(
@@ -76,7 +78,7 @@ export function ImageUpload({
         className="grid h-full w-full cursor-pointer place-items-center"
         htmlFor={inputId}
       >
-        {isUploading ? (
+        {isUploading || isLoadingUpload ? (
           <div className="grid h-full w-full place-items-center rounded-full bg-dbrown bg-opacity-80 p-4">
             <LoadingAnimation />
           </div>

@@ -1,6 +1,8 @@
+import { useMutation } from '@tanstack/react-query'
 import Image from 'next/image'
-import { usePost } from '../data/use-post'
+import { apiImageUploadPostSegments } from '../services/api-service'
 import { useCloudStorage } from '../services/use-cloud-storage'
+import { trpc } from '../util/trpc'
 import { ImageUpload } from './ImageUpload'
 import { Modal, useModal } from './modal'
 
@@ -17,7 +19,13 @@ export function PostSegmentImage({
   imageId: string | null
   isEditable?: boolean
 }): JSX.Element {
-  const { updatePostSegmentImageId } = usePost(postId)
+  const utils = trpc.useContext()
+  const updatePostSegmentImageIdMutation = useMutation({
+    mutationFn: apiImageUploadPostSegments,
+    onSuccess: () => {
+      utils.postSegments.byPostId.invalidate({ postId })
+    },
+  })
   const { getPublicURLPostSegmentImage } = useCloudStorage()
   const imageURL = !imageId
     ? null
@@ -43,12 +51,13 @@ export function PostSegmentImage({
             <ImageUpload
               inputId={postSegmentId}
               onUpload={async (fileToUpload) => {
-                await updatePostSegmentImageId({
+                updatePostSegmentImageIdMutation.mutate({
                   postId,
                   postSegmentId,
                   postSegmentImageFile: fileToUpload,
                 })
               }}
+              isLoadingUpload={updatePostSegmentImageIdMutation.isLoading}
             />
           </span>
         </div>

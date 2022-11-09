@@ -1,8 +1,30 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useState } from 'react'
-import { useOwnUser } from '../data/use-own-user'
+import { queryKey as queryKeyPosts } from '../data/use-posts'
+import { apiImageUploadAvatars } from '../services/api-service'
 import { useCloudStorage } from '../services/use-cloud-storage'
+import { trpc } from '../util/trpc'
 import { ImageUpload } from './ImageUpload'
+
+function useUserImageMutation(userId: string) {
+  const utils = trpc.useContext()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: apiImageUploadAvatars,
+    onSuccess: () => {
+      // USER DATA
+      utils.user.byUserId.invalidate({ userId })
+
+      // USER POSTS DATA
+      utils.userPosts.byUserId.invalidate({ userId })
+
+      // POSTS DATA
+      queryClient.invalidateQueries(queryKeyPosts)
+    },
+  })
+}
 
 /*
  * For the love of god, this file is very similar to "PostSegmentImage".
@@ -69,7 +91,7 @@ function AvatarInternal({
   placeholderColorVariant = 'brown',
 }: Props): JSX.Element {
   const [sizePixels] = useState(SIZES[size])
-  const { updateUserImageId } = useOwnUser(userId)
+  const updateUserImageIdMutation = useUserImageMutation(userId)
   const { getPublicURLAvatar } = useCloudStorage()
   const imageURL = !imageId
     ? null
@@ -88,8 +110,9 @@ function AvatarInternal({
             <ImageUpload
               inputId={userId}
               onUpload={async (fileToUpload) => {
-                await updateUserImageId(fileToUpload)
+                updateUserImageIdMutation.mutate(fileToUpload)
               }}
+              isLoadingUpload={updateUserImageIdMutation.isLoading}
             />
           </span>
         </div>
