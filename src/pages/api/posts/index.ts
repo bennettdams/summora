@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { dbCreatePost, dbFindPosts, DbFindPosts } from '../../../lib/db'
 import { ApiPostsCreateRequestBody } from '../../../services/api-service'
-import { getUserByCookie } from '../../../services/auth-service'
+import { getUserFromRequest } from '../../../services/auth-service'
 import { logAPI } from '../../../util/logger'
 
 export type ApiPosts = DbFindPosts
@@ -24,23 +24,21 @@ export default async function _apiPosts(
       break
     }
     case 'POST': {
-      const { userAuth, error } = await getUserByCookie(req)
+      const { userIdAuth, error } = await getUserFromRequest(req, res)
 
       if (error) {
         return res.status(401).json({
           message: `Error while getting user from cookie: ${error.message}`,
         })
-      } else if (!userAuth) {
+      } else if (!userIdAuth) {
         return res.status(401).json({
           message: 'Error while authenticating: No user for that cookie.',
         })
       } else {
-        const userId = userAuth.id
-
         const { postToCreate }: ApiPostsCreateRequestBody = requestBody
 
         const postCreated: ApiPostsCreate = await dbCreatePost(
-          userId,
+          userIdAuth,
           postToCreate
         )
 

@@ -108,6 +108,7 @@ export default async function _apiPostSegment(
                 authorId,
                 imageId,
                 req,
+                res,
               })
             }
 

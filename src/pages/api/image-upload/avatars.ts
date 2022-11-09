@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { getPlaiceholder } from 'plaiceholder'
 import { prisma } from '../../../prisma/prisma'
 import { ApiImageUploadAvatarsRequestBody } from '../../../services/api-service'
-import { getUserByCookie } from '../../../services/auth-service'
+import { getUserFromRequest } from '../../../services/auth-service'
 import { convertImageForUpload } from '../../../services/image-upload-service'
 import { uploadAvatarSupabase } from '../../../services/supabase/supabase-service'
 import { deleteAvatarInStorage } from '../../../services/use-cloud-storage'
@@ -61,19 +61,14 @@ export default async function _apiImageUploadAvatars(
 
   logAPI('IMAGE_UPLOAD_AVATARS', method)
 
-  const { data: user, error } = await getUserByCookie(req)
+  const { userIdAuth, error } = await getUserFromRequest(req, res)
 
   if (error) {
     return res
       .status(401)
       .json({ message: `Error while authenticating: ${error.message}` })
-  } else if (!user) {
-    return res.status(401).json({
-      message:
-        'Error while authenticating: No user for that cookie in database.',
-    })
   } else {
-    const userId = user.id
+    const userId = userIdAuth
 
     switch (method) {
       case 'POST': {
@@ -97,6 +92,7 @@ export default async function _apiImageUploadAvatars(
                 userId,
                 imageId: imageIdOld,
                 req,
+                res,
               })
             }
 
@@ -106,6 +102,7 @@ export default async function _apiImageUploadAvatars(
               imageId: imageIdNew,
               avatarFileParsed: fileForUpload,
               req,
+              res,
             })
 
             const { base64: imageBlurDataURL } = await getPlaiceholder(

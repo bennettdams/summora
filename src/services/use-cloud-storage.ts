@@ -1,4 +1,4 @@
-import { NextApiRequest } from 'next'
+import { NextApiRequest, NextApiResponse } from 'next'
 import { useCallback } from 'react'
 import {
   deleteAvatarSupabase,
@@ -14,6 +14,7 @@ export async function deletePostSegmentImageInStorage(params: {
   authorId: string
   imageId: string
   req: NextApiRequest
+  res: NextApiResponse
 }): Promise<void> {
   return await deletePostSegmentImageSupabase(params)
 }
@@ -22,6 +23,7 @@ export async function deleteAvatarInStorage(params: {
   userId: string
   imageId: string
   req: NextApiRequest
+  res: NextApiResponse
 }): Promise<void> {
   return await deleteAvatarSupabase(params)
 }

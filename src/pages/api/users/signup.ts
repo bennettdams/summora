@@ -47,12 +47,13 @@ export default async function _apiUsersSignUp(
           console.warn(message)
           return res.status(409).json({ message })
         } else {
-          const { user, error } = await signUp(email, password)
+          const { data, error } = await signUp({ email, password })
+
           if (error) {
             console.error('[API] Error while sign up (Supabase):', error)
             return res.status(500).json({ error })
-          } else if (user) {
-            const userId = user.id
+          } else if (data.user) {
+            const userId = data.user.id
             let userCreated
 
             try {

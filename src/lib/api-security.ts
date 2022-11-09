@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ContextTRPC } from '../server/context-trpc'
-import { getUserByCookie } from '../services/auth-service'
+import { getUserFromRequest } from '../services/auth-service'
 
 /**
  * Used to ensure the requester is the author of a given topic (like post, comment, etc.).
@@ -32,14 +32,14 @@ export async function ensureAuthor<
    */
   cbExecute: (entity: TEntityType) => Promise<void>
 }) {
-  const { data: user, error } = await getUserByCookie(req)
+  const { userIdAuth, error } = await getUserFromRequest(req, res)
 
-  if (!user || error) {
+  if (!userIdAuth || error) {
     res.status(401).json({ message: 'Not signed in' })
   } else {
     const { authorId: postAuthorId, entity } = await cbQueryEntity()
 
-    if (postAuthorId !== user.id) {
+    if (postAuthorId !== userIdAuth) {
       res.status(403).end(`You're not the author of this ${topic}.`)
     } else {
       await cbExecute(entity)
@@ -47,18 +47,14 @@ export async function ensureAuthor<
   }
 }
 
-/**
- * @returns userIdAuth
- */
 export async function checkAuthTRPC(ctx: ContextTRPC): Promise<string> {
-  if (!ctx.req) {
+  if (!ctx.req || !ctx.res) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: 'No request given, cannot determine authentication.',
     })
   } else {
-    const { data, error } = await getUserByCookie(ctx.req)
-    const userIdAuth = data?.id ?? null
+    const { userIdAuth, error } = await getUserFromRequest(ctx.req, ctx.res)
 
     if (!userIdAuth || !!error) {
       throw new TRPCError({

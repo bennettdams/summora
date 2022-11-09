@@ -1,24 +1,28 @@
+import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs'
+import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
+import { useState } from 'react'
 import { ErrorBoundary } from '../components/error'
 import { Footer } from '../components/Footer'
 import { Header } from '../components/Header'
-import { AuthContextProvider } from '../services/auth-service'
-import { supabase } from '../services/supabase/supabase-service'
 import '../styles/globals.css'
 import { trpc } from '../util/trpc'
 
 function App({ Component, pageProps }: AppProps): JSX.Element {
   // const [queryClient] = useState(() => new QueryClient())
 
+  // Create a new Supabase browser client on every first render.
+  const [supabaseClient] = useState(() => createBrowserSupabaseClient())
+
   return (
     <ErrorBoundary>
       <ReactQueryDevtools initialIsOpen={true} />
-      {/* tRPC already brings the `QueryClientProvider` */}
-      {/* https://github.com/trpc/trpc/discussions/1594#discussioncomment-2303573 */}
-      {/* <QueryClientProvider client={queryClient}> */}
-      <AuthContextProvider supabaseClient={supabase}>
+      <SessionContextProvider supabaseClient={supabaseClient}>
+        {/* tRPC already brings the `QueryClientProvider` */}
+        {/* https://github.com/trpc/trpc/discussions/1594#discussioncomment-2303573 */}
+        {/* <QueryClientProvider client={queryClient}> */}
         <Head>
           <title>Condun</title>
           <link rel="icon" href="/favicon.ico" />
@@ -39,8 +43,8 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
 
           <Footer />
         </div>
-      </AuthContextProvider>
-      {/* </QueryClientProvider> */}
+        {/* </QueryClientProvider> */}
+      </SessionContextProvider>
     </ErrorBoundary>
   )
 }

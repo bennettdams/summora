@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../../prisma/prisma'
 import { ApiImageUploadPostSegmentsRequestBody } from '../../../../services/api-service'
-import { getUserByCookie } from '../../../../services/auth-service'
+import { getUserFromRequest } from '../../../../services/auth-service'
 import { convertImageForUpload } from '../../../../services/image-upload-service'
 import { uploadPostSegmentImageSupabase } from '../../../../services/supabase/supabase-service'
 import { deletePostSegmentImageInStorage } from '../../../../services/use-cloud-storage'
@@ -67,20 +67,18 @@ export default async function _apiImageUploadPostSegment(
   ) {
     res.status(500).end('Post ID or post segment ID wrong format!')
   } else {
-    const { data: user, error } = await getUserByCookie(req)
+    const { userIdAuth, error } = await getUserFromRequest(req, res)
 
     if (error) {
       return res
         .status(401)
         .json({ message: `Error while authenticating: ${error.message}` })
-    } else if (!user) {
+    } else if (!userIdAuth) {
       return res.status(401).json({
         message:
           'Error while authenticating: No user for that cookie in database.',
       })
     } else {
-      const userId = user.id
-
       switch (method) {
         case 'POST': {
           try {
@@ -95,9 +93,9 @@ export default async function _apiImageUploadPostSegment(
               return res.status(404).json({
                 message: `Postsegment ${postSegmentId} not found.`,
               })
-            } else if (postSegmentDb.Post.authorId !== userId) {
+            } else if (postSegmentDb.Post.authorId !== userIdAuth) {
               return res.status(404).json({
-                message: `User ${userId} is not the author of the post for post segment ${postSegmentId}.`,
+                message: `User ${userIdAuth} is not the author of the post for post segment ${postSegmentId}.`,
               })
             } else {
               // delete old image
@@ -108,16 +106,18 @@ export default async function _apiImageUploadPostSegment(
                   authorId: postSegmentDb.Post.authorId,
                   imageId: imageIdOld,
                   req,
+                  res,
                 })
               }
 
               const imageIdNew = `segment-${postSegmentId}-${createRandomId()}`
               await uploadPostSegmentImageSupabase({
                 postId,
-                authorId: userId,
+                authorId: userIdAuth,
                 imageId: imageIdNew,
                 postSegmentImageFileParsed: fileForUpload,
                 req,
+                res,
               })
 
               const segmentUpdatedNewImageId = await updatePostSegmentImageId({
