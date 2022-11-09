@@ -1,4 +1,3 @@
-import { useUser } from '../../data/use-user'
 import { useUserPosts } from '../../data/use-user-posts'
 import { UserPageProps } from '../../pages/user/[userId]'
 import { useAuth } from '../../services/auth-service'
@@ -8,27 +7,42 @@ import { Box } from '../Box'
 import { ButtonRemove } from '../Button'
 import { DateTime } from '../DateTime'
 import { UserDonations } from '../donation'
+import { LoadingAnimation } from '../LoadingAnimation'
 import { NoContent } from '../NoContent'
 import { Page, PageSection } from '../Page'
 import { PostsList } from '../post'
 import { StatisticsCard } from '../StatisticsCard'
 
-type QueryReturnPosts = ReturnType<typeof useUserPosts>
-type UserPostsUserPage = QueryReturnPosts['posts']
-
 export function UserPage(props: UserPageProps): JSX.Element {
-  const { user } = useUser(props.userId)
-  const { posts } = useUserPosts(props.userId)
+  const {
+    data: user,
+    isLoading,
+    isError,
+  } = trpc.user.byUserId.useQuery(
+    { userId: props.userId },
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchInterval: false,
+    }
+  )
 
-  return !user ? (
-    <NoContent>No user</NoContent>
-  ) : (
-    <UserPageInternal
-      {...user}
-      userId={props.userId}
-      posts={posts}
-      userStatistics={props.userStatistics}
-    />
+  return (
+    <Page>
+      {isLoading ? (
+        <LoadingAnimation />
+      ) : isError ? (
+        <p>Error loading user.</p>
+      ) : !user ? (
+        <NoContent>No user</NoContent>
+      ) : (
+        <UserPageInternal
+          {...user}
+          userId={props.userId}
+          userStatistics={props.userStatistics}
+        />
+      )}
+    </Page>
   )
 }
 
@@ -39,7 +53,6 @@ function UserPageInternal({
   updatedAt,
   imageId,
   imageBlurDataURL,
-  posts,
   userStatistics,
 }: UserPageProps & {
   userId: string
@@ -48,8 +61,8 @@ function UserPageInternal({
   updatedAt: Date
   imageId: string | null
   imageBlurDataURL: string | null
-  posts: UserPostsUserPage
 }): JSX.Element {
+  const { posts, isLoading: isLoadingPosts } = useUserPosts(userId)
   const utils = trpc.useContext()
   const { data: donationLinks } = trpc.donationLink.byUserId.useQuery({
     userId,
@@ -60,7 +73,7 @@ function UserPageInternal({
   const { userId: userIdAuth } = useAuth()
 
   return (
-    <Page>
+    <>
       <PageSection>
         <Box>
           <div className="flex">
@@ -192,28 +205,28 @@ function UserPageInternal({
       </PageSection>
 
       <PageSection label="Posts">
-        <PostsList
-          posts={
-            !posts
-              ? null
-              : posts.map((post) => ({
-                  id: post.id,
-                  categoryTitle: post.category.name,
-                  title: post.title,
-                  subtitle: post.subtitle,
-                  updatedAt: post.updatedAt,
-                  author: {
-                    id: post.authorId,
-                    username: post.author.username,
-                    imageId: post.author.imageId,
-                    imageBlurDataURL: post.author.imageBlurDataURL,
-                  },
-                  noOfViews: post.noOfViews,
-                  noOfComments: post._count.comments,
-                }))
-          }
-        />
+        {isLoadingPosts ? (
+          <LoadingAnimation />
+        ) : (
+          <PostsList
+            posts={posts.map((post) => ({
+              id: post.id,
+              categoryTitle: post.category.name,
+              title: post.title,
+              subtitle: post.subtitle,
+              updatedAt: post.updatedAt,
+              author: {
+                id: post.authorId,
+                username: post.author.username,
+                imageId: post.author.imageId,
+                imageBlurDataURL: post.author.imageBlurDataURL,
+              },
+              noOfViews: post.noOfViews,
+              noOfComments: post._count.comments,
+            }))}
+          />
+        )}
       </PageSection>
-    </Page>
+    </>
   )
 }

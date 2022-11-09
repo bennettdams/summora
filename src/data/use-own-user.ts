@@ -3,7 +3,7 @@ import { apiImageUploadAvatars } from '../services/api-service'
 import { trpc } from '../util/trpc'
 import { queryKey as queryKeyPosts } from './use-posts'
 
-export function useUser(userId: string) {
+export function useOwnUser(userId: string) {
   const { data, isLoading, isError } = trpc.user.byUserId.useQuery(
     { userId },
     {

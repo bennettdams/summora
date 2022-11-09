@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { useState } from 'react'
-import { useUser } from '../data/use-user'
+import { useOwnUser } from '../data/use-own-user'
 import { useCloudStorage } from '../services/use-cloud-storage'
 import { ImageUpload } from './ImageUpload'
 
@@ -69,7 +69,7 @@ function AvatarInternal({
   placeholderColorVariant = 'brown',
 }: Props): JSX.Element {
   const [sizePixels] = useState(SIZES[size])
-  const { updateUserImageId } = useUser(userId)
+  const { updateUserImageId } = useOwnUser(userId)
   const { getPublicURLAvatar } = useCloudStorage()
   const imageURL = !imageId
     ? null

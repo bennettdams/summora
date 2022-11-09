@@ -3,6 +3,7 @@ import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 import { useRouter } from 'next/router'
 import { Fragment } from 'react'
 import { z } from 'zod'
+import { useOwnUser } from '../data/use-own-user'
 import { FormDefaultValuesUndefinable, schemaCreatePost } from '../lib/schemas'
 import { useAuth } from '../services/auth-service'
 import { ROUTES } from '../services/routing'
@@ -27,15 +28,42 @@ function classNames(...classes: unknown[]) {
   return classes.filter(Boolean).join(' ')
 }
 
+function UserNavbarInternal({ userId }: { userId: string }) {
+  const { user, isLoading, isError } = useOwnUser(userId)
+  return (
+    <Menu.Button className="flex rounded-full text-sm hover:bg-dorange focus:outline-none focus:ring-2 focus:ring-dlight">
+      <div className="flex flex-row items-center text-white">
+        {isLoading ? (
+          <LoadingAnimation />
+        ) : isError || !user ? (
+          <p>Error loading user.</p>
+        ) : (
+          <>
+            <p className="hidden px-2 sm:block">{user?.username}</p>
+            <div className="flex items-center sm:ml-2">
+              <Avatar
+                userId={userId}
+                username={user.username ?? ''}
+                imageId={user.imageId ?? null}
+                imageBlurDataURL={user.imageBlurDataURL ?? null}
+                size="small"
+                placeholderColorVariant="orange"
+              />
+            </div>
+          </>
+        )}
+      </div>
+    </Menu.Button>
+  )
+}
+
 function UserNavbar() {
-  const { userAuth, user, isLoading: isLoadingAuth, signOut } = useAuth()
+  const { userId, signOut } = useAuth()
 
   return (
     <Menu as="div" className="relative">
       <div className="grid place-items-end md:min-w-[150px]">
-        {isLoadingAuth ? (
-          <LoadingAnimation />
-        ) : userAuth === null && !isLoadingAuth ? (
+        {!userId ? (
           <Link to={ROUTES.signIn}>
             {/* TODO Should be a ButtonNav */}
             <Button
@@ -46,24 +74,7 @@ function UserNavbar() {
             </Button>
           </Link>
         ) : (
-          userAuth !== null &&
-          !isLoadingAuth && (
-            <Menu.Button className="flex rounded-full text-sm hover:bg-dorange focus:outline-none focus:ring-2 focus:ring-dlight">
-              <div className="flex flex-row items-center text-white">
-                <p className="hidden px-2 sm:block">{user?.username}</p>
-                <div className="flex items-center sm:ml-2">
-                  <Avatar
-                    userId={userAuth.id}
-                    username={user?.username ?? ''}
-                    imageId={user?.imageId ?? null}
-                    imageBlurDataURL={user?.imageBlurDataURL ?? null}
-                    size="small"
-                    placeholderColorVariant="orange"
-                  />
-                </div>
-              </div>
-            </Menu.Button>
-          )
+          <UserNavbarInternal userId={userId} />
         )}
       </div>
 
@@ -76,9 +87,9 @@ function UserNavbar() {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        {userAuth && (
+        {userId && (
           <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-            <Link to={ROUTES.user(userAuth.id)}>
+            <Link to={ROUTES.user(userId)}>
               <Menu.Item>
                 {({ active }) => (
                   <span
