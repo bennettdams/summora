@@ -70,7 +70,7 @@ function UserPageInternal({
   const deleteAvatar = trpc.user.removeAvatar.useMutation({
     onSuccess: () => utils.user.byUserId.invalidate({ userId }),
   })
-  const { userId: userIdAuth } = useAuth()
+  const { userIdAuth } = useAuth()
   const isOwnUser = userId === userIdAuth
 
   return (
@@ -80,7 +80,6 @@ function UserPageInternal({
           <div className="flex">
             <div className="grow">
               <h2 className="text-3xl">{username}</h2>
-              <p className="mt-8">User ID {userId}</p>
               <p>
                 <span>Member since</span>
                 <span className="ml-2 text-lg">

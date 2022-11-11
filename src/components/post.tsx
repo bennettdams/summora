@@ -37,7 +37,7 @@ type PostsPostsList =
 type PostPostsList = NonNullable<PostsPostsList>[number]
 
 export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
-  const { userId } = useAuth()
+  const { userIdAuth } = useAuth()
 
   const choiceSelectControl = useChoiceSelect(
     [
@@ -69,7 +69,7 @@ export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
           className="mt-10 grid w-full grid-cols-1 gap-20 xl:grid-cols-2"
         >
           {posts.map((post) => (
-            <PostsListItem key={post.id} post={post} userId={userId} />
+            <PostsListItem key={post.id} post={post} userId={userIdAuth} />
           ))}
         </div>
       ) : (
@@ -78,7 +78,7 @@ export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
           className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:gap-12"
         >
           {posts.map((post) => (
-            <PostsListItemShort key={post.id} post={post} userId={userId} />
+            <PostsListItemShort key={post.id} post={post} userId={userIdAuth} />
           ))}
         </div>
       )}

@@ -70,12 +70,12 @@ function UserNavbarInternal({ userId }: { userId: string }) {
 }
 
 function UserNavbar() {
-  const { userId, signOut } = useAuth()
+  const { userIdAuth, signOut } = useAuth()
 
   return (
     <Menu as="div" className="relative">
       <div className="grid place-items-end md:min-w-[150px]">
-        {!userId ? (
+        {!userIdAuth ? (
           <Link to={ROUTES.signIn}>
             {/* TODO Should be a ButtonNav */}
             <Button
@@ -86,7 +86,7 @@ function UserNavbar() {
             </Button>
           </Link>
         ) : (
-          <UserNavbarInternal userId={userId} />
+          <UserNavbarInternal userId={userIdAuth} />
         )}
       </div>
 
@@ -99,9 +99,9 @@ function UserNavbar() {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        {userId && (
+        {userIdAuth && (
           <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-            <Link to={ROUTES.user(userId)}>
+            <Link to={ROUTES.user(userIdAuth)}>
               <Menu.Item>
                 {({ active }) => (
                   <span

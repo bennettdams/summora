@@ -55,7 +55,7 @@ export function PostPage(props: PostPageProps): JSX.Element {
       postId: props.postId,
     }
   )
-  const { userId } = useAuth()
+  const { userIdAuth } = useAuth()
 
   const [hasViewsBeenIncremented, setHasViewBeenIncremented] = useState(
     () => false
@@ -74,7 +74,11 @@ export function PostPage(props: PostPageProps): JSX.Element {
       ) : !post ? (
         <NoContent>No post</NoContent>
       ) : (
-        <PostPageInternal post={post} postId={props.postId} userId={userId} />
+        <PostPageInternal
+          post={post}
+          postId={props.postId}
+          userId={userIdAuth}
+        />
       )}
     </Page>
   )

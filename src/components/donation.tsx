@@ -411,7 +411,7 @@ export function UserDonations({
       {isEditMode === true ? (
         <UserDonationsUpdates userId={userId} userDonations={userDonations} />
       ) : userDonations.length === 0 ? (
-        <NoContent>No donation links.</NoContent>
+        <NoContent>This user has not provided any donation links.</NoContent>
       ) : (
         userDonations.map((userDonation) => (
           <DonationLink

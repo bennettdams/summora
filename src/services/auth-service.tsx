@@ -67,7 +67,7 @@ export function useAuth() {
   }
 
   return {
-    userId: userAuth?.id ?? null,
+    userIdAuth: userAuth?.id ?? null,
     signInWithEmailAndPassword,
     signUpWithEmailAndPassword,
     signOut,
