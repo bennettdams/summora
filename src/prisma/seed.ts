@@ -234,7 +234,7 @@ const postCategories: Prisma.PostCategoryCreateInput[] = [
   { id: 'music', name: 'Music', description: '..' },
   { id: 'gaming', name: 'Gaming', description: '..' },
   { id: 'pc-electronics', name: 'PC & Electronics', description: '..' },
-  { id: 'household', name: 'Electronic', description: '..' },
+  { id: 'household', name: 'Household', description: '..' },
   { id: 'animals', name: 'Animals', description: '..' },
   { id: 'nature', name: 'Nature', description: '..' },
   { id: 'beauty', name: 'Beauty', description: '..' },

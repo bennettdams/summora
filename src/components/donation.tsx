@@ -281,6 +281,9 @@ function UserDonationsUpdates({
                         label: provider.name,
                       }))}
                       unselectedLabel="Please select a provider."
+                      validationErrorMessage={
+                        formStateUpdate.errors.donationLinksToUpdate?.message
+                      }
                     />
                   }
                 >

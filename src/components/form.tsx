@@ -182,12 +182,14 @@ export function FormSelect<TFieldValues extends FieldValues>({
   items,
   unselectedLabel,
   validationErrorMessage,
+  onChangeExternal,
 }: {
   control: Control<TFieldValues>
   name: FieldPath<TFieldValues>
   items: DropdownItem[]
   unselectedLabel: string
   validationErrorMessage?: string
+  onChangeExternal?: (selectedId: string) => void
 }): JSX.Element {
   return (
     <div className="relative">
@@ -201,6 +203,7 @@ export function FormSelect<TFieldValues extends FieldValues>({
             items={items}
             onChangeSelection={(selectedItemId) => {
               fieldSelection.onChange(selectedItemId)
+              onChangeExternal?.(selectedItemId)
             }}
           />
         )}

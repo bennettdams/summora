@@ -1,13 +1,12 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { z } from 'zod'
-import { usePost } from '../../../data/use-post'
-import { schemaUpdatePost } from '../../../lib/schemas'
-import { PostPageProps } from '../../../pages/post/[postId]'
 import {
-  apiIncrementPostViews,
-  ApiPostUpdateRequestBody,
-} from '../../../services/api-service'
+  schemaUpdatePost,
+  schemaUpdatePostCategory,
+} from '../../../lib/schemas'
+import { PostPageProps } from '../../../pages/post/[postId]'
+import { apiIncrementPostViews } from '../../../services/api-service'
 import { useAuth } from '../../../services/auth-service'
 import { ROUTES } from '../../../services/routing'
 import { RouterOutput, trpc } from '../../../util/trpc'
@@ -18,15 +17,20 @@ import { useZodForm } from '../../../util/use-zod-form'
 import { Avatar } from '../../Avatar'
 import { Box } from '../../Box'
 import { ButtonAdd } from '../../Button'
-import { CategorySelect } from '../../CategorySelect'
 import { CommentsIcon } from '../../CommentsIcon'
 import { DateTime } from '../../DateTime'
 import { DonateButton } from '../../donation'
-import { DropdownItem } from '../../DropdownSelect'
 import { EditOverlay } from '../../EditOverlay'
-import { Form, FormLabel, Input, useIsSubmitEnabled } from '../../form'
+import {
+  Form,
+  FormFieldError,
+  FormLabel,
+  FormSelect,
+  Input,
+  useIsSubmitEnabled,
+} from '../../form'
 import { FormInput } from '../../FormInput'
-import { IconDate, IconReply, IconTrash } from '../../Icon'
+import { IconCategory, IconDate, IconReply, IconTrash } from '../../Icon'
 import { Link } from '../../link'
 import { LoadingAnimation } from '../../LoadingAnimation'
 import { NoContent } from '../../NoContent'
@@ -43,6 +47,7 @@ export type SegmentItemPostPage = SegmentPostPage['items'][number]
 type TagPostPage = RouterOutput['postTags']['byPostId'][number]
 
 type SchemaUpdate = z.infer<typeof schemaUpdatePost>
+type SchemaUpdateCategory = z.infer<typeof schemaUpdatePostCategory>
 
 export function PostPage(props: PostPageProps): JSX.Element {
   const { data: post, isLoading: isLoadingPost } = trpc.posts.byPostId.useQuery(
@@ -86,8 +91,6 @@ function PostPageInternal<
   post: TPostType
   userId: string | null
 }): JSX.Element {
-  const { updatePost } = usePost(postId)
-
   const { data: segments, isLoading: isLoadingSegments } =
     trpc.postSegments.byPostId.useQuery({
       postId,
@@ -125,19 +128,6 @@ function PostPageInternal<
     setIsShownCategoryDropdown(true)
   )
   useOnClickOutside(refCategory, () => setIsShownCategoryDropdown(false))
-
-  async function handleOnCategorySelect(newCategory: DropdownItem) {
-    setIsShownCategoryDropdown(false)
-
-    const postToUpdate: ApiPostUpdateRequestBody = {
-      categoryId: newCategory.itemId,
-    }
-
-    await updatePost({
-      postId,
-      postToUpdate,
-    })
-  }
 
   // POST HEADER
   const [isPostHeaderEditMode, setIsPostHeaderEditMode] = useState(false)
@@ -355,8 +345,8 @@ function PostPageInternal<
           <div className="mb-10 flex flex-col sm:flex-row sm:flex-wrap md:space-x-6">
             {/* CATEGORY */}
             <CategorySelect
-              categoryInitial={post.category}
-              onSelect={handleOnCategorySelect}
+              postId={postId}
+              categoryIdInitial={post.postCategoryId}
               shouldShowDropdown={isPostEditable && isShownCategoryDropdown}
               refExternal={refCategory}
             />
@@ -573,6 +563,95 @@ function PostPageInternal<
         />
       </PageSection>
     </>
+  )
+}
+
+function CategorySelect({
+  postId,
+  categoryIdInitial,
+  shouldShowDropdown,
+  refExternal,
+}: {
+  postId: string
+  categoryIdInitial: string
+  shouldShowDropdown: boolean
+  refExternal: MutableRefObject<HTMLDivElement>
+}): JSX.Element {
+  const utils = trpc.useContext()
+  const { data: postCategories, isLoading: isLoadingCategories } =
+    trpc.postCategories.all.useQuery()
+  const updateCategory = trpc.posts.editCategory.useMutation({
+    onSuccess: () => utils.posts.byPostId.invalidate(),
+  })
+
+  const defaultValues: SchemaUpdateCategory = useMemo(
+    () => ({
+      postId,
+      categoryId: categoryIdInitial,
+    }),
+    [postId, categoryIdInitial]
+  )
+
+  const { handleSubmit, formState, control } = useZodForm({
+    schema: schemaUpdatePostCategory,
+    defaultValues,
+    mode: 'onChange',
+    reValidateMode: 'onBlur',
+  })
+
+  /*
+   * This is a hack because RHF's `Controller` is not triggering the form's `onChange`.
+   * See: https://github.com/react-hook-form/react-hook-form/discussions/9359
+   */
+  const refSubmitButtom = useRef<HTMLButtonElement>(null)
+  function triggerSubmit() {
+    refSubmitButtom?.current?.click()
+  }
+
+  return (
+    <div className="flex items-center justify-center text-sm" ref={refExternal}>
+      {isLoadingCategories ? (
+        <LoadingAnimation />
+      ) : !postCategories ? (
+        <NoContent>No categories</NoContent>
+      ) : shouldShowDropdown ? (
+        <Form
+          onSubmit={handleSubmit((data) => {
+            updateCategory.mutate({ postId, categoryId: data.categoryId })
+          })}
+        >
+          <button hidden={true} ref={refSubmitButtom} type="submit" />
+          <FormSelect
+            control={control}
+            name="categoryId"
+            items={postCategories.map((category) => ({
+              itemId: category.id,
+              label: category.name,
+            }))}
+            validationErrorMessage={formState.errors.categoryId?.message}
+            unselectedLabel="Please select a category."
+            onChangeExternal={triggerSubmit}
+          />
+          <FormFieldError
+            noMargin
+            errors={formState.errors}
+            fieldName="general-form-error-key"
+          />
+        </Form>
+      ) : (
+        <div className="flex items-center text-sm">
+          <IconCategory />
+
+          <span className="ml-2 py-1.5">
+            {!categoryIdInitial
+              ? 'Please select a category'
+              : postCategories.find(
+                  (category) => category.id === categoryIdInitial
+                )?.name ?? 'No category'}
+          </span>
+        </div>
+      )}
+    </div>
   )
 }
 

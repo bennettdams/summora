@@ -341,11 +341,8 @@ function CreatePostModal() {
                     itemId: category.id,
                     label: category.name,
                   }))}
+                  validationErrorMessage={formState.errors.categoryId?.message}
                   unselectedLabel="Please select a category."
-                />
-                <FormFieldError
-                  fieldName="categoryId"
-                  errors={formState.errors}
                 />
                 <FormFieldError
                   fieldName="general-form-error-key"

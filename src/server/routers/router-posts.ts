@@ -2,7 +2,11 @@ import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { checkAuthTRPC, ensureAuthorTRPC } from '../../lib/api-security'
-import { schemaCreatePost, schemaUpdatePost } from '../../lib/schemas'
+import {
+  schemaCreatePost,
+  schemaUpdatePost,
+  schemaUpdatePostCategory,
+} from '../../lib/schemas'
 import { ContextTRPC } from '../context-trpc'
 import { t } from '../trpc'
 
@@ -78,6 +82,19 @@ export const postsRouter = t.router({
       data: { title, subtitle },
     })
   }),
+  // EDIT CATEGORY
+  editCategory: t.procedure
+    .input(schemaUpdatePostCategory)
+    .mutation(async ({ input, ctx }) => {
+      const { postId, categoryId } = input
+
+      await ensureAuthor(ctx, postId)
+
+      await ctx.prisma.post.update({
+        where: { id: postId },
+        data: { category: { connect: { id: categoryId } } },
+      })
+    }),
   // CREATE
   create: t.procedure
     .input(schemaCreatePost)

@@ -36,6 +36,11 @@ export const schemaUpdatePost = z
     path: [generalFormErrorKey],
   })
 
+export const schemaUpdatePostCategory = z.object({
+  postId: z.string().cuid(),
+  categoryId: postCategorySchema,
+})
+
 export const schemaCreatePost = z.object({
   title: z.string().min(1),
   subtitle: z.string().optional(),
