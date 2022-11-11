@@ -7,16 +7,18 @@ import { Button } from './Button'
 import { Form, FormLabel, FormSubmit, Input } from './form'
 import { IconSignIn } from './Icon'
 
+const defaultValues = {
+  email: process.env.NEXT_PUBLIC_DEFAULT_EMAIL ?? '',
+  password: process.env.NEXT_PUBLIC_DEFAULT_PASSWORD ?? '',
+}
+
 export function SignIn(): JSX.Element {
   const { signInWithEmailAndPassword, signUpWithEmailAndPassword } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
 
   const { handleSubmit, register, formState } = useZodForm({
     schema: signInSchema,
-    defaultValues: {
-      email: process.env.NEXT_PUBLIC_DEFAULT_EMAIL ?? '',
-      password: process.env.NEXT_PUBLIC_DEFAULT_PASSWORD ?? '',
-    },
+    defaultValues,
     mode: 'onSubmit',
   })
 

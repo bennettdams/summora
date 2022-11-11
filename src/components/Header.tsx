@@ -78,10 +78,7 @@ function UserNavbar() {
         {!userIdAuth ? (
           <Link to={ROUTES.signIn}>
             {/* TODO Should be a ButtonNav */}
-            <Button
-              icon={<IconSignIn />}
-              onClick={() => console.info('Signing in..')}
-            >
+            <Button icon={<IconSignIn />} onClick={() => console.info('')}>
               Sign in
             </Button>
           </Link>
