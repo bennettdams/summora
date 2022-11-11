@@ -410,6 +410,8 @@ export function UserDonations({
     <div className="flex flex-col space-y-4 pl-6 text-left">
       {isEditMode === true ? (
         <UserDonationsUpdates userId={userId} userDonations={userDonations} />
+      ) : userDonations.length === 0 ? (
+        <NoContent>No donation links.</NoContent>
       ) : (
         userDonations.map((userDonation) => (
           <DonationLink

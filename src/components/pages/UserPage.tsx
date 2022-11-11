@@ -71,6 +71,7 @@ function UserPageInternal({
     onSuccess: () => utils.user.byUserId.invalidate({ userId }),
   })
   const { userId: userIdAuth } = useAuth()
+  const isOwnUser = userId === userIdAuth
 
   return (
     <>
@@ -95,7 +96,7 @@ function UserPageInternal({
             </div>
 
             <div className="mr-4 grid place-items-center">
-              {!!imageId && (
+              {isOwnUser && !!imageId && (
                 <ButtonRemove
                   onClick={() => deleteAvatar.mutate({ userId, imageId })}
                 >
@@ -106,7 +107,7 @@ function UserPageInternal({
 
             <div>
               <Avatar
-                isEditable
+                isEditable={isOwnUser}
                 userId={userId}
                 username={username}
                 imageId={imageId}
@@ -159,10 +160,8 @@ function UserPageInternal({
         </div>
       </PageSection>
 
-      <PageSection>
+      <PageSection label="Avatar preview">
         <Box>
-          <h1 className="text-lg">Preview your avatar</h1>
-
           <div className="grid auto-rows-min grid-cols-3 text-center">
             <div className="col-start-1">
               <div className="grid h-full place-items-center">
@@ -204,7 +203,7 @@ function UserPageInternal({
         </Box>
       </PageSection>
 
-      <PageSection label="Posts">
+      <PageSection label={`Posts by ${username}`}>
         {isLoadingPosts ? (
           <LoadingAnimation />
         ) : (
