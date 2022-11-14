@@ -106,44 +106,47 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   ref
 ): JSX.Element {
   return (
-    // flex & items-center for the loading animation
-    <div className="relative flex items-center">
-      <input
-        type={props.type ?? 'text'}
-        className={
-          'relative block w-full disabled:cursor-not-allowed ' +
-          (isSpecial
-            ? `border-b-2 border-t-0 border-l-0 border-r-0 border-dbrown bg-transparent outline-none focus:border-dlila focus:ring-0 ${
-                small ? 'p-3 px-8' : 'p-6 px-12'
-              }`
-            : 'rounded-md placeholder:text-indigo-300 hover:shadow-md disabled:bg-gray-100' +
-              // only show margin when there is a label
-              ` ${hasLabel && !small && 'mt-1'}` +
-              ` ${small ? 'py-1.5 px-2 text-xs' : 'text-sm'}` +
-              ` ${
-                !props.required
-                  ? 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
-                  : 'border-yellow-500 focus:border-yellow-500 focus:ring-yellow-500'
-              }`)
-        }
-        // TODO Ideally, this is set on the form element and not the single inputs, but not sure about the implementation for that.
-        onKeyDown={
-          !blurOnEnterPressed
-            ? undefined
-            : (e) => {
-                if (e.key === 'Enter') {
-                  e.currentTarget.blur()
+    <div className="relative">
+      {/* flex & items-center for the loading animation */}
+      <div className="flex items-center">
+        <input
+          type={props.type ?? 'text'}
+          className={
+            'relative block w-full disabled:cursor-not-allowed ' +
+            (isSpecial
+              ? `border-b-2 border-t-0 border-l-0 border-r-0 border-dbrown bg-transparent outline-none focus:border-dlila focus:ring-0 ${
+                  small ? 'p-3 px-8' : 'p-6 px-12'
+                }`
+              : 'rounded-md placeholder:text-indigo-300 hover:shadow-md disabled:bg-gray-100' +
+                // only show margin when there is a label
+                ` ${hasLabel && !small && 'mt-1'}` +
+                ` ${small ? 'py-1.5 px-2 text-xs' : 'text-sm'}` +
+                ` ${
+                  !props.required
+                    ? 'border-gray-300 focus:border-dlila focus:ring-dlila'
+                    : 'border-dorange focus:border-dorange focus:ring-dorange'
+                }`)
+          }
+          // TODO Ideally, this is set on the form element and not the single inputs, but not sure about the implementation for that.
+          onKeyDown={
+            !blurOnEnterPressed
+              ? undefined
+              : (e) => {
+                  if (e.key === 'Enter') {
+                    e.currentTarget.blur()
+                  }
                 }
-              }
-        }
-        {...props}
-        ref={ref}
-      />
-      {isLoading && (
-        <div className="absolute">
-          <LoadingAnimation size="small" />
-        </div>
-      )}
+          }
+          {...props}
+          ref={ref}
+        />
+
+        {isLoading && (
+          <div className="absolute">
+            <LoadingAnimation size="small" />
+          </div>
+        )}
+      </div>
 
       {!!validationErrorMessage && (
         <div className="absolute mt-1">
