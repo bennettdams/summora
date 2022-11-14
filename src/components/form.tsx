@@ -80,6 +80,7 @@ type InputProps = React.ComponentPropsWithoutRef<'input'> & {
   validationErrorMessage?: string
   /** This is used in forms that should submit on blur. */
   blurOnEnterPressed?: boolean
+  isSpecial?: boolean
 }
 
 /**
@@ -88,6 +89,7 @@ type InputProps = React.ComponentPropsWithoutRef<'input'> & {
  * - hasLabel?: `boolean`
  * - validationErrorMessage?: `string`
  * - blurOnEnterPressed?: `boolean`
+ * - isSpecial?: `boolean`
  */
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
@@ -95,6 +97,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     hasLabel = true,
     validationErrorMessage = undefined,
     blurOnEnterPressed = false,
+    isSpecial = false,
     ...props
   },
   ref
@@ -104,15 +107,20 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       <input
         type={props.type ?? 'text'}
         className={
-          'block w-full rounded-md shadow-sm placeholder:text-indigo-300 hover:shadow-md disabled:cursor-not-allowed disabled:bg-gray-100' +
-          // only show margin when there is a label
-          ` ${hasLabel && !small && 'mt-1'}` +
-          ` ${small ? 'py-1.5 px-2 text-xs' : 'text-sm'}` +
-          ` ${
-            !props.required
-              ? 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
-              : 'border-yellow-500 focus:border-yellow-500 focus:ring-yellow-500'
-          }`
+          'block w-full disabled:cursor-not-allowed ' +
+          (isSpecial
+            ? `border-b-2 border-t-0 border-l-0 border-r-0 border-dbrown bg-transparent outline-none focus:border-dlila focus:ring-0 ${
+                small ? 'p-3' : 'p-6'
+              }`
+            : 'rounded-md placeholder:text-indigo-300 hover:shadow-md disabled:bg-gray-100' +
+              // only show margin when there is a label
+              ` ${hasLabel && !small && 'mt-1'}` +
+              ` ${small ? 'py-1.5 px-2 text-xs' : 'text-sm'}` +
+              ` ${
+                !props.required
+                  ? 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
+                  : 'border-yellow-500 focus:border-yellow-500 focus:ring-yellow-500'
+              }`)
         }
         // TODO Ideally, this is set on the form element and not the single inputs, but not sure about the implementation for that.
         onKeyDown={
