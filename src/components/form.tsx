@@ -11,6 +11,7 @@ import { generalFormErrorKey } from '../lib/schemas'
 import { Button, ButtonProps } from './Button'
 import { DropdownItem, DropdownSelect } from './DropdownSelect'
 import { IconOkCircle } from './Icon'
+import { LoadingAnimation } from './LoadingAnimation'
 
 export function FormLabel({
   ...props
@@ -81,6 +82,7 @@ type InputProps = React.ComponentPropsWithoutRef<'input'> & {
   /** This is used in forms that should submit on blur. */
   blurOnEnterPressed?: boolean
   isSpecial?: boolean
+  isLoading?: boolean
 }
 
 /**
@@ -98,19 +100,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     validationErrorMessage = undefined,
     blurOnEnterPressed = false,
     isSpecial = false,
+    isLoading = false,
     ...props
   },
   ref
 ): JSX.Element {
   return (
-    <div className="relative">
+    // flex & items-center for the loading animation
+    <div className="relative flex items-center">
       <input
         type={props.type ?? 'text'}
         className={
-          'block w-full disabled:cursor-not-allowed ' +
+          'relative block w-full disabled:cursor-not-allowed ' +
           (isSpecial
             ? `border-b-2 border-t-0 border-l-0 border-r-0 border-dbrown bg-transparent outline-none focus:border-dlila focus:ring-0 ${
-                small ? 'p-3' : 'p-6'
+                small ? 'p-3 px-8' : 'p-6 px-12'
               }`
             : 'rounded-md placeholder:text-indigo-300 hover:shadow-md disabled:bg-gray-100' +
               // only show margin when there is a label
@@ -135,6 +139,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         {...props}
         ref={ref}
       />
+      {isLoading && (
+        <div className="absolute">
+          <LoadingAnimation size="small" />
+        </div>
+      )}
 
       {!!validationErrorMessage && (
         <div className="absolute mt-1">
