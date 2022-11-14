@@ -78,20 +78,21 @@ function UserPageInternal({
       <PageSection>
         <Box>
           <div className="flex">
-            <div className="grow">
+            <div className="grow space-y-4">
               <h2 className="text-3xl">{username}</h2>
-              <p>
-                <span>Member since</span>
-                <span className="ml-2 text-lg">
+
+              <div>
+                <p className="uppercase tracking-widest">Member since</p>
+                <p className="ml-4 text-lg font-semibold">
                   <DateTime format="MM-DD hh:mm" date={createdAt} />
-                </span>
-              </p>
-              <p>
-                <span>Last update</span>
-                <span className="ml-2 text-lg">
+                </p>
+              </div>
+              <div>
+                <p className="uppercase tracking-widest">Last update</p>
+                <p className="ml-4 text-lg font-semibold">
                   <DateTime format="MM-DD hh:mm" date={updatedAt} />
-                </span>
-              </p>
+                </p>
+              </div>
             </div>
 
             <div className="mr-4 grid place-items-center">

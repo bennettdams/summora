@@ -92,3 +92,10 @@ export const schemaCreatePostSegmentItem = z.object({
   segmentId: z.string().cuid(),
   content: z.string().min(1),
 })
+
+export const schemaCreatePostComment = z.object({
+  postId: z.string().cuid(),
+  // null for root comments
+  commentParentId: z.string().cuid().nullable(),
+  text: z.string().min(1),
+})

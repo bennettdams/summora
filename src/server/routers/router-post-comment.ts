@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { checkAuthTRPC, ensureAuthorTRPC } from '../../lib/api-security'
+import { schemaCreatePostComment } from '../../lib/schemas'
 import { ContextTRPC } from '../context-trpc'
 import { t } from '../trpc'
 
@@ -71,14 +72,7 @@ export const postCommentsRouter = t.router({
     }),
   // CREATE
   create: t.procedure
-    .input(
-      z.object({
-        postId: z.string().cuid(),
-        // null for root comments
-        commentParentId: z.string().cuid().nullable(),
-        text: z.string().min(1),
-      })
-    )
+    .input(schemaCreatePostComment)
     .mutation(async ({ input, ctx }) => {
       const { postId, commentParentId, text } = input
 
@@ -97,6 +91,7 @@ export const postCommentsRouter = t.router({
         },
       })
     }),
+  // DELETE
   delete: t.procedure
     .input(
       z.object({
@@ -113,6 +108,7 @@ export const postCommentsRouter = t.router({
         data: { text: '', isDeleted: true },
       })
     }),
+  // UPVOTE
   upvote: t.procedure
     .input(
       z.object({
@@ -155,6 +151,7 @@ export const postCommentsRouter = t.router({
         })
       }
     }),
+  // DOWNVOTE
   downvote: t.procedure
     .input(
       z.object({

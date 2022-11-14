@@ -2,6 +2,7 @@ import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { z } from 'zod'
 import {
+  schemaCreatePostComment,
   schemaUpdatePost,
   schemaUpdatePostCategory,
 } from '../../../lib/schemas'
@@ -48,6 +49,7 @@ type TagPostPage = RouterOutput['postTags']['byPostId'][number]
 
 type SchemaUpdate = z.infer<typeof schemaUpdatePost>
 type SchemaUpdateCategory = z.infer<typeof schemaUpdatePostCategory>
+type SchemaCreateComment = z.infer<typeof schemaCreatePostComment>
 
 export function PostPage(props: PostPageProps): JSX.Element {
   const { data: post, isLoading: isLoadingPost } = trpc.posts.byPostId.useQuery(
@@ -109,10 +111,7 @@ function PostPageInternal<
     await utils.postSegments.byPostId.invalidate({ postId })
   }
 
-  const createOne = trpc.postComments.create.useMutation({
-    onSuccess: invalidateComments,
-  })
-  const deleteOne = trpc.postComments.delete.useMutation({
+  const createComment = trpc.postComments.create.useMutation({
     onSuccess: invalidateComments,
   })
 
@@ -229,21 +228,20 @@ function PostPageInternal<
   }
 
   // COMMENTS
-  const [inputRootComment, setInputRootComment] = useState('')
-
-  async function addComment(
-    /**
-     * `null` for root comments
-     */
-    commentParentId: string | null,
-    text: string
-  ) {
-    createOne.mutate({ postId, commentParentId, text })
-  }
-
-  async function removeComment(commentId: string) {
-    deleteOne.mutate({ commentId })
-  }
+  const defaultValuesCreateComment: SchemaCreateComment = useMemo(
+    () => ({ postId, commentParentId: null, text: '' }),
+    [postId]
+  )
+  const {
+    handleSubmit: handleSubmitCreateComment,
+    register: registerCreateComment,
+    formState: formStateCreateComment,
+    reset: resetCreateComment,
+  } = useZodForm({
+    schema: schemaCreatePostComment,
+    defaultValues: defaultValuesCreateComment,
+    mode: 'onSubmit',
+  })
 
   const [animateRef] = useAutoAnimate<HTMLDivElement>()
 
@@ -537,34 +535,33 @@ function PostPageInternal<
 
       <PageSection label="Comments">
         <div className="mx-auto w-2/3">
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault()
-              addComment(null, inputRootComment)
-              setInputRootComment('')
-            }}
+          <Form
+            onSubmit={handleSubmitCreateComment((data) => {
+              createComment.mutate(
+                { postId, commentParentId: null, text: data.text },
+                {
+                  onSuccess: () => {
+                    resetCreateComment()
+                  },
+                }
+              )
+            })}
           >
-            <input
-              className="h-16 w-full border-b border-dbrown bg-transparent p-8 outline-none focus:border-dorange focus:ring-dorange"
-              name="rootCommentInput"
-              placeholder="Leave a comment.."
-              id="rootCommentInput"
-              value={inputRootComment}
-              required
-              onChange={(e) => setInputRootComment(e.target.value)}
-              onKeyDown={(e) => e.key === 'Escape' && setInputRootComment('')}
+            <Input
+              {...registerCreateComment('text')}
+              placeholder="Enter a comment.."
+              validationErrorMessage={
+                formStateCreateComment.errors.text?.message
+              }
+              isSpecial
+              isLoading={createComment.isLoading}
             />
-          </form>
+          </Form>
         </div>
       </PageSection>
 
       <PageSection>
-        <PostComments
-          postId={postId}
-          userId={userId}
-          onAddComment={addComment}
-          onRemoveComment={removeComment}
-        />
+        <PostComments postId={postId} userId={userId} />
       </PageSection>
     </>
   )
@@ -700,6 +697,7 @@ type PostCommentTreeComment = PostComment & {
 }
 
 function Comment({
+  postId,
   comment,
   isRoot = false,
   userId,
@@ -708,23 +706,33 @@ function Comment({
   onUpvote,
   onDownvote,
 }: {
+  postId: string
   comment: PostCommentTreeComment
   isRoot: boolean
   userId: string | null
-  onAdd: (commentParentId: string, text: string) => void
-  onRemove: (commentId: string) => void
-  onUpvote: (commentId: string) => void
-  onDownvote: (commentId: string) => void
+  onAdd: (text: string) => void
+  onRemove: () => void
+  onUpvote: () => void
+  onDownvote: () => void
 }) {
   const [showCommentInput, setShowCommentInput] = useState(false)
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
 
-  const [inputComment, setInputComment] = useState('')
-
-  const refCommentInput = useRef<HTMLFormElement>(null)
+  const refCommentInput = useRef<HTMLDivElement>(null)
   useOnClickOutside(refCommentInput, () => setShowCommentInput(false))
 
   const [animateRef] = useAutoAnimate<HTMLDivElement>()
+
+  const defaultValues: SchemaCreateComment = useMemo(
+    // this is misleading, but we use `commentId` here (instead of `commentParentId`) because we create a NEW comment "below" in the tree
+    () => ({ postId, commentParentId: comment.commentId, text: '' }),
+    [postId, comment.commentId]
+  )
+  const { handleSubmit, register, formState, reset } = useZodForm({
+    schema: schemaCreatePostComment,
+    defaultValues: defaultValues,
+    mode: 'onSubmit',
+  })
 
   return (
     <>
@@ -760,7 +768,7 @@ function Comment({
               isVoted={comment.upvotedBy.some(
                 (upvote) => upvote.userId === userId
               )}
-              onClick={() => onUpvote(comment.commentId)}
+              onClick={onUpvote}
             />
             <VoteIcon
               size="small"
@@ -768,7 +776,7 @@ function Comment({
               isVoted={comment.downvotedBy.some(
                 (downvote) => downvote.userId === userId
               )}
-              onClick={() => onDownvote(comment.commentId)}
+              onClick={onDownvote}
             />
           </div>
           <Link to={ROUTES.user(comment.authorId)} disablePrefetch>
@@ -825,10 +833,7 @@ function Comment({
                   </span>
                 </div>
               ) : (
-                <div
-                  className="flex items-center"
-                  onClick={() => onRemove(comment.commentId)}
-                >
+                <div className="flex items-center" onClick={onRemove}>
                   <IconTrash size="small" className="group-hover:text-white" />
                   <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dorange group-hover:text-white">
                     Confirm
@@ -840,32 +845,30 @@ function Comment({
         </div>
 
         {!!showCommentInput && (
-          <form
-            ref={refCommentInput}
-            className="md:w-2/3"
-            onSubmit={async (e) => {
-              e.preventDefault()
-              onAdd(comment.commentId, inputComment)
-              setInputComment('')
-              setShowCommentInput(false)
-            }}
-          >
-            <input
-              className="h-10 w-full border-b border-dbrown bg-transparent p-4 outline-none focus:border-dorange focus:ring-dorange"
-              name="commentInput"
-              placeholder="Leave a reply.."
-              id="commentInput"
-              value={inputComment}
-              required
-              onChange={(e) => setInputComment(e.target.value)}
-              onKeyDown={(e) => e.key === 'Escape' && setInputComment('')}
-            />
-          </form>
+          <div ref={refCommentInput} className="md:w-2/3">
+            <Form
+              onSubmit={handleSubmit((data) => {
+                onAdd(data.text)
+                setShowCommentInput(false)
+                reset()
+              })}
+            >
+              <Input
+                {...register('text')}
+                placeholder="Enter a comment.."
+                validationErrorMessage={formState.errors.text?.message}
+                isSpecial
+                isLoading={false}
+                small
+              />
+            </Form>
+          </div>
         )}
 
         <div ref={animateRef}>
           {comment.commentChilds.map((comment) => (
             <Comment
+              postId={postId}
               key={comment.commentId}
               isRoot={false}
               comment={comment}
@@ -898,13 +901,9 @@ function createRootComments(
 export function PostComments({
   postId,
   userId,
-  onAddComment,
-  onRemoveComment,
 }: {
   postId: string
   userId: string | null
-  onAddComment: (commentParentId: string, text: string) => void
-  onRemoveComment: (commentId: string) => void
 }): JSX.Element {
   const [animateRef] = useAutoAnimate<HTMLDivElement>()
   const { data: comments, isLoading } = trpc.postComments.byPostId.useQuery({
@@ -913,16 +912,22 @@ export function PostComments({
 
   const utils = trpc.useContext()
 
-  function invalidate() {
-    // TODO We could only invalidate the comment (or root comment?) instead of all comments
+  function invalidateComments() {
+    // TODO We could only invalidate the comment (or root comment?) instead of all comments, but we would need to fetch the comments differently for that
     utils.postComments.byPostId.invalidate({ postId })
   }
 
+  const createComment = trpc.postComments.create.useMutation({
+    onSuccess: invalidateComments,
+  })
   const upvote = trpc.postComments.upvote.useMutation({
-    onSuccess: invalidate,
+    onSuccess: invalidateComments,
   })
   const downvote = trpc.postComments.downvote.useMutation({
-    onSuccess: invalidate,
+    onSuccess: invalidateComments,
+  })
+  const deleteOne = trpc.postComments.delete.useMutation({
+    onSuccess: invalidateComments,
   })
 
   return (
@@ -935,14 +940,22 @@ export function PostComments({
         // For the root level tree, we use "null" as comment ID. See "createCommentTree" docs.
         createCommentTree(createRootComments(comments), null).map((comment) => (
           <Comment
+            postId={postId}
             key={comment.commentId}
             isRoot={true}
             comment={comment}
             userId={userId}
-            onAdd={onAddComment}
-            onRemove={onRemoveComment}
-            onUpvote={(commentId) => upvote.mutate({ commentId })}
-            onDownvote={(commentId) => downvote.mutate({ commentId })}
+            onAdd={(text) =>
+              createComment.mutate({
+                postId,
+                text,
+                // this is misleading, but we use `commentId` here (instead of `commentParentId`) because we create a NEW comment "below" in the tree
+                commentParentId: comment.commentId,
+              })
+            }
+            onRemove={() => deleteOne.mutate({ commentId: comment.commentId })}
+            onUpvote={() => upvote.mutate({ commentId: comment.commentId })}
+            onDownvote={() => downvote.mutate({ commentId: comment.commentId })}
           />
         ))
       )}
