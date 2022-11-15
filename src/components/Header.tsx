@@ -43,8 +43,8 @@ function UserNavbarInternal({ userId }: { userId: string }) {
   )
 
   return (
-    <Menu.Button className="flex rounded-full text-sm hover:bg-dorange focus:outline-none focus:ring-2 focus:ring-dlight">
-      <div className="flex flex-row items-center text-white">
+    <Menu.Button className="flex rounded-full text-sm hover:bg-dorange hover:text-white focus:outline-none focus:ring-2 focus:ring-dlight">
+      <div className="flex flex-row items-center font-semibold">
         {isLoading ? (
           <LoadingAnimation />
         ) : isError || !user ? (
@@ -137,14 +137,17 @@ export function Header(): JSX.Element {
   const { asPath } = useRouter()
 
   return (
-    <Disclosure as="nav" className="bg-dbrown">
+    <Disclosure
+      as="nav"
+      className="fixed top-0 z-30 w-full border-b border-gray-100 bg-opacity-30 text-dlila backdrop-blur-2xl"
+    >
       {({ open }) => (
         <>
           <div className="mx-auto w-full px-2 sm:px-6 lg:px-8">
             <div className="relative flex h-16 items-center justify-between">
-              {/* Mobile menu button*/}
+              {/* MOBILE menu button*/}
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-dlila hover:bg-dlight focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dlight">
+                <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-dlila focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dlight">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
                     <XIcon className="block h-6 w-6" aria-hidden="true" />
@@ -159,7 +162,7 @@ export function Header(): JSX.Element {
                 <div className="flex shrink-0 items-center">
                   <Link to={ROUTES.home}>
                     <div className="text-left text-4xl font-extrabold leading-none tracking-tight">
-                      <p className="bg-gradient-to-b from-amber-100 to-orange-100 decoration-clone bg-clip-text text-3xl uppercase text-transparent">
+                      <p className="bg-gradient-to-b from-dorange to-orange-300 decoration-clone bg-clip-text text-3xl uppercase text-transparent">
                         Condun
                       </p>
                     </div>
@@ -170,21 +173,21 @@ export function Header(): JSX.Element {
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
                     {NAV_ROUTES.map((route) => (
-                      <a
-                        key={route.name}
-                        href={route.href}
-                        className={classNames(
-                          route.href === asPath
-                            ? 'border-b border-b-white text-white'
-                            : 'hover:rounded-md hover:bg-dorange hover:text-white',
-                          'px-3 py-2 text-sm font-semibold'
-                        )}
-                        aria-current={
-                          route.href === asPath ? 'page' : undefined
-                        }
-                      >
-                        {route.name}
-                      </a>
+                      <Link key={route.name} to={route.href}>
+                        <span
+                          className={classNames(
+                            route.href === asPath
+                              ? 'border-b border-b-dlila text-dlila'
+                              : 'hover:rounded-md hover:bg-dorange hover:text-white',
+                            'px-3 py-2 text-sm font-semibold'
+                          )}
+                          aria-current={
+                            route.href === asPath ? 'page' : undefined
+                          }
+                        >
+                          {route.name}
+                        </span>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -203,7 +206,7 @@ export function Header(): JSX.Element {
                   className="rounded-full p-1 text-white hover:bg-dorange focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
+                  <BellIcon className="h-6 w-6 text-dlila" aria-hidden="true" />
                 </button>
 
                 <UserNavbar />
@@ -211,7 +214,7 @@ export function Header(): JSX.Element {
             </div>
           </div>
 
-          {/* Navbar items mobile */}
+          {/* MOBILE navbar items */}
           <Transition
             as={Fragment}
             enter="duration-200 ease-out"
@@ -226,22 +229,26 @@ export function Header(): JSX.Element {
                 <CreatePostModal />
               </div>
 
-              <div className="space-y-1 px-2 pt-2 pb-3">
+              <div className="space-y-2 px-2 pt-2 pb-3">
                 {NAV_ROUTES.map((route) => (
-                  <Disclosure.Button
-                    key={route.name}
-                    as="a"
-                    href={route.href}
-                    className={classNames(
-                      route.href === asPath
-                        ? 'rounded-md bg-dorange'
-                        : 'hover:rounded-md hover:bg-dorange',
-                      'block px-3 py-2 text-base font-semibold'
-                    )}
-                    aria-current={route.href === asPath ? 'page' : undefined}
-                  >
-                    {route.name}
-                  </Disclosure.Button>
+                  <div key={route.name}>
+                    <Link to={route.href}>
+                      <Disclosure.Button
+                        as="div"
+                        className={classNames(
+                          route.href === asPath
+                            ? 'rounded-md bg-dorange text-white'
+                            : 'hover:rounded-md hover:bg-dlila hover:text-white',
+                          'block px-3 py-2 text-base font-semibold'
+                        )}
+                        aria-current={
+                          route.href === asPath ? 'page' : undefined
+                        }
+                      >
+                        {route.name}
+                      </Disclosure.Button>
+                    </Link>
+                  </div>
                 ))}
               </div>
             </Disclosure.Panel>
