@@ -103,9 +103,9 @@ function PostsListItem({
     })
 
   return (
-    <Box padding="small" shadow="xxl">
-      <div className="text-center">
-        <Link to={ROUTES.post(post.id)}>
+    <Link to={ROUTES.post(post.id)}>
+      <Box padding="small" showShadow>
+        <div className="text-center">
           <div className="relative">
             <div className="absolute top-0 left-0 inline">
               <PostLikes postId={post.id} userId={userId} iconSize="big" />
@@ -139,50 +139,50 @@ function PostsListItem({
               )}
             </div>
           </div>
-        </Link>
 
-        <div className="flex h-14 text-center">
-          <div className="w-1/2 overflow-y-hidden">
-            {isLoadingTags ? (
-              <LoadingAnimation />
-            ) : (
-              <TagsList tags={tags ?? null} />
-            )}
-          </div>
-
-          <div className="flex h-full w-1/2 justify-end space-x-4 leading-none">
-            <div className="flex h-full w-1/2 flex-col">
-              <div className="flex-1 space-x-5">
-                <ViewsIcon noOfViews={post.noOfViews} />
-                <CommentsIcon noOfComments={post.noOfComments} />
-              </div>
-              <div className="flex-1">
-                <span className="inline-flex items-center text-sm">
-                  <DateTime format="MM-DD hh:mm" date={post.updatedAt} />
-                </span>
-              </div>
+          <div className="flex h-14 text-center">
+            <div className="w-1/2 overflow-y-hidden">
+              {isLoadingTags ? (
+                <LoadingAnimation />
+              ) : (
+                <TagsList tags={tags ?? null} />
+              )}
             </div>
 
-            <div className="h-full w-1/2">
-              <div className="flex h-full justify-end">
-                <Link to={ROUTES.user(post.author.id)}>
-                  <div className="flex h-full items-center space-x-4 rounded-lg px-4 hover:bg-dbrown hover:text-white">
-                    <span>{post.author.username}</span>
-                    <Avatar
-                      userId={post.author.id}
-                      username={post.author.username}
-                      imageId={post.author.imageId}
-                      imageBlurDataURL={post.author.imageBlurDataURL}
-                      size="small"
-                    />
-                  </div>
-                </Link>
+            <div className="flex h-full w-1/2 justify-end space-x-4 leading-none">
+              <div className="flex h-full w-1/2 flex-col">
+                <div className="flex-1 space-x-5">
+                  <ViewsIcon noOfViews={post.noOfViews} />
+                  <CommentsIcon noOfComments={post.noOfComments} />
+                </div>
+                <div className="flex-1">
+                  <span className="inline-flex items-center text-sm">
+                    <DateTime format="MM-DD hh:mm" date={post.updatedAt} />
+                  </span>
+                </div>
+              </div>
+
+              <div className="h-full w-1/2">
+                <div className="flex h-full justify-end">
+                  <Link to={ROUTES.user(post.author.id)}>
+                    <div className="flex h-full items-center space-x-4 rounded-lg px-4 hover:bg-dbrown hover:text-white">
+                      <span>{post.author.username}</span>
+                      <Avatar
+                        userId={post.author.id}
+                        username={post.author.username}
+                        imageId={post.author.imageId}
+                        imageBlurDataURL={post.author.imageBlurDataURL}
+                        size="small"
+                      />
+                    </div>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </Box>
+      </Box>
+    </Link>
   )
 }
 
@@ -195,7 +195,7 @@ function PostsListItemShort({
 }): JSX.Element {
   return (
     <Link to={ROUTES.post(post.id)}>
-      <Box padding="small">
+      <Box padding="small" showShadow>
         <div className="relative h-60 w-full text-center">
           <h2 className="text-xs font-semibold tracking-widest text-dorange">
             {post.categoryTitle}

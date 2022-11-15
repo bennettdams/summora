@@ -15,7 +15,7 @@ module.exports = {
       },
       colors: {
         gray: colors.stone,
-        dlight: '#faf2f0',
+        dlight: '#fcf8f7',
         dlila: '#993a58',
         dorange: '#e08560',
         dbrown: '#d4ad9f',

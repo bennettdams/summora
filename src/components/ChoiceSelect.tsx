@@ -73,9 +73,9 @@ export function ChoiceSelect<
               } ${
                 checked
                   ? // keep in sync with Button component
-                    'bg-dlila bg-gradient-to-r from-dlila to-dlila/90 text-white ring-orange-500 hover:bg-pink-900 hover:bg-none active:bg-dlila/40'
-                  : 'bg-white'
-              } relative flex w-full cursor-pointer rounded-lg py-2 px-5 shadow-md focus:outline-none`
+                    'border border-dlila bg-dlila bg-gradient-to-r from-dlila to-dlila/90 text-white ring-orange-500 hover:bg-pink-900 hover:bg-none active:bg-dlila/40'
+                  : 'border border-gray-300 bg-white'
+              } relative flex w-full cursor-pointer rounded-lg py-2 px-5 hover:shadow-md focus:outline-none`
             }
           >
             {({ checked }) => (

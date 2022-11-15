@@ -9,6 +9,7 @@ import { formatDateTime } from '../../../util/date-time'
 import { trpc } from '../../../util/trpc'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
 import { useZodForm } from '../../../util/use-zod-form'
+import { Box } from '../../Box'
 import { ButtonRemove } from '../../Button'
 import { ChoiceSelect, useChoiceSelect } from '../../ChoiceSelect'
 import { EditOverlay } from '../../EditOverlay'
@@ -135,176 +136,209 @@ export function PostSegment({
   })
 
   return (
-    // items-stretch needed for the post image
-    <div
-      ref={refSegmentEdit}
-      className="flex w-full flex-col items-stretch rounded-xl bg-white p-8 shadow-2xl lg:flex-row"
-    >
+    <Box>
       <div
-        className={`px-4 ${
-          choiceControl.selected.choiceId === 'right' ? 'w-4/5' : 'w-full'
-        }`}
+        ref={refSegmentEdit}
+        // items-stretch needed for the post image
+        className="flex w-full flex-col items-stretch rounded-xl bg-white p-8 lg:flex-row"
       >
-        {/* HEADER & ITEMS */}
-        <EditOverlay
-          isEnabled={isPostEditable && !isSegmentEditMode}
-          onClick={() => setIsSegmentEditMode(true)}
+        <div
+          className={`px-4 ${
+            choiceControl.selected.choiceId === 'right' ? 'w-4/5' : 'w-full'
+          }`}
         >
-          <div className="rounded-xl">
+          {/* HEADER & ITEMS */}
+          <EditOverlay
+            isEnabled={isPostEditable && !isSegmentEditMode}
+            onClick={() => setIsSegmentEditMode(true)}
+          >
+            <div className="rounded-xl">
+              <Form
+                className="w-full space-y-4"
+                onBlur={handleSubmitUpdate((data) => {
+                  // For `onBlur`, RHF does not validate like with `onSubmit`, so we check ourselves.
+                  if (isSubmitEnabled) {
+                    edit.mutate({
+                      postSegmentId,
+                      title: data.title,
+                      subtitle: data.subtitle,
+                    })
+                  }
+                })}
+              >
+                <div className="flex w-full flex-row text-xl">
+                  <div className="h-full w-20 text-left">
+                    <span className="text-4xl italic">{sequenceNumber}</span>
+                  </div>
+
+                  {/* SEGMENT HEADER */}
+                  {/*
+                   * We use conditional CSS instead of conditional rendering so the children are not re-/mounted.
+                   * This is e.g. needed because there is bug in React where unmounting does not trigger `onBlur`.
+                   * See: https://github.com/facebook/react/issues/12363
+                   */}
+                  <div
+                    className={`grow space-y-6 ${
+                      isSegmentEditMode ? 'block' : 'hidden'
+                    }`}
+                  >
+                    <div>
+                      <FormLabel>Title</FormLabel>
+                      <Input
+                        {...registerUpdate('title')}
+                        hasLabel
+                        blurOnEnterPressed
+                        placeholder="Enter a title.."
+                        autoFocus={
+                          !defaultValuesUpdate.title && isLastInSequence
+                        }
+                        defaultValue={defaultValuesUpdate.title}
+                        validationErrorMessage={
+                          formStateUpdate.errors.title?.message
+                        }
+                      />
+                    </div>
+                    <div>
+                      <FormLabel>Subtitle</FormLabel>
+                      <Input
+                        {...registerUpdate('subtitle')}
+                        hasLabel
+                        blurOnEnterPressed
+                        placeholder="Enter a subtitle.."
+                        defaultValue={defaultValuesUpdate.subtitle}
+                        validationErrorMessage={
+                          formStateUpdate.errors.subtitle?.message
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    className={`flex grow ${
+                      isSegmentEditMode ? 'hidden' : 'block'
+                    }`}
+                  >
+                    <div className="ml-2 flex flex-col">
+                      <div className="flex-1 text-dlila">
+                        <span>{segment.title}</span>
+                      </div>
+
+                      <div className="flex-1">
+                        <span className="text-lg italic text-dorange">
+                          {segment.subtitle}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Form>
+
+              {/* SEGMENT ITEMS */}
+              {/* `relative` here needed for auto-animate. Without it, the edit overlay is shown loosely below the list, instead of overlaying the list. */}
+              <div ref={animateRef} className="relative mt-8 space-y-4">
+                {segment.items.map((item, index) => (
+                  <PostSegmentItem
+                    key={item.id}
+                    index={index}
+                    isEditMode={isSegmentEditMode}
+                    itemContent={item.content}
+                    postId={postId}
+                    postSegmentItemId={item.id}
+                    setIsLoading={(isLoadingNew) =>
+                      setIsItemLoading(isLoadingNew)
+                    }
+                    onSuccessfulSubmit={createSuccessfulEditStatus}
+                  />
+                ))}
+              </div>
+            </div>
+          </EditOverlay>
+
+          {/* EDIT ACTIONS */}
+          <div className={isSegmentEditMode ? 'block' : 'hidden'}>
+            <p className="my-6 text-center text-xl text-dlila">
+              <span>Add a new item:</span>
+            </p>
+
             <Form
-              className="w-full space-y-4"
-              onBlur={handleSubmitUpdate((data) => {
+              onBlur={handleSubmitCreateItem((data) => {
                 // For `onBlur`, RHF does not validate like with `onSubmit`, so we check ourselves.
-                if (isSubmitEnabled) {
-                  edit.mutate({
-                    postSegmentId,
-                    title: data.title,
-                    subtitle: data.subtitle,
-                  })
+                if (isSubmitCreateItemEnabled) {
+                  createItem.mutate(
+                    {
+                      segmentId: postSegmentId,
+                      content: data.content,
+                    },
+                    { onSuccess: () => resetCreateItem() }
+                  )
                 }
               })}
+              className="my-4 flex w-full items-center space-x-4"
             >
-              <div className="flex w-full flex-row text-xl">
-                <div className="h-full w-20 text-left">
-                  <span className="text-4xl italic">{sequenceNumber}</span>
-                </div>
-
-                {/* SEGMENT HEADER */}
-                {/*
-                 * We use conditional CSS instead of conditional rendering so the children are not re-/mounted.
-                 * This is e.g. needed because there is bug in React where unmounting does not trigger `onBlur`.
-                 * See: https://github.com/facebook/react/issues/12363
-                 */}
-                <div
-                  className={`grow space-y-6 ${
-                    isSegmentEditMode ? 'block' : 'hidden'
-                  }`}
-                >
-                  <div>
-                    <FormLabel>Title</FormLabel>
-                    <Input
-                      {...registerUpdate('title')}
-                      hasLabel
-                      blurOnEnterPressed
-                      placeholder="Enter a title.."
-                      autoFocus={!defaultValuesUpdate.title && isLastInSequence}
-                      defaultValue={defaultValuesUpdate.title}
-                      validationErrorMessage={
-                        formStateUpdate.errors.title?.message
-                      }
-                    />
-                  </div>
-                  <div>
-                    <FormLabel>Subtitle</FormLabel>
-                    <Input
-                      {...registerUpdate('subtitle')}
-                      hasLabel
-                      blurOnEnterPressed
-                      placeholder="Enter a subtitle.."
-                      defaultValue={defaultValuesUpdate.subtitle}
-                      validationErrorMessage={
-                        formStateUpdate.errors.subtitle?.message
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div
-                  className={`flex grow ${
-                    isSegmentEditMode ? 'hidden' : 'block'
-                  }`}
-                >
-                  <div className="ml-2 flex flex-col">
-                    <div className="flex-1 text-dlila">
-                      <span>{segment.title}</span>
-                    </div>
-
-                    <div className="flex-1">
-                      <span className="text-lg italic text-dorange">
-                        {segment.subtitle}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+              <div className="grow">
+                <Input
+                  {...registerCreateItem('content')}
+                  placeholder="Enter some text.."
+                  blurOnEnterPressed
+                  validationErrorMessage={
+                    formStateCreateItem.errors.content?.message
+                  }
+                />
               </div>
             </Form>
 
-            {/* SEGMENT ITEMS */}
-            {/* `relative` here needed for auto-animate. Without it, the edit overlay is shown loosely below the list, instead of overlaying the list. */}
-            <div ref={animateRef} className="relative mt-8 space-y-4">
-              {segment.items.map((item, index) => (
-                <PostSegmentItem
-                  key={item.id}
-                  index={index}
-                  isEditMode={isSegmentEditMode}
-                  itemContent={item.content}
-                  postId={postId}
-                  postSegmentItemId={item.id}
-                  setIsLoading={(isLoadingNew) =>
-                    setIsItemLoading(isLoadingNew)
-                  }
-                  onSuccessfulSubmit={createSuccessfulEditStatus}
-                />
-              ))}
+            <div className="my-2 text-center italic">
+              {/* height needed to not make it jump when the loading animation is shown */}
+              <p className="h-6 tracking-tighter">
+                {edit.isLoading || isItemLoading || createItem.isLoading ? (
+                  <LoadingAnimation size="small" />
+                ) : !lastSuccessfulEdit ? (
+                  <span>No changes yet.</span>
+                ) : (
+                  <>
+                    <span>Saved changes</span>
+                    <span className="ml-2 text-gray-400">
+                      {formatDateTime(lastSuccessfulEdit, 'MM-DD hh:mm:ss')}
+                    </span>
+                  </>
+                )}
+              </p>
             </div>
           </div>
-        </EditOverlay>
 
-        {/* EDIT ACTIONS */}
-        <div className={isSegmentEditMode ? 'block' : 'hidden'}>
-          <p className="my-6 text-center text-xl text-dlila">
-            <span>Add a new item:</span>
-          </p>
-
-          <Form
-            onBlur={handleSubmitCreateItem((data) => {
-              // For `onBlur`, RHF does not validate like with `onSubmit`, so we check ourselves.
-              if (isSubmitCreateItemEnabled) {
-                createItem.mutate(
-                  {
-                    segmentId: postSegmentId,
-                    content: data.content,
-                  },
-                  { onSuccess: () => resetCreateItem() }
-                )
-              }
-            })}
-            className="my-4 flex w-full items-center space-x-4"
-          >
-            <div className="grow">
-              <Input
-                {...registerCreateItem('content')}
-                placeholder="Enter some text.."
-                blurOnEnterPressed
-                validationErrorMessage={
-                  formStateCreateItem.errors.content?.message
-                }
+          {/* POST IMAGE */}
+          {choiceControl.selected.choiceId === 'bottom' && (
+            <div className="grid min-h-[250px] w-full place-items-center">
+              <PostSegmentImage
+                isEditable={isPostEditable}
+                postId={postId}
+                authorId={authorId}
+                postSegmentId={postSegmentId}
+                imageId={segment.imageId}
               />
             </div>
-          </Form>
+          )}
 
-          <div className="my-2 text-center italic">
-            {/* height needed to not make it jump when the loading animation is shown */}
-            <p className="h-6 tracking-tighter">
-              {edit.isLoading || isItemLoading || createItem.isLoading ? (
-                <LoadingAnimation size="small" />
-              ) : !lastSuccessfulEdit ? (
-                <span>No changes yet.</span>
-              ) : (
-                <>
-                  <span>Saved changes</span>
-                  <span className="ml-2 text-gray-400">
-                    {formatDateTime(lastSuccessfulEdit, 'MM-DD hh:mm:ss')}
-                  </span>
-                </>
-              )}
-            </p>
-          </div>
+          {isPostEditable && (
+            <div className="mt-4 flex flex-row justify-between">
+              <ButtonRemove
+                showLoading={deleteSegment.isLoading}
+                onClick={() =>
+                  deleteSegment.mutate({ segmentId: postSegmentId })
+                }
+              >
+                Remove segment
+              </ButtonRemove>
+
+              <ChoiceSelect control={choiceControl} />
+            </div>
+          )}
         </div>
 
         {/* POST IMAGE */}
-        {choiceControl.selected.choiceId === 'bottom' && (
-          <div className="grid min-h-[250px] w-full place-items-center">
+        {/* the parent container uses "items-stretch" so the image can "fill" the height */}
+        {choiceControl.selected.choiceId === 'right' && (
+          <div className="grid min-h-[150px] w-full place-items-center lg:w-1/5">
             <PostSegmentImage
               isEditable={isPostEditable}
               postId={postId}
@@ -314,34 +348,7 @@ export function PostSegment({
             />
           </div>
         )}
-
-        {isPostEditable && (
-          <div className="mt-4 flex flex-row justify-between">
-            <ButtonRemove
-              showLoading={deleteSegment.isLoading}
-              onClick={() => deleteSegment.mutate({ segmentId: postSegmentId })}
-            >
-              Remove segment
-            </ButtonRemove>
-
-            <ChoiceSelect control={choiceControl} />
-          </div>
-        )}
       </div>
-
-      {/* POST IMAGE */}
-      {/* the parent container uses "items-stretch" so the image can "fill" the height */}
-      {choiceControl.selected.choiceId === 'right' && (
-        <div className="grid min-h-[150px] w-full place-items-center lg:w-1/5">
-          <PostSegmentImage
-            isEditable={isPostEditable}
-            postId={postId}
-            authorId={authorId}
-            postSegmentId={postSegmentId}
-            imageId={segment.imageId}
-          />
-        </div>
-      )}
-    </div>
+    </Box>
   )
 }

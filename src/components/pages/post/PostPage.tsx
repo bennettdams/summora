@@ -432,8 +432,12 @@ function PostPageInternal<
 
                 <div className="-m-1 mt-2 flex flex-wrap">
                   {tagsSearchResult &&
-                    filterTags(tagsSearchResult).map((tag) => (
-                      <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
+                    (tagsSearchResult.length === 0 ? (
+                      <NoContent>No results for your search</NoContent>
+                    ) : (
+                      filterTags(tagsSearchResult).map((tag) => (
+                        <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
+                      ))
                     ))}
                 </div>
               </Box>

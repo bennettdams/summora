@@ -7,7 +7,8 @@ export function Box({
   isHighlighted = false,
   inline = false,
   padding = 'medium',
-  shadow = false,
+  hideBorder = false,
+  showShadow = false,
 }: {
   children: ReactNode
   onClick?: () => void
@@ -15,13 +16,16 @@ export function Box({
   isHighlighted?: boolean
   inline?: boolean
   padding?: false | 'small' | 'medium'
-  shadow?: false | 'xxl'
+  hideBorder?: boolean
+  showShadow?: boolean
 }): JSX.Element {
   return (
     <div
       onClick={() => onClick && onClick()}
       ref={refExternal}
-      className={`box rounded-xl ${
+      className={`box rounded-xl ${showShadow && 'hover:shadow-xl'} ${
+        !hideBorder && 'border border-gray-300'
+      } ${
         padding === false
           ? 'p-0'
           : padding === 'small'
@@ -29,8 +33,6 @@ export function Box({
           : padding === 'medium'
           ? 'p-10'
           : ''
-      } ${
-        shadow === false ? 'shadow-none' : shadow === 'xxl' ? 'shadow-2xl' : ''
       } ${onClick && 'cursor-pointer'} ${
         !isHighlighted ? 'bg-white' : 'from-fuchsia-200 to-blue-200'
       } ${inline && 'inline-block'}`}

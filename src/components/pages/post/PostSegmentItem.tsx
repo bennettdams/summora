@@ -62,7 +62,12 @@ export function PostSegmentItem({
   })
 
   return (
-    <Box key={postSegmentItemId} padding={false} isHighlighted={isEditMode}>
+    <Box
+      hideBorder
+      key={postSegmentItemId}
+      padding={false}
+      isHighlighted={isEditMode}
+    >
       <div className="flex flex-row items-center space-x-2">
         <div className="ml-2 inline-flex w-10 items-center italic">
           {isLoading ? (
