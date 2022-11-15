@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { ensureAuthorTRPC } from '../../lib/api-security'
+import { schemaTagSearch } from '../../lib/schemas'
 import { ContextTRPC } from '../context-trpc'
 import { t } from '../trpc'
 
@@ -115,28 +116,23 @@ export const postTagsRouter = t.router({
         },
       })
     }),
-  search: t.procedure
-    .input(
-      z.object({
-        searchInput: z.string().min(1),
-      })
-    )
-    .query(async ({ input, ctx }) => {
-      const { searchInput } = input
+  // SEARCH
+  search: t.procedure.input(schemaTagSearch).query(async ({ input, ctx }) => {
+    const { searchInput } = input
 
-      return await ctx.prisma.postTag.findMany({
-        where: {
-          OR: [
-            {
-              label: { contains: searchInput, mode: 'insensitive' },
-            },
-            {
-              description: { contains: searchInput, mode: 'insensitive' },
-            },
-          ],
-        },
-        orderBy: { posts: { _count: 'desc' } },
-        take: 20,
-      })
-    }),
+    return await ctx.prisma.postTag.findMany({
+      where: {
+        OR: [
+          {
+            label: { contains: searchInput, mode: 'insensitive' },
+          },
+          {
+            description: { contains: searchInput, mode: 'insensitive' },
+          },
+        ],
+      },
+      orderBy: { posts: { _count: 'desc' } },
+      take: 20,
+    })
+  }),
 })

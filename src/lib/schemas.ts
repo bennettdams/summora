@@ -99,3 +99,7 @@ export const schemaCreatePostComment = z.object({
   commentParentId: z.string().cuid().nullable(),
   text: z.string().min(1),
 })
+
+export const schemaTagSearch = z.object({
+  searchInput: z.string().min(1).max(128),
+})

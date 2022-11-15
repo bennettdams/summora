@@ -3,6 +3,7 @@ import { MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { z } from 'zod'
 import {
   schemaCreatePostComment,
+  schemaTagSearch,
   schemaUpdatePost,
   schemaUpdatePostCategory,
 } from '../../../lib/schemas'
@@ -30,7 +31,6 @@ import {
   Input,
   useIsSubmitEnabled,
 } from '../../form'
-import { FormInput } from '../../FormInput'
 import { IconCategory, IconDate, IconReply, IconTrash } from '../../Icon'
 import { Link } from '../../link'
 import { LoadingAnimation } from '../../LoadingAnimation'
@@ -50,6 +50,7 @@ type TagPostPage = RouterOutput['postTags']['byPostId'][number]
 type SchemaUpdate = z.infer<typeof schemaUpdatePost>
 type SchemaUpdateCategory = z.infer<typeof schemaUpdatePostCategory>
 type SchemaCreateComment = z.infer<typeof schemaCreatePostComment>
+type SchemaTagSearch = z.infer<typeof schemaTagSearch>
 
 export function PostPage(props: PostPageProps): JSX.Element {
   const { data: post, isLoading: isLoadingPost } = trpc.posts.byPostId.useQuery(
@@ -194,6 +195,22 @@ function PostPageInternal<
     categoryId: post.postCategoryId,
   })
 
+  const defaultValuesTagSearch: SchemaTagSearch = useMemo(
+    () => ({ searchInput: '' }),
+    []
+  )
+  const {
+    handleSubmit: handleSubmitTagSearch,
+    register: registerTagSearchTagSearch,
+    watch: watchTagSearch,
+  } = useZodForm({
+    schema: schemaTagSearch,
+    defaultValues: defaultValuesTagSearch,
+    mode: 'onSubmit',
+  })
+
+  const inputTagSearch = watchTagSearch('searchInput')
+
   const [isShownTagSelection, setIsShownTagSelection] = useState(false)
   const refTagSelection = useRef<HTMLDivElement>(null)
   useOnClickOutside(refTagSelection, () => setIsShownTagSelection(false))
@@ -201,7 +218,6 @@ function PostPageInternal<
   async function handleRemoveTag(tagId: string): Promise<void> {
     removeFromPost.mutate({ postId, tagId })
   }
-  const [inputTagSearch, setInputTagSearch] = useState('')
   const inputTagSearchDebounced = useDebounce(inputTagSearch, 500)
   const { data: tagsSearchResult, isFetching } = trpc.postTags.search.useQuery(
     { searchInput: inputTagSearchDebounced },
@@ -421,14 +437,21 @@ function PostPageInternal<
                 <div className="flex w-full items-center space-x-3">
                   <span className="italic">Search</span>
                   <span className="font-bold text-dlila">{inputTagSearch}</span>
-                  {isFetching && <LoadingAnimation size="small" />}
                 </div>
 
-                <FormInput
-                  inputId="tags-search"
-                  initialValue={inputTagSearch}
-                  onChange={async (inputNew) => setInputTagSearch(inputNew)}
-                />
+                <Form
+                  onSubmit={handleSubmitTagSearch(() => {
+                    // noop, this is executed via debounce above
+                  })}
+                >
+                  <Input
+                    {...registerTagSearchTagSearch('searchInput')}
+                    placeholder="Search for tags.."
+                    isSpecial
+                    isLoading={isFetching}
+                    small
+                  />
+                </Form>
 
                 <div className="-m-1 mt-2 flex flex-wrap">
                   {tagsSearchResult &&
