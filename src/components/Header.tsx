@@ -203,10 +203,10 @@ export function Header(): JSX.Element {
 
                 <button
                   type="button"
-                  className="rounded-full p-1 text-white hover:bg-dorange focus:outline-none focus:ring-2 focus:ring-white"
+                  className="rounded-full p-1 text-dlila hover:bg-dorange hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6 text-dlila" aria-hidden="true" />
+                  <BellIcon className="h-6 w-6" aria-hidden="true" />
                 </button>
 
                 <UserNavbar />

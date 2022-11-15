@@ -94,8 +94,9 @@ function UserPageInternal({
             </div>
           </div>
 
-          <div className="w-1/4">
-            <div>
+          <div className="grid w-1/4 place-items-center">
+            {/* `w-min` to prvent the hover color not spreading to the width of the container */}
+            <div className="w-min">
               <Avatar
                 isEditable={isOwnUser}
                 userId={userId}
