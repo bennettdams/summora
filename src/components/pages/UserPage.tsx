@@ -80,7 +80,7 @@ function UserPageInternal({
           <div className="w-1/4"></div>
 
           <div className="w-2/4">
-            <h2 className="text-center text-5xl">{username}</h2>
+            <h2 className="text-center text-5xl text-dlila">{username}</h2>
 
             <div className="mt-6 text-center">
               <p className="uppercase tracking-widest">Member since</p>

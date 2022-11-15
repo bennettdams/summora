@@ -293,6 +293,7 @@ export function IconLiked({
       onClick={(event: MouseEvent) => {
         if (onClick) {
           event.stopPropagation()
+          event.preventDefault()
           onClick()
         }
       }}
@@ -315,6 +316,7 @@ export function IconUnliked({
       onClick={(event: MouseEvent) => {
         if (onClick) {
           event.stopPropagation()
+          event.preventDefault()
           onClick()
         }
       }}
