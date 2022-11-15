@@ -76,35 +76,25 @@ function UserPageInternal({
   return (
     <>
       <PageSection>
-        <Box>
-          <div className="flex">
-            <div className="grow space-y-4">
-              <h2 className="text-3xl">{username}</h2>
+        <div className="flex p-10">
+          <div className="w-1/4"></div>
 
-              <div>
-                <p className="uppercase tracking-widest">Member since</p>
-                <p className="ml-4 text-lg font-semibold">
-                  <DateTime format="MM-DD hh:mm" date={createdAt} />
-                </p>
-              </div>
-              <div>
-                <p className="uppercase tracking-widest">Last update</p>
-                <p className="ml-4 text-lg font-semibold">
-                  <DateTime format="MM-DD hh:mm" date={updatedAt} />
-                </p>
-              </div>
+          <div className="w-2/4">
+            <h2 className="text-center text-5xl">{username}</h2>
+
+            <div className="mt-6 text-center">
+              <p className="uppercase tracking-widest">Member since</p>
+              <p className="text-lg font-semibold">
+                <DateTime format="MM-DD hh:mm" date={createdAt} />
+              </p>
+              <p className="uppercase tracking-widest">Last update</p>
+              <p className="text-lg font-semibold">
+                <DateTime format="MM-DD hh:mm" date={updatedAt} />
+              </p>
             </div>
+          </div>
 
-            <div className="mr-4 grid place-items-center">
-              {isOwnUser && !!imageId && (
-                <ButtonRemove
-                  onClick={() => deleteAvatar.mutate({ userId, imageId })}
-                >
-                  Delete avatar
-                </ButtonRemove>
-              )}
-            </div>
-
+          <div className="w-1/4">
             <div>
               <Avatar
                 isEditable={isOwnUser}
@@ -115,11 +105,21 @@ function UserPageInternal({
                 size="large"
               />
             </div>
+
+            <div className="grid place-items-center">
+              {isOwnUser && !!imageId && (
+                <ButtonRemove
+                  onClick={() => deleteAvatar.mutate({ userId, imageId })}
+                >
+                  Delete avatar
+                </ButtonRemove>
+              )}
+            </div>
           </div>
-        </Box>
+        </div>
       </PageSection>
 
-      <PageSection label="Statistics">
+      <PageSection>
         <div className="flex flex-row space-x-10">
           <StatisticsCard
             label="Posts created"
@@ -160,48 +160,50 @@ function UserPageInternal({
         </div>
       </PageSection>
 
-      <PageSection label="Avatar preview">
-        <Box>
-          <div className="grid auto-rows-min grid-cols-3 text-center">
-            <div className="col-start-1">
-              <div className="grid h-full place-items-center">
-                <Avatar
-                  userId={userId}
-                  username={username}
-                  imageId={imageId}
-                  imageBlurDataURL={imageBlurDataURL}
-                  size="small"
-                />
+      {isOwnUser && (
+        <PageSection label="Avatar preview">
+          <Box>
+            <div className="grid auto-rows-min grid-cols-3 text-center">
+              <div className="col-start-1">
+                <div className="grid h-full place-items-center">
+                  <Avatar
+                    userId={userId}
+                    username={username}
+                    imageId={imageId}
+                    imageBlurDataURL={imageBlurDataURL}
+                    size="small"
+                  />
+                </div>
+                <p>Small</p>
               </div>
-              <p>Small</p>
-            </div>
-            <div className="col-start-2">
-              <div className="grid h-full place-items-center">
-                <Avatar
-                  userId={userId}
-                  username={username}
-                  imageId={imageId}
-                  imageBlurDataURL={imageBlurDataURL}
-                  size="medium"
-                />
+              <div className="col-start-2">
+                <div className="grid h-full place-items-center">
+                  <Avatar
+                    userId={userId}
+                    username={username}
+                    imageId={imageId}
+                    imageBlurDataURL={imageBlurDataURL}
+                    size="medium"
+                  />
+                </div>
+                <p>Medium</p>
               </div>
-              <p>Medium</p>
-            </div>
-            <div className="col-start-3">
-              <div className="grid h-full place-items-center">
-                <Avatar
-                  userId={userId}
-                  username={username}
-                  imageId={imageId}
-                  imageBlurDataURL={imageBlurDataURL}
-                  size="large"
-                />
+              <div className="col-start-3">
+                <div className="grid h-full place-items-center">
+                  <Avatar
+                    userId={userId}
+                    username={username}
+                    imageId={imageId}
+                    imageBlurDataURL={imageBlurDataURL}
+                    size="large"
+                  />
+                </div>
+                <p>Large</p>
               </div>
-              <p>Large</p>
             </div>
-          </div>
-        </Box>
-      </PageSection>
+          </Box>
+        </PageSection>
+      )}
 
       <PageSection label={`Posts by ${username}`}>
         {isLoadingPosts ? (
