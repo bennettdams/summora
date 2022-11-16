@@ -11,7 +11,9 @@ export function Page({
   return (
     <div className="page mt-16 w-full pb-32">
       {pageHeader && pageHeader}
-      <main className="container mx-auto mt-20 w-full pb-32">{children}</main>
+      <main className="container mx-auto mt-20 w-full px-4 pb-32 md:px-6 lg:px-0">
+        {children}
+      </main>
     </div>
   )
 }

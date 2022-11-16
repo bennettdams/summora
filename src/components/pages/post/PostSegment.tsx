@@ -140,11 +140,14 @@ export function PostSegment({
       <div
         ref={refSegmentEdit}
         // items-stretch needed for the post image
-        className="flex w-full flex-col items-stretch rounded-xl bg-white p-8 lg:flex-row"
+        className="flex w-full flex-col items-stretch rounded-xl bg-white lg:flex-row"
       >
         <div
           className={`px-4 ${
-            choiceControl.selected.choiceId === 'right' ? 'w-4/5' : 'w-full'
+            choiceControl.selected.choiceId === 'right'
+              ? // keep width in sync with post segment image
+                'w-full lg:w-4/5'
+              : 'w-full'
           }`}
         >
           {/* HEADER & ITEMS */}
@@ -167,7 +170,7 @@ export function PostSegment({
                 })}
               >
                 <div className="flex w-full flex-row text-xl">
-                  <div className="h-full w-20 text-left">
+                  <div className="h-full w-10 text-left md:w-20">
                     <span className="text-4xl italic">{sequenceNumber}</span>
                   </div>
 
@@ -306,39 +309,16 @@ export function PostSegment({
             </div>
           </div>
 
-          {/* POST IMAGE */}
-          {choiceControl.selected.choiceId === 'bottom' && (
-            <div className="grid min-h-[250px] w-full place-items-center">
-              <PostSegmentImage
-                isEditable={isPostEditable}
-                postId={postId}
-                authorId={authorId}
-                postSegmentId={postSegmentId}
-                imageId={segment.imageId}
-              />
-            </div>
-          )}
-
-          {isPostEditable && (
-            <div className="mt-4 flex flex-row justify-between">
-              <ButtonRemove
-                showLoading={deleteSegment.isLoading}
-                onClick={() =>
-                  deleteSegment.mutate({ segmentId: postSegmentId })
-                }
-              >
-                Remove segment
-              </ButtonRemove>
-
-              <ChoiceSelect control={choiceControl} />
-            </div>
-          )}
-        </div>
-
-        {/* POST IMAGE */}
-        {/* the parent container uses "items-stretch" so the image can "fill" the height */}
-        {choiceControl.selected.choiceId === 'right' && (
-          <div className="grid min-h-[150px] w-full place-items-center lg:w-1/5">
+          {/* POST IMAGE - BOTTOM */}
+          <div
+            className={
+              'grid w-full place-items-center' +
+              // placeholder doesn't need to be as big as an image
+              ` ${segment.imageId ? 'min-h-[250px]' : 'min-h-[100px]'}` +
+              // on mobile, we always show the image at the bottom, so we hide it here on larger screens if necessary
+              ` ${choiceControl.selected.choiceId !== 'bottom' && 'lg:hidden'}`
+            }
+          >
             <PostSegmentImage
               isEditable={isPostEditable}
               postId={postId}
@@ -347,7 +327,43 @@ export function PostSegment({
               imageId={segment.imageId}
             />
           </div>
-        )}
+
+          {isPostEditable && (
+            <div className="mt-4 flex flex-col items-center space-y-4 lg:flex-row-reverse lg:items-end lg:justify-between lg:space-y-0">
+              <div className="text-center">
+                <p>Image position:</p>
+                <p className="text-sm italic">(only on larger screens)</p>
+              </div>
+
+              <ChoiceSelect control={choiceControl} />
+
+              <div>
+                <ButtonRemove
+                  showLoading={deleteSegment.isLoading}
+                  onClick={() =>
+                    deleteSegment.mutate({ segmentId: postSegmentId })
+                  }
+                >
+                  Remove segment
+                </ButtonRemove>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* POST IMAGE - RIGHT */}
+        {/* the parent container uses "items-stretch" so the image can "fill" the height */}
+        <div className="hidden min-h-[150px] w-full place-items-center lg:grid lg:w-1/5">
+          {choiceControl.selected.choiceId === 'right' && (
+            <PostSegmentImage
+              isEditable={isPostEditable}
+              postId={postId}
+              authorId={authorId}
+              postSegmentId={postSegmentId}
+              imageId={segment.imageId}
+            />
+          )}
+        </div>
       </div>
     </Box>
   )

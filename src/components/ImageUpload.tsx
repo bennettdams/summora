@@ -83,7 +83,10 @@ export function ImageUpload({
             <LoadingAnimation />
           </div>
         ) : (
-          <IconAdd className="duration-200 group-hover:scale-125" size="huge" />
+          <IconAdd
+            className="rounded-full bg-dbrown text-white duration-200 group-hover:scale-125 lg:bg-transparent"
+            size="huge"
+          />
         )}
       </label>
 

@@ -29,9 +29,9 @@ export function Box({
         padding === false
           ? 'p-0'
           : padding === 'small'
-          ? 'p-4'
+          ? 'p-1 md:p-4'
           : padding === 'medium'
-          ? 'p-10'
+          ? 'p-2 md:p-10'
           : ''
       } ${onClick && 'cursor-pointer'} ${
         !isHighlighted ? 'bg-white' : 'from-fuchsia-200 to-blue-200'

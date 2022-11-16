@@ -387,7 +387,7 @@ function PostPageInternal<
           </div>
 
           {/* RIGHT JUSTIFY */}
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row items-center justify-center lg:justify-end">
             {/* DONATION */}
             {/* margin bottom to align the row vertically with the avatar image */}
             <div className="mr-4 mb-10">
@@ -431,7 +431,10 @@ function PostPageInternal<
 
       {isShownTagSelection && (
         <PageSection>
-          <div className="flex space-x-10" ref={refTagSelection}>
+          <div
+            className="flex flex-col space-y-6 lg:flex-row lg:space-x-10 lg:space-y-0"
+            ref={refTagSelection}
+          >
             <div className="w-full flex-1">
               <Box>
                 <div className="flex w-full items-center space-x-3">
@@ -465,6 +468,7 @@ function PostPageInternal<
                 </div>
               </Box>
             </div>
+
             <div className="flex-1">
               <Box inline>
                 <p className="italic">Popular overall</p>
@@ -481,6 +485,7 @@ function PostPageInternal<
                 </div>
               </Box>
             </div>
+
             <div className="flex-1">
               <Box inline>
                 <p className="italic">Popular for this category</p>
