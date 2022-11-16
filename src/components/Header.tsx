@@ -319,17 +319,21 @@ function CreatePostModal() {
                 }
               )
             })}
-            className="my-4 flex w-full flex-col space-y-8 px-20"
+            className="my-4 flex w-full flex-col space-y-16 px-6 md:px-20"
           >
             <Input
               {...register('title')}
               placeholder="Enter a title.."
               validationErrorMessage={formState.errors.title?.message}
+              isSpecial
+              small
             />
             <Input
               {...register('subtitle')}
               placeholder="Enter a subtitle.."
               validationErrorMessage={formState.errors.subtitle?.message}
+              isSpecial
+              small
             />
 
             {isLoadingCategories ? (

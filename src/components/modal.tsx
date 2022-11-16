@@ -133,7 +133,7 @@ export function Modal({
                 className={
                   'inline-flex max-w-screen-2xl flex-col overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl' +
                   ` ${forceFullWidth && 'w-full'}` +
-                  ` ${forceHalfWidth && 'w-1/2'}` +
+                  ` ${forceHalfWidth && 'w-full lg:w-1/2'}` +
                   ` ${forceFullHeight && 'h-screen'}`
                 }
                 style={{ maxHeight: '90vh' }}
