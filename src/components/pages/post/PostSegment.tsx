@@ -295,12 +295,12 @@ export function PostSegment({
                 ) : !lastSuccessfulEdit ? (
                   <span>No changes yet.</span>
                 ) : (
-                  <>
+                  <p className="animate-fade-in">
                     <span>Saved changes</span>
                     <span className="ml-2 text-gray-400">
                       {formatDateTime(lastSuccessfulEdit, 'MM-DD hh:mm:ss')}
                     </span>
-                  </>
+                  </p>
                 )}
               </p>
             </div>

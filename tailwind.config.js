@@ -20,6 +20,15 @@ module.exports = {
         dorange: '#e08560',
         dbrown: '#d4ad9f',
       },
+      animation: {
+        'fade-in': 'fade-in 300ms ease',
+      },
+      keyframes: {
+        'fade-in': {
+          from: { opacity: 0 },
+          to: { opacity: 1 },
+        },
+      },
     },
     fontWeight: {
       normal: 400,

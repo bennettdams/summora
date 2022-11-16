@@ -25,7 +25,7 @@ export function LoadingAnimation({
   light?: boolean
 }): JSX.Element {
   return (
-    <span className="inline" title="Loading..">
+    <span className="inline animate-fade-in" title="Loading..">
       <svg
         className={`inline animate-spin ${
           light ? 'text-dbrown' : 'text-dlila'
