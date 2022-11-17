@@ -11,26 +11,25 @@ import {
 
 import {
   Bars3Icon,
-  ChatBubbleBottomCenterIcon,
+  ChatBubbleBottomCenterTextIcon,
   ArrowDownCircleIcon,
   ArrowRightCircleIcon,
   CheckIcon,
   CalendarIcon,
   ChevronUpDownIcon,
-  ChevronDownIcon as ChevronDownIconSolid,
-  CurrencyDollarIcon as CurrencyDollarIconSolid,
+  ChevronDownIcon,
+  CurrencyDollarIcon,
   EyeIcon,
-  HeartIcon as HeartIconSolid,
+  HeartIcon,
   PencilIcon,
   PlusIcon,
-  QuestionMarkCircleIcon as QuestionMarkCircleIconSolid,
+  QuestionMarkCircleIcon,
   ArrowUturnLeftIcon,
   TrashIcon,
   XMarkIcon,
   SquaresPlusIcon,
   Squares2X2Icon,
 } from '@heroicons/react/24/solid'
-import { MouseEvent } from 'react'
 
 const sizes = {
   small: 'h-4 w-4',
@@ -38,25 +37,6 @@ const sizes = {
   big: 'h8 w-8',
   huge: 'h-12 w-12',
 } as const
-
-const style = 'leading-none rounded-full'
-
-const clickableStyle =
-  'cursor-pointer transition ease-in duration-75 transform hover:scale-110 hover:text-dlila hover:shadow-sm'
-
-function createClassNames({
-  size,
-  className,
-  isClickable,
-}: {
-  size: IconSize
-  isClickable: boolean
-  className?: string
-}) {
-  return `${style} ${sizes[size]} ${className ?? 'text-dorange'} ${
-    isClickable && clickableStyle
-  }`
-}
 
 export type IconSize = keyof typeof sizes
 
@@ -67,596 +47,163 @@ export interface IconProps {
   onClick?: () => void
 }
 
-// CUSTOM ICONS
-export function IconAdd({
+const icons = {
+  BookmarkSquareIconOutline,
+  BoltIconOutline,
+  CheckCircleIconOutline,
+  HeartIconOutline,
+  ArrowLeftOnRectangleIconOutline,
+  MinusCircleIconOutline,
+  PlusCircleIconOutline,
+  BellIconOutline,
+  Bars3Icon,
+  ChatBubbleBottomCenterTextIcon,
+  ArrowDownCircleIcon,
+  ArrowRightCircleIcon,
+  CheckIcon,
+  CalendarIcon,
+  ChevronUpDownIcon,
+  ChevronDownIcon,
+  CurrencyDollarIcon,
+  EyeIcon,
+  HeartIcon,
+  PencilIcon,
+  PlusIcon,
+  QuestionMarkCircleIcon,
+  ArrowUturnLeftIcon,
+  TrashIcon,
+  XMarkIcon,
+  SquaresPlusIcon,
+  Squares2X2Icon,
+}
+
+type IconName = keyof typeof icons
+
+/** Be aware that using `className` also removes the default color of icons. */
+function Icon({
+  iconName,
   size = 'medium',
   className,
-  onClick,
-}: IconProps): JSX.Element {
+}: {
+  iconName: IconName
+  size?: IconProps['size']
+  className?: IconProps['className']
+}): JSX.Element {
+  const IconForName = icons[iconName]
+
   return (
-    <PlusIcon
-      className={`text-white ${sizes[size]} ${className ?? 'text-dorange'}`}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
+    <IconForName
+      className={`${
+        className ?? 'rounded-full leading-none text-dorange'
+      } inline-block ${sizes[size]}`}
     />
   )
 }
 
-// DEFAULT ICONS
-export function IconEdit({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <PencilIcon
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconAdd(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="PlusIcon" />
 }
 
-export function IconTrash({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <TrashIcon
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconEdit(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="PencilIcon" />
 }
 
-export function IconReply({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <ArrowUturnLeftIcon
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconTrash(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="TrashIcon" />
 }
 
-export function IconCategory({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <BookmarkSquareIconOutline
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconReply(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="ArrowUturnLeftIcon" />
 }
 
-export function IconDate({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <CalendarIcon
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconCategory(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="BookmarkSquareIconOutline" />
 }
 
-export function IconComment({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <ChatBubbleBottomCenterIcon
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconDate(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="CalendarIcon" />
 }
 
-export function IconView({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <EyeIcon
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconComment(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="ChatBubbleBottomCenterTextIcon" />
 }
 
-export function IconUpvote({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <PlusCircleIconOutline
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconView(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="EyeIcon" />
 }
 
-export function IconDownvote({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <MinusCircleIconOutline
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconUpvote(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="PlusCircleIconOutline" />
 }
 
-export function IconLiked({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <HeartIconSolid
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          event.preventDefault()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconDownvote(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="MinusCircleIconOutline" />
 }
 
-export function IconUnliked({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <HeartIconOutline
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          event.preventDefault()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconLiked(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="HeartIcon" />
 }
 
-export function IconDonate({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <CurrencyDollarIconSolid
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconUnliked(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="HeartIconOutline" />
 }
 
-export function IconArrowDown({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <ChevronDownIconSolid
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconDonate(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="CurrencyDollarIcon" />
 }
 
-export function IconOk({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <CheckIcon
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconArrowDown(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="ChevronDownIcon" />
 }
 
-export function IconSelector({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <ChevronUpDownIcon
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconOk(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="CheckIcon" />
 }
 
-export function IconBell({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <BellIconOutline
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconSelector(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="ChevronUpDownIcon" />
 }
 
-export function IconMenu({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <Bars3Icon
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconBell(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="BellIconOutline" />
 }
 
-export function IconX({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <XMarkIcon
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconMenu(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="Bars3Icon" />
 }
 
-export function IconLightning({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <BoltIconOutline
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconX(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="XMarkIcon" />
 }
 
-export function IconOkCircle({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <CheckCircleIconOutline
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconLightning(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="BoltIconOutline" />
 }
 
-export function IconQuestionMarkCircle({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <QuestionMarkCircleIconSolid
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconOkCircle(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="CheckCircleIconOutline" />
 }
 
-export function IconShort({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <Squares2X2Icon
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconQuestionMarkCircle(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="QuestionMarkCircleIcon" />
 }
 
-export function IconLong({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <SquaresPlusIcon
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconShort(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="Squares2X2Icon" />
 }
 
-export function IconSignIn({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <ArrowLeftOnRectangleIconOutline
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconLong(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="SquaresPlusIcon" />
 }
 
-export function IconArrowCircleRight({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <ArrowRightCircleIcon
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconSignIn(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="ArrowLeftOnRectangleIconOutline" />
 }
 
-export function IconArrowCircleDown({
-  size = 'medium',
-  className,
-  onClick,
-}: IconProps): JSX.Element {
-  return (
-    <ArrowDownCircleIcon
-      className={createClassNames({
-        size,
-        className,
-        isClickable: !!onClick,
-      })}
-      onClick={(event: MouseEvent) => {
-        if (onClick) {
-          event.stopPropagation()
-          onClick()
-        }
-      }}
-    />
-  )
+export function IconArrowCircleRight(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="ArrowRightCircleIcon" />
+}
+
+export function IconArrowCircleDown(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="ArrowDownCircleIcon" />
 }
