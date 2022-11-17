@@ -11,15 +11,30 @@ import { useZodForm } from '../util/use-zod-form'
 import { Avatar } from './Avatar'
 import { Button } from './Button'
 import { Form, FormFieldError, FormSelect, FormSubmit, Input } from './form'
-import { IconBell, IconEdit, IconMenu, IconSignIn, IconX } from './Icon'
+import {
+  IconBell,
+  IconEdit,
+  IconHome,
+  IconMenu,
+  IconSignIn,
+  IconSignOut,
+  IconUser,
+  IconX,
+} from './Icon'
 import { Link } from './link'
 import { LoadingAnimation } from './LoadingAnimation'
 import { Modal, useModal } from './modal'
 import { NoContent } from './NoContent'
 
 const NAV_ROUTES = [
-  { name: 'home', href: ROUTES.home },
-  { name: 'explore', href: ROUTES.explore },
+  {
+    name: 'Home',
+    href: ROUTES.home,
+    icon: (
+      <IconHome size="big" className="text-dorange group-hover:text-white" />
+    ),
+  },
+  { name: 'Explore', href: ROUTES.explore, icon: null },
 ] as const
 
 function classNames(...classes: unknown[]) {
@@ -96,33 +111,28 @@ function UserNavbar() {
         leaveTo="transform opacity-0 scale-95"
       >
         {userIdAuth && (
-          <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="absolute right-0 mt-2 w-52 origin-top-right rounded-md bg-white py-4 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <Link to={ROUTES.user(userIdAuth)}>
               <Menu.Item>
                 {({ active }) => (
-                  <span
+                  <p
                     className={classNames(
-                      active && 'bg-dorange text-white',
-                      'block px-4 py-2 text-sm'
+                      active && 'bg-dorange hover:text-white',
+                      'group block px-4 py-2 text-sm'
                     )}
                   >
-                    Your profile
-                  </span>
+                    <IconUser className="text-dorange group-hover:text-white" />
+                    <span className="ml-1">Your profile</span>
+                  </p>
                 )}
               </Menu.Item>
             </Link>
             <Menu.Item>
-              {({ active }) => (
-                <button
-                  onClick={signOut}
-                  className={classNames(
-                    active && 'bg-dorange text-white',
-                    'w-full px-4 py-2 text-left text-sm '
-                  )}
-                >
+              <div className="mt-4 grid place-items-center">
+                <Button icon={<IconSignOut />} onClick={signOut}>
                   Sign out
-                </button>
-              )}
+                </Button>
+              </div>
             </Menu.Item>
           </Menu.Items>
         )}
@@ -171,16 +181,16 @@ export function Header(): JSX.Element {
                       <Link key={route.name} to={route.href}>
                         <span
                           className={classNames(
-                            route.href === asPath
+                            route.href === asPath && route.href !== '/'
                               ? 'border-b border-b-dlila text-dlila'
                               : 'hover:rounded-md hover:bg-dorange hover:text-white',
-                            'px-3 py-2 text-sm font-semibold'
+                            'group px-3 py-2.5 text-sm font-semibold'
                           )}
                           aria-current={
                             route.href === asPath ? 'page' : undefined
                           }
                         >
-                          {route.name}
+                          {route.icon ?? route.name}
                         </span>
                       </Link>
                     ))}

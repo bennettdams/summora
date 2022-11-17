@@ -4,9 +4,12 @@ import {
   CheckCircleIcon as CheckCircleIconOutline,
   HeartIcon as HeartIconOutline,
   ArrowLeftOnRectangleIcon as ArrowLeftOnRectangleIconOutline,
+  ArrowRightOnRectangleIcon as ArrowRightOnRectangleIconOutline,
   MinusCircleIcon as MinusCircleIconOutline,
   PlusCircleIcon as PlusCircleIconOutline,
   BellIcon as BellIconOutline,
+  UserCircleIcon as UserCircleIconOutline,
+  HomeIcon as HomeIconOutline,
 } from '@heroicons/react/24/outline'
 
 import {
@@ -53,6 +56,7 @@ const icons = {
   CheckCircleIconOutline,
   HeartIconOutline,
   ArrowLeftOnRectangleIconOutline,
+  ArrowRightOnRectangleIconOutline,
   MinusCircleIconOutline,
   PlusCircleIconOutline,
   BellIconOutline,
@@ -63,7 +67,9 @@ const icons = {
   CheckIcon,
   CalendarIcon,
   ChevronUpDownIcon,
+  HomeIconOutline,
   ChevronDownIcon,
+  UserCircleIconOutline,
   CurrencyDollarIcon,
   EyeIcon,
   HeartIcon,
@@ -93,9 +99,9 @@ function Icon({
 
   return (
     <IconForName
-      className={`${
-        className ?? 'rounded-full leading-none text-dorange'
-      } inline-block ${sizes[size]}`}
+      className={`inline-block rounded-full leading-none ${
+        className ?? 'text-dorange'
+      } ${sizes[size]}`}
     />
   )
 }
@@ -200,10 +206,22 @@ export function IconSignIn(props: IconProps): JSX.Element {
   return <Icon {...props} iconName="ArrowLeftOnRectangleIconOutline" />
 }
 
+export function IconSignOut(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="ArrowRightOnRectangleIconOutline" />
+}
+
 export function IconArrowCircleRight(props: IconProps): JSX.Element {
   return <Icon {...props} iconName="ArrowRightCircleIcon" />
 }
 
 export function IconArrowCircleDown(props: IconProps): JSX.Element {
   return <Icon {...props} iconName="ArrowDownCircleIcon" />
+}
+
+export function IconHome(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="HomeIconOutline" />
+}
+
+export function IconUser(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="UserCircleIconOutline" />
 }
