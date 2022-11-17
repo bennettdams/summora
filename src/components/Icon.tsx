@@ -1,16 +1,22 @@
 import {
-  BookmarkAltIcon,
+  BookmarkSquareIcon as BookmarkSquareIconOutline,
+  BoltIcon as BoltIconOutline,
   CheckCircleIcon as CheckCircleIconOutline,
   HeartIcon as HeartIconOutline,
-  LoginIcon as LoginIconOutline,
+  ArrowLeftOnRectangleIcon as ArrowLeftOnRectangleIconOutline,
   MinusCircleIcon as MinusCircleIconOutline,
   PlusCircleIcon as PlusCircleIconOutline,
-} from '@heroicons/react/outline'
+  BellIcon as BellIconOutline,
+} from '@heroicons/react/24/outline'
+
 import {
-  AnnotationIcon,
-  ArrowCircleDownIcon,
-  ArrowCircleRightIcon,
+  Bars3Icon,
+  ChatBubbleBottomCenterIcon,
+  ArrowDownCircleIcon,
+  ArrowRightCircleIcon,
+  CheckIcon,
   CalendarIcon,
+  ChevronUpDownIcon,
   ChevronDownIcon as ChevronDownIconSolid,
   CurrencyDollarIcon as CurrencyDollarIconSolid,
   EyeIcon,
@@ -18,11 +24,12 @@ import {
   PencilIcon,
   PlusIcon,
   QuestionMarkCircleIcon as QuestionMarkCircleIconSolid,
-  ReplyIcon,
+  ArrowUturnLeftIcon,
   TrashIcon,
-  ViewGridAddIcon,
-  ViewGridIcon,
-} from '@heroicons/react/solid'
+  XMarkIcon,
+  SquaresPlusIcon,
+  Squares2X2Icon,
+} from '@heroicons/react/24/solid'
 import { MouseEvent } from 'react'
 
 const sizes = {
@@ -130,7 +137,7 @@ export function IconReply({
   onClick,
 }: IconProps): JSX.Element {
   return (
-    <ReplyIcon
+    <ArrowUturnLeftIcon
       className={createClassNames({
         size,
         className,
@@ -152,7 +159,7 @@ export function IconCategory({
   onClick,
 }: IconProps): JSX.Element {
   return (
-    <BookmarkAltIcon
+    <BookmarkSquareIconOutline
       className={createClassNames({
         size,
         className,
@@ -196,7 +203,7 @@ export function IconComment({
   onClick,
 }: IconProps): JSX.Element {
   return (
-    <AnnotationIcon
+    <ChatBubbleBottomCenterIcon
       className={createClassNames({
         size,
         className,
@@ -368,6 +375,138 @@ export function IconArrowDown({
   )
 }
 
+export function IconOk({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <CheckIcon
+      className={createClassNames({
+        size,
+        className,
+        isClickable: !!onClick,
+      })}
+      onClick={(event: MouseEvent) => {
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
+      }}
+    />
+  )
+}
+
+export function IconSelector({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <ChevronUpDownIcon
+      className={createClassNames({
+        size,
+        className,
+        isClickable: !!onClick,
+      })}
+      onClick={(event: MouseEvent) => {
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
+      }}
+    />
+  )
+}
+
+export function IconBell({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <BellIconOutline
+      className={createClassNames({
+        size,
+        className,
+        isClickable: !!onClick,
+      })}
+      onClick={(event: MouseEvent) => {
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
+      }}
+    />
+  )
+}
+
+export function IconMenu({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <Bars3Icon
+      className={createClassNames({
+        size,
+        className,
+        isClickable: !!onClick,
+      })}
+      onClick={(event: MouseEvent) => {
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
+      }}
+    />
+  )
+}
+
+export function IconX({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <XMarkIcon
+      className={createClassNames({
+        size,
+        className,
+        isClickable: !!onClick,
+      })}
+      onClick={(event: MouseEvent) => {
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
+      }}
+    />
+  )
+}
+
+export function IconLightning({
+  size = 'medium',
+  className,
+  onClick,
+}: IconProps): JSX.Element {
+  return (
+    <BoltIconOutline
+      className={createClassNames({
+        size,
+        className,
+        isClickable: !!onClick,
+      })}
+      onClick={(event: MouseEvent) => {
+        if (onClick) {
+          event.stopPropagation()
+          onClick()
+        }
+      }}
+    />
+  )
+}
+
 export function IconOkCircle({
   size = 'medium',
   className,
@@ -418,7 +557,7 @@ export function IconShort({
   onClick,
 }: IconProps): JSX.Element {
   return (
-    <ViewGridIcon
+    <Squares2X2Icon
       className={createClassNames({
         size,
         className,
@@ -440,7 +579,7 @@ export function IconLong({
   onClick,
 }: IconProps): JSX.Element {
   return (
-    <ViewGridAddIcon
+    <SquaresPlusIcon
       className={createClassNames({
         size,
         className,
@@ -462,7 +601,7 @@ export function IconSignIn({
   onClick,
 }: IconProps): JSX.Element {
   return (
-    <LoginIconOutline
+    <ArrowLeftOnRectangleIconOutline
       className={createClassNames({
         size,
         className,
@@ -484,7 +623,7 @@ export function IconArrowCircleRight({
   onClick,
 }: IconProps): JSX.Element {
   return (
-    <ArrowCircleRightIcon
+    <ArrowRightCircleIcon
       className={createClassNames({
         size,
         className,
@@ -506,7 +645,7 @@ export function IconArrowCircleDown({
   onClick,
 }: IconProps): JSX.Element {
   return (
-    <ArrowCircleDownIcon
+    <ArrowDownCircleIcon
       className={createClassNames({
         size,
         className,

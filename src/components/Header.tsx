@@ -1,5 +1,4 @@
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 import { useRouter } from 'next/router'
 import { Fragment } from 'react'
 import { z } from 'zod'
@@ -12,7 +11,7 @@ import { useZodForm } from '../util/use-zod-form'
 import { Avatar } from './Avatar'
 import { Button } from './Button'
 import { Form, FormFieldError, FormSelect, FormSubmit, Input } from './form'
-import { IconEdit, IconSignIn } from './Icon'
+import { IconBell, IconEdit, IconMenu, IconSignIn, IconX } from './Icon'
 import { Link } from './link'
 import { LoadingAnimation } from './LoadingAnimation'
 import { Modal, useModal } from './modal'
@@ -149,11 +148,7 @@ export function Header(): JSX.Element {
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                 <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-dlila focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dlight">
                   <span className="sr-only">Open main menu</span>
-                  {open ? (
-                    <XIcon className="block h-6 w-6" aria-hidden="true" />
-                  ) : (
-                    <MenuIcon className="block h-6 w-6" aria-hidden="true" />
-                  )}
+                  {open ? <IconX size="big" /> : <IconMenu size="big" />}
                 </Disclosure.Button>
               </div>
 
@@ -206,7 +201,7 @@ export function Header(): JSX.Element {
                   className="rounded-full p-1 text-dlila hover:bg-dorange hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
+                  <IconBell />
                 </button>
 
                 <UserNavbar />

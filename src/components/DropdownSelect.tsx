@@ -1,6 +1,7 @@
 import { Listbox, Transition } from '@headlessui/react'
-import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
 import { Fragment, useEffect, useState } from 'react'
+import { IconOk, IconSelector } from './Icon'
+import { NoContent } from './NoContent'
 
 export interface DropdownItem {
   itemId: string
@@ -67,7 +68,7 @@ export function DropdownSelect({
             </span>
           )}
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-            <SelectorIcon className="h-5 w-5 text-dorange" aria-hidden="true" />
+            <IconSelector />
           </span>
         </Listbox.Button>
         <Transition
@@ -76,38 +77,32 @@ export function DropdownSelect({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <Listbox.Options className="absolute z-40 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm md:w-52">
+          <Listbox.Options className="absolute z-40 mt-1 max-h-72 w-full overflow-auto rounded-md bg-white py-3 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm md:w-72">
             {!items ? (
-              <p className="py-2 pl-10 pr-4">No options available</p>
+              <div className="py-2">
+                <NoContent>No options available.</NoContent>
+              </div>
             ) : (
               items.map((item) => (
                 <Listbox.Option
                   key={item.itemId}
                   className={({ active }) =>
                     `${active && 'bg-dorange text-white'}
-                      relative cursor-default select-none py-2 pl-10 pr-4`
+                     cursor-default select-none py-2`
                   }
                   value={item.itemId}
                 >
                   {({ active, selected }) => (
-                    <>
-                      <span
-                        className={`${
-                          selected ? 'font-semibold' : 'font-normal'
-                        } block truncate`}
-                      >
-                        {item.label}
+                    <div className="ml-4 flex items-center justify-start">
+                      <span className={`w-12 ${active && 'text-white'}`}>
+                        {selected && (
+                          <IconOk
+                            className={active ? 'text-white' : undefined}
+                          />
+                        )}
                       </span>
-                      {/* TODO does not work*/}
-                      {selected ? (
-                        <span
-                          className={`${active && 'text-dorange'}
-                            absolute inset-y-0 left-0 flex items-center pl-3`}
-                        >
-                          <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                        </span>
-                      ) : null}
-                    </>
+                      <span className="">{item.label}</span>
+                    </div>
                   )}
                 </Listbox.Option>
               ))

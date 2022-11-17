@@ -1,4 +1,3 @@
-import { LightningBoltIcon } from '@heroicons/react/outline'
 import ErrorPage from 'next/error'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -7,6 +6,7 @@ import { usePosts } from '../../../data/use-posts'
 import { PostsPageProps } from '../../../pages'
 import { trpc } from '../../../util/trpc'
 import { Box } from '../../Box'
+import { IconLightning } from '../../Icon'
 import { LoadingAnimation } from '../../LoadingAnimation'
 import { NoContent } from '../../NoContent'
 import { Page, PageSection } from '../../Page'
@@ -99,10 +99,9 @@ export function PostsPage({
       <PageSection>
         <div className="grid grid-cols-2 grid-rows-2 gap-8 md:px-44">
           <div className="justify-left flex items-center">
-            <LightningBoltIcon
-              className="h-12 w-12 rounded-md bg-dorange p-2 text-white"
-              aria-hidden="true"
-            />
+            <div className="rounded-md bg-dorange p-3">
+              <IconLightning size="big" className="text-white" />
+            </div>
 
             <p className="ml-6 text-lg font-semibold leading-6">
               Every topic you can imagine
@@ -110,10 +109,9 @@ export function PostsPage({
           </div>
 
           <div className="justify-left flex items-center">
-            <LightningBoltIcon
-              className="h-12 w-12 rounded-md bg-dorange p-2 text-white"
-              aria-hidden="true"
-            />
+            <div className="rounded-md bg-dorange p-3">
+              <IconLightning size="big" className="text-white" />
+            </div>
 
             <p className="ml-6 text-lg font-semibold leading-6">
               User-generated content
@@ -121,10 +119,9 @@ export function PostsPage({
           </div>
 
           <div className="justify-left flex items-center">
-            <LightningBoltIcon
-              className="h-12 w-12 rounded-md bg-dorange p-2 text-white"
-              aria-hidden="true"
-            />
+            <div className="rounded-md bg-dorange p-3">
+              <IconLightning size="big" className="text-white" />
+            </div>
 
             <p className="ml-6 text-lg font-semibold leading-6">
               Get paid to write articles
@@ -132,10 +129,9 @@ export function PostsPage({
           </div>
 
           <div className="justify-left flex items-center">
-            <LightningBoltIcon
-              className="h-12 w-12 rounded-md bg-dorange p-2 text-white"
-              aria-hidden="true"
-            />
+            <div className="rounded-md bg-dorange p-3">
+              <IconLightning size="big" className="text-white" />
+            </div>
 
             <p className="ml-6 text-lg font-semibold leading-6">
               Explore unknown knowledge territories
