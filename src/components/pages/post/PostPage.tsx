@@ -87,6 +87,17 @@ export function PostPage(props: PostPageProps): JSX.Element {
   )
 }
 
+function useCreateComment(postId: string) {
+  const utils = trpc.useContext()
+  async function invalidateComments() {
+    await utils.postComments.byPostId.invalidate({ postId })
+  }
+
+  return trpc.postComments.create.useMutation({
+    onSuccess: invalidateComments,
+  })
+}
+
 function PostPageInternal<
   // exclude null - this should be checked in the parent to allow easier hooks usage in this component
   TPostType extends Exclude<RouterOutput['posts']['byPostId'], null>
@@ -105,16 +116,11 @@ function PostPageInternal<
 
   const utils = trpc.useContext()
 
-  async function invalidateComments() {
-    await utils.postComments.byPostId.invalidate({ postId })
-  }
   async function invalidateSegments() {
     await utils.postSegments.byPostId.invalidate({ postId })
   }
 
-  const createComment = trpc.postComments.create.useMutation({
-    onSuccess: invalidateComments,
-  })
+  const createComment = useCreateComment(postId)
 
   const [isPostEditable, setIsPostEditable] = useState(userId === post.authorId)
   useEffect(
@@ -949,9 +955,7 @@ export function PostComments({
     utils.postComments.byPostId.invalidate({ postId })
   }
 
-  const createComment = trpc.postComments.create.useMutation({
-    onSuccess: invalidateComments,
-  })
+  const createComment = useCreateComment(postId)
   const upvote = trpc.postComments.upvote.useMutation({
     onSuccess: invalidateComments,
   })
