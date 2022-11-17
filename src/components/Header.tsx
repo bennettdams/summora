@@ -111,7 +111,7 @@ function UserNavbar() {
         leaveTo="transform opacity-0 scale-95"
       >
         {userIdAuth && (
-          <Menu.Items className="absolute right-0 mt-2 w-52 origin-top-right rounded-md bg-white py-4 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="absolute right-0 mt-2 w-80 origin-top-right rounded-md bg-white py-4 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none lg:w-60">
             <Link to={ROUTES.user(userIdAuth)}>
               <Menu.Item>
                 {({ active }) => (
@@ -208,10 +208,10 @@ export function Header(): JSX.Element {
 
                 <button
                   type="button"
-                  className="rounded-full p-1 text-dlila hover:bg-dorange hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                  className="group rounded-full p-1 hover:bg-dorange focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <span className="sr-only">View notifications</span>
-                  <IconBell />
+                  <IconBell className="text-dorange group-hover:text-white" />
                 </button>
 
                 <UserNavbar />

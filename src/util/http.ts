@@ -1,4 +1,4 @@
-import { isServer } from './server/server-utils'
+import { isServer } from './utils'
 
 export interface HttpResponse<T> extends Response {
   result?: T
