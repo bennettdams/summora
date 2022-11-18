@@ -67,10 +67,14 @@ export function PostSegmentImage({
         <>
           <Image
             onClick={modalControls.open}
+            alt="Segment image"
             src={imageURL}
-            alt=""
-            layout="fill"
-            objectFit="contain"
+            fill={true}
+            className="object-contain"
+            sizes="
+            (max-width: 768px) 100vw,
+            (max-width: 1200px) 50vw,
+            33vw"
           />
           <Modal
             forceFullWidth
@@ -81,10 +85,12 @@ export function PostSegmentImage({
             <div className="relative h-full w-full">
               <Image
                 onClick={modalControls.close}
-                alt="Post segment image"
+                alt="Segment image"
                 src={imageURL}
-                layout="fill"
-                objectFit="contain"
+                fill={true}
+                className="object-contain"
+                // modal shows the image in full width, so we need the full viewport width
+                sizes="100vw"
               />
             </div>
           </Modal>

@@ -134,11 +134,11 @@ function AvatarInternal({
         >
           <Image
             src={imageURL}
+            alt="Avatar"
             placeholder="blur"
+            className="object-cover"
             // Next.js' types don't allow `null`, but they do allow `undefined`
             blurDataURL={imageBlurDataURL ?? undefined}
-            className="rounded-full"
-            alt="Avatar"
             width={sizePixels}
             height={sizePixels}
           />
@@ -153,3 +153,5 @@ function AvatarInternal({
     </div>
   )
 }
+
+// brunes
