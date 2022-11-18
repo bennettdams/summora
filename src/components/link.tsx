@@ -4,24 +4,18 @@ import { ReactNode } from 'react'
 export function Link({
   to,
   children,
-  disablePrefetch = false,
+  disablePrefetch = undefined,
 }: {
   to: string
   children: ReactNode
   /**
    * By default, Next.js' links will be prefetched when they come into viewport or when they're hovered.
    */
-  disablePrefetch?: boolean
+  disablePrefetch?: true
 }): JSX.Element {
-  return disablePrefetch ? (
-    <a href={to}>
+  return (
+    <NextLink href={to} prefetch={disablePrefetch}>
       <div className="cursor-pointer">{children}</div>
-    </a>
-  ) : (
-    <NextLink href={to}>
-      <a href={to}>
-        <div className="cursor-pointer">{children}</div>
-      </a>
     </NextLink>
   )
 }
