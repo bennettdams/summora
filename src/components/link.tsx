@@ -14,7 +14,7 @@ export function Link({
   disablePrefetch?: true
 }): JSX.Element {
   return (
-    <NextLink href={to} prefetch={disablePrefetch}>
+    <NextLink href={to} prefetch={disablePrefetch ? false : undefined}>
       <div className="cursor-pointer">{children}</div>
     </NextLink>
   )
