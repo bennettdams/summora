@@ -336,7 +336,7 @@ function PostPageInternal<
                   }`}
                 >
                   {/* LIKES */}
-                  <div className="absolute right-0 z-10 grid h-full place-items-center md:mr-14">
+                  <div className="absolute right-0 z-10 hidden h-full place-items-center md:mr-14 lg:grid">
                     <PostLikes
                       iconSize="huge"
                       postId={postId}
@@ -363,40 +363,46 @@ function PostPageInternal<
 
       {/* META */}
       <PageSection hideTopMargin>
-        <div className="flex flex-col justify-between lg:flex-row">
+        <div className="flex w-full flex-col justify-between lg:flex-row">
           {/* LEFT JUSTIFY */}
           {/* margin bottom to align the row vertically with the avatar image */}
-          <div className="mb-10 flex flex-col sm:flex-row sm:flex-wrap md:space-x-6">
-            {/* CATEGORY */}
-            <CategorySelect
-              postId={postId}
-              categoryIdInitial={post.postCategoryId}
-              shouldShowDropdown={isPostEditable && isShownCategoryDropdown}
-              refExternal={refCategory}
-            />
+          <div className="mb-10 flex flex-row items-center">
+            <div className="flex w-2/3 flex-col items-start justify-center pl-10 md:w-3/4 md:flex-row md:flex-wrap md:items-center md:space-x-6 md:pl-0 lg:relative lg:w-full">
+              {/* CATEGORY */}
+              <CategorySelect
+                postId={postId}
+                categoryIdInitial={post.postCategoryId}
+                shouldShowDropdown={isPostEditable && isShownCategoryDropdown}
+                refExternal={refCategory}
+              />
 
-            {/* META INFO */}
-            <div className="flex items-center text-sm">
-              <ViewsIcon noOfViews={post.noOfViews} />
+              {/* META INFO */}
+              <div className="flex items-center text-sm">
+                <ViewsIcon noOfViews={post.noOfViews} />
+              </div>
+
+              <div className="flex items-center text-sm">
+                <CommentsIcon noOfComments={post._count.comments} />
+              </div>
+
+              <div className="flex items-center text-sm">
+                <IconDate />
+                <span className="ml-1">
+                  <DateTime format="MM-DD hh:mm" date={post.createdAt} />
+                </span>
+              </div>
             </div>
 
-            <div className="flex items-center text-sm">
-              <CommentsIcon noOfComments={post._count.comments} />
-            </div>
-
-            <div className="flex items-center text-sm">
-              <IconDate />
-              <span className="ml-1">
-                <DateTime format="MM-DD hh:mm" date={post.createdAt} />
-              </span>
+            <div className="z-10 grid h-full w-1/3 place-items-center md:w-1/4 lg:absolute lg:right-0 lg:mr-14 lg:hidden">
+              <PostLikes iconSize="huge" postId={postId} userId={userId} />
             </div>
           </div>
 
           {/* RIGHT JUSTIFY */}
-          <div className="flex flex-row items-center justify-center lg:justify-end">
+          <div className="flex flex-row items-center justify-center">
             {/* DONATION */}
             {/* margin bottom to align the row vertically with the avatar image */}
-            <div className="mr-4 mb-10">
+            <div className="mb-10 md:mr-4">
               <DonateButton userId={post.authorId} />
             </div>
 
