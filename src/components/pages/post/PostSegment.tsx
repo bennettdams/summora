@@ -346,20 +346,30 @@ export function PostSegment({
           {isPostEditable && (
             <div className="mt-4 flex flex-col items-center space-y-4 lg:flex-row-reverse lg:items-end lg:justify-between lg:space-y-0">
               <div className="space-y-4">
-                <div className="text-center">
-                  <p>Image position:</p>
-                  <p className="text-sm italic">(only on larger screens)</p>
-                </div>
+                {!segment.imageId ? (
+                  /*
+                   * Hack to respect the "justify between".
+                   * With e.g. `hidden` the button remove button would take the full width and be wrongly positioned.
+                   */
+                  <>&nbsp;</>
+                ) : (
+                  <>
+                    <div className="text-center">
+                      <p>Image position:</p>
+                      <p className="text-sm italic">(only on larger screens)</p>
+                    </div>
 
-                <ChoiceSelect
-                  control={choiceControl}
-                  onSelect={(selectedChoice) => {
-                    changePosition.mutate({
-                      postSegmentId,
-                      position: selectedChoice.choiceId,
-                    })
-                  }}
-                />
+                    <ChoiceSelect
+                      control={choiceControl}
+                      onSelect={(selectedChoice) => {
+                        changePosition.mutate({
+                          postSegmentId,
+                          position: selectedChoice.choiceId,
+                        })
+                      }}
+                    />
+                  </>
+                )}
               </div>
 
               <div>
