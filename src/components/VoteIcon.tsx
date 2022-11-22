@@ -1,3 +1,4 @@
+import { ButtonIcon } from './Button'
 import { IconDownvote, IconSize, IconUpvote } from './Icon'
 
 export function VoteIcon({
@@ -14,21 +15,29 @@ export function VoteIcon({
   return (
     <span className="inline-flex items-center text-sm leading-none">
       {variant === 'upvote' ? (
-        <IconUpvote
-          className={`hover:text-dsecondary ${
-            isVoted ? 'text-dprimary' : 'text-dtertiary'
-          }`}
-          size={size}
+        <ButtonIcon
           onClick={onClick}
+          icon={
+            <IconUpvote
+              className={`hover:text-dsecondary ${
+                isVoted ? 'text-dprimary' : 'text-dtertiary'
+              }`}
+              size={size}
+            />
+          }
         />
       ) : (
         variant === 'downvote' && (
-          <IconDownvote
-            className={`hover:text-dsecondary ${
-              isVoted ? 'text-dprimary' : 'text-dtertiary'
-            }`}
-            size={size}
+          <ButtonIcon
             onClick={onClick}
+            icon={
+              <IconDownvote
+                className={`hover:text-dsecondary ${
+                  isVoted ? 'text-dprimary' : 'text-dtertiary'
+                }`}
+                size={size}
+              />
+            }
           />
         )
       )}

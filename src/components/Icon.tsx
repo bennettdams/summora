@@ -47,7 +47,6 @@ export interface IconProps {
   size?: IconSize
   // based on the prop type of Heroicons
   className?: Parameters<typeof PlusIcon>[0]['className']
-  onClick?: () => void
 }
 
 const icons = {

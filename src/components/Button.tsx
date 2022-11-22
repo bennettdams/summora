@@ -131,3 +131,39 @@ export function ButtonAdd(
     </Button>
   )
 }
+
+/** Only used for clickable icons. */
+export function ButtonIcon({
+  onClick,
+  disabled = false,
+  icon,
+}: OmitStrict<ButtonProps, 'icon' | 'onClick'> & {
+  onClick: NonNullable<ButtonProps['onClick']>
+  icon: NonNullable<ButtonProps['icon']>
+}): JSX.Element {
+  function handleClick(e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+    onClick(e)
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      disabled={disabled}
+      className="cursor-pointer rounded-full text-dsecondary duration-150 hover:rotate-12 hover:text-dtertiary focus:outline-dprimary disabled:cursor-not-allowed disabled:text-gray-400"
+    >
+      {
+        // overwrite the icon color for the appropiate text color of the button
+        isValidElement<IconProps>(icon) ? (
+          cloneElement<IconProps>(icon, {
+            className: icon.props.className ?? 'text-current',
+          })
+        ) : (
+          <></>
+        )
+      }
+    </button>
+  )
+}

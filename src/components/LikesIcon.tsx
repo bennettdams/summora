@@ -1,3 +1,4 @@
+import { ButtonIcon } from './Button'
 import { IconLiked, IconSize, IconUnliked } from './Icon'
 
 export function LikesIcon({
@@ -14,9 +15,9 @@ export function LikesIcon({
   return (
     <span className="inline-flex items-center text-sm leading-none">
       {isLiked ? (
-        <IconLiked size={size} onClick={onClick} />
+        <ButtonIcon onClick={onClick} icon={<IconLiked size={size} />} />
       ) : (
-        <IconUnliked size={size} onClick={onClick} />
+        <ButtonIcon onClick={onClick} icon={<IconUnliked size={size} />} />
       )}
       <span className="ml-1">{noOfLikes}</span>
     </span>

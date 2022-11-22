@@ -24,7 +24,7 @@ module.exports = {
       colors: {
         gray: colors.slate,
         dprimary: '#993a58',
-        dsecondary: '#253691',
+        dsecondary: '#4151a3',
         dtertiary: '#a0afda',
         dlight: '#eff2f8',
       },
