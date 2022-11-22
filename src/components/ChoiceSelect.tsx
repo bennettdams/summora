@@ -47,14 +47,21 @@ export function useChoiceSelect<
 export function ChoiceSelect<
   TChoices extends Choice<TChoiceId>[],
   TChoiceId extends string
->({ control }: { control: ChoiceSelectControl<TChoices, TChoiceId> }) {
+>({
+  control,
+  onSelect,
+}: {
+  control: ChoiceSelectControl<TChoices, TChoiceId>
+  onSelect?: (selected: Choice<TChoiceId>) => void
+}) {
   return (
     <RadioGroup
       by="choiceId"
       value={control.selected}
-      onChange={(val: typeof control.choices[number]) =>
+      onChange={(val: typeof control.choices[number]) => {
         control.setSelected(val)
-      }
+        onSelect?.(val)
+      }}
     >
       <div className="flex w-full flex-row space-x-2">
         {control.choices.map((choice) => (
