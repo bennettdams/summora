@@ -28,11 +28,14 @@ export function PostsPage({
         <div className="mt-20 grid place-items-center text-center">
           <div>
             <div className="relative grid h-96 place-items-center text-center text-4xl font-extrabold leading-none tracking-tight">
-              <p className="z-10 bg-gradient-to-b from-dsecondary to-orange-300 decoration-clone bg-clip-text text-8xl uppercase text-transparent drop-shadow-md">
+              <p className="z-10 bg-gradient-to-b from-dsecondary to-orange-300 decoration-clone bg-clip-text text-8xl uppercase text-transparent">
                 Condun
               </p>
 
-              <div className="absolute top-0 h-96 w-96 rounded-full bg-dtertiary opacity-80 blur-xl filter"></div>
+              {/* Background glow */}
+              <div className="absolute top-0 h-96 w-96 rounded-full bg-dtertiary opacity-20 blur-2xl filter"></div>
+              <div className="absolute top-0 h-56 w-96 rounded-full bg-dprimary opacity-30 blur-2xl filter"></div>
+              <div className="absolute top-0 h-96 w-96 rounded-full bg-dsecondary opacity-20 blur-2xl filter"></div>
 
               <div className="absolute z-0">
                 <Image

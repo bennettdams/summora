@@ -430,6 +430,7 @@ function PostPageInternal<
         </div>
       </PageSection>
 
+      {/* TAGS */}
       <PageSection hideTopMargin>
         {isLoadingTags ? (
           <LoadingAnimation />
@@ -443,6 +444,7 @@ function PostPageInternal<
         )}
       </PageSection>
 
+      {/* TAG SELECTION */}
       {isShownTagSelection && (
         <PageSection>
           <div
@@ -524,7 +526,7 @@ function PostPageInternal<
 
       <PageSection>
         {/* "items-start" to make "sticky" work. Without it, the sticky div has the full height of the flex container. */}
-        <div className="w-full items-start md:flex">
+        <div className="w-full items-start lg:flex">
           {isLoadingSegments ? (
             <div className="grid w-full place-items-center">
               <LoadingAnimation />
@@ -536,7 +538,7 @@ function PostPageInternal<
           ) : (
             <>
               {/* STEP LIST */}
-              <div className="top-40 pr-10 md:sticky md:w-1/6">
+              <div className="top-40 ml-0 md:ml-10 lg:sticky lg:ml-0 lg:block lg:w-1/6 lg:pr-8">
                 <StepList
                   steps={segments.map((segment, index) => ({
                     no: index,
@@ -547,7 +549,7 @@ function PostPageInternal<
               </div>
 
               {/* POST SEGMENTS */}
-              <div ref={animateRef} className="space-y-16 md:w-4/6">
+              <div ref={animateRef} className="space-y-16 lg:w-4/6">
                 {segments.map((segment, index) => (
                   <PostSegment
                     postSegmentId={segment.id}
@@ -561,7 +563,8 @@ function PostPageInternal<
                   />
                 ))}
               </div>
-              <div className="md:w-1/6">&nbsp;</div>
+
+              <div className="lg:w-1/6">&nbsp;</div>
             </>
           )}
         </div>

@@ -6,7 +6,7 @@ export function StepList({
   steps: { no: number; title: string; subtitle: string | null }[]
 }): JSX.Element {
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex flex-col">
       {steps.length === 0 ? (
         <NoContent>No steps yet</NoContent>
       ) : (
@@ -17,10 +17,12 @@ export function StepList({
                 <div className="pointer-events-none h-full w-1 bg-dtertiary"></div>
               </div>
             )}
+
             <div className="font-bold relative inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-dsecondary text-xl leading-none text-white">
               {step.no + 1}
             </div>
-            <div className="grow pl-4 text-sm">
+
+            <div className="pl-4 text-sm">
               <p>{step.title}</p>
               <h2 className="mb-1 text-xs font-semibold italic tracking-wider text-dtertiary">
                 {step.subtitle}
