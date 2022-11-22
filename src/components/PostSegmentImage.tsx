@@ -46,7 +46,7 @@ export function PostSegmentImage({
     >
       {/* TODO use EditOverlay instead */}
       {isEditable && (
-        <div className="absolute z-10 h-full w-full rounded-xl hover:cursor-pointer hover:bg-dbrown hover:bg-opacity-50">
+        <div className="absolute z-10 h-full w-full rounded-xl hover:cursor-pointer hover:bg-dtertiary hover:bg-opacity-50">
           <span className="grid h-full w-full place-items-center">
             <ImageUpload
               inputId={postSegmentId}

@@ -14,15 +14,15 @@ export function StepList({
           <div key={step.no} className="relative flex pb-12">
             {index !== steps.length - 1 && (
               <div className="absolute inset-0 flex h-full w-8 items-center justify-center">
-                <div className="pointer-events-none h-full w-1 bg-dbrown"></div>
+                <div className="pointer-events-none h-full w-1 bg-dtertiary"></div>
               </div>
             )}
-            <div className="font-bold relative inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-dorange text-xl leading-none text-white">
+            <div className="font-bold relative inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-dsecondary text-xl leading-none text-white">
               {step.no + 1}
             </div>
             <div className="grow pl-4 text-sm">
               <p>{step.title}</p>
-              <h2 className="mb-1 text-xs font-semibold italic tracking-wider text-dbrown">
+              <h2 className="mb-1 text-xs font-semibold italic tracking-wider text-dtertiary">
                 {step.subtitle}
               </h2>
             </div>

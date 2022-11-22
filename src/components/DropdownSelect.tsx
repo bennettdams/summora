@@ -57,7 +57,7 @@ export function DropdownSelect({
   return (
     <Listbox value={selectedItemId} onChange={handleSelect}>
       <div className="relative mt-1">
-        <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-dorange sm:text-sm">
+        <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-dsecondary sm:text-sm">
           {!selectedItemId ? (
             <span className="block truncate italic">
               {unselectedLabel ?? 'Please select an item.'}
@@ -87,7 +87,7 @@ export function DropdownSelect({
                 <Listbox.Option
                   key={item.itemId}
                   className={({ active }) =>
-                    `${active && 'bg-dorange text-white'}
+                    `${active && 'bg-dsecondary text-white'}
                      cursor-default select-none py-2`
                   }
                   value={item.itemId}

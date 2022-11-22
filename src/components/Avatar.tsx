@@ -55,7 +55,7 @@ function AvatarPlaceholder({
   return (
     <div
       className={`inline-flex items-center justify-center rounded-full text-center text-dlight ${
-        variant === 'brown' ? 'bg-dbrown' : 'bg-dorange'
+        variant === 'brown' ? 'bg-dtertiary' : 'bg-dsecondary'
       }`}
       style={{ width: sizePixels, height: sizePixels }}
     >
@@ -105,7 +105,7 @@ function AvatarInternal({
     <div className="relative inline-grid h-full w-full place-items-center">
       {/* TODO use EditOverlay instead */}
       {isEditable && (
-        <div className="group absolute z-30 h-full w-full rounded-full hover:cursor-pointer hover:bg-dbrown hover:bg-opacity-50">
+        <div className="group absolute z-30 h-full w-full rounded-full hover:cursor-pointer hover:bg-dtertiary hover:bg-opacity-50">
           <span className="grid h-full w-full place-items-center">
             <ImageUpload
               inputId={userId}

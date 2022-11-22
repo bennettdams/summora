@@ -28,7 +28,7 @@ export function LoadingAnimation({
     <span className="inline animate-fade-in" title="Loading..">
       <svg
         className={`inline animate-spin ${
-          light ? 'text-dbrown' : 'text-dlila'
+          light ? 'text-dtertiary' : 'text-dprimary'
         } ${getSize(size)}`}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

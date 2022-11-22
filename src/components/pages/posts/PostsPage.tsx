@@ -28,11 +28,11 @@ export function PostsPage({
         <div className="mt-20 grid place-items-center text-center">
           <div>
             <div className="relative grid h-96 place-items-center text-center text-4xl font-extrabold leading-none tracking-tight">
-              <p className="z-10 bg-gradient-to-b from-dorange to-orange-300 decoration-clone bg-clip-text text-8xl uppercase text-transparent drop-shadow-md">
+              <p className="z-10 bg-gradient-to-b from-dsecondary to-orange-300 decoration-clone bg-clip-text text-8xl uppercase text-transparent drop-shadow-md">
                 Condun
               </p>
 
-              <div className="absolute top-0 h-96 w-96 rounded-full bg-dbrown opacity-80 blur-xl filter"></div>
+              <div className="absolute top-0 h-96 w-96 rounded-full bg-dtertiary opacity-80 blur-xl filter"></div>
 
               <div className="absolute z-0">
                 <Image
@@ -45,7 +45,7 @@ export function PostsPage({
               </div>
             </div>
 
-            <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-dlila sm:text-4xl">
+            <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-dprimary sm:text-4xl">
               Everything, but summarized.
             </p>
           </div>
@@ -78,7 +78,7 @@ export function PostsPage({
       <PageSection>
         <div className="mx-auto max-w-7xl">
           <div className="lg:text-center">
-            <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-dlila sm:text-4xl">
+            <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-dprimary sm:text-4xl">
               <span>A </span>
               <span className="underline">faster</span> way to learn
             </p>
@@ -99,7 +99,7 @@ export function PostsPage({
       <PageSection>
         <div className="grid grid-cols-2 grid-rows-2 gap-8 md:px-44">
           <div className="justify-left flex items-center">
-            <div className="rounded-md bg-dorange p-3">
+            <div className="rounded-md bg-dsecondary p-3">
               <IconLightning size="big" className="text-white" />
             </div>
 
@@ -109,7 +109,7 @@ export function PostsPage({
           </div>
 
           <div className="justify-left flex items-center">
-            <div className="rounded-md bg-dorange p-3">
+            <div className="rounded-md bg-dsecondary p-3">
               <IconLightning size="big" className="text-white" />
             </div>
 
@@ -119,7 +119,7 @@ export function PostsPage({
           </div>
 
           <div className="justify-left flex items-center">
-            <div className="rounded-md bg-dorange p-3">
+            <div className="rounded-md bg-dsecondary p-3">
               <IconLightning size="big" className="text-white" />
             </div>
 
@@ -129,7 +129,7 @@ export function PostsPage({
           </div>
 
           <div className="justify-left flex items-center">
-            <div className="rounded-md bg-dorange p-3">
+            <div className="rounded-md bg-dsecondary p-3">
               <IconLightning size="big" className="text-white" />
             </div>
 
@@ -162,11 +162,11 @@ export function PostsPage({
 
       <PageSection>
         <div className="mx-auto max-w-7xl py-12 lg:flex lg:items-center lg:justify-between lg:py-16">
-          <h2 className="text-3xl font-extrabold tracking-tight text-dlila sm:text-4xl">
+          <h2 className="text-3xl font-extrabold tracking-tight text-dprimary sm:text-4xl">
             <span className="block">
               Ready to make your knowledge to money?
             </span>
-            <span className="block text-dbrown">
+            <span className="block text-dtertiary">
               Create an account for free today.
             </span>
           </h2>
@@ -174,7 +174,7 @@ export function PostsPage({
             <div className="inline-flex rounded-md shadow">
               <a
                 href="#"
-                className="inline-flex items-center justify-center rounded-md border border-transparent bg-dlila px-5 py-3 text-base font-semibold text-white hover:bg-dorange"
+                className="inline-flex items-center justify-center rounded-md border border-transparent bg-dprimary px-5 py-3 text-base font-semibold text-white hover:bg-dsecondary"
               >
                 Sign Up
               </a>

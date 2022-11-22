@@ -14,7 +14,7 @@ export function TextGradient({
         ` ${!big ? 'text-sm md:text-lg' : 'text-2xl md:text-4xl'}`
       }
     >
-      <span className="dvia-dbrown bg-gradient-to-br from-dorange to-dbrown decoration-clone bg-clip-text uppercase text-transparent">
+      <span className="dvia-dtertiary bg-gradient-to-br from-dsecondary to-dtertiary decoration-clone bg-clip-text uppercase text-transparent">
         {children}
       </span>
     </div>

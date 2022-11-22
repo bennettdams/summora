@@ -31,7 +31,7 @@ const NAV_ROUTES = [
     name: 'Home',
     href: ROUTES.home,
     icon: (
-      <IconHome size="big" className="text-dorange group-hover:text-white" />
+      <IconHome size="big" className="text-dsecondary group-hover:text-white" />
     ),
   },
   { name: 'Explore', href: ROUTES.explore, icon: null },
@@ -57,7 +57,7 @@ function UserNavbarInternal({ userId }: { userId: string }) {
   )
 
   return (
-    <Menu.Button className="flex rounded-full text-sm hover:bg-dorange hover:text-white focus:outline-none focus:ring-2 focus:ring-dlight">
+    <Menu.Button className="flex rounded-full text-sm hover:bg-dsecondary hover:text-white focus:outline-none focus:ring-2 focus:ring-dlight">
       <div className="flex flex-row items-center font-semibold">
         {isLoading ? (
           <LoadingAnimation />
@@ -117,11 +117,11 @@ function UserNavbar() {
                 {({ active }) => (
                   <p
                     className={classNames(
-                      active && 'bg-dorange hover:text-white',
+                      active && 'bg-dsecondary hover:text-white',
                       'group block px-4 py-2 text-sm'
                     )}
                   >
-                    <IconUser className="text-dorange group-hover:text-white" />
+                    <IconUser className="text-dsecondary group-hover:text-white" />
                     <span className="ml-1">Your profile</span>
                   </p>
                 )}
@@ -148,7 +148,7 @@ export function Header(): JSX.Element {
   return (
     <Disclosure
       as="nav"
-      className="fixed top-0 z-30 w-full border-b border-gray-100 bg-opacity-30 text-dlila backdrop-blur-2xl"
+      className="fixed top-0 z-30 w-full border-b border-gray-100 bg-opacity-30 text-dprimary backdrop-blur-2xl"
     >
       {({ open }) => (
         <>
@@ -156,7 +156,7 @@ export function Header(): JSX.Element {
             <div className="relative flex h-16 items-center justify-between">
               {/* MOBILE menu button*/}
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-dlila focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dlight">
+                <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-dprimary focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dlight">
                   <span className="sr-only">Open main menu</span>
                   {open ? <IconX size="big" /> : <IconMenu size="big" />}
                 </Disclosure.Button>
@@ -167,7 +167,7 @@ export function Header(): JSX.Element {
                 <div className="flex shrink-0 items-center">
                   <Link to={ROUTES.home}>
                     <div className="text-left text-4xl font-extrabold leading-none tracking-tight">
-                      <p className="bg-gradient-to-b from-dorange to-orange-300 decoration-clone bg-clip-text text-3xl uppercase text-transparent">
+                      <p className="bg-gradient-to-b from-dsecondary to-orange-300 decoration-clone bg-clip-text text-3xl uppercase text-transparent">
                         Condun
                       </p>
                     </div>
@@ -182,8 +182,8 @@ export function Header(): JSX.Element {
                         <span
                           className={classNames(
                             route.href === asPath && route.href !== '/'
-                              ? 'border-b border-b-dlila text-dlila'
-                              : 'hover:rounded-md hover:bg-dorange hover:text-white',
+                              ? 'border-b border-b-dprimary text-dprimary'
+                              : 'hover:rounded-md hover:bg-dsecondary hover:text-white',
                             'group px-3 py-2.5 text-sm font-semibold'
                           )}
                           aria-current={
@@ -208,10 +208,10 @@ export function Header(): JSX.Element {
 
                 <button
                   type="button"
-                  className="group rounded-full p-1 hover:bg-dorange focus:outline-none focus:ring-2 focus:ring-white"
+                  className="group rounded-full p-1 hover:bg-dsecondary focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <span className="sr-only">View notifications</span>
-                  <IconBell className="text-dorange group-hover:text-white" />
+                  <IconBell className="text-dsecondary group-hover:text-white" />
                 </button>
 
                 <UserNavbar />
@@ -242,8 +242,8 @@ export function Header(): JSX.Element {
                         as="div"
                         className={classNames(
                           route.href === asPath
-                            ? 'rounded-md bg-dorange text-white'
-                            : 'hover:rounded-md hover:bg-dlila hover:text-white',
+                            ? 'rounded-md bg-dsecondary text-white'
+                            : 'hover:rounded-md hover:bg-dprimary hover:text-white',
                           'block px-3 py-2 text-base font-semibold'
                         )}
                         aria-current={

@@ -33,7 +33,7 @@ function DonationLink({
 }): JSX.Element {
   return (
     <LinkExternal to={userDonation.donationAddress}>
-      <div className="flex-1 rounded-lg p-2 hover:bg-dbrown hover:text-white">
+      <div className="flex-1 rounded-lg p-2 hover:bg-dtertiary hover:text-white">
         <div className="flex">
           <div className="grid w-1/2 place-items-center">
             <Logo
@@ -318,7 +318,7 @@ function UserDonationsUpdates({
       )}
 
       {/* NEW LINK */}
-      <p className="mb-20 text-center text-xl text-dlila">
+      <p className="mb-20 text-center text-xl text-dprimary">
         {userDonations.length === 0
           ? 'Add a new link:'
           : '..or add a new link:'}
@@ -435,7 +435,7 @@ export function DonateButton({ userId }: { userId: string }): JSX.Element {
           <Popover.Button
             className={`
                   ${open ? '' : 'text-opacity-90'}
-                  font-medium group inline-flex items-center rounded-md bg-dorange px-3 py-2 text-base text-white hover:text-opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75`}
+                  font-medium group inline-flex items-center rounded-md bg-dsecondary px-3 py-2 text-base text-white hover:text-opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75`}
           >
             <IconDonate className="text-dlight" />
             <span className="ml-2 font-semibold">Donate</span>
@@ -465,7 +465,7 @@ export function DonateButton({ userId }: { userId: string }): JSX.Element {
                     </div>
                   ) : !!donationLinks && donationLinks.length > 0 ? (
                     <>
-                      <p className="mb-4 text-center text-xl text-dlila">
+                      <p className="mb-4 text-center text-xl text-dprimary">
                         Donate via..
                       </p>
 

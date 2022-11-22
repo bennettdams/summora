@@ -79,12 +79,12 @@ export function ImageUpload({
         htmlFor={inputId}
       >
         {isUploading || isLoadingUpload ? (
-          <div className="grid h-full w-full place-items-center rounded-full bg-dbrown bg-opacity-80 p-4">
+          <div className="grid h-full w-full place-items-center rounded-full bg-dtertiary bg-opacity-80 p-4">
             <LoadingAnimation />
           </div>
         ) : (
           <IconAdd
-            className="rounded-full bg-dbrown text-white duration-200 group-hover:scale-125 lg:bg-transparent"
+            className="rounded-full bg-dtertiary text-white duration-200 group-hover:scale-125 lg:bg-transparent"
             size="huge"
           />
         )}

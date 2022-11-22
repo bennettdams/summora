@@ -28,7 +28,7 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <div className="font-light flex h-screen min-h-screen flex-col bg-dlight font-sans text-gray-500 caret-dorange selection:bg-dlila selection:text-dbrown">
+        <div className="font-light flex h-screen min-h-screen flex-col bg-dlight font-sans text-gray-500 caret-dprimary selection:bg-dprimary selection:text-dtertiary">
           <Header />
 
           <div className="flex-grow overflow-y-auto">

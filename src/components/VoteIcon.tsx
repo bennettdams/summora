@@ -15,8 +15,8 @@ export function VoteIcon({
     <span className="inline-flex items-center text-sm leading-none">
       {variant === 'upvote' ? (
         <IconUpvote
-          className={`hover:text-dorange ${
-            isVoted ? 'text-dlila' : 'text-dbrown'
+          className={`hover:text-dsecondary ${
+            isVoted ? 'text-dprimary' : 'text-dtertiary'
           }`}
           size={size}
           onClick={onClick}
@@ -24,8 +24,8 @@ export function VoteIcon({
       ) : (
         variant === 'downvote' && (
           <IconDownvote
-            className={`hover:text-dorange ${
-              isVoted ? 'text-dlila' : 'text-dbrown'
+            className={`hover:text-dsecondary ${
+              isVoted ? 'text-dprimary' : 'text-dtertiary'
             }`}
             size={size}
             onClick={onClick}

@@ -234,12 +234,12 @@ export function PostSegment({
                     }`}
                   >
                     <div className="ml-2 flex flex-col">
-                      <div className="flex-1 text-dlila">
+                      <div className="flex-1 text-dprimary">
                         <span>{segment.title}</span>
                       </div>
 
                       <div className="flex-1">
-                        <span className="text-lg italic text-dorange">
+                        <span className="text-lg italic text-dsecondary">
                           {segment.subtitle}
                         </span>
                       </div>
@@ -271,7 +271,7 @@ export function PostSegment({
 
           {/* EDIT ACTIONS */}
           <div className={isSegmentEditMode ? 'block' : 'hidden'}>
-            <p className="my-6 text-center text-xl text-dlila">
+            <p className="my-6 text-center text-xl text-dprimary">
               <span>Add a new item:</span>
             </p>
 

@@ -110,13 +110,15 @@ function PostsListItem({
             <div className="absolute top-0 left-0 inline">
               <PostLikes postId={post.id} userId={userId} iconSize="big" />
             </div>
-            <h2 className="text-xs font-semibold tracking-widest text-dorange">
+            <h2 className="text-xs font-semibold tracking-widest text-dsecondary">
               {post.categoryTitle}
             </h2>
-            <h1 className="mt-1 text-xl font-semibold text-dlila sm:text-2xl">
+            <h1 className="mt-1 text-xl font-semibold text-dprimary sm:text-2xl">
               {post.title}
             </h1>
-            <p className="mt-3 leading-relaxed text-dorange">{post.subtitle}</p>
+            <p className="mt-3 leading-relaxed text-dsecondary">
+              {post.subtitle}
+            </p>
 
             <div className="my-4 flex h-32 snap-x flex-row flex-nowrap space-x-4 overflow-y-hidden">
               {isLoadingSegments ? (
@@ -166,7 +168,7 @@ function PostsListItem({
             <div className="h-full w-1/2">
               <div className="flex h-full justify-end">
                 <Link to={ROUTES.user(post.author.id)}>
-                  <div className="flex h-full items-center space-x-4 rounded-lg px-4 hover:bg-dbrown hover:text-white">
+                  <div className="flex h-full items-center space-x-4 rounded-lg px-4 hover:bg-dtertiary hover:text-white">
                     <span>{post.author.username}</span>
                     <Avatar
                       userId={post.author.id}
@@ -197,13 +199,13 @@ function PostsListItemShort({
     <Link to={ROUTES.post(post.id)}>
       <Box padding="small" showShadow>
         <div className="relative h-60 w-full text-center">
-          <h2 className="text-xs font-semibold tracking-widest text-dorange">
+          <h2 className="text-xs font-semibold tracking-widest text-dsecondary">
             {post.categoryTitle}
           </h2>
-          <h1 className="mt-1 text-xl font-semibold text-dlila sm:text-2xl">
+          <h1 className="mt-1 text-xl font-semibold text-dprimary sm:text-2xl">
             {post.title}
           </h1>
-          <p className="mt-3 leading-relaxed text-dbrown">{post.subtitle}</p>
+          <p className="mt-3 leading-relaxed text-dtertiary">{post.subtitle}</p>
           <div className="absolute bottom-0 mt-2 flex w-full justify-center space-x-4 py-3 text-center leading-none">
             <PostLikes postId={post.id} userId={userId} />
             <ViewsIcon noOfViews={post.noOfViews} />

@@ -347,12 +347,14 @@ function PostPageInternal<
                   {/* POST TITLE */}
                   <div>
                     <h2 className="font-bold text-2xl leading-7 sm:text-3xl">
-                      <span className="text-dlila">{post.title}</span>
+                      <span className="text-dprimary">{post.title}</span>
                     </h2>
                   </div>
 
                   <div className="flex-1">
-                    <span className="italic text-dorange">{post.subtitle}</span>
+                    <span className="italic text-dsecondary">
+                      {post.subtitle}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -418,7 +420,7 @@ function PostPageInternal<
                 />
 
                 <div className="mt-4 flex flex-col items-center justify-center text-center">
-                  <h2 className="text-lg font-semibold leading-none text-dlila">
+                  <h2 className="text-lg font-semibold leading-none text-dprimary">
                     {post.author.username}
                   </h2>
                 </div>
@@ -451,7 +453,9 @@ function PostPageInternal<
               <Box>
                 <div className="flex w-full items-center space-x-3">
                   <span className="italic">Search</span>
-                  <span className="font-bold text-dlila">{inputTagSearch}</span>
+                  <span className="font-bold text-dprimary">
+                    {inputTagSearch}
+                  </span>
                 </div>
 
                 <Form
@@ -785,12 +789,12 @@ function Comment({
       >
         <div className="flex w-full">
           <div className="group relative grid w-10 place-items-center">
-            <p className="font-bold block text-sm tracking-tight text-dorange group-hover:hidden">
+            <p className="font-bold block text-sm tracking-tight text-dsecondary group-hover:hidden">
               {comment.upvotedBy.length - comment.downvotedBy.length}
             </p>
             <p
               title="Upvotes | Downvotes"
-              className="font-bold absolute hidden w-20 text-center text-xs tracking-tight text-dbrown group-hover:block"
+              className="font-bold absolute hidden w-20 text-center text-xs tracking-tight text-dtertiary group-hover:block"
             >
               {comment.upvotedBy.length} | {comment.downvotedBy.length}
             </p>
@@ -805,7 +809,7 @@ function Comment({
         </div>
 
         <div className="m-0 flex w-full text-sm">
-          <div className="flex w-10 flex-row items-center justify-center text-center leading-none text-dbrown">
+          <div className="flex w-10 flex-row items-center justify-center text-center leading-none text-dtertiary">
             <VoteIcon
               size="small"
               variant="upvote"
@@ -835,7 +839,7 @@ function Comment({
                 />
               </div>
 
-              <div className="flex items-center space-x-2 leading-none text-dlila group-hover:underline">
+              <div className="flex items-center space-x-2 leading-none text-dprimary group-hover:underline">
                 <span className="ml-2">{comment.authorUsername}</span>
               </div>
             </div>
@@ -847,14 +851,14 @@ function Comment({
             </span>
           </div>
 
-          <div className="group ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-dorange">
+          <div className="group ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-dsecondary">
             {!showCommentInput && (
               <div
                 className="flex items-center"
                 onClick={() => setShowCommentInput(true)}
               >
                 <IconReply size="small" className="group-hover:text-white" />
-                <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dorange group-hover:text-white">
+                <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dsecondary group-hover:text-white">
                   Reply
                 </span>
               </div>
@@ -863,7 +867,7 @@ function Comment({
 
           {!!userId && comment.authorId === userId && (
             <div
-              className="group ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-dorange"
+              className="group ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-dsecondary"
               onClick={() => setShowRemoveConfirmation(true)}
             >
               {!showRemoveConfirmation ? (
@@ -872,14 +876,14 @@ function Comment({
                   onClick={() => setShowRemoveConfirmation(true)}
                 >
                   <IconTrash size="small" className="group-hover:text-white" />
-                  <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dorange group-hover:text-white">
+                  <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dsecondary group-hover:text-white">
                     Remove
                   </span>
                 </div>
               ) : (
                 <div className="flex items-center" onClick={onRemove}>
                   <IconTrash size="small" className="group-hover:text-white" />
-                  <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dorange group-hover:text-white">
+                  <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dsecondary group-hover:text-white">
                     Confirm
                   </span>
                 </div>

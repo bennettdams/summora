@@ -114,7 +114,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           className={
             'relative block w-full disabled:cursor-not-allowed ' +
             (isSpecial
-              ? `border-b-2 border-t-0 border-l-0 border-r-0 border-dbrown bg-transparent outline-none focus:border-dlila focus:ring-0 ${
+              ? `border-b-2 border-t-0 border-l-0 border-r-0 border-dtertiary bg-transparent outline-none focus:border-dprimary focus:ring-0 ${
                   small ? 'p-3 px-8' : 'p-6 px-12'
                 }`
               : 'rounded-md placeholder:text-indigo-300 hover:shadow-md disabled:bg-gray-100' +
@@ -123,8 +123,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
                 ` ${small ? 'py-1.5 px-2 text-xs' : 'text-sm'}` +
                 ` ${
                   !props.required
-                    ? 'border-gray-300 focus:border-dlila focus:ring-dlila'
-                    : 'border-dorange focus:border-dorange focus:ring-dorange'
+                    ? 'border-gray-300 focus:border-dprimary focus:ring-dprimary'
+                    : 'border-dsecondary focus:border-dsecondary focus:ring-dsecondary'
                 }`)
           }
           // TODO Ideally, this is set on the form element and not the single inputs, but not sure about the implementation for that.

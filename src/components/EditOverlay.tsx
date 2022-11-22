@@ -20,7 +20,7 @@ export function EditOverlay({
          * This is e.g. needed because there is bug in React where unmounting does not trigger `onBlur`.
          * See: https://github.com/facebook/react/issues/12363
          */
-        className={`absolute inset-0 hidden place-items-center rounded-xl opacity-50 hover:bg-dbrown ${
+        className={`absolute inset-0 hidden place-items-center rounded-xl opacity-50 hover:bg-dtertiary ${
           isEnabled && 'group-hover:grid'
         } group-hover:transition-colors group-hover:duration-200 group-hover:ease-in-out`}
       >

@@ -26,7 +26,7 @@ export function SignIn(): JSX.Element {
     <div className="flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-4xl font-extrabold tracking-tight text-dlila">
+          <h2 className="mt-6 text-center text-4xl font-extrabold tracking-tight text-dprimary">
             Sign in to your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
@@ -73,7 +73,7 @@ export function SignIn(): JSX.Element {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-dlila focus:ring-dlila"
+                  className="h-4 w-4 rounded border-gray-300 text-dprimary focus:ring-dprimary"
                 />
                 {/* TODO implement */}
                 <label htmlFor="remember-me" className="ml-2 block text-sm">
@@ -85,7 +85,7 @@ export function SignIn(): JSX.Element {
                 {/* TODO implement */}
                 <a
                   href="#"
-                  className="font-medium text-dlila hover:text-dorange"
+                  className="font-medium text-dprimary hover:text-dsecondary"
                 >
                   Forgot your password?
                 </a>

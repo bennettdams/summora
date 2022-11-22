@@ -71,12 +71,12 @@ export function ChoiceSelect<
             className={({ active, checked }) =>
               `${
                 active
-                  ? 'ring-2 ring-white ring-opacity-60 ring-offset-2 ring-offset-dorange'
+                  ? 'ring-2 ring-white ring-opacity-60 ring-offset-2 ring-offset-dsecondary'
                   : ''
               } ${
                 checked
                   ? // keep in sync with Button component
-                    'border border-dlila bg-dlila bg-gradient-to-r from-dlila to-dlila/90 text-white ring-orange-500 hover:bg-pink-900 hover:bg-none active:bg-dlila/40'
+                    'border border-dprimary bg-dprimary bg-gradient-to-r from-dprimary to-dprimary/90 text-white ring-orange-500 hover:bg-pink-900 hover:bg-none active:bg-dprimary/40'
                   : 'border border-gray-300 bg-white'
               } relative flex w-full cursor-pointer rounded-lg py-2 px-5 hover:shadow-md focus:outline-none`
             }

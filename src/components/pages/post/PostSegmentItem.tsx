@@ -73,7 +73,7 @@ export function PostSegmentItem({
           {isLoading ? (
             <LoadingAnimation />
           ) : (
-            <span className="text-dorange">{index + 1}</span>
+            <span className="text-dsecondary">{index + 1}</span>
           )}
         </div>
 

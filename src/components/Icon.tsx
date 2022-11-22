@@ -100,7 +100,7 @@ function Icon({
   return (
     <IconForName
       className={`inline-block rounded-full leading-none ${
-        className ?? 'text-dorange'
+        className ?? 'text-dsecondary'
       } ${sizes[size]}`}
     />
   )

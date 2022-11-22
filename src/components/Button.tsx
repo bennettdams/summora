@@ -49,14 +49,14 @@ export function Button({
       className={
         'group shadow-md outline-none focus:outline-none disabled:cursor-not-allowed' +
         // keep in sync with "Choice" component
-        ' bg-dlila bg-gradient-to-r from-dlila to-dlila/90 text-white ring-orange-500 hover:bg-pink-900 hover:bg-none active:bg-dlila/40 disabled:text-gray-300' +
+        ' bg-dprimary bg-gradient-to-r from-dprimary to-dprimary/90 text-white ring-orange-500 hover:bg-pink-900 hover:bg-none active:bg-dprimary/40 disabled:text-gray-300' +
         ` ${!isBig ? 'rounded py-2 px-2' : 'rounded-xl px-8 py-6 text-xl'}`
       }
     >
       <div className="flex items-center justify-center">
         {icon && (
           <span
-            className={`w-6 leading-none text-dbrown group-hover:text-white ${
+            className={`w-6 leading-none text-dtertiary group-hover:text-white ${
               isBig ? 'mr-3' : 'mr-1'
             }`}
           >
@@ -88,7 +88,7 @@ export function ButtonAddSpecial({
     <button
       onClick={onClick}
       disabled={disabled}
-      className="cursor-pointer rounded-full bg-dlila text-transparent text-white shadow-md duration-150 hover:rotate-90 hover:bg-dorange focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-200"
+      className="cursor-pointer rounded-full bg-dprimary text-transparent text-white shadow-md duration-150 hover:rotate-90 hover:bg-dsecondary focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-200"
     >
       <IconAdd size={size} className="text-white" />
     </button>
