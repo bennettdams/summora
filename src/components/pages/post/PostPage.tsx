@@ -707,28 +707,6 @@ function CategorySelect({
   )
 }
 
-/**
- * Creates a comment tree from a flat array.
- * For root level comments, use "null" as `commentId`.
- *
- * input:
- * `[1 | 1.1 | 2 | 3 | 3.1 | 3.2]`
- *
- * output:
- * `[1 [1.1] | 2 | 3 [3.1, 3.2] ]`
- */
-function createCommentTree(
-  comments: PostCommentTreeComment[],
-  commentId: string | null
-): PostCommentTreeComment[] {
-  return comments
-    .filter((comment) => comment.commentParentId === commentId)
-    .map((comment) => ({
-      ...comment,
-      commentChilds: createCommentTree(comments, comment.commentId),
-    }))
-}
-
 type PostComment = {
   commentId: string
   commentParentId: string | null
@@ -761,10 +739,16 @@ function Comment({
   comment: PostCommentTreeComment
   isRoot: boolean
   userId: string | null
-  onAdd: (text: string) => void
-  onRemove: () => void
-  onUpvote: () => void
-  onDownvote: () => void
+  onAdd: ({
+    commentParentId,
+    text,
+  }: {
+    commentParentId: string
+    text: string
+  }) => void
+  onRemove: (commentId: string) => void
+  onUpvote: (commentId: string) => void
+  onDownvote: (commentId: string) => void
 }) {
   const [showCommentInput, setShowCommentInput] = useState(false)
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
@@ -819,7 +803,7 @@ function Comment({
               isVoted={comment.upvotedBy.some(
                 (upvote) => upvote.userId === userId
               )}
-              onClick={onUpvote}
+              onClick={() => onUpvote(comment.commentId)}
             />
             <VoteIcon
               size="small"
@@ -827,7 +811,7 @@ function Comment({
               isVoted={comment.downvotedBy.some(
                 (downvote) => downvote.userId === userId
               )}
-              onClick={onDownvote}
+              onClick={() => onDownvote(comment.commentId)}
             />
           </div>
           <Link to={ROUTES.user(comment.authorId)} disablePrefetch>
@@ -884,7 +868,10 @@ function Comment({
                   </span>
                 </div>
               ) : (
-                <div className="flex items-center" onClick={onRemove}>
+                <div
+                  className="flex items-center"
+                  onClick={() => onRemove(comment.commentId)}
+                >
                   <IconTrash size="small" className="group-hover:text-white" />
                   <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dsecondary group-hover:text-white">
                     Confirm
@@ -899,7 +886,15 @@ function Comment({
           <div ref={refCommentInput} className="md:w-2/3">
             <Form
               onSubmit={handleSubmit((data) => {
-                onAdd(data.text)
+                onAdd({
+                  /*
+                   * Using `commentId` instead of `commentParentId` is confusing on first sight, but we use `commentId` here instead of `commentParentId`
+                   * because we create a NEW comment "below" in the tree. Think about it like this: THIS comment (`commentId`) is the future parent of
+                   * the comment we want to create right now.
+                   */
+                  commentParentId: comment.commentId,
+                  text: data.text,
+                })
                 setShowCommentInput(false)
                 reset()
               })}
@@ -949,6 +944,28 @@ function createRootComments(
   }))
 }
 
+/**
+ * Creates a comment tree from a flat array.
+ * For root level comments, use "null" as `commentId`.
+ *
+ * input:
+ * `[1 | 1.1 | 2 | 3 | 3.1 | 3.2]`
+ *
+ * output:
+ * `[1 [1.1] | 2 | 3 [3.1, 3.2] ]`
+ */
+function createCommentTree(
+  comments: PostCommentTreeComment[],
+  commentId: string | null
+): PostCommentTreeComment[] {
+  return comments
+    .filter((comment) => comment.commentParentId === commentId)
+    .map((comment) => ({
+      ...comment,
+      commentChilds: createCommentTree(comments, comment.commentId),
+    }))
+}
+
 export function PostComments({
   postId,
   userId,
@@ -994,17 +1011,18 @@ export function PostComments({
             isRoot={true}
             comment={comment}
             userId={userId}
-            onAdd={(text) =>
+            onAdd={({ commentParentId, text }) =>
               createComment.mutate({
                 postId,
                 text,
-                // this is misleading, but we use `commentId` here (instead of `commentParentId`) because we create a NEW comment "below" in the tree
-                commentParentId: comment.commentId,
+                commentParentId,
               })
             }
-            onRemove={() => deleteOne.mutate({ commentId: comment.commentId })}
-            onUpvote={() => upvote.mutate({ commentId: comment.commentId })}
-            onDownvote={() => downvote.mutate({ commentId: comment.commentId })}
+            onUpvote={(commentId) => {
+              upvote.mutate({ commentId })
+            }}
+            onDownvote={(commentId) => downvote.mutate({ commentId })}
+            onRemove={(commentId) => deleteOne.mutate({ commentId })}
           />
         ))
       )}

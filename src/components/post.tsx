@@ -202,7 +202,7 @@ function PostsListItemShort({
   return (
     <Link to={ROUTES.post(post.id)}>
       <Box padding="small" showShadow>
-        <div className="relative h-60 w-full text-center">
+        <div className="relative h-48 w-full text-center">
           <h2 className="text-xs font-semibold tracking-widest text-dsecondary">
             {post.categoryTitle}
           </h2>
