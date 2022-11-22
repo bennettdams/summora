@@ -10,7 +10,7 @@ type Choice<TChoiceId extends string> = {
 }
 
 type ChoiceSelectControl<
-  TChoices extends Choice<TChoiceId>[],
+  TChoices extends readonly Choice<TChoiceId>[],
   TChoiceId extends string
 > = {
   selected: Choice<TChoiceId>
@@ -18,12 +18,8 @@ type ChoiceSelectControl<
   choices: TChoices
 }
 
-/**
- * FIXME the returned `selected` item does not have the string literal as `choiceId`,
- * instead it is of type `string`.
- */
 export function useChoiceSelect<
-  TChoices extends Choice<TChoiceId>[],
+  TChoices extends readonly Choice<TChoiceId>[],
   TChoiceId extends string
 >(
   choices: TChoices,
@@ -33,7 +29,7 @@ export function useChoiceSelect<
       ? never
       : UChoiceId
     : never
-): ChoiceSelectControl<TChoices, TChoiceId> {
+): ChoiceSelectControl<TChoices, TChoices[number]['choiceId']> {
   const [selected, setSelected] = useState<Choice<TChoiceId>>(() => {
     const choiceFound = choices.find(
       (choice) => choice.choiceId === initiallySelectedChoiceId
