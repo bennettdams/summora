@@ -309,7 +309,7 @@ export function PostSegment({
             </div>
           </div>
 
-          {/* POST IMAGE - BOTTOM */}
+          {/* POST SEGMENT IMAGE - BOTTOM */}
           <div
             className={
               'grid w-full place-items-center' +
@@ -330,12 +330,14 @@ export function PostSegment({
 
           {isPostEditable && (
             <div className="mt-4 flex flex-col items-center space-y-4 lg:flex-row-reverse lg:items-end lg:justify-between lg:space-y-0">
-              <div className="text-center">
-                <p>Image position:</p>
-                <p className="text-sm italic">(only on larger screens)</p>
-              </div>
+              <div className="space-y-4">
+                <div className="text-center">
+                  <p>Image position:</p>
+                  <p className="text-sm italic">(only on larger screens)</p>
+                </div>
 
-              <ChoiceSelect control={choiceControl} />
+                <ChoiceSelect control={choiceControl} />
+              </div>
 
               <div>
                 <ButtonRemove
@@ -351,7 +353,7 @@ export function PostSegment({
           )}
         </div>
 
-        {/* POST IMAGE - RIGHT */}
+        {/* POST SEGMENT IMAGE - RIGHT */}
         {/* the parent container uses "items-stretch" so the image can "fill" the height */}
         <div className="hidden min-h-[150px] w-full place-items-center lg:grid lg:w-1/5">
           {choiceControl.selected.choiceId === 'right' && (
