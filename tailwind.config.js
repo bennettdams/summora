@@ -3,6 +3,14 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const colors = require('tailwindcss/colors')
 
+// COLOR THEMES
+// ----- Brown
+// gray: colors.stone,
+// dlight: '#fcf8f7',
+// dprimary: '#993a58',
+// dsecondary: '#e08560',
+// dtertiary: '#d4ad9f',
+
 module.exports = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx}',
@@ -14,11 +22,11 @@ module.exports = {
         sans: ['Nunito', ...defaultTheme.fontFamily.sans],
       },
       colors: {
-        gray: colors.stone,
-        dlight: '#fcf8f7',
+        gray: colors.slate,
         dprimary: '#993a58',
-        dsecondary: '#e08560',
-        dtertiary: '#d4ad9f',
+        dsecondary: '#253691',
+        dtertiary: '#a0afda',
+        dlight: '#eff2f8',
       },
       animation: {
         'fade-in': 'fade-in 300ms ease',
