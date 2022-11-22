@@ -109,12 +109,12 @@ export function PostSegment({
       {
         choiceId: PostSegmentImagePosition.RIGHT,
         label: 'Right',
-        icon: <IconArrowCircleRight />,
+        icon: <IconArrowCircleRight className="text-dtertiary" />,
       },
       {
         choiceId: PostSegmentImagePosition.BOTTOM,
         label: 'Bottom',
-        icon: <IconArrowCircleDown />,
+        icon: <IconArrowCircleDown className="text-dtertiary" />,
       },
     ],
     segment.position

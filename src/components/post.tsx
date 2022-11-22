@@ -44,9 +44,13 @@ export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
       {
         choiceId: 'long',
         label: 'Long',
-        icon: <IconLong />,
+        icon: <IconLong className="text-dtertiary" />,
       },
-      { choiceId: 'short', label: 'Short', icon: <IconShort /> },
+      {
+        choiceId: 'short',
+        label: 'Short',
+        icon: <IconShort className="text-dtertiary" />,
+      },
     ],
     'long'
   )

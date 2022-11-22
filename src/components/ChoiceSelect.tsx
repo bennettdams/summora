@@ -108,7 +108,9 @@ export function ChoiceSelect<
                     </div>
                   </div>
 
-                  {choice.icon && <div className="shrink-0">{choice.icon}</div>}
+                  {choice.icon && (
+                    <div className="ml-2 shrink-0">{choice.icon}</div>
+                  )}
                 </div>
               </>
             )}
