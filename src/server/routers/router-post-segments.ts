@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client'
+import { PostSegmentImagePosition, Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { ensureAuthorTRPC } from '../../lib/api-security'
@@ -15,6 +15,7 @@ const defaultPostSegmentSelect = Prisma.validator<Prisma.PostSegmentSelect>()({
   title: true,
   subtitle: true,
   imageId: true,
+  position: true,
   items: {
     select: { id: true, content: true, createdAt: true },
     orderBy: { createdAt: 'asc' },
@@ -69,6 +70,24 @@ export const postSegmentsRouter = t.router({
       await ctx.prisma.postSegment.update({
         where: { id: postSegmentId },
         data: { title, subtitle },
+      })
+    }),
+  // CHANGE IMAGE POSITION
+  changeImagePosition: t.procedure
+    .input(
+      z.object({
+        postSegmentId: z.string().cuid(),
+        position: z.nativeEnum(PostSegmentImagePosition),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { postSegmentId, position } = input
+
+      await ensureAuthor(ctx, postSegmentId)
+
+      await ctx.prisma.postSegment.update({
+        where: { id: postSegmentId },
+        data: { position },
       })
     }),
   // CREATE ITEM

@@ -60,16 +60,22 @@ model PostComment {
   downvotedBy     User[]        @relation("PostCommentDownvotes")
 }
 
+enum PostSegmentImagePosition {
+  RIGHT
+  BOTTOM
+}
+
 model PostSegment {
-  id        String            @id @default(cuid())
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
+  id        String                   @id @default(cuid())
+  createdAt DateTime                 @default(now())
+  updatedAt DateTime                 @updatedAt
   title     String
   subtitle  String?
   imageId   String?
+  position  PostSegmentImagePosition @default(RIGHT)
   items     PostSegmentItem[]
   // for Post.segments
-  Post      Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+  Post      Post                     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
   //
 }

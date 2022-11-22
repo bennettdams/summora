@@ -1,4 +1,5 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
+import { PostSegmentImagePosition } from '@prisma/client'
 import { useMemo, useRef, useState } from 'react'
 import { z } from 'zod'
 import {
@@ -68,6 +69,9 @@ export function PostSegment({
   const deleteSegment = trpc.postSegments.delete.useMutation({
     onSuccess: invalidate,
   })
+  const changePosition = trpc.postSegments.changeImagePosition.useMutation({
+    onSuccess: () => utils.postSegments.byPostId.invalidate({ postId }),
+  })
 
   const {
     handleSubmit: handleSubmitCreateItem,
@@ -102,10 +106,18 @@ export function PostSegment({
 
   const choiceControl = useChoiceSelect(
     [
-      { choiceId: 'right', label: 'Right', icon: <IconArrowCircleRight /> },
-      { choiceId: 'bottom', label: 'Bottom', icon: <IconArrowCircleDown /> },
+      {
+        choiceId: PostSegmentImagePosition.RIGHT,
+        label: 'Right',
+        icon: <IconArrowCircleRight />,
+      },
+      {
+        choiceId: PostSegmentImagePosition.BOTTOM,
+        label: 'Bottom',
+        icon: <IconArrowCircleDown />,
+      },
     ],
-    'right'
+    segment.position
   )
 
   const defaultValuesUpdate: SchemaUpdateSegment = useMemo(
@@ -144,7 +156,7 @@ export function PostSegment({
       >
         <div
           className={`px-4 ${
-            choiceControl.selected.choiceId === 'right'
+            choiceControl.selected.choiceId === PostSegmentImagePosition.RIGHT
               ? // keep width in sync with post segment image
                 'w-full lg:w-4/5'
               : 'w-full'
@@ -316,7 +328,10 @@ export function PostSegment({
               // placeholder doesn't need to be as big as an image
               ` ${segment.imageId ? 'min-h-[250px]' : 'min-h-[100px]'}` +
               // on mobile, we always show the image at the bottom, so we hide it here on larger screens if necessary
-              ` ${choiceControl.selected.choiceId !== 'bottom' && 'lg:hidden'}`
+              ` ${
+                choiceControl.selected.choiceId !==
+                  PostSegmentImagePosition.BOTTOM && 'lg:hidden'
+              }`
             }
           >
             <PostSegmentImage
@@ -336,7 +351,15 @@ export function PostSegment({
                   <p className="text-sm italic">(only on larger screens)</p>
                 </div>
 
-                <ChoiceSelect control={choiceControl} />
+                <ChoiceSelect
+                  control={choiceControl}
+                  onSelect={(selectedChoice) => {
+                    changePosition.mutate({
+                      postSegmentId,
+                      position: selectedChoice.choiceId,
+                    })
+                  }}
+                />
               </div>
 
               <div>
@@ -356,7 +379,8 @@ export function PostSegment({
         {/* POST SEGMENT IMAGE - RIGHT */}
         {/* the parent container uses "items-stretch" so the image can "fill" the height */}
         <div className="hidden min-h-[150px] w-full place-items-center lg:grid lg:w-1/5">
-          {choiceControl.selected.choiceId === 'right' && (
+          {choiceControl.selected.choiceId ===
+            PostSegmentImagePosition.RIGHT && (
             <PostSegmentImage
               isEditable={isPostEditable}
               postId={postId}
