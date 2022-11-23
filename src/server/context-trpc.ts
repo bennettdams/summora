@@ -1,6 +1,6 @@
 import * as trpc from '@trpc/server'
 import * as trpcNext from '@trpc/server/adapters/next'
-import { prisma } from '../prisma/prisma'
+import { prisma } from './db/client'
 
 /**
  * Creates context for each incoming request.

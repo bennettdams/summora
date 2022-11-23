@@ -5,7 +5,7 @@ import {
   prefillServer as prefillServerPosts,
 } from '../data/use-posts'
 import { dbFindPosts } from '../lib/db'
-import { prisma } from '../prisma/prisma'
+import { prisma } from '../server/db/client'
 import { ServerPageProps } from '../types/PageProps'
 import { ApiPosts } from './api/posts'
 

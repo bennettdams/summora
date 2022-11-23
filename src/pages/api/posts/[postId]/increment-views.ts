@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '../../../../prisma/prisma'
+import { prisma } from '../../../../server/db/client'
 // import { logAPI } from '../../../../util/logger'
 
 export type ApiPostIncrementViews = ReturnType<typeof incrementViews>

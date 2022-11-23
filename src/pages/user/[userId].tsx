@@ -2,7 +2,7 @@ import { createProxySSGHelpers } from '@trpc/react-query/ssg'
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import type { ParsedUrlQuery } from 'querystring'
 import { UserPage } from '../../components/pages/UserPage'
-import { prisma } from '../../prisma/prisma'
+import { prisma } from '../../server/db/client'
 import { createPrefetchHelpersArgs } from '../../server/prefetch-helpers'
 import { PageProps } from '../../types/PageProps'
 

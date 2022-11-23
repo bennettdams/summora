@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { dbFindPost, DbFindPost, postInclude } from '../../../../lib/db'
-import { prisma } from '../../../../prisma/prisma'
+import { prisma } from '../../../../server/db/client'
 import { ApiPostUpdateRequestBody } from '../../../../services/api-service'
 import { logAPI } from '../../../../util/logger'
 

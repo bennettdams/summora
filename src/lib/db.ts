@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client'
-import { prisma } from '../prisma/prisma'
+import { prisma } from '../server/db/client'
 import { ApiPostsCreateRequestBody } from '../services/api-service'
 
 export type DbFindPosts = Prisma.PromiseReturnType<typeof dbFindPosts>

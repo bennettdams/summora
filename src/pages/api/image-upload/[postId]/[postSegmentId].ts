@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '../../../../prisma/prisma'
+import { prisma } from '../../../../server/db/client'
 import { ApiImageUploadPostSegmentsRequestBody } from '../../../../services/api-service'
 import { getUserFromRequest } from '../../../../services/auth-service'
 import { convertImageForUpload } from '../../../../services/image-upload-service'

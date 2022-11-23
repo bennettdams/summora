@@ -1,5 +1,6 @@
-import { Prisma } from '@prisma/client'
-import { prisma } from '../prisma/prisma'
+import { Prisma, PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 async function main() {
   await drop()

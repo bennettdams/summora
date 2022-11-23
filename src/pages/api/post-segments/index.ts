@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '../../../prisma/prisma'
+import { prisma } from '../../../server/db/client'
 import { ApiPostSegmentCreateRequestBody } from '../../../services/api-service'
 import { logAPI } from '../../../util/logger'
 

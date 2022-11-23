@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ensureAuthor } from '../../../lib/api-security'
-import { prisma } from '../../../prisma/prisma'
+import { prisma } from '../../../server/db/client'
 import { ApiPostSegmentItemUpdateRequestBody } from '../../../services/api-service'
 import { logAPI } from '../../../util/logger'
 
