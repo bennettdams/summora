@@ -8,6 +8,7 @@
     "/////////////// RUN": "",
     "dev": "next dev -p 3000",
     "build": "next build",
+    "build:analyze": "ANALYZE=true npm run build",
     "start": "next start -p 3000",
     "devprod": "npm run build && npm run start",
     "debug": "cross-env NODE_OPTIONS='--inspect' npm run dev",
@@ -63,6 +64,7 @@
     "zod": "^3.19.1"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^13.0.4",
     "@tailwindcss/forms": "^0.5.3",
     "@tanstack/eslint-plugin-query": "^4.15.1",
     "@types/formidable": "^2.0.5",
