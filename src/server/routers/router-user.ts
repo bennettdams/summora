@@ -52,6 +52,7 @@ export const userRouter = t.router({
         return user
       }
     }),
+  // REMOVE AVATAR
   removeAvatar: t.procedure
     .input(
       z.object({

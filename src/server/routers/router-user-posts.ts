@@ -16,7 +16,18 @@ export const userPostsRouter = t.router({
         where: { authorId: userId },
         take: 10,
         orderBy: { createdAt: 'desc' },
-        include: {
+        select: {
+          id: true,
+          title: true,
+          subtitle: true,
+          noOfViews: true,
+          updatedAt: true,
+          authorId: true,
+          category: {
+            select: {
+              name: true,
+            },
+          },
           author: {
             select: {
               username: true,
@@ -24,7 +35,6 @@ export const userPostsRouter = t.router({
               imageBlurDataURL: true,
             },
           },
-          category: true,
           segments: { orderBy: { createdAt: 'asc' } },
           _count: { select: { comments: true, likedBy: true } },
         },
