@@ -50,7 +50,6 @@ export function SignIn(): JSX.Element {
               <FormLabel htmlFor="email-input">Username</FormLabel>
               <Input
                 {...register('email')}
-                id="email-input"
                 hasLabel={true}
                 validationErrorMessage={formState.errors.email?.message}
               />
@@ -60,7 +59,6 @@ export function SignIn(): JSX.Element {
               <FormLabel htmlFor="password-input">Password</FormLabel>
               <Input
                 {...register('password')}
-                id="password-input"
                 hasLabel={true}
                 type="password"
                 validationErrorMessage={formState.errors.password?.message}
