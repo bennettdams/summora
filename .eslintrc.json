@@ -8,5 +8,14 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "prettier"
-  ]
+  ],
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "name": "react-error-boundary",
+        "message": "Please use our own <ErrorBoundary /> component instead."
+      }
+    ]
+  }
 }

@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+// eslint-disable-next-line no-restricted-imports
 import { ErrorBoundary as ErrorBoundaryReact } from 'react-error-boundary'
 import Router from 'next/router'
 import { Button } from './Button'
