@@ -1,4 +1,4 @@
-import { forwardRef, ReactNode } from 'react'
+import { forwardRef, ReactNode, useRef } from 'react'
 import {
   Control,
   Controller,
@@ -204,30 +204,42 @@ export function FormSelect<TFieldValues extends FieldValues>({
   items,
   unselectedLabel,
   validationErrorMessage,
-  onChangeExternal,
 }: {
   control: Control<TFieldValues>
   name: FieldPath<TFieldValues>
   items: DropdownItem[]
   unselectedLabel: string
   validationErrorMessage?: string
-  onChangeExternal?: (selectedId: string) => void
 }): JSX.Element {
+  /**
+   * Hack, as the form who is using this `FormSelect`'s `onChange` is not triggered by Headless UI.
+   * See https://github.com/react-hook-form/react-hook-form/discussions/9359#discussioncomment-4131515
+   */
+  const refSelect = useRef<HTMLSelectElement | null>(null)
+
   return (
     <div className="relative">
+      <select className="hidden" ref={refSelect} />
       <Controller
         name={name}
         control={control}
         render={({ field: fieldSelection }) => (
-          <DropdownSelect
-            unselectedLabel={unselectedLabel}
-            selectedItemIdExternal={fieldSelection.value ?? null}
-            items={items}
-            onChangeSelection={(selectedItemId) => {
-              fieldSelection.onChange(selectedItemId)
-              onChangeExternal?.(selectedItemId)
-            }}
-          />
+          <>
+            <DropdownSelect
+              unselectedLabel={unselectedLabel}
+              selectedItemIdExternal={fieldSelection.value ?? null}
+              items={items}
+              onChangeSelection={(selectedItemId) => {
+                fieldSelection.onChange(selectedItemId)
+
+                if (refSelect.current) {
+                  refSelect.current.dispatchEvent(
+                    new Event('change', { bubbles: true })
+                  )
+                }
+              }}
+            />
+          </>
         )}
       />
 

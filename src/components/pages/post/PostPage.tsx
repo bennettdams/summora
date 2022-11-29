@@ -651,15 +651,6 @@ function CategorySelect({
     reValidateMode: 'onBlur',
   })
 
-  /*
-   * This is a hack because RHF's `Controller` is not triggering the form's `onChange`.
-   * See: https://github.com/react-hook-form/react-hook-form/discussions/9359
-   */
-  const refSubmitButtom = useRef<HTMLButtonElement>(null)
-  function triggerSubmit() {
-    refSubmitButtom?.current?.click()
-  }
-
   return (
     <div className="flex items-center justify-center text-sm" ref={refExternal}>
       {isLoadingCategories ? (
@@ -668,11 +659,10 @@ function CategorySelect({
         <NoContent>No categories</NoContent>
       ) : shouldShowDropdown ? (
         <Form
-          onSubmit={handleSubmit((data) => {
+          onChange={handleSubmit((data) => {
             updateCategory.mutate({ postId, categoryId: data.categoryId })
           })}
         >
-          <button hidden={true} ref={refSubmitButtom} type="submit" />
           <FormSelect
             control={control}
             name="categoryId"
@@ -682,7 +672,6 @@ function CategorySelect({
             }))}
             validationErrorMessage={formState.errors.categoryId?.message}
             unselectedLabel="Please select a category."
-            onChangeExternal={triggerSubmit}
           />
           <FormFieldError
             noMargin
