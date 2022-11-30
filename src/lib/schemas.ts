@@ -6,6 +6,7 @@ import { OmitStrict, Undefinable } from '../types/util-types'
  * This is a hack for a schema that needs an `undefined` field on the input which is not allowed to be `undefined` for the output.
  * This situation e.g. exists on fields of an initial form to create something. e.g. we don't want to have a category selected when
  * a new post is created, so the field is `undefined`.
+ * See: https://github.com/react-hook-form/react-hook-form/discussions/8496#discussioncomment-4042383
  */
 export type FormDefaultValuesUndefinable<
   TSchema extends z.ZodTypeAny['_output'],

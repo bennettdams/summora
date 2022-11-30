@@ -1,5 +1,6 @@
 import Router from 'next/router'
 import { useState } from 'react'
+import { useFormState } from 'react-hook-form'
 import { signInSchema, useAuth } from '../services/auth-service'
 import { landingPageRoute } from '../services/routing'
 import { useZodForm } from '../util/use-zod-form'
@@ -16,11 +17,12 @@ export function SignIn(): JSX.Element {
   const { signInWithEmailAndPassword, signUpWithEmailAndPassword } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
 
-  const { handleSubmit, register, formState } = useZodForm({
+  const { handleSubmit, register, control } = useZodForm({
     schema: signInSchema,
     defaultValues,
     mode: 'onSubmit',
   })
+  const { errors } = useFormState({ control })
 
   return (
     <div className="flex items-center justify-center px-4 sm:px-6 lg:px-8">
@@ -51,7 +53,7 @@ export function SignIn(): JSX.Element {
               <Input
                 {...register('email')}
                 hasLabel={true}
-                validationErrorMessage={formState.errors.email?.message}
+                validationErrorMessage={errors.email?.message}
               />
             </div>
 
@@ -61,7 +63,7 @@ export function SignIn(): JSX.Element {
                 {...register('password')}
                 hasLabel={true}
                 type="password"
-                validationErrorMessage={formState.errors.password?.message}
+                validationErrorMessage={errors.password?.message}
               />
             </div>
 
@@ -95,7 +97,7 @@ export function SignIn(): JSX.Element {
                 isInitiallySubmittable={true}
                 icon={<IconSignIn />}
                 isLoading={isLoading}
-                formState={formState}
+                control={control}
               >
                 Sign in
               </FormSubmit>

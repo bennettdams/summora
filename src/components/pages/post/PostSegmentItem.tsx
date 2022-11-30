@@ -49,7 +49,14 @@ export function PostSegmentItem({
     [itemContent, postSegmentItemId]
   )
 
-  const { handleSubmit, register, formState } = useZodForm({
+  const {
+    handleSubmit,
+    register,
+    formState: {
+      errors: { content: errorContent },
+    },
+    control,
+  } = useZodForm({
     schema: schemaUpdatePostSegmentItem,
     defaultValues,
     mode: 'onBlur',
@@ -58,7 +65,7 @@ export function PostSegmentItem({
 
   const isSubmitEnabled = useIsSubmitEnabled({
     isLoading: update.isLoading,
-    formState,
+    control,
   })
 
   return (
@@ -99,7 +106,7 @@ export function PostSegmentItem({
               {...register('content')}
               placeholder="Enter some text.."
               blurOnEnterPressed
-              validationErrorMessage={formState.errors.content?.message}
+              validationErrorMessage={errorContent?.message}
             />
           </Form>
         </div>

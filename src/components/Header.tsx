@@ -1,6 +1,7 @@
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { useRouter } from 'next/router'
 import { Fragment } from 'react'
+import { useFormState } from 'react-hook-form'
 import { z } from 'zod'
 import { FormDefaultValuesUndefinable, schemaCreatePost } from '../lib/schemas'
 import { useAuth } from '../services/auth-service'
@@ -277,11 +278,12 @@ function CreatePostModal() {
 
   const createPost = trpc.posts.create.useMutation()
 
-  const { handleSubmit, register, formState, reset, control } = useZodForm({
+  const { handleSubmit, register, reset, control } = useZodForm({
     schema: schemaCreatePost,
     defaultValues: defaultValuesCreate,
     mode: 'onSubmit',
   })
+  const { errors } = useFormState({ control })
 
   const { data: postCategories, isLoading: isLoadingCategories } =
     trpc.postCategories.all.useQuery()
@@ -329,14 +331,14 @@ function CreatePostModal() {
             <Input
               {...register('title')}
               placeholder="Enter a title.."
-              validationErrorMessage={formState.errors.title?.message}
+              validationErrorMessage={errors.title?.message}
               isSpecial
               small
             />
             <Input
               {...register('subtitle')}
               placeholder="Enter a subtitle.."
-              validationErrorMessage={formState.errors.subtitle?.message}
+              validationErrorMessage={errors.subtitle?.message}
               isSpecial
               small
             />
@@ -354,12 +356,12 @@ function CreatePostModal() {
                     itemId: category.id,
                     label: category.name,
                   }))}
-                  validationErrorMessage={formState.errors.categoryId?.message}
+                  validationErrorMessage={errors.categoryId?.message}
                   unselectedLabel="Please select a category."
                 />
                 <FormFieldError
                   fieldName="general-form-error-key"
-                  errors={formState.errors}
+                  errors={errors}
                 />
               </>
             )}
@@ -368,7 +370,7 @@ function CreatePostModal() {
               <FormSubmit
                 isBig={true}
                 isInitiallySubmittable={true}
-                formState={formState}
+                control={control}
                 isLoading={createPost.isLoading}
               >
                 Create

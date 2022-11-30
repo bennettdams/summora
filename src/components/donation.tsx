@@ -2,7 +2,7 @@ import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Popover, Transition } from '@headlessui/react'
 import type { DonationProviderId } from '@prisma/client'
 import { Fragment, ReactNode, useMemo } from 'react'
-import { useFieldArray } from 'react-hook-form'
+import { useFieldArray, useFormState } from 'react-hook-form'
 import { z } from 'zod'
 import {
   FormDefaultValuesUndefinable,
@@ -166,13 +166,15 @@ function UserDonationsUpdates({
     handleSubmit: handleSubmitUpdate,
     register: registerUpdate,
     control: controlUpdate,
-    formState: formStateUpdate,
     watch: watchUpdate,
   } = useZodForm({
     schema: schemaUpdateDonationLink,
     defaultValues: defaultValuesUpdate,
     mode: 'onSubmit',
   })
+  const { errors: errorsUpdate, dirtyFields: dirtyFieldsUpdate } = useFormState(
+    { control: controlUpdate }
+  )
 
   const { fields: fieldsUpdate, remove: removeUpdate } = useFieldArray({
     name: 'donationLinksToUpdate',
@@ -183,7 +185,6 @@ function UserDonationsUpdates({
     handleSubmit: handleSubmitCreate,
     register: registerCreate,
     control: controlCreate,
-    formState: formStateCreate,
     reset: resetCreate,
     watch: watchCreate,
   } = useZodForm({
@@ -191,10 +192,9 @@ function UserDonationsUpdates({
     defaultValues: defaultValuesCreate,
     mode: 'onSubmit',
   })
-
-  const errorsUpdate = formStateUpdate.errors
-  const errorsCreate = formStateCreate.errors
-  const dirtyFieldsUpdate = formStateUpdate.dirtyFields
+  const { errors: errorsCreate, isSubmitSuccessful } = useFormState({
+    control: controlCreate,
+  })
 
   const newProviderIdFromInput = watchCreate('donationProviderId')
 
@@ -282,7 +282,7 @@ function UserDonationsUpdates({
                       }))}
                       unselectedLabel="Please select a provider."
                       validationErrorMessage={
-                        formStateUpdate.errors.donationLinksToUpdate?.message
+                        errorsUpdate.donationLinksToUpdate?.message
                       }
                     />
                   }
@@ -311,7 +311,7 @@ function UserDonationsUpdates({
             <FormSubmit
               isBig={true}
               isLoading={updateMany.isLoading}
-              formState={formStateUpdate}
+              control={controlUpdate}
             />
           </div>
         </Form>
@@ -350,7 +350,7 @@ function UserDonationsUpdates({
             ) : (
               <FormSelect
                 // we throw away the component after a successful submit to reset the selection
-                key={formStateCreate.isSubmitSuccessful + ''}
+                key={isSubmitSuccessful + ''}
                 control={controlCreate}
                 name="donationProviderId"
                 items={donationProviders.map((provider) => ({
@@ -378,7 +378,7 @@ function UserDonationsUpdates({
             <FormSubmit
               isInitiallySubmittable={true}
               isLoading={updateMany.isLoading}
-              formState={formStateCreate}
+              control={controlCreate}
             >
               Add
             </FormSubmit>

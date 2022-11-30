@@ -1,5 +1,6 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
+import { useFormState } from 'react-hook-form'
 import { z } from 'zod'
 import {
   schemaCreatePostComment,
@@ -163,17 +164,18 @@ function PostPageInternal<
   const {
     handleSubmit: handleSubmitUpdate,
     register: registerUpdate,
-    formState: formStateUpdate,
+    control: controlUpdate,
   } = useZodForm({
     schema: schemaUpdatePost,
     defaultValues: defaultValuesUpdate,
     mode: 'onBlur',
     reValidateMode: 'onBlur',
   })
+  const { errors: errorsUpdate } = useFormState({ control: controlUpdate })
 
   const isSubmitEnabled = useIsSubmitEnabled({
     isLoading: edit.isLoading,
-    formState: formStateUpdate,
+    control: controlUpdate,
   })
 
   // TAGS
@@ -257,7 +259,9 @@ function PostPageInternal<
   const {
     handleSubmit: handleSubmitCreateComment,
     register: registerCreateComment,
-    formState: formStateCreateComment,
+    formState: {
+      errors: { text: errorText },
+    },
     reset: resetCreateComment,
   } = useZodForm({
     schema: schemaCreatePostComment,
@@ -310,9 +314,7 @@ function PostPageInternal<
                       placeholder="Enter a title.."
                       autoFocus={!defaultValuesUpdate.title}
                       defaultValue={defaultValuesUpdate.title}
-                      validationErrorMessage={
-                        formStateUpdate.errors.title?.message
-                      }
+                      validationErrorMessage={errorsUpdate.title?.message}
                     />
                   </div>
                   <div>
@@ -323,9 +325,7 @@ function PostPageInternal<
                       blurOnEnterPressed
                       placeholder="Enter a subtitle.."
                       defaultValue={defaultValuesUpdate.subtitle}
-                      validationErrorMessage={
-                        formStateUpdate.errors.subtitle?.message
-                      }
+                      validationErrorMessage={errorsUpdate.subtitle?.message}
                     />
                   </div>
                 </div>
@@ -601,9 +601,7 @@ function PostPageInternal<
             <Input
               {...registerCreateComment('text')}
               placeholder="Enter a comment.."
-              validationErrorMessage={
-                formStateCreateComment.errors.text?.message
-              }
+              validationErrorMessage={errorText?.message}
               isSpecial
               isLoading={createComment.isLoading}
             />
@@ -644,7 +642,11 @@ function CategorySelect({
     [postId, categoryIdInitial]
   )
 
-  const { handleSubmit, formState, control } = useZodForm({
+  const {
+    handleSubmit,
+    formState: { errors },
+    control,
+  } = useZodForm({
     schema: schemaUpdatePostCategory,
     defaultValues,
     mode: 'onChange',
@@ -670,12 +672,12 @@ function CategorySelect({
               itemId: category.id,
               label: category.name,
             }))}
-            validationErrorMessage={formState.errors.categoryId?.message}
+            validationErrorMessage={errors.categoryId?.message}
             unselectedLabel="Please select a category."
           />
           <FormFieldError
             noMargin
-            errors={formState.errors}
+            errors={errors}
             fieldName="general-form-error-key"
           />
         </Form>
@@ -752,7 +754,14 @@ function Comment({
     () => ({ postId, commentParentId: comment.commentId, text: '' }),
     [postId, comment.commentId]
   )
-  const { handleSubmit, register, formState, reset } = useZodForm({
+  const {
+    handleSubmit,
+    register,
+    formState: {
+      errors: { text: errorText },
+    },
+    reset,
+  } = useZodForm({
     schema: schemaCreatePostComment,
     defaultValues: defaultValues,
     mode: 'onSubmit',
@@ -891,7 +900,7 @@ function Comment({
               <Input
                 {...register('text')}
                 placeholder="Enter a comment.."
-                validationErrorMessage={formState.errors.text?.message}
+                validationErrorMessage={errorText?.message}
                 isSpecial
                 isLoading={false}
                 small

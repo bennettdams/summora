@@ -1,6 +1,7 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import type { PostSegmentImagePosition } from '@prisma/client'
 import { useMemo, useRef, useState } from 'react'
+import { useFormState } from 'react-hook-form'
 import { z } from 'zod'
 import {
   schemaCreatePostSegmentItem,
@@ -86,7 +87,7 @@ export function PostSegment({
   const {
     handleSubmit: handleSubmitCreateItem,
     register: registerCreateItem,
-    formState: formStateCreateItem,
+    control: controlCreateItem,
     reset: resetCreateItem,
   } = useZodForm({
     schema: schemaCreatePostSegmentItem.pick({ content: true }),
@@ -94,11 +95,14 @@ export function PostSegment({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
   })
+  const {
+    errors: { content: errorContent },
+  } = useFormState({ control: controlCreateItem, name: 'content' })
 
   const isSubmitCreateItemEnabled = useIsSubmitEnabled({
     isInitiallySubmittable: true,
     isLoading: createItem.isLoading,
-    formState: formStateCreateItem,
+    control: controlCreateItem,
   })
 
   const [isSegmentEditMode, setIsSegmentEditMode] = useState(
@@ -142,19 +146,20 @@ export function PostSegment({
   const {
     handleSubmit: handleSubmitUpdate,
     register: registerUpdate,
-    formState: formStateUpdate,
+    control: controlUpdate,
   } = useZodForm({
     schema: schemaUpdatePostSegment,
     defaultValues: defaultValuesUpdate,
     mode: 'onBlur',
     reValidateMode: 'onBlur',
   })
+  const { errors: errorsUpdate } = useFormState({ control: controlUpdate })
 
   const isSubmitEnabled = useIsSubmitEnabled({
     // new segments should be able to submit initially, as they don't have any data yet
     isInitiallySubmittable: !!isNewSegmentItem ?? false,
     isLoading: edit.isLoading,
-    formState: formStateUpdate,
+    control: controlUpdate,
   })
 
   return (
@@ -218,9 +223,7 @@ export function PostSegment({
                           !defaultValuesUpdate.title && isLastInSequence
                         }
                         defaultValue={defaultValuesUpdate.title}
-                        validationErrorMessage={
-                          formStateUpdate.errors.title?.message
-                        }
+                        validationErrorMessage={errorsUpdate.title?.message}
                       />
                     </div>
                     <div>
@@ -231,9 +234,7 @@ export function PostSegment({
                         blurOnEnterPressed
                         placeholder="Enter a subtitle.."
                         defaultValue={defaultValuesUpdate.subtitle}
-                        validationErrorMessage={
-                          formStateUpdate.errors.subtitle?.message
-                        }
+                        validationErrorMessage={errorsUpdate.subtitle?.message}
                       />
                     </div>
                   </div>
@@ -305,9 +306,7 @@ export function PostSegment({
                   {...registerCreateItem('content')}
                   placeholder="Enter some text.."
                   blurOnEnterPressed
-                  validationErrorMessage={
-                    formStateCreateItem.errors.content?.message
-                  }
+                  validationErrorMessage={errorContent?.message}
                 />
               </div>
             </Form>
