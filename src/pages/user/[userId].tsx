@@ -4,7 +4,8 @@ import type { ParsedUrlQuery } from 'querystring'
 import { UserPage } from '../../components/pages/UserPage'
 import { prisma } from '../../server/db/client'
 import { createPrefetchHelpersArgs } from '../../server/prefetch-helpers'
-import { PageProps } from '../../types/PageProps'
+import { ServerPageProps } from '../../types/PageProps'
+import { isPromiseFulfilled } from '../../util/utils'
 
 type UserStatistics = {
   noOfPostsCreated: number
@@ -35,7 +36,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 const revalidateInSeconds = 5 * 60
 
-type UserPageServerProps = UserPageProps & PageProps
+type UserPageServerProps = UserPageProps & ServerPageProps
 
 export const getStaticProps: GetStaticProps<
   UserPageServerProps,
@@ -52,27 +53,38 @@ export const getStaticProps: GetStaticProps<
     if (!user) {
       return { notFound: true }
     } else {
-      await ssg.donationLink.byUserId.prefetch({ userId })
-      await ssg.donationProvider.all.prefetch()
-      const userPosts = await ssg.userPosts.byUserId.fetch({ userId })
+      const [userPosts, statistics] = await Promise.allSettled([
+        ssg.userPosts.byUserId.fetch({ userId }),
+        prisma.user.findUnique({
+          where: { userId },
+          select: {
+            _count: { select: { PostComment: true, posts: true } },
+          },
+        }),
+        ssg.donationLink.byUserId.prefetch({ userId }),
+        ssg.donationProvider.all.prefetch(),
+      ])
 
       // STATISTICS
-      const statisticsQuery = await prisma.user.findUnique({
-        where: { userId },
-        select: {
-          _count: { select: { PostComment: true, posts: true } },
-        },
-      })
-      const noOfPostsCreated = statisticsQuery?._count.posts ?? 0
-      const noOfCommentsWritten = statisticsQuery?._count.PostComment ?? 0
-      const noOfLikesReceived = userPosts.reduce(
-        (acc, post) => acc + post._count.likedBy,
-        0
-      )
-      const noOfViewsReceived = userPosts.reduce(
-        (acc, post) => acc + post.noOfViews,
-        0
-      )
+      let noOfPostsCreated = 0
+      let noOfCommentsWritten = 0
+      if (isPromiseFulfilled(statistics)) {
+        noOfPostsCreated = statistics.value?._count.posts ?? 0
+        noOfCommentsWritten = statistics.value?._count.PostComment ?? 0
+      }
+
+      let noOfLikesReceived = 0
+      let noOfViewsReceived = 0
+      if (isPromiseFulfilled(userPosts)) {
+        noOfLikesReceived = userPosts.value.reduce(
+          (acc, post) => acc + post._count.likedBy,
+          0
+        )
+        noOfViewsReceived = userPosts.value.reduce(
+          (acc, post) => acc + post.noOfViews,
+          0
+        )
+      }
 
       return {
         props: {

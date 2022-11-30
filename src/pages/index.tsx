@@ -32,14 +32,21 @@ export const getStaticProps: GetStaticProps<
   const now = new Date()
   const nowYesterday = new Date(now.setHours(now.getHours() - 24))
 
-  const noOfPosts = await prisma.post.count()
-  const noOfComments = await prisma.postComment.count()
-  const noOfPostsCreatedLast24Hours = await prisma.post.count({
-    where: { createdAt: { gte: nowYesterday } },
-  })
-  const noOfCommentsCreatedLast24Hours = await prisma.postComment.count({
-    where: { createdAt: { gte: nowYesterday } },
-  })
+  const [
+    noOfPosts,
+    noOfComments,
+    noOfPostsCreatedLast24Hours,
+    noOfCommentsCreatedLast24Hours,
+  ] = await Promise.all([
+    prisma.post.count(),
+    prisma.postComment.count(),
+    prisma.post.count({
+      where: { createdAt: { gte: nowYesterday } },
+    }),
+    prisma.postComment.count({
+      where: { createdAt: { gte: nowYesterday } },
+    }),
+  ])
 
   return {
     props: {
