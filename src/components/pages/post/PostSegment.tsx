@@ -314,20 +314,29 @@ export function PostSegment({
 
             <div className="my-2 text-center italic">
               {/* height needed to not make it jump when the loading animation is shown */}
-              <p className="h-6 tracking-tighter">
-                {edit.isLoading || isItemLoading || createItem.isLoading ? (
-                  <LoadingAnimation size="small" />
-                ) : !lastSuccessfulEdit ? (
-                  <span>No changes yet.</span>
-                ) : (
-                  <p className="animate-fade-in">
-                    <span>Saved changes</span>
-                    <span className="ml-2 text-gray-400">
-                      {formatDateTime(lastSuccessfulEdit, 'MM-DD hh:mm:ss')}
-                    </span>
-                  </p>
-                )}
-              </p>
+              <div className="h-7 tracking-tighter">
+                <div className="animate-fade-in">
+                  {!lastSuccessfulEdit ? (
+                    <span>No changes yet.</span>
+                  ) : (
+                    <div className="grid h-7 grid-cols-8 place-items-center lg:grid-cols-3">
+                      <div className="col-span-1 justify-self-end">
+                        {(edit.isLoading ||
+                          isItemLoading ||
+                          createItem.isLoading) && (
+                          <LoadingAnimation size="small" />
+                        )}
+                      </div>
+                      <div className="col-span-6 lg:col-span-1">
+                        <span>Saved changes</span>
+                        <span className="ml-2 text-gray-400">
+                          {formatDateTime(lastSuccessfulEdit, 'MM-DD hh:mm:ss')}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 

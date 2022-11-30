@@ -18,9 +18,9 @@ export default trpcNext.createNextApiHandler({
   /**
    * @link https://trpc.io/docs/error-handling
    */
-  onError({ error }) {
-    if (error.code === 'INTERNAL_SERVER_ERROR') {
-      console.error('Something went wrong', error)
-    }
+  onError({ path, error }) {
+    // if (error.code === 'INTERNAL_SERVER_ERROR') {
+    console.error(`Something went wrong on path ${path}:`, error)
+    // }
   },
 })
