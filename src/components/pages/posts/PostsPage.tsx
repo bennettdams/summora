@@ -1,8 +1,6 @@
-import ErrorPage from 'next/error'
 import Head from 'next/head'
 import Image from 'next/image'
 import img from '../../../../public/assets/homepage-hero.jpg'
-import { usePosts } from '../../../data/use-posts'
 import { PostsPageProps } from '../../../pages'
 import { trpc } from '../../../util/trpc'
 import { Box } from '../../Box'
@@ -19,8 +17,12 @@ export function PostsPage({
   noOfComments,
   noOfCommentsCreatedLast24Hours,
 }: PostsPageProps): JSX.Element {
-  const { posts } = usePosts()
-  const { data: postCategories, isLoading } = trpc.postCategories.all.useQuery()
+  const { data: posts, isLoading, isError } = trpc.posts.some.useQuery()
+  const {
+    data: postCategories,
+    isLoading: isLoadingCategories,
+    isError: isErrorCategories,
+  } = trpc.postCategories.all.useQuery()
 
   return (
     <Page
@@ -144,12 +146,12 @@ export function PostsPage({
       </PageSection>
 
       <PageSection label="Find by category">
-        {isLoading ? (
-          <div className="placeitece grid">
+        {isLoadingCategories ? (
+          <div className="grid place-items-center">
             <LoadingAnimation />
           </div>
-        ) : !postCategories ? (
-          <NoContent>No categories</NoContent>
+        ) : isErrorCategories || !postCategories ? (
+          <NoContent>Error while loading categories.</NoContent>
         ) : (
           <div className="grid grid-cols-2 gap-6 text-center text-lg md:grid-cols-4">
             {postCategories.map((category) => (
@@ -186,10 +188,14 @@ export function PostsPage({
         </div>
       </PageSection>
 
-      {!posts ? (
-        <ErrorPage statusCode={404}>Error while fetching posts</ErrorPage>
-      ) : (
-        <PageSection label="Popular posts">
+      <PageSection label="Popular posts">
+        {isLoading ? (
+          <div className="grid place-items-center">
+            <LoadingAnimation />
+          </div>
+        ) : isError || !postCategories ? (
+          <NoContent>Error while loading posts.</NoContent>
+        ) : (
           <PostsList
             posts={
               !posts
@@ -211,8 +217,8 @@ export function PostsPage({
                   }))
             }
           />
-        </PageSection>
-      )}
+        )}
+      </PageSection>
     </Page>
   )
 }

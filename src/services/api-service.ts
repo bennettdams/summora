@@ -8,22 +8,12 @@ import {
   ApiPostSegmentDelete,
   ApiPostSegmentUpdate,
 } from '../pages/api/post-segments/[postSegmentId]'
-import { ApiPosts } from '../pages/api/posts'
 import { ApiPostIncrementViews } from '../pages/api/posts/[postId]/increment-views'
 import { ApiUsersSignUp } from '../pages/api/users/signup'
-import {
-  deleteHTTP,
-  get,
-  HttpResponse,
-  post,
-  postFile,
-  put,
-} from '../util/http'
+import { deleteHTTP, HttpResponse, post, postFile, put } from '../util/http'
 
 export const ROUTES_API = {
   USERS_SIGN_UP: 'users/signup',
-  POSTS: 'posts',
-  POST: (postId: string) => `posts/${postId}`,
   POST_INCREMENT_VIEWS: (postId: string) => `posts/${postId}/increment-views`,
   POST_SEGMENTS: 'post-segments',
   POST_SEGMENT: (postSegmentId: string) => `post-segments/${postSegmentId}`,
@@ -91,22 +81,6 @@ export async function apiImageUploadPostSegments({
     ROUTES_API.IMAGE_UPLOAD_POST_SEGMENTS({ postId, postSegmentId }),
     postSegmentImageFile
   )
-}
-
-// #########################################
-
-export async function apiFetchPosts(): Promise<HttpResponse<ApiPosts>> {
-  const response = await get<ApiPosts>(ROUTES_API.POSTS)
-  if (response.result) response.result = transformApiPosts(response.result)
-  return response
-}
-
-export function transformApiPosts(posts: ApiPosts): ApiPosts {
-  return posts.map((post) => ({
-    ...post,
-    createdAt: new Date(post.createdAt),
-    updatedAt: new Date(post.updatedAt),
-  }))
 }
 
 // #########################################

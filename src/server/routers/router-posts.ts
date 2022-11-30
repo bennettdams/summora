@@ -13,6 +13,7 @@ import { procedure, router } from '../trpc'
 const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
   id: true,
   createdAt: true,
+  updatedAt: true,
   title: true,
   subtitle: true,
   authorId: true,
@@ -60,6 +61,14 @@ async function ensureAuthor(ctx: ContextTRPC, postId: string) {
 }
 
 export const postsRouter = router({
+  // SOME
+  some: procedure.query(async ({ ctx }) => {
+    return await ctx.prisma.post.findMany({
+      take: 20,
+      orderBy: { createdAt: 'desc' },
+      select: defaultPostSelect,
+    })
+  }),
   // READ
   byPostId: procedure
     .input(z.object({ postId: z.string().cuid() }))

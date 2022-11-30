@@ -1,13 +1,9 @@
+import { createProxySSGHelpers } from '@trpc/react-query/ssg'
 import { GetStaticProps } from 'next'
 import { PostsPage } from '../components/pages/posts/PostsPage'
-import {
-  hydrationHandler as hydrationHandlerPosts,
-  prefillServer as prefillServerPosts,
-} from '../data/use-posts'
-import { dbFindPosts } from '../lib/db'
 import { prisma } from '../server/db/client'
+import { createPrefetchHelpersArgs } from '../server/prefetch-helpers'
 import { ServerPageProps } from '../types/PageProps'
-import { ApiPosts } from './api/posts'
 
 export type PostsPageProps = {
   noOfPosts: number
@@ -18,19 +14,13 @@ export type PostsPageProps = {
 
 const revalidateInSeconds = 5 * 60
 
-type Props = PostsPageProps &
-  ServerPageProps & { dehydratedState2: ServerPageProps['dehydratedState'] }
+type Props = PostsPageProps & ServerPageProps
 
-export const getStaticProps: GetStaticProps<
-  PostsPageProps & ServerPageProps
-> = async () => {
-  const posts: ApiPosts = await dbFindPosts()
-
-  const client = hydrationHandlerPosts.createClient()
-  prefillServerPosts(client, posts)
-
+export const getStaticProps: GetStaticProps<Props> = async () => {
   const now = new Date()
   const nowYesterday = new Date(now.setHours(now.getHours() - 24))
+
+  const ssg = createProxySSGHelpers(await createPrefetchHelpersArgs())
 
   const [
     noOfPosts,
@@ -46,11 +36,12 @@ export const getStaticProps: GetStaticProps<
     prisma.postComment.count({
       where: { createdAt: { gte: nowYesterday } },
     }),
+    ssg.posts.some.prefetch(),
   ])
 
   return {
     props: {
-      dehydratedState: hydrationHandlerPosts.dehydrate(client),
+      trpcState: ssg.dehydrate(),
       noOfPosts,
       noOfPostsCreatedLast24Hours,
       noOfComments,
@@ -60,17 +51,13 @@ export const getStaticProps: GetStaticProps<
   }
 }
 
-const HydratePosts = hydrationHandlerPosts.Hydrate
-
 export default function _HomePage(props: Props): JSX.Element {
   return (
-    <HydratePosts dehydratedState={props.dehydratedState}>
-      <PostsPage
-        noOfPosts={props.noOfPosts}
-        noOfPostsCreatedLast24Hours={props.noOfPostsCreatedLast24Hours}
-        noOfComments={props.noOfComments}
-        noOfCommentsCreatedLast24Hours={props.noOfCommentsCreatedLast24Hours}
-      />
-    </HydratePosts>
+    <PostsPage
+      noOfPosts={props.noOfPosts}
+      noOfPostsCreatedLast24Hours={props.noOfPostsCreatedLast24Hours}
+      noOfComments={props.noOfComments}
+      noOfCommentsCreatedLast24Hours={props.noOfCommentsCreatedLast24Hours}
+    />
   )
 }

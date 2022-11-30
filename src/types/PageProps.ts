@@ -17,5 +17,5 @@ export type ServerPageProps = PageProps & {
    * Used for React Query.
    * https://react-query.tanstack.com/guides/ssr#using-nextjs
    */
-  dehydratedState: DehydratedState
+  trpcState: DehydratedState
 }

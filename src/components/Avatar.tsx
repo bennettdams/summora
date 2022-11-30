@@ -1,7 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useState } from 'react'
-import { queryKey as queryKeyPosts } from '../data/use-posts'
 import { apiImageUploadAvatars } from '../services/api-service'
 import { useCloudStorage } from '../services/use-cloud-storage'
 import { trpc } from '../util/trpc'
@@ -9,7 +8,6 @@ import { ImageUpload } from './ImageUpload'
 
 function useUserImageMutation(userId: string) {
   const utils = trpc.useContext()
-  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: apiImageUploadAvatars,
@@ -21,7 +19,7 @@ function useUserImageMutation(userId: string) {
       utils.userPosts.byUserId.invalidate({ userId })
 
       // POSTS DATA
-      queryClient.invalidateQueries(queryKeyPosts)
+      utils.posts.invalidate()
     },
   })
 }
