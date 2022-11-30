@@ -1,5 +1,5 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-import { PostSegmentImagePosition } from '@prisma/client'
+import type { PostSegmentImagePosition } from '@prisma/client'
 import { useMemo, useRef, useState } from 'react'
 import { z } from 'zod'
 import {
@@ -20,6 +20,16 @@ import { LoadingAnimation } from '../../LoadingAnimation'
 import { PostSegmentImage } from '../../PostSegmentImage'
 import { SegmentPostPage } from './PostPage'
 import { PostSegmentItem } from './PostSegmentItem'
+
+/**
+ * This is a hack to convert Prisma string literals to an enum-like.
+ * We do this to prevent `@prisma/client` being part of the client bundle.
+ * See: https://github.com/prisma/prisma/issues/13567#issuecomment-1332030096
+ */
+const segmentImagePositionMap: { [K in PostSegmentImagePosition]: K } = {
+  BOTTOM: 'BOTTOM',
+  RIGHT: 'RIGHT',
+}
 
 type SchemaUpdateSegment = z.infer<typeof schemaUpdatePostSegment>
 
@@ -107,12 +117,12 @@ export function PostSegment({
   const choiceControl = useChoiceSelect(
     [
       {
-        choiceId: PostSegmentImagePosition.RIGHT,
+        choiceId: segmentImagePositionMap.RIGHT,
         label: 'Right',
         icon: <IconArrowCircleRight className="text-dtertiary" />,
       },
       {
-        choiceId: PostSegmentImagePosition.BOTTOM,
+        choiceId: segmentImagePositionMap.BOTTOM,
         label: 'Bottom',
         icon: <IconArrowCircleDown className="text-dtertiary" />,
       },
@@ -156,7 +166,7 @@ export function PostSegment({
       >
         <div
           className={`px-4 ${
-            choiceControl.selected.choiceId === PostSegmentImagePosition.RIGHT
+            choiceControl.selected.choiceId === 'RIGHT'
               ? // keep width in sync with post segment image
                 'w-full lg:w-4/5'
               : 'w-full'
@@ -328,10 +338,7 @@ export function PostSegment({
               // placeholder doesn't need to be as big as an image
               ` ${segment.imageId ? 'min-h-[250px]' : 'min-h-[100px]'}` +
               // on mobile, we always show the image at the bottom, so we hide it here on larger screens if necessary
-              ` ${
-                choiceControl.selected.choiceId !==
-                  PostSegmentImagePosition.BOTTOM && 'lg:hidden'
-              }`
+              ` ${choiceControl.selected.choiceId !== 'BOTTOM' && 'lg:hidden'}`
             }
           >
             <PostSegmentImage
@@ -389,8 +396,7 @@ export function PostSegment({
         {/* POST SEGMENT IMAGE - RIGHT */}
         {/* the parent container uses "items-stretch" so the image can "fill" the height */}
         <div className="hidden min-h-[150px] w-full place-items-center lg:grid lg:w-1/5">
-          {choiceControl.selected.choiceId ===
-            PostSegmentImagePosition.RIGHT && (
+          {choiceControl.selected.choiceId === 'RIGHT' && (
             <PostSegmentImage
               isEditable={isPostEditable}
               postId={postId}

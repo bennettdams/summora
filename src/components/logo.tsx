@@ -1,4 +1,4 @@
-import { DonationProviderId } from '@prisma/client'
+import type { DonationProviderId } from '@prisma/client'
 import Image from 'next/image'
 import { NoContent } from './NoContent'
 

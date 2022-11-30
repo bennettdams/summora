@@ -14,12 +14,23 @@ export type FormDefaultValuesUndefinable<
   [K in keyof TSchema as TKeyToOverwrite]: Undefinable<TSchema[TKeyToOverwrite]>
 }
 
+/**
+ * This is a hack to convert Prisma string literals to an enum-like.
+ * We do this to prevent `@prisma/client` being part of the client bundle.
+ * See: https://github.com/prisma/prisma/issues/13567#issuecomment-1332030096
+ */
+const donationProviderIdsMap: { [K in DonationProviderId]: K } = {
+  BITCOIN: 'BITCOIN',
+  PAYPAL: 'PAYPAL',
+}
+const donationProviderIdSchema = z.nativeEnum(donationProviderIdsMap, {
+  required_error: 'Provider required',
+})
+
 export const generalFormErrorKey = 'general-form-error-key'
 
 export const addressSchema = z.string().min(1).max(128)
-const donationProviderIdSchema = z.nativeEnum(DonationProviderId, {
-  required_error: 'Provider required',
-})
+
 const postCategorySchema = z
   .string({ required_error: 'Category required' })
   .min(1)

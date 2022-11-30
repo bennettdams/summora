@@ -1,6 +1,6 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Popover, Transition } from '@headlessui/react'
-import { DonationProviderId } from '@prisma/client'
+import type { DonationProviderId } from '@prisma/client'
 import { Fragment, ReactNode, useMemo } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import { z } from 'zod'
