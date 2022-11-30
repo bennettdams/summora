@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { checkAuthTRPC } from '../../lib/api-security'
+import { checkAuthTRPC } from '../api-security'
 import { procedure, router } from '../trpc'
 
 const defaultPostLikesSelect = Prisma.validator<Prisma.PostSelect>()({

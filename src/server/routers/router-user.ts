@@ -1,8 +1,8 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { ensureAuthorTRPC } from '../../lib/api-security'
 import { avatarImageIdPrefix } from '../../pages/api/image-upload/avatars'
 import { deleteAvatarInStorage } from '../../services/use-cloud-storage'
+import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
 import { procedure, router } from '../trpc'
 

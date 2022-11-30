@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { ContextTRPC } from '../server/context-trpc'
 import { getUserFromRequest } from '../services/auth-service'
+import { ContextTRPC } from './context-trpc'
 
 /**
  * Used to ensure the requester is the author of a given topic (like post, comment, etc.).

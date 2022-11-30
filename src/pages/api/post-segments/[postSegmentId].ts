@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { ensureAuthor } from '../../../lib/api-security'
+import { ensureAuthor } from '../../../server/api-security'
 import { prisma } from '../../../server/db/client'
 import { ApiPostSegmentUpdateRequestBody } from '../../../services/api-service'
 import { deletePostSegmentImageInStorage } from '../../../services/use-cloud-storage'

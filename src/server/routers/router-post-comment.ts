@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { checkAuthTRPC, ensureAuthorTRPC } from '../../lib/api-security'
 import { schemaCreatePostComment } from '../../lib/schemas'
+import { checkAuthTRPC, ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
 import { procedure, router } from '../trpc'
 

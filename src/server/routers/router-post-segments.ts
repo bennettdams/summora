@@ -1,11 +1,11 @@
 import { PostSegmentImagePosition, Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { ensureAuthorTRPC } from '../../lib/api-security'
 import {
   schemaCreatePostSegmentItem,
   schemaUpdatePostSegment,
 } from '../../lib/schemas'
+import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
 import { procedure, router } from '../trpc'
 
