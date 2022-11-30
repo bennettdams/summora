@@ -3,7 +3,7 @@ import superjson from 'superjson'
 import { ZodError } from 'zod'
 import { ContextTRPC } from './context-trpc'
 
-export const t = initTRPC.context<ContextTRPC>().create({
+const t = initTRPC.context<ContextTRPC>().create({
   transformer: superjson,
   /*
    * See https://trpc.io/docs/v10/error-formatting
@@ -21,3 +21,8 @@ export const t = initTRPC.context<ContextTRPC>().create({
     }
   },
 })
+
+export const router = t.router
+
+/** Unauthenticated procedure. */
+export const procedure = t.procedure

@@ -1,7 +1,7 @@
 /**
  * This file contains the root router of your tRPC-backend
  */
-import { t } from '../trpc'
+import { router } from '../trpc'
 import { donationLinkRouter } from './router-donation-link'
 import { donationProviderRouter } from './router-donation-providers'
 import { postCategoriesRouter } from './router-post-categories'
@@ -18,7 +18,7 @@ import { userPostsRouter } from './router-user-posts'
  * Application's root router.
  * @link https://trpc.io/docs/router
  */
-export const appRouter = t.router({
+export const appRouter = router({
   posts: postsRouter,
   postLikes: postLikesRouter,
   postSegments: postSegmentsRouter,

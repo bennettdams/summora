@@ -2,15 +2,15 @@ import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { checkAuthTRPC } from '../../lib/api-security'
-import { t } from '../trpc'
+import { procedure, router } from '../trpc'
 
 const defaultPostLikesSelect = Prisma.validator<Prisma.PostSelect>()({
   likedBy: { select: { userId: true } },
 })
 
-export const postLikesRouter = t.router({
+export const postLikesRouter = router({
   // READ
-  byPostId: t.procedure
+  byPostId: procedure
     .input(
       z.object({
         postId: z.string().cuid(),
@@ -34,7 +34,7 @@ export const postLikesRouter = t.router({
       }
     }),
   // LIKE/UNLIKE
-  toggleLike: t.procedure
+  toggleLike: procedure
     .input(z.object({ postId: z.string().cuid() }))
     .mutation(async ({ input, ctx }) => {
       const { postId } = input

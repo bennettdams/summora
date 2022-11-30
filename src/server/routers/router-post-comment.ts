@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { checkAuthTRPC, ensureAuthorTRPC } from '../../lib/api-security'
 import { schemaCreatePostComment } from '../../lib/schemas'
 import { ContextTRPC } from '../context-trpc'
-import { t } from '../trpc'
+import { procedure, router } from '../trpc'
 
 const defaultPostCommentSelect = Prisma.validator<Prisma.PostCommentSelect>()({
   commentId: true,
@@ -47,9 +47,9 @@ async function ensureAuthor(ctx: ContextTRPC, commentId: string) {
   })
 }
 
-export const postCommentsRouter = t.router({
+export const postCommentsRouter = router({
   // READ
-  byPostId: t.procedure
+  byPostId: procedure
     .input(
       z.object({
         postId: z.string().cuid(),
@@ -71,7 +71,7 @@ export const postCommentsRouter = t.router({
       return postComments
     }),
   // CREATE
-  create: t.procedure
+  create: procedure
     .input(schemaCreatePostComment)
     .mutation(async ({ input, ctx }) => {
       const { postId, commentParentId, text } = input
@@ -92,7 +92,7 @@ export const postCommentsRouter = t.router({
       })
     }),
   // DELETE
-  delete: t.procedure
+  delete: procedure
     .input(
       z.object({
         commentId: z.string().cuid(),
@@ -109,7 +109,7 @@ export const postCommentsRouter = t.router({
       })
     }),
   // UPVOTE
-  upvote: t.procedure
+  upvote: procedure
     .input(
       z.object({
         commentId: z.string().cuid(),
@@ -152,7 +152,7 @@ export const postCommentsRouter = t.router({
       }
     }),
   // DOWNVOTE
-  downvote: t.procedure
+  downvote: procedure
     .input(
       z.object({
         commentId: z.string().cuid(),

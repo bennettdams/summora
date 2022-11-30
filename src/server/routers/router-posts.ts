@@ -8,7 +8,7 @@ import {
   schemaUpdatePostCategory,
 } from '../../lib/schemas'
 import { ContextTRPC } from '../context-trpc'
-import { t } from '../trpc'
+import { procedure, router } from '../trpc'
 
 const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
   id: true,
@@ -59,9 +59,9 @@ async function ensureAuthor(ctx: ContextTRPC, postId: string) {
   })
 }
 
-export const postsRouter = t.router({
+export const postsRouter = router({
   // READ
-  byPostId: t.procedure
+  byPostId: procedure
     .input(z.object({ postId: z.string().cuid() }))
     .query(async ({ input, ctx }) => {
       const { postId } = input
@@ -72,7 +72,7 @@ export const postsRouter = t.router({
       })
     }),
   // EDIT
-  edit: t.procedure.input(schemaUpdatePost).mutation(async ({ input, ctx }) => {
+  edit: procedure.input(schemaUpdatePost).mutation(async ({ input, ctx }) => {
     const { postId, title, subtitle } = input
 
     await ensureAuthor(ctx, postId)
@@ -83,7 +83,7 @@ export const postsRouter = t.router({
     })
   }),
   // EDIT CATEGORY
-  editCategory: t.procedure
+  editCategory: procedure
     .input(schemaUpdatePostCategory)
     .mutation(async ({ input, ctx }) => {
       const { postId, categoryId } = input
@@ -96,25 +96,23 @@ export const postsRouter = t.router({
       })
     }),
   // CREATE
-  create: t.procedure
-    .input(schemaCreatePost)
-    .mutation(async ({ input, ctx }) => {
-      const { title, subtitle, categoryId } = input
+  create: procedure.input(schemaCreatePost).mutation(async ({ input, ctx }) => {
+    const { title, subtitle, categoryId } = input
 
-      const userId = await checkAuthTRPC(ctx)
+    const userId = await checkAuthTRPC(ctx)
 
-      return await ctx.prisma.post.create({
-        data: {
-          title,
-          subtitle,
-          author: { connect: { userId } },
-          category: { connect: { id: categoryId } },
-        },
-        select: { id: true },
-      })
-    }),
+    return await ctx.prisma.post.create({
+      data: {
+        title,
+        subtitle,
+        author: { connect: { userId } },
+        category: { connect: { id: categoryId } },
+      },
+      select: { id: true },
+    })
+  }),
   // CREATE SEGMENT
-  createSegment: t.procedure
+  createSegment: procedure
     .input(z.object({ postId: z.string().cuid() }))
     .mutation(async ({ input, ctx }) => {
       const { postId } = input

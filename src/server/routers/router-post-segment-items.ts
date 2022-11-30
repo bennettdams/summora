@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { ensureAuthorTRPC } from '../../lib/api-security'
 import { schemaUpdatePostSegmentItem } from '../../lib/schemas'
 import { ContextTRPC } from '../context-trpc'
-import { t } from '../trpc'
+import { procedure, router } from '../trpc'
 
 const defaultPostSegmentItemSelect =
   Prisma.validator<Prisma.PostSegmentItemSelect>()({
@@ -44,9 +44,9 @@ async function ensureAuthor(ctx: ContextTRPC, segmentItemId: string) {
   })
 }
 
-export const postSegmentItemsRouter = t.router({
+export const postSegmentItemsRouter = router({
   // UPDATE
-  update: t.procedure
+  update: procedure
     .input(schemaUpdatePostSegmentItem)
     .mutation(async ({ input, ctx }) => {
       const { segmentItemId, content } = input
@@ -62,7 +62,7 @@ export const postSegmentItemsRouter = t.router({
       })
     }),
   // DELETE
-  delete: t.procedure
+  delete: procedure
     .input(
       z.object({
         segmentItemId: z.string().cuid(),

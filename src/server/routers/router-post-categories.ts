@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client'
-import { t } from '../trpc'
+import { procedure, router } from '../trpc'
 
 const defaultPostCategoriesSelect =
   Prisma.validator<Prisma.PostCategorySelect>()({
@@ -7,9 +7,9 @@ const defaultPostCategoriesSelect =
     name: true,
   })
 
-export const postCategoriesRouter = t.router({
+export const postCategoriesRouter = router({
   // READ ALL
-  all: t.procedure.query(async ({ ctx }) => {
+  all: procedure.query(async ({ ctx }) => {
     return await ctx.prisma.postCategory.findMany({
       select: defaultPostCategoriesSelect,
       orderBy: { name: 'asc' },

@@ -11,7 +11,7 @@ import {
   schemaUpdateDonationLink,
 } from '../../lib/schemas'
 import { ContextTRPC } from '../context-trpc'
-import { t } from '../trpc'
+import { procedure, router } from '../trpc'
 
 /**
  * It's important to always explicitly say which fields you want to return in order to not leak extra information
@@ -41,7 +41,7 @@ async function ensureAuthor(ctx: ContextTRPC, donationLinkId: string) {
       if (!res?.userId) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'The donation link you tried to update does not exist.',
+          message: 'The donation link you tried to update does not exis',
         })
       } else {
         return { authorId: res.userId, entity: null }
@@ -50,9 +50,9 @@ async function ensureAuthor(ctx: ContextTRPC, donationLinkId: string) {
   })
 }
 
-export const donationLinkRouter = t.router({
+export const donationLinkRouter = router({
   // CREATE
-  createByUserId: t.procedure
+  createByUserId: procedure
     .input(
       z.object({
         newDonationLink: schemaCreateDonationLink,
@@ -83,7 +83,7 @@ export const donationLinkRouter = t.router({
       })
     }),
   // READ MANY
-  byUserId: t.procedure
+  byUserId: procedure
     .input(
       z.object({
         userId: z.string().uuid(),
@@ -101,7 +101,7 @@ export const donationLinkRouter = t.router({
       return donationLinks
     }),
   //  UPDATE MANY
-  editMany: t.procedure
+  editMany: procedure
     .input(schemaUpdateDonationLink)
     .mutation(async ({ input, ctx }) => {
       const { donationLinksToUpdate } = input
@@ -129,7 +129,7 @@ export const donationLinkRouter = t.router({
       )
     }),
   // DELETE
-  delete: t.procedure
+  delete: procedure
     .input(
       z.object({
         donationLinkId: z.string().cuid(),

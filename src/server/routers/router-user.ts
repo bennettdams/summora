@@ -4,7 +4,7 @@ import { ensureAuthorTRPC } from '../../lib/api-security'
 import { avatarImageIdPrefix } from '../../pages/api/image-upload/avatars'
 import { deleteAvatarInStorage } from '../../services/use-cloud-storage'
 import { ContextTRPC } from '../context-trpc'
-import { t } from '../trpc'
+import { procedure, router } from '../trpc'
 
 async function ensureAuthor(ctx: ContextTRPC, userId: string) {
   await ensureAuthorTRPC({
@@ -28,9 +28,9 @@ async function ensureAuthor(ctx: ContextTRPC, userId: string) {
   })
 }
 
-export const userRouter = t.router({
+export const userRouter = router({
   // READ
-  byUserId: t.procedure
+  byUserId: procedure
     .input(
       z.object({
         userId: z.string().uuid(),
@@ -53,7 +53,7 @@ export const userRouter = t.router({
       }
     }),
   // REMOVE AVATAR
-  removeAvatar: t.procedure
+  removeAvatar: procedure
     .input(
       z.object({
         userId: z.string().uuid(),

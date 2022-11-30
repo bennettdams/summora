@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client'
-import { t } from '../trpc'
+import { procedure, router } from '../trpc'
 
 const defaultDonationProvidersSelect =
   Prisma.validator<Prisma.DonationProviderSelect>()({
@@ -7,9 +7,9 @@ const defaultDonationProvidersSelect =
     donationProviderId: true,
   })
 
-export const donationProviderRouter = t.router({
+export const donationProviderRouter = router({
   // READ ALL
-  all: t.procedure.query(async ({ ctx }) => {
+  all: procedure.query(async ({ ctx }) => {
     const donationProviders = await ctx.prisma.donationProvider.findMany({
       select: defaultDonationProvidersSelect,
       orderBy: { name: 'asc' },

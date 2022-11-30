@@ -7,7 +7,7 @@ import {
   schemaUpdatePostSegment,
 } from '../../lib/schemas'
 import { ContextTRPC } from '../context-trpc'
-import { t } from '../trpc'
+import { procedure, router } from '../trpc'
 
 const defaultPostSegmentSelect = Prisma.validator<Prisma.PostSegmentSelect>()({
   id: true,
@@ -43,9 +43,9 @@ async function ensureAuthor(ctx: ContextTRPC, postSegmentId: string) {
   })
 }
 
-export const postSegmentsRouter = t.router({
+export const postSegmentsRouter = router({
   // READ BY POST
-  byPostId: t.procedure
+  byPostId: procedure
     .input(
       z.object({
         postId: z.string().cuid(),
@@ -60,7 +60,7 @@ export const postSegmentsRouter = t.router({
       })
     }),
   // EDIT
-  edit: t.procedure
+  edit: procedure
     .input(schemaUpdatePostSegment)
     .mutation(async ({ input, ctx }) => {
       const { postSegmentId, title, subtitle } = input
@@ -73,7 +73,7 @@ export const postSegmentsRouter = t.router({
       })
     }),
   // CHANGE IMAGE POSITION
-  changeImagePosition: t.procedure
+  changeImagePosition: procedure
     .input(
       z.object({
         postSegmentId: z.string().cuid(),
@@ -91,7 +91,7 @@ export const postSegmentsRouter = t.router({
       })
     }),
   // CREATE ITEM
-  createItem: t.procedure
+  createItem: procedure
     .input(schemaCreatePostSegmentItem)
     .mutation(async ({ input, ctx }) => {
       const { segmentId, content } = input
@@ -106,7 +106,7 @@ export const postSegmentsRouter = t.router({
       })
     }),
   // DELETE
-  delete: t.procedure
+  delete: procedure
     .input(
       z.object({
         segmentId: z.string().cuid(),

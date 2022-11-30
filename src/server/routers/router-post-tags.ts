@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { ensureAuthorTRPC } from '../../lib/api-security'
 import { schemaTagSearch } from '../../lib/schemas'
 import { ContextTRPC } from '../context-trpc'
-import { t } from '../trpc'
+import { procedure, router } from '../trpc'
 
 const defaultPostTagsSelect = Prisma.validator<Prisma.PostTagSelect>()({
   tagId: true,
@@ -32,9 +32,9 @@ async function ensureAuthor(ctx: ContextTRPC, postId: string) {
   })
 }
 
-export const postTagsRouter = t.router({
+export const postTagsRouter = router({
   // READ
-  byPostId: t.procedure
+  byPostId: procedure
     .input(z.object({ postId: z.string().cuid() }))
     .query(async ({ input, ctx }) => {
       const { postId } = input
@@ -52,7 +52,7 @@ export const postTagsRouter = t.router({
         return tagsForPost.tags
       }
     }),
-  popularOverall: t.procedure.query(async ({ ctx }) => {
+  popularOverall: procedure.query(async ({ ctx }) => {
     return await ctx.prisma.postTag.findMany({
       select: {
         tagId: true,
@@ -62,7 +62,7 @@ export const postTagsRouter = t.router({
       take: 20,
     })
   }),
-  popularByCategoryId: t.procedure
+  popularByCategoryId: procedure
     .input(z.object({ categoryId: z.string().min(1) }))
     .query(async ({ input, ctx }) => {
       const { categoryId } = input
@@ -77,7 +77,7 @@ export const postTagsRouter = t.router({
       })
     }),
   // ADD
-  addToPost: t.procedure
+  addToPost: procedure
     .input(
       z.object({
         postId: z.string().cuid(),
@@ -97,7 +97,7 @@ export const postTagsRouter = t.router({
       })
     }),
   // REMOVE
-  removeFromPost: t.procedure
+  removeFromPost: procedure
     .input(
       z.object({
         postId: z.string().cuid(),
@@ -117,7 +117,7 @@ export const postTagsRouter = t.router({
       })
     }),
   // SEARCH
-  search: t.procedure.input(schemaTagSearch).query(async ({ input, ctx }) => {
+  search: procedure.input(schemaTagSearch).query(async ({ input, ctx }) => {
     const { searchInput } = input
 
     return await ctx.prisma.postTag.findMany({

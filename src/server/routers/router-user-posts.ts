@@ -1,9 +1,9 @@
 import { z } from 'zod'
-import { t } from '../trpc'
+import { procedure, router } from '../trpc'
 
-export const userPostsRouter = t.router({
+export const userPostsRouter = router({
   // READ
-  byUserId: t.procedure
+  byUserId: procedure
     .input(
       z.object({
         userId: z.string().uuid(),
