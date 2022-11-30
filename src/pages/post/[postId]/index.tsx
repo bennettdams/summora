@@ -2,14 +2,8 @@ import { createProxySSGHelpers } from '@trpc/react-query/ssg'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import type { ParsedUrlQuery } from 'querystring'
 import { PostPage } from '../../../components/pages/post/PostPage'
-import {
-  hydrationHandler as hydrationHandlerPost,
-  prefillServer as prefillServerPost,
-} from '../../../data/use-post'
-import { dbFindPost } from '../../../lib/db'
 import { createPrefetchHelpersArgs } from '../../../server/prefetch-helpers'
 import { ServerPageProps } from '../../../types/PageProps'
-import { ApiPost } from '../../api/posts/[postId]'
 
 export interface PostPageProps {
   postId: string
@@ -42,26 +36,25 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
     return { notFound: true }
   } else {
     const postId = params.postId
-    const post: ApiPost = await dbFindPost(postId)
+
+    const ssg = createProxySSGHelpers(await createPrefetchHelpersArgs())
+    const post = await ssg.posts.byPostId.fetch({ postId: params.postId })
 
     if (!post) {
       return { notFound: true }
     } else {
-      const ssg = createProxySSGHelpers(await createPrefetchHelpersArgs())
-      await ssg.user.byUserId.prefetch({ userId: post.authorId })
-      await ssg.postComments.byPostId.prefetch({ postId })
-      // we could prefetch the user data here, but this only impacts the avatar in the post comments
+      await Promise.allSettled([
+        ssg.user.byUserId.prefetch({ userId: post.authorId }),
+        ssg.postComments.byPostId.prefetch({ postId }),
+      ])
+      // we could prefetch the comment user data here, but as they're at the bottom of the page, we're not doing it for performance reasons
       // const commentAuthorIds = (await postComments).map(
-      //   (comm) => comm.author.userId
+      //   (comment) => comment.author.userId
       // )
-
-      const client = hydrationHandlerPost.createClient()
-      prefillServerPost(client, postId, post)
 
       return {
         props: {
           trpcState: ssg.dehydrate(),
-          dehydratedState: hydrationHandlerPost.dehydrate(client),
           postId,
         },
         revalidate: revalidateInSeconds,
@@ -70,12 +63,6 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
   }
 }
 
-const HydratePost = hydrationHandlerPost.Hydrate
-
 export default function _PostPage(props: Props): JSX.Element {
-  return (
-    <HydratePost dehydratedState={props.dehydratedState}>
-      <PostPage postId={props.postId} />
-    </HydratePost>
-  )
+  return <PostPage postId={props.postId} />
 }

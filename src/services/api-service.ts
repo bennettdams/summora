@@ -8,8 +8,7 @@ import {
   ApiPostSegmentDelete,
   ApiPostSegmentUpdate,
 } from '../pages/api/post-segments/[postSegmentId]'
-import { ApiPosts, ApiPostsCreate } from '../pages/api/posts'
-import { ApiPost, ApiPostUpdate } from '../pages/api/posts/[postId]'
+import { ApiPosts } from '../pages/api/posts'
 import { ApiPostIncrementViews } from '../pages/api/posts/[postId]/increment-views'
 import { ApiUsersSignUp } from '../pages/api/users/signup'
 import {
@@ -96,36 +95,6 @@ export async function apiImageUploadPostSegments({
 
 // #########################################
 
-export async function apiFetchPost(
-  postId: string
-): Promise<HttpResponse<ApiPost>> {
-  const response = await get<ApiPost>(ROUTES_API.POST(postId))
-  if (response.result) response.result = transformApiPost(response.result)
-  return response
-}
-
-export function transformApiPost(
-  post: NonNullable<ApiPost>
-): NonNullable<ApiPost> {
-  return {
-    ...post,
-    createdAt: new Date(post.createdAt),
-    updatedAt: new Date(post.updatedAt),
-    segments: post.segments.map((segment) => ({
-      ...segment,
-      createdAt: new Date(segment.createdAt),
-      updatedAt: new Date(segment.updatedAt),
-      items: segment.items.map((item) => ({
-        ...item,
-        createdAt: new Date(item.createdAt),
-        updatedAt: new Date(item.updatedAt),
-      })),
-    })),
-  }
-}
-
-// #########################################
-
 export async function apiFetchPosts(): Promise<HttpResponse<ApiPosts>> {
   const response = await get<ApiPosts>(ROUTES_API.POSTS)
   if (response.result) response.result = transformApiPosts(response.result)
@@ -138,46 +107,6 @@ export function transformApiPosts(posts: ApiPosts): ApiPosts {
     createdAt: new Date(post.createdAt),
     updatedAt: new Date(post.updatedAt),
   }))
-}
-
-// #########################################
-
-export type ApiPostUpdateRequestBody = Prisma.PostUpdateInput & {
-  categoryId?: string
-  tagIds?: string[]
-}
-
-export async function apiUpdatePost({
-  postId,
-  postToUpdate,
-}: {
-  postId: string
-  postToUpdate: ApiPostUpdateRequestBody
-}): Promise<HttpResponse<ApiPostUpdate>> {
-  const response = await put<ApiPostUpdate>(
-    ROUTES_API.POST(postId),
-    postToUpdate
-  )
-  if (response.result) response.result = transformApiPost(response.result)
-  return response
-}
-
-// #########################################
-
-export type ApiPostsCreateRequestBody = {
-  postToCreate: {
-    title: string
-    subtitle: string
-    categoryId: string
-  }
-}
-
-export async function apiCreatePost(
-  input: ApiPostsCreateRequestBody
-): Promise<HttpResponse<ApiPostsCreate>> {
-  const response = await post<ApiPostsCreate>(ROUTES_API.POSTS, input)
-  if (response.result) response.result = transformApiPost(response.result)
-  return response
 }
 
 // #########################################

@@ -1,6 +1,5 @@
 import { Prisma } from '@prisma/client'
 import { prisma } from '../server/db/client'
-import { ApiPostsCreateRequestBody } from '../services/api-service'
 
 export type DbFindPosts = Prisma.PromiseReturnType<typeof dbFindPosts>
 export async function dbFindPosts() {
@@ -41,32 +40,3 @@ export const postInclude = Prisma.validator<Prisma.PostInclude>()({
     },
   },
 })
-
-export type DbFindPost = Prisma.PromiseReturnType<typeof dbFindPost>
-export async function dbFindPost(postId: string) {
-  return await prisma.post.findUnique({
-    where: { id: postId },
-    include: postInclude,
-  })
-}
-
-export type DbCreatePost = Prisma.PromiseReturnType<typeof dbCreatePost>
-export async function dbCreatePost(
-  userId: string,
-  postToCreate: ApiPostsCreateRequestBody['postToCreate']
-) {
-  try {
-    return await prisma.post.create({
-      data: {
-        title: postToCreate.title,
-        subtitle: postToCreate.subtitle,
-        // connect
-        author: { connect: { userId } },
-        category: { connect: { id: postToCreate.categoryId } },
-      },
-      include: postInclude,
-    })
-  } catch (error) {
-    throw new Error(`Error while creating post: ${error}`)
-  }
-}
