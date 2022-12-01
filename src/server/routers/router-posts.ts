@@ -22,6 +22,7 @@ const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
   _count: {
     select: {
       comments: true,
+      likedBy: true,
     },
   },
   category: true,
@@ -69,7 +70,20 @@ export const postsRouter = router({
       select: defaultPostSelect,
     })
   }),
-  // READ
+  // SOME BY USER ID
+  someByUserId: procedure
+    .input(z.object({ userId: z.string().uuid() }))
+    .query(async ({ input, ctx }) => {
+      const { userId } = input
+
+      return await ctx.prisma.post.findMany({
+        where: { authorId: userId },
+        take: 10,
+        orderBy: { createdAt: 'desc' },
+        select: defaultPostSelect,
+      })
+    }),
+  // READ BY POST ID
   byPostId: procedure
     .input(z.object({ postId: z.string().cuid() }))
     .query(async ({ input, ctx }) => {

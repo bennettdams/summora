@@ -148,7 +148,7 @@ function PostPageInternal<
   const edit = trpc.posts.edit.useMutation({
     onSuccess: async () => {
       await utils.posts.byPostId.invalidate({ postId })
-      await utils.userPosts.byUserId.invalidate({ userId: post.authorId })
+      await utils.posts.someByUserId.invalidate({ userId: post.authorId })
     },
   })
 

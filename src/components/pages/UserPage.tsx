@@ -1,4 +1,3 @@
-import { useUserPosts } from '../../data/use-user-posts'
 import { UserPageProps } from '../../pages/user/[userId]'
 import { useAuth } from '../../services/auth-service'
 import { trpc } from '../../util/trpc'
@@ -62,7 +61,11 @@ function UserPageInternal({
   imageId: string | null
   imageBlurDataURL: string | null
 }): JSX.Element {
-  const { posts, isLoading: isLoadingPosts } = useUserPosts(userId)
+  const {
+    data: posts,
+    isLoading: isLoadingPosts,
+    isError: isErrorPosts,
+  } = trpc.posts.someByUserId.useQuery({ userId })
   const utils = trpc.useContext()
   const { data: donationLinks } = trpc.donationLink.byUserId.useQuery({
     userId,
@@ -209,6 +212,8 @@ function UserPageInternal({
       <PageSection label={`Posts by ${username}`}>
         {isLoadingPosts ? (
           <LoadingAnimation />
+        ) : isErrorPosts || !posts ? (
+          <NoContent>Error loading posts.</NoContent>
         ) : (
           <PostsList
             posts={posts.map((post) => ({

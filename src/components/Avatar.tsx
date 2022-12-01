@@ -15,11 +15,10 @@ function useUserImageMutation(userId: string) {
       // USER DATA
       utils.user.byUserId.invalidate({ userId })
 
-      // USER POSTS DATA
-      utils.userPosts.byUserId.invalidate({ userId })
-
       // POSTS DATA
-      utils.posts.invalidate()
+      utils.posts.some.invalidate()
+      utils.posts.someByUserId.invalidate({ userId })
+      utils.posts.byPostId.invalidate()
     },
   })
 }

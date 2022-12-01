@@ -67,7 +67,7 @@ export function PostSegment({
 
   async function invalidate() {
     await utils.postSegments.byPostId.invalidate({ postId })
-    await utils.userPosts.byUserId.invalidate({ userId: authorId })
+    await utils.posts.someByUserId.invalidate({ userId: authorId })
     createSuccessfulEditStatus()
   }
 
