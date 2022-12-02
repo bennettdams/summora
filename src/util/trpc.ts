@@ -8,7 +8,7 @@ export type RouterInput = inferRouterInputs<AppRouter>
 export type RouterOutput = inferRouterOutputs<AppRouter>
 
 function getBaseUrl() {
-  if (typeof window !== 'undefined')
+  if (typeof document !== 'undefined')
     // browser should use relative path
     return ''
   if (process.env.VERCEL_URL)

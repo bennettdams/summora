@@ -1,5 +1,5 @@
 export function isServer(): boolean {
-  return typeof window === 'undefined'
+  return typeof document === 'undefined'
 }
 
 /** Type-guard useful for a result of `Promise.allSettled`. */
