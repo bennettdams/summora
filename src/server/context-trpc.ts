@@ -1,46 +1,38 @@
-import * as trpc from '@trpc/server'
-import * as trpcNext from '@trpc/server/adapters/next'
+import { type inferAsyncReturnType } from '@trpc/server'
+import type { CreateNextContextOptions } from '@trpc/server/adapters/next'
 import { prisma } from './db/client'
 
+type CreateContextOptions = Partial<CreateNextContextOptions>
+
 /**
- * Creates context for each incoming request.
- * Will be available in all resolvers.
+ * Inner context. Will always be available in your procedures, in contrast to the outer context.
  *
- * @link https://trpc.io/docs/context
- */
-export async function createContextTRPC(
-  opts?: trpcNext.CreateNextContextOptions
-) {
-  /**
-   * We could check the session here, but it would occur on every request,
-   * and we don't need that.
-   */
-
-  // const userIdAuth: string | null = null
-  // if (req) {
-  // const result = await getUserByCookie(req)
-  // const error = result.error
-
-  // if (error) {
-  //   throw new TRPCError({
-  //     code: 'UNAUTHORIZED',
-  //     message: `Error while authenticating user.`,
-  //     cause: error,
-  //   })
-  // }
-
-  // userIdAuth = result.user?.id ?? null
-  // }
-
-  const req = opts?.req
-  const res = opts?.res
-
+ * Also useful for:
+ * - testing, so you don't have to mock Next.js' `req`/`res`
+ * - tRPC's `createSSGHelpers` where we don't have `req`/`res`
+ *
+ * @see https://trpc.io/docs/context#inner-and-outer-context
+ **/
+export async function createContextTRPCInner(opts?: CreateContextOptions) {
   return {
-    req,
-    res,
+    ...opts,
     prisma,
-    // userIdAuth,
   }
 }
 
-export type ContextTRPC = trpc.inferAsyncReturnType<typeof createContextTRPC>
+/**
+ * Outer context. Will e.g. bring `req` & `res` to the context as "not `undefined`".
+ *
+ * @see https://trpc.io/docs/context#inner-and-outer-context
+ **/
+export async function createContextTRPC(opts: CreateNextContextOptions) {
+  const contextInner = await createContextTRPCInner()
+
+  return {
+    ...contextInner,
+    req: opts.req,
+    res: opts.res,
+  }
+}
+
+export type ContextTRPC = inferAsyncReturnType<typeof createContextTRPCInner>
