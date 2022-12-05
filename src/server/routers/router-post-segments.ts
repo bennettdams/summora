@@ -5,6 +5,7 @@ import {
   schemaCreatePostSegmentItem,
   schemaUpdatePostSegment,
 } from '../../lib/schemas'
+import { deletePostSegmentImageInStorage } from '../../services/use-cloud-storage'
 import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
 import { procedure, protectedProcedure, router } from '../trpc'
@@ -37,7 +38,10 @@ async function ensureAuthor({
     cbQueryEntity: async () => {
       const postSegment = await prisma.postSegment.findUnique({
         where: { id: postSegmentId },
-        select: { Post: { select: { authorId: true } } },
+        select: {
+          imageId: true,
+          Post: { select: { authorId: true, id: true } },
+        },
       })
       if (!postSegment?.Post.authorId) {
         throw new TRPCError({
@@ -45,7 +49,7 @@ async function ensureAuthor({
           message: 'The post segment does not exist.',
         })
       } else {
-        return { authorId: postSegment.Post.authorId, entity: null }
+        return { authorId: postSegment.Post.authorId, entity: postSegment }
       }
     },
   })
@@ -135,8 +139,30 @@ export const postSegmentsRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { segmentId } = input
 
-      await ensureAuthor(ctx, segmentId)
+      const res = await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        postSegmentId: segmentId,
+      })
 
-      await ctx.prisma.postSegment.delete({ where: { id: segmentId } })
+      if (res) {
+        const {
+          imageId,
+          Post: { authorId, id: postId },
+        } = res
+
+        // Delete the segment image in cloud storage
+        if (imageId) {
+          await deletePostSegmentImageInStorage({
+            postId,
+            authorId,
+            imageId,
+            req: ctx.req,
+            res: ctx.res,
+          })
+        }
+
+        await ctx.prisma.postSegment.delete({ where: { id: segmentId } })
+      }
     }),
 })

@@ -1,5 +1,5 @@
 import superjson from 'superjson'
-import { createContextTRPC } from './context-trpc'
+import { createContextTRPCInner } from './context-trpc'
 import { appRouter } from './routers/_app'
 
 // FIXME not working since 10.0.0-proxy-beta.7, let's the page hang indefinitely
@@ -14,7 +14,7 @@ import { appRouter } from './routers/_app'
 export async function createPrefetchHelpersArgs() {
   return {
     router: appRouter,
-    ctx: await createContextTRPC(),
+    ctx: await createContextTRPCInner(),
     transformer: superjson,
   }
 }
