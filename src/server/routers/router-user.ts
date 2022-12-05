@@ -4,14 +4,22 @@ import { avatarImageIdPrefix } from '../../pages/api/image-upload/avatars'
 import { deleteAvatarInStorage } from '../../services/use-cloud-storage'
 import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
-import { procedure, router } from '../trpc'
+import { procedure, protectedProcedure, router } from '../trpc'
 
-async function ensureAuthor(ctx: ContextTRPC, userId: string) {
+async function ensureAuthor({
+  userIdAuth,
+  prisma,
+  userId,
+}: {
+  userIdAuth: string
+  prisma: ContextTRPC['prisma']
+  userId: string
+}) {
   await ensureAuthorTRPC({
     topic: 'user',
-    ctx,
+    userIdAuth,
     cbQueryEntity: async () => {
-      const user = await ctx.prisma.user.findUnique({
+      const user = await prisma.user.findUnique({
         where: { userId },
         select: { userId: true },
       })
@@ -53,7 +61,7 @@ export const userRouter = router({
       }
     }),
   // REMOVE AVATAR
-  removeAvatar: procedure
+  removeAvatar: protectedProcedure
     .input(
       z.object({
         userId: z.string().uuid(),
@@ -70,7 +78,11 @@ export const userRouter = router({
           message: 'No request given, cannot determine authentication.',
         })
 
-      await ensureAuthor(ctx, userId)
+      await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        userId,
+      })
 
       await deleteAvatarInStorage({
         userId,

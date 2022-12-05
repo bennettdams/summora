@@ -1,8 +1,7 @@
 import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { checkAuthTRPC } from '../api-security'
-import { procedure, router } from '../trpc'
+import { procedure, protectedProcedure, router } from '../trpc'
 
 const defaultPostLikesSelect = Prisma.validator<Prisma.PostSelect>()({
   likedBy: { select: { userId: true } },
@@ -34,12 +33,12 @@ export const postLikesRouter = router({
       }
     }),
   // LIKE/UNLIKE
-  toggleLike: procedure
+  toggleLike: protectedProcedure
     .input(z.object({ postId: z.string().cuid() }))
     .mutation(async ({ input, ctx }) => {
       const { postId } = input
 
-      const userIdAuth = await checkAuthTRPC(ctx)
+      const userIdAuth = ctx.userIdAuth
 
       const isAlreadyLiked = await ctx.prisma.user.findFirst({
         where: { userId: userIdAuth, likedPosts: { some: { id: postId } } },

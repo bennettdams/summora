@@ -6,9 +6,9 @@ import {
   schemaUpdatePost,
   schemaUpdatePostCategory,
 } from '../../lib/schemas'
-import { checkAuthTRPC, ensureAuthorTRPC } from '../api-security'
+import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
-import { procedure, router } from '../trpc'
+import { procedure, protectedProcedure, router } from '../trpc'
 
 const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
   id: true,
@@ -35,12 +35,20 @@ const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
   },
 })
 
-async function ensureAuthor(ctx: ContextTRPC, postId: string) {
+async function ensureAuthor({
+  userIdAuth,
+  prisma,
+  postId,
+}: {
+  userIdAuth: string
+  prisma: ContextTRPC['prisma']
+  postId: string
+}) {
   await ensureAuthorTRPC({
     topic: 'post',
-    ctx,
+    userIdAuth,
     cbQueryEntity: async () => {
-      const post = await ctx.prisma.post.findUnique({
+      const post = await prisma.post.findUnique({
         where: {
           id: postId,
         },
@@ -95,23 +103,33 @@ export const postsRouter = router({
       })
     }),
   // EDIT
-  edit: procedure.input(schemaUpdatePost).mutation(async ({ input, ctx }) => {
-    const { postId, title, subtitle } = input
+  edit: protectedProcedure
+    .input(schemaUpdatePost)
+    .mutation(async ({ input, ctx }) => {
+      const { postId, title, subtitle } = input
 
-    await ensureAuthor(ctx, postId)
+      await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        postId,
+      })
 
-    await ctx.prisma.post.update({
-      where: { id: postId },
-      data: { title, subtitle },
-    })
-  }),
+      await ctx.prisma.post.update({
+        where: { id: postId },
+        data: { title, subtitle },
+      })
+    }),
   // EDIT CATEGORY
-  editCategory: procedure
+  editCategory: protectedProcedure
     .input(schemaUpdatePostCategory)
     .mutation(async ({ input, ctx }) => {
       const { postId, categoryId } = input
 
-      await ensureAuthor(ctx, postId)
+      await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        postId,
+      })
 
       await ctx.prisma.post.update({
         where: { id: postId },
@@ -119,28 +137,32 @@ export const postsRouter = router({
       })
     }),
   // CREATE
-  create: procedure.input(schemaCreatePost).mutation(async ({ input, ctx }) => {
-    const { title, subtitle, categoryId } = input
+  create: protectedProcedure
+    .input(schemaCreatePost)
+    .mutation(async ({ input, ctx }) => {
+      const { title, subtitle, categoryId } = input
 
-    const userId = await checkAuthTRPC(ctx)
-
-    return await ctx.prisma.post.create({
-      data: {
-        title,
-        subtitle,
-        author: { connect: { userId } },
-        category: { connect: { id: categoryId } },
-      },
-      select: { id: true },
-    })
-  }),
+      return await ctx.prisma.post.create({
+        data: {
+          title,
+          subtitle,
+          author: { connect: { userId: ctx.userIdAuth } },
+          category: { connect: { id: categoryId } },
+        },
+        select: { id: true },
+      })
+    }),
   // CREATE SEGMENT
-  createSegment: procedure
+  createSegment: protectedProcedure
     .input(z.object({ postId: z.string().cuid() }))
     .mutation(async ({ input, ctx }) => {
       const { postId } = input
 
-      await ensureAuthor(ctx, postId)
+      await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        postId,
+      })
 
       await ctx.prisma.post.update({
         where: { id: postId },

@@ -2,7 +2,9 @@ import { type inferAsyncReturnType } from '@trpc/server'
 import type { CreateNextContextOptions } from '@trpc/server/adapters/next'
 import { prisma } from './db/client'
 
-type CreateContextOptions = Partial<CreateNextContextOptions>
+type CreateContextOptions = Partial<CreateNextContextOptions> & {
+  userIdAuth: string | null
+}
 
 /**
  * Inner context. Will always be available in your procedures, in contrast to the outer context.

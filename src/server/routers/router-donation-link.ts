@@ -9,9 +9,9 @@ import {
   schemaCreateDonationLink,
   schemaUpdateDonationLink,
 } from '../../lib/schemas'
-import { checkAuthTRPC, ensureAuthorTRPC } from '../api-security'
+import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
-import { procedure, router } from '../trpc'
+import { procedure, protectedProcedure, router } from '../trpc'
 
 /**
  * It's important to always explicitly say which fields you want to return in order to not leak extra information
@@ -27,24 +27,32 @@ const defaultDonationLinkSelect = Prisma.validator<Prisma.DonationLinkSelect>()(
   }
 )
 
-async function ensureAuthor(ctx: ContextTRPC, donationLinkId: string) {
+async function ensureAuthor({
+  userIdAuth,
+  prisma,
+  donationLinkId,
+}: {
+  userIdAuth: string
+  prisma: ContextTRPC['prisma']
+  donationLinkId: string
+}) {
   await ensureAuthorTRPC({
     topic: 'donation link',
-    ctx,
+    userIdAuth,
     cbQueryEntity: async () => {
-      const res = await ctx.prisma.donationLink.findUnique({
+      const result = await prisma.donationLink.findUnique({
         where: { donationLinkId },
         select: {
           userId: true,
         },
       })
-      if (!res?.userId) {
+      if (!result?.userId) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'The donation link you tried to update does not exis',
         })
       } else {
-        return { authorId: res.userId, entity: null }
+        return { authorId: result.userId, entity: null }
       }
     },
   })
@@ -52,7 +60,7 @@ async function ensureAuthor(ctx: ContextTRPC, donationLinkId: string) {
 
 export const donationLinkRouter = router({
   // CREATE
-  createByUserId: procedure
+  createByUserId: protectedProcedure
     .input(
       z.object({
         newDonationLink: schemaCreateDonationLink,
@@ -60,8 +68,6 @@ export const donationLinkRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       const { newDonationLink } = input
-
-      const userIdAuth = await checkAuthTRPC(ctx)
 
       if (!newDonationLink.donationProviderId)
         throw new TRPCError({
@@ -77,7 +83,7 @@ export const donationLinkRouter = router({
               donationProviderId: newDonationLink.donationProviderId,
             },
           },
-          User: { connect: { userId: userIdAuth } },
+          User: { connect: { userId: ctx.userIdAuth } },
         },
         select: defaultDonationLinkSelect,
       })
@@ -101,7 +107,7 @@ export const donationLinkRouter = router({
       return donationLinks
     }),
   //  UPDATE MANY
-  editMany: procedure
+  editMany: protectedProcedure
     .input(schemaUpdateDonationLink)
     .mutation(async ({ input, ctx }) => {
       const { donationLinksToUpdate } = input
@@ -111,7 +117,11 @@ export const donationLinkRouter = router({
           const { donationLinkId, address, donationProviderId } =
             donationLinkToUpdate
 
-          await ensureAuthor(ctx, donationLinkId)
+          await ensureAuthor({
+            userIdAuth: ctx.userIdAuth,
+            prisma: ctx.prisma,
+            donationLinkId,
+          })
 
           return ctx.prisma.donationLink.update({
             where: { donationLinkId },
@@ -129,7 +139,7 @@ export const donationLinkRouter = router({
       )
     }),
   // DELETE
-  delete: procedure
+  delete: protectedProcedure
     .input(
       z.object({
         donationLinkId: z.string().cuid(),
@@ -138,7 +148,11 @@ export const donationLinkRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { donationLinkId } = input
 
-      await ensureAuthor(ctx, donationLinkId)
+      await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        donationLinkId,
+      })
 
       await ctx.prisma.donationLink.delete({ where: { donationLinkId } })
     }),

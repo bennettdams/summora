@@ -2,9 +2,9 @@ import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { schemaCreatePostComment } from '../../lib/schemas'
-import { checkAuthTRPC, ensureAuthorTRPC } from '../api-security'
+import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
-import { procedure, router } from '../trpc'
+import { procedure, protectedProcedure, router } from '../trpc'
 
 const defaultPostCommentSelect = Prisma.validator<Prisma.PostCommentSelect>()({
   commentId: true,
@@ -24,12 +24,20 @@ const defaultPostCommentSelect = Prisma.validator<Prisma.PostCommentSelect>()({
   },
 })
 
-async function ensureAuthor(ctx: ContextTRPC, commentId: string) {
+async function ensureAuthor({
+  userIdAuth,
+  prisma,
+  commentId,
+}: {
+  userIdAuth: string
+  prisma: ContextTRPC['prisma']
+  commentId: string
+}) {
   await ensureAuthorTRPC({
     topic: 'post comment',
-    ctx,
+    userIdAuth,
     cbQueryEntity: async () => {
-      const res = await ctx.prisma.postComment.findUnique({
+      const res = await prisma.postComment.findUnique({
         where: { commentId },
         select: {
           authorId: true,
@@ -71,17 +79,15 @@ export const postCommentsRouter = router({
       return postComments
     }),
   // CREATE
-  create: procedure
+  create: protectedProcedure
     .input(schemaCreatePostComment)
     .mutation(async ({ input, ctx }) => {
       const { postId, commentParentId, text } = input
 
-      const userIdAuth = await checkAuthTRPC(ctx)
-
       await ctx.prisma.postComment.create({
         data: {
           Post: { connect: { id: postId } },
-          author: { connect: { userId: userIdAuth } },
+          author: { connect: { userId: ctx.userIdAuth } },
           commentParent: !commentParentId
             ? undefined
             : {
@@ -92,7 +98,7 @@ export const postCommentsRouter = router({
       })
     }),
   // DELETE
-  delete: procedure
+  delete: protectedProcedure
     .input(
       z.object({
         commentId: z.string().cuid(),
@@ -101,7 +107,11 @@ export const postCommentsRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { commentId } = input
 
-      await ensureAuthor(ctx, commentId)
+      await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        commentId,
+      })
 
       await ctx.prisma.postComment.update({
         where: { commentId },
@@ -109,7 +119,7 @@ export const postCommentsRouter = router({
       })
     }),
   // UPVOTE
-  upvote: procedure
+  upvote: protectedProcedure
     .input(
       z.object({
         commentId: z.string().cuid(),
@@ -117,8 +127,7 @@ export const postCommentsRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       const { commentId } = input
-
-      const userIdAuth = await checkAuthTRPC(ctx)
+      const userIdAuth = ctx.userIdAuth
 
       const isAlreadyUpvoted = !!(await ctx.prisma.postComment.findFirst({
         where: { commentId, upvotedBy: { some: { userId: userIdAuth } } },
@@ -152,7 +161,7 @@ export const postCommentsRouter = router({
       }
     }),
   // DOWNVOTE
-  downvote: procedure
+  downvote: protectedProcedure
     .input(
       z.object({
         commentId: z.string().cuid(),
@@ -160,8 +169,7 @@ export const postCommentsRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       const { commentId } = input
-
-      const userIdAuth = await checkAuthTRPC(ctx)
+      const userIdAuth = ctx.userIdAuth
 
       const isAlreadyDownvoted = !!(await ctx.prisma.postComment.findFirst({
         where: { commentId, downvotedBy: { some: { userId: userIdAuth } } },

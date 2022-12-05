@@ -4,19 +4,27 @@ import { z } from 'zod'
 import { schemaTagSearch } from '../../lib/schemas'
 import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
-import { procedure, router } from '../trpc'
+import { procedure, protectedProcedure, router } from '../trpc'
 
 const defaultPostTagsSelect = Prisma.validator<Prisma.PostTagSelect>()({
   tagId: true,
   label: true,
 })
 
-async function ensureAuthor(ctx: ContextTRPC, postId: string) {
+async function ensureAuthor({
+  userIdAuth,
+  prisma,
+  postId,
+}: {
+  userIdAuth: string
+  prisma: ContextTRPC['prisma']
+  postId: string
+}) {
   await ensureAuthorTRPC({
     topic: 'post tag',
-    ctx,
+    userIdAuth,
     cbQueryEntity: async () => {
-      const post = await ctx.prisma.post.findUnique({
+      const post = await prisma.post.findUnique({
         where: { id: postId },
         select: { authorId: true },
       })
@@ -77,7 +85,7 @@ export const postTagsRouter = router({
       })
     }),
   // ADD
-  addToPost: procedure
+  addToPost: protectedProcedure
     .input(
       z.object({
         postId: z.string().cuid(),
@@ -87,7 +95,11 @@ export const postTagsRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { postId, tagId } = input
 
-      await ensureAuthor(ctx, postId)
+      await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        postId,
+      })
 
       await ctx.prisma.post.update({
         where: { id: postId },
@@ -97,7 +109,7 @@ export const postTagsRouter = router({
       })
     }),
   // REMOVE
-  removeFromPost: procedure
+  removeFromPost: protectedProcedure
     .input(
       z.object({
         postId: z.string().cuid(),
@@ -107,7 +119,11 @@ export const postTagsRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { postId, tagId } = input
 
-      await ensureAuthor(ctx, postId)
+      await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        postId,
+      })
 
       await ctx.prisma.post.update({
         where: { id: postId },

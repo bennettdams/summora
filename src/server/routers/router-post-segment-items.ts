@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { schemaUpdatePostSegmentItem } from '../../lib/schemas'
 import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
-import { procedure, router } from '../trpc'
+import { protectedProcedure, router } from '../trpc'
 
 const defaultPostSegmentItemSelect =
   Prisma.validator<Prisma.PostSegmentItemSelect>()({
@@ -13,12 +13,20 @@ const defaultPostSegmentItemSelect =
     content: true,
   })
 
-async function ensureAuthor(ctx: ContextTRPC, segmentItemId: string) {
+async function ensureAuthor({
+  userIdAuth,
+  prisma,
+  segmentItemId,
+}: {
+  userIdAuth: string
+  prisma: ContextTRPC['prisma']
+  segmentItemId: string
+}) {
   await ensureAuthorTRPC({
     topic: 'post segment items',
-    ctx,
+    userIdAuth,
     cbQueryEntity: async () => {
-      const segmentItem = await ctx.prisma.postSegmentItem.findUnique({
+      const segmentItem = await prisma.postSegmentItem.findUnique({
         where: { id: segmentItemId },
         select: {
           PostSegment: {
@@ -46,12 +54,16 @@ async function ensureAuthor(ctx: ContextTRPC, segmentItemId: string) {
 
 export const postSegmentItemsRouter = router({
   // UPDATE
-  update: procedure
+  update: protectedProcedure
     .input(schemaUpdatePostSegmentItem)
     .mutation(async ({ input, ctx }) => {
       const { segmentItemId, content } = input
 
-      await ensureAuthor(ctx, segmentItemId)
+      await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        segmentItemId,
+      })
 
       await ctx.prisma.postSegmentItem.update({
         where: { id: segmentItemId },
@@ -62,7 +74,7 @@ export const postSegmentItemsRouter = router({
       })
     }),
   // DELETE
-  delete: procedure
+  delete: protectedProcedure
     .input(
       z.object({
         segmentItemId: z.string().cuid(),
@@ -71,7 +83,11 @@ export const postSegmentItemsRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { segmentItemId } = input
 
-      await ensureAuthor(ctx, segmentItemId)
+      await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        segmentItemId,
+      })
 
       await ctx.prisma.postSegmentItem.delete({ where: { id: segmentItemId } })
     }),

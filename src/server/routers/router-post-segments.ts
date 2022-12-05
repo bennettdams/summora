@@ -7,7 +7,7 @@ import {
 } from '../../lib/schemas'
 import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
-import { procedure, router } from '../trpc'
+import { procedure, protectedProcedure, router } from '../trpc'
 
 const defaultPostSegmentSelect = Prisma.validator<Prisma.PostSegmentSelect>()({
   id: true,
@@ -22,12 +22,20 @@ const defaultPostSegmentSelect = Prisma.validator<Prisma.PostSegmentSelect>()({
   },
 })
 
-async function ensureAuthor(ctx: ContextTRPC, postSegmentId: string) {
-  await ensureAuthorTRPC({
+async function ensureAuthor({
+  userIdAuth,
+  prisma,
+  postSegmentId,
+}: {
+  userIdAuth: string
+  prisma: ContextTRPC['prisma']
+  postSegmentId: string
+}) {
+  return await ensureAuthorTRPC({
     topic: 'post segments',
-    ctx,
+    userIdAuth,
     cbQueryEntity: async () => {
-      const postSegment = await ctx.prisma.postSegment.findUnique({
+      const postSegment = await prisma.postSegment.findUnique({
         where: { id: postSegmentId },
         select: { Post: { select: { authorId: true } } },
       })
@@ -60,12 +68,16 @@ export const postSegmentsRouter = router({
       })
     }),
   // EDIT
-  edit: procedure
+  edit: protectedProcedure
     .input(schemaUpdatePostSegment)
     .mutation(async ({ input, ctx }) => {
       const { postSegmentId, title, subtitle } = input
 
-      await ensureAuthor(ctx, postSegmentId)
+      await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        postSegmentId,
+      })
 
       await ctx.prisma.postSegment.update({
         where: { id: postSegmentId },
@@ -73,7 +85,7 @@ export const postSegmentsRouter = router({
       })
     }),
   // CHANGE IMAGE POSITION
-  changeImagePosition: procedure
+  changeImagePosition: protectedProcedure
     .input(
       z.object({
         postSegmentId: z.string().cuid(),
@@ -83,7 +95,11 @@ export const postSegmentsRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { postSegmentId, position } = input
 
-      await ensureAuthor(ctx, postSegmentId)
+      await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        postSegmentId,
+      })
 
       await ctx.prisma.postSegment.update({
         where: { id: postSegmentId },
@@ -91,12 +107,16 @@ export const postSegmentsRouter = router({
       })
     }),
   // CREATE ITEM
-  createItem: procedure
+  createItem: protectedProcedure
     .input(schemaCreatePostSegmentItem)
     .mutation(async ({ input, ctx }) => {
       const { segmentId, content } = input
 
-      await ensureAuthor(ctx, segmentId)
+      await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        postSegmentId: segmentId,
+      })
 
       await ctx.prisma.postSegment.update({
         where: { id: segmentId },
@@ -106,7 +126,7 @@ export const postSegmentsRouter = router({
       })
     }),
   // DELETE
-  delete: procedure
+  delete: protectedProcedure
     .input(
       z.object({
         segmentId: z.string().cuid(),
