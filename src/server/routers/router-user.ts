@@ -72,12 +72,6 @@ export const userRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { userId, imageId } = input
 
-      if (!ctx.req || !ctx.res)
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'No request given, cannot determine authentication.',
-        })
-
       await ensureAuthor({
         userIdAuth: ctx.userIdAuth,
         prisma: ctx.prisma,
