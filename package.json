@@ -52,7 +52,7 @@
     "@trpc/next": "^10.4.2",
     "@trpc/react-query": "^10.4.2",
     "@trpc/server": "^10.4.2",
-    "formidable": "^2.0.1",
+    "formidable": "^2.1.1",
     "next": "^13.0.5",
     "plaiceholder": "^2.5.0",
     "react": "^18.2.0",
