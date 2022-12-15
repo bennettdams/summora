@@ -850,11 +850,8 @@ function Comment({
             )}
           </div>
 
-          {!!userId && comment.authorId === userId && (
-            <div
-              className="group ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-dsecondary"
-              onClick={() => setShowRemoveConfirmation(true)}
-            >
+          {!!userId && comment.authorId === userId && !comment.isDeleted && (
+            <div className="group ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-dsecondary">
               {!showRemoveConfirmation ? (
                 <div
                   className="flex items-center"
