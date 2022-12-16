@@ -9,7 +9,6 @@ import {
   schemaUpdatePostCategory,
 } from '../../../lib/schemas'
 import { PostPageProps } from '../../../pages/post/[postId]'
-import { apiIncrementPostViews } from '../../../services/api-service'
 import { useAuth } from '../../../services/auth-service'
 import { ROUTES } from '../../../services/routing'
 import { RouterOutput, trpc } from '../../../util/trpc'
@@ -61,13 +60,17 @@ export function PostPage(props: PostPageProps): JSX.Element {
   )
   const { userIdAuth } = useAuth()
 
-  const [hasViewsBeenIncremented, setHasViewBeenIncremented] = useState(
-    () => false
+  const { refetch } = trpc.posts.incrementViews.useQuery(
+    { postId: props.postId },
+    { enabled: false }
   )
+  const [hasViewsBeenIncremented, setHasViewBeenIncremented] = useState(false)
   useEffect(() => {
-    if (!hasViewsBeenIncremented) apiIncrementPostViews(props.postId)
-    else setHasViewBeenIncremented(true)
-  }, [hasViewsBeenIncremented, props.postId])
+    if (!hasViewsBeenIncremented) {
+      setHasViewBeenIncremented(true)
+      refetch()
+    }
+  }, [hasViewsBeenIncremented, props.postId, refetch])
 
   return (
     <Page>

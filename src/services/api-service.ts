@@ -1,8 +1,7 @@
 import { ApiAvatarsUpload } from '../pages/api/image-upload/avatars'
 import { ApiImageUploadPostSegment } from '../pages/api/image-upload/[postId]/[postSegmentId]'
-import { ApiPostIncrementViews } from '../pages/api/posts/[postId]/increment-views'
 import { ApiUsersSignUp } from '../pages/api/users/signup'
-import { HttpResponse, post, postFile, put } from '../util/http'
+import { HttpResponse, post, postFile } from '../util/http'
 
 export const ROUTES_API = {
   USERS_SIGN_UP: 'users/signup',
@@ -68,18 +67,4 @@ export async function apiImageUploadPostSegments({
     ROUTES_API.IMAGE_UPLOAD_POST_SEGMENTS({ postId, postSegmentId }),
     postSegmentImageFile
   )
-}
-
-// #########################################
-
-export type ApiPostIncrementViewsRequestBody = null
-
-export async function apiIncrementPostViews(
-  postId: string
-): Promise<HttpResponse<ApiPostIncrementViews>> {
-  const response = await put<ApiPostIncrementViews>(
-    ROUTES_API.POST_INCREMENT_VIEWS(postId),
-    null
-  )
-  return response
 }

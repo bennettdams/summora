@@ -176,4 +176,19 @@ export const postsRouter = router({
         },
       })
     }),
+  // INCREMENT VIEWS
+  incrementViews: procedure
+    .input(z.object({ postId: z.string().cuid() }))
+    .query(async ({ input, ctx }) => {
+      const { postId } = input
+
+      await ctx.prisma.post.update({
+        where: { id: postId },
+        data: { noOfViews: { increment: 1 } },
+        select: null,
+      })
+
+      // placeholder return as queries need one
+      return null
+    }),
 })
