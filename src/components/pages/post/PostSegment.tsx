@@ -107,7 +107,7 @@ export function PostSegment({
 
   const [isSegmentEditMode, setIsSegmentEditMode] = useState(
     // segments without a title should be considered "new" and are shown in edit mode initially
-    () => isNewSegmentItem
+    () => isNewSegmentItem && isPostEditable
   )
 
   const refSegmentEdit = useRef<HTMLDivElement>(null)
