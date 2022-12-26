@@ -123,7 +123,7 @@ function AvatarInternal({
          * See: https://github.com/vercel/next.js/issues/30033
          */
         <div
-          className="block overflow-hidden rounded-full"
+          className="relative block overflow-hidden rounded-full"
           style={{
             width: sizePixels,
             height: sizePixels,
@@ -133,11 +133,10 @@ function AvatarInternal({
             src={imageURL}
             alt="Avatar"
             placeholder="blur"
-            className="object-cover"
-            // Next.js' types don't allow `null`, but they do allow `undefined`
+            fill={true}
+            style={{ objectFit: 'cover' }}
+            className="rounded-full"
             blurDataURL={imageBlurDataURL ?? undefined}
-            width={sizePixels}
-            height={sizePixels}
           />
         </div>
       ) : (
