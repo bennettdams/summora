@@ -12,7 +12,6 @@ import { postSegmentsRouter } from './router-post-segments'
 import { postTagsRouter } from './router-post-tags'
 import { postsRouter } from './router-posts'
 import { userRouter } from './router-user'
-import { userPostsRouter } from './router-user-posts'
 
 /**
  * Application's root router.
@@ -26,7 +25,6 @@ export const appRouter = router({
   postTags: postTagsRouter,
   postCategories: postCategoriesRouter,
   user: userRouter,
-  userPosts: userPostsRouter,
   donationLink: donationLinkRouter,
   donationProvider: donationProviderRouter,
   postComments: postCommentsRouter,
