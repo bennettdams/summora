@@ -85,12 +85,14 @@ function UserNavbarInternal({ userId }: { userId: string }) {
 }
 
 function UserNavbar() {
-  const { userIdAuth, signOut } = useAuth()
+  const { userIdAuth, isLoadingAuth, signOut } = useAuth()
 
   return (
     <Menu as="div" className="relative">
       <div className="grid place-items-end md:min-w-[150px]">
-        {!userIdAuth ? (
+        {isLoadingAuth ? (
+          <LoadingAnimation />
+        ) : !userIdAuth ? (
           <Link to={ROUTES.signIn}>
             {/* TODO Should be a ButtonNav */}
             <Button icon={<IconSignIn />} onClick={() => console.info('')}>

@@ -1,7 +1,6 @@
 import { ApiAvatarsUpload } from '../pages/api/image-upload/avatars'
 import { ApiImageUploadPostSegment } from '../pages/api/image-upload/[postId]/[postSegmentId]'
-import { ApiUsersSignUp } from '../pages/api/users/signup'
-import { HttpResponse, post, postFile } from '../util/http'
+import { HttpResponse, postFile } from '../util/http'
 
 export const ROUTES_API = {
   USERS_SIGN_UP: 'users/signup',
@@ -15,27 +14,6 @@ export const ROUTES_API = {
     postSegmentId: string
   }) => `image-upload/${postId}/${postSegmentId}`,
 } as const
-
-// #########################################
-
-export type ApiUsersSignUpRequestBody = {
-  username: string
-  email: string
-  password: string
-}
-
-export async function apiUsersSignUp(
-  username: string,
-  email: string,
-  password: string
-): Promise<HttpResponse<ApiUsersSignUp>> {
-  const input: ApiUsersSignUpRequestBody = {
-    username,
-    email,
-    password,
-  }
-  return await post<ApiUsersSignUp>(ROUTES_API.USERS_SIGN_UP, input)
-}
 
 // #########################################
 
