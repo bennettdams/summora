@@ -1,8 +1,6 @@
-import {
-  useSupabaseClient,
-  useUser as useUserSupabase,
-} from '@supabase/auth-helpers-react'
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { NextApiRequest, NextApiResponse } from 'next'
+import { signOut as signOutNextAuth, useSession } from 'next-auth/react'
 import { z } from 'zod'
 import { apiUsersSignUp } from './api-service'
 import {
@@ -16,7 +14,7 @@ export const signInSchema = z.object({
 })
 
 export function useAuth() {
-  const userAuth = useUserSupabase()
+  const { data: sessionData, status } = useSession()
   const supabase = useSupabaseClient()
 
   async function signInWithEmailAndPassword({
@@ -63,11 +61,12 @@ export function useAuth() {
   }
 
   async function signOut() {
-    return await supabase.auth.signOut()
+    return await signOutNextAuth()
   }
 
   return {
-    userIdAuth: userAuth?.id ?? null,
+    isLoadingAuth: status === 'loading',
+    userIdAuth: sessionData?.user?.id ?? null,
     signInWithEmailAndPassword,
     signUpWithEmailAndPassword,
     signOut,

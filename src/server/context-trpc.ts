@@ -1,5 +1,6 @@
 import { type inferAsyncReturnType } from '@trpc/server'
 import type { CreateNextContextOptions } from '@trpc/server/adapters/next'
+import { getServerAuthSession } from './api-security'
 import { prisma } from './db/client'
 
 type CreateContextOptions = Partial<CreateNextContextOptions> & {
@@ -30,10 +31,13 @@ export async function createContextTRPCInner(opts?: CreateContextOptions) {
 export async function createContextTRPC(opts: CreateNextContextOptions) {
   const contextInner = await createContextTRPCInner()
 
+  const session = await getServerAuthSession({ req: opts.req, res: opts.res })
+
   return {
     ...contextInner,
     req: opts.req,
     res: opts.res,
+    userIdAuth: session?.user?.id ?? null,
   }
 }
 

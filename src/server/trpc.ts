@@ -1,7 +1,6 @@
 import { initTRPC, TRPCError } from '@trpc/server'
 import superjson from 'superjson'
 import { ZodError } from 'zod'
-import { checkAuthTRPC } from './api-security'
 import { ContextTRPC } from './context-trpc'
 
 const t = initTRPC.context<ContextTRPC>().create({
@@ -28,22 +27,25 @@ export const router = t.router
 /** Unauthenticated procedure. */
 export const procedure = t.procedure
 
-/** Procedure only for authenticated users. */
-export const protectedProcedure = procedure.use(async ({ ctx, next }) => {
-  if (!ctx.req || !ctx.res) {
+/**
+ * Reusable middleware to ensure users are logged in.
+ */
+const isAuthed = t.middleware(({ ctx, next }) => {
+  if (!ctx.userIdAuth || !ctx.req || !ctx.res) {
     throw new TRPCError({
-      code: 'INTERNAL_SERVER_ERROR',
-      message: 'You are missing `req` or `res` in your call.',
-    })
-  } else {
-    const userIdAuth = await checkAuthTRPC(ctx.req, ctx.res)
-
-    return next({
-      ctx: {
-        userIdAuth,
-        req: ctx.req,
-        res: ctx.res,
-      },
+      code: 'UNAUTHORIZED',
+      message: `You are not authenticated.`,
     })
   }
+
+  return next({
+    ctx: {
+      userIdAuth: ctx.userIdAuth,
+      req: ctx.req,
+      res: ctx.res,
+    },
+  })
 })
+
+/** Procedure only for authenticated users. */
+export const protectedProcedure = t.procedure.use(isAuthed)

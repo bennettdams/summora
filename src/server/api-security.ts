@@ -1,5 +1,11 @@
 import { TRPCError } from '@trpc/server'
-import { NextApiRequest, NextApiResponse } from 'next'
+import type {
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from 'next'
+import { unstable_getServerSession } from 'next-auth'
+import { authOptions } from '../pages/api/auth/[...nextauth]'
 import { getUserFromRequest } from '../services/auth-service'
 
 /**
@@ -95,4 +101,14 @@ export async function ensureAuthorTRPC<
   } else {
     return entity ?? null
   }
+}
+
+/**
+ * Wrapper for `unstable_getServerSession` https://next-auth.js.org/configuration/nextjs.
+ */
+export async function getServerAuthSession(ctx: {
+  req: GetServerSidePropsContext['req']
+  res: GetServerSidePropsContext['res']
+}) {
+  return await unstable_getServerSession(ctx.req, ctx.res, authOptions)
 }
