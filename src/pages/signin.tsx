@@ -32,7 +32,10 @@ export default function _SignInPage({ providers }: Props) {
               ) : (
                 Object.values(providers).map((provider) => (
                   <div key={provider.name}>
-                    <Button isBig onClick={() => signIn(provider.id)}>
+                    <Button
+                      isBig
+                      onClick={() => signIn(provider.id, { callbackUrl: '/' })}
+                    >
                       {provider.name}
                     </Button>
                   </div>
