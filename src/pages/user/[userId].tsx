@@ -56,7 +56,7 @@ export const getStaticProps: GetStaticProps<
       const [userPosts, statistics] = await Promise.allSettled([
         ssg.posts.someByUserId.fetch({ userId }),
         prisma.user.findUnique({
-          where: { userId },
+          where: { id: userId },
           select: {
             _count: { select: { PostComment: true, posts: true } },
           },

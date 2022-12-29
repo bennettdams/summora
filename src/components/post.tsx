@@ -269,9 +269,7 @@ export function PostLikes({
     ? false
     : !postLikedByUserIds
     ? false
-    : postLikedByUserIds.some(
-        (userLikesPost) => userLikesPost.userId === userId
-      )
+    : postLikedByUserIds.some((userLikesPost) => userLikesPost.id === userId)
 
   return (
     <div className="flex">

@@ -12,11 +12,11 @@ const defaultPostCommentSelect = Prisma.validator<Prisma.PostCommentSelect>()({
   text: true,
   isDeleted: true,
   createdAt: true,
-  upvotedBy: { select: { userId: true } },
+  upvotedBy: { select: { id: true } },
   downvotedBy: true,
   author: {
     select: {
-      userId: true,
+      id: true,
       username: true,
       imageId: true,
       imageBlurDataURL: true,
@@ -87,7 +87,7 @@ export const postCommentsRouter = router({
       await ctx.prisma.postComment.create({
         data: {
           Post: { connect: { id: postId } },
-          author: { connect: { userId: ctx.userIdAuth } },
+          author: { connect: { id: ctx.userIdAuth } },
           commentParent: !commentParentId
             ? undefined
             : {
@@ -130,7 +130,7 @@ export const postCommentsRouter = router({
       const userIdAuth = ctx.userIdAuth
 
       const isAlreadyUpvoted = !!(await ctx.prisma.postComment.findFirst({
-        where: { commentId, upvotedBy: { some: { userId: userIdAuth } } },
+        where: { commentId, upvotedBy: { some: { id: userIdAuth } } },
       }))
 
       if (isAlreadyUpvoted) {
@@ -140,7 +140,7 @@ export const postCommentsRouter = router({
           },
           data: {
             upvotedBy: {
-              disconnect: { userId: userIdAuth },
+              disconnect: { id: userIdAuth },
             },
           },
         })
@@ -151,10 +151,10 @@ export const postCommentsRouter = router({
           },
           data: {
             upvotedBy: {
-              connect: { userId: userIdAuth },
+              connect: { id: userIdAuth },
             },
             downvotedBy: {
-              disconnect: { userId: userIdAuth },
+              disconnect: { id: userIdAuth },
             },
           },
         })
@@ -172,7 +172,7 @@ export const postCommentsRouter = router({
       const userIdAuth = ctx.userIdAuth
 
       const isAlreadyDownvoted = !!(await ctx.prisma.postComment.findFirst({
-        where: { commentId, downvotedBy: { some: { userId: userIdAuth } } },
+        where: { commentId, downvotedBy: { some: { id: userIdAuth } } },
       }))
 
       if (isAlreadyDownvoted) {
@@ -182,7 +182,7 @@ export const postCommentsRouter = router({
           },
           data: {
             downvotedBy: {
-              disconnect: { userId: userIdAuth },
+              disconnect: { id: userIdAuth },
             },
           },
         })
@@ -193,10 +193,10 @@ export const postCommentsRouter = router({
           },
           data: {
             upvotedBy: {
-              disconnect: { userId: userIdAuth },
+              disconnect: { id: userIdAuth },
             },
             downvotedBy: {
-              connect: { userId: userIdAuth },
+              connect: { id: userIdAuth },
             },
           },
         })

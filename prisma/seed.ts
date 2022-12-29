@@ -70,7 +70,7 @@ async function fill() {
             title: `${category.name} ${loremRandom()} ${i + 1}`,
             subtitle: `Subtitle - ${loremRandom()} ${i + 1}`,
             postCategoryId: category.id,
-            authorId: getRandomElementOfArray(users).userId,
+            authorId: getRandomElementOfArray(users).id,
           },
         })
       }
@@ -130,7 +130,7 @@ async function fill() {
               data: {
                 text: text1,
                 postId: post.id,
-                authorId: getRandomElementOfArray(users).userId,
+                authorId: getRandomElementOfArray(users).id,
               },
             })
             await sleep()
@@ -145,7 +145,7 @@ async function fill() {
                       text: text2,
                       postId: post.id,
                       commentParentId: com1.commentId,
-                      authorId: getRandomElementOfArray(users).userId,
+                      authorId: getRandomElementOfArray(users).id,
                     },
                   })
                   await sleep()
@@ -161,7 +161,7 @@ async function fill() {
                             text: text3,
                             postId: post.id,
                             commentParentId: com2.commentId,
-                            authorId: getRandomElementOfArray(users).userId,
+                            authorId: getRandomElementOfArray(users).id,
                           },
                         })
                         await sleep()
@@ -186,7 +186,7 @@ async function fill() {
                                 text: text4,
                                 postId: post.id,
                                 commentParentId: com3.commentId,
-                                authorId: getRandomElementOfArray(users).userId,
+                                authorId: getRandomElementOfArray(users).id,
                               },
                             })
                             await sleep()

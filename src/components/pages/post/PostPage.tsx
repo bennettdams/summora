@@ -934,10 +934,12 @@ function createRootComments(
 ): PostCommentTreeComment[] {
   return comments.map((comm) => ({
     ...comm,
-    authorId: comm.author.userId,
+    authorId: comm.author.id,
     authorUsername: comm.author.username,
     authorImageId: comm.author.imageId,
     authorImageBlurDataURL: comm.author.imageBlurDataURL,
+    upvotedBy: comm.upvotedBy.map((upvote) => ({ userId: upvote.id })),
+    downvotedBy: comm.downvotedBy.map((downvote) => ({ userId: downvote.id })),
     commentChilds: [],
   }))
 }

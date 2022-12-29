@@ -83,7 +83,7 @@ export const donationLinkRouter = router({
               donationProviderId: newDonationLink.donationProviderId,
             },
           },
-          User: { connect: { userId: ctx.userIdAuth } },
+          User: { connect: { id: ctx.userIdAuth } },
         },
         select: defaultDonationLinkSelect,
       })
@@ -92,7 +92,7 @@ export const donationLinkRouter = router({
   byUserId: procedure
     .input(
       z.object({
-        userId: z.string().uuid(),
+        userId: z.string().cuid(),
       })
     )
     .query(async ({ input, ctx }) => {

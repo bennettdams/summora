@@ -80,7 +80,7 @@ export const postsRouter = router({
   }),
   // SOME BY USER ID
   someByUserId: procedure
-    .input(z.object({ userId: z.string().uuid() }))
+    .input(z.object({ userId: z.string().cuid() }))
     .query(async ({ input, ctx }) => {
       const { userId } = input
 
@@ -146,7 +146,7 @@ export const postsRouter = router({
         data: {
           title,
           subtitle,
-          author: { connect: { userId: ctx.userIdAuth } },
+          author: { connect: { id: ctx.userIdAuth } },
           category: { connect: { id: categoryId } },
         },
         select: { id: true },

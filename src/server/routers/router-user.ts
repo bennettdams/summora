@@ -20,17 +20,17 @@ async function ensureAuthor({
     userIdAuth,
     cbQueryEntity: async () => {
       const user = await prisma.user.findUnique({
-        where: { userId },
-        select: { userId: true },
+        where: { id: userId },
+        select: { id: true },
       })
 
-      if (!user?.userId) {
+      if (!user?.id) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'The user does not exist.',
         })
       } else {
-        return { authorId: user.userId, entity: null }
+        return { authorId: user.id, entity: null }
       }
     },
   })
@@ -41,14 +41,14 @@ export const userRouter = router({
   byUserId: procedure
     .input(
       z.object({
-        userId: z.string().uuid(),
+        userId: z.string().cuid(),
       })
     )
     .query(async ({ input, ctx }) => {
       const { userId } = input
 
       const user = await ctx.prisma.user.findUnique({
-        where: { userId },
+        where: { id: userId },
       })
 
       if (!user) {
@@ -64,7 +64,7 @@ export const userRouter = router({
   removeAvatar: protectedProcedure
     .input(
       z.object({
-        userId: z.string().uuid(),
+        userId: z.string().cuid(),
         // min. 8:   avatar prefix + ID etc.
         imageId: z.string().startsWith(avatarImageIdPrefix).min(8),
       })
@@ -86,7 +86,7 @@ export const userRouter = router({
       })
 
       await ctx.prisma.user.update({
-        where: { userId },
+        where: { id: userId },
         data: { imageId: null, imageBlurDataURL: null },
       })
     }),

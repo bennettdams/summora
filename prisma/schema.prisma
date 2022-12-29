@@ -27,7 +27,7 @@ model Post {
   tags           PostTag[]
   //
   // user
-  author         User          @relation("AuthorPost", fields: [authorId], references: [userId])
+  author         User          @relation("AuthorPost", fields: [authorId], references: [id])
   authorId       String
   //
   // comments
@@ -52,7 +52,7 @@ model PostComment {
   commentParent   PostComment?  @relation("CommentParent", fields: [commentParentId], references: [commentId])
   commentChilds   PostComment[] @relation("CommentParent")
   // author
-  author          User          @relation("PostCommentAuthor", fields: [authorId], references: [userId])
+  author          User          @relation("PostCommentAuthor", fields: [authorId], references: [id])
   authorId        String
   // upvotes
   upvotedBy       User[]        @relation("PostCommentUpvotes")
@@ -109,34 +109,13 @@ model PostTag {
   //
 }
 
-model User {
-  userId            String         @id @default(cuid())
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  username          String         @unique
-  imageId           String?
-  imageBlurDataURL  String?
-  // posts
-  posts             Post[]         @relation("AuthorPost")
-  // comments
-  PostComment       PostComment[]  @relation("PostCommentAuthor")
-  // likes
-  likedPosts        Post[]         @relation("PostLikes")
-  // upvotes
-  upvotedComments   PostComment[]  @relation("PostCommentUpvotes")
-  // downvotes
-  downvotedComments PostComment[]  @relation("PostCommentDownvotes")
-  // donation links
-  donationLinks     DonationLink[] @relation("UserDonationLinks")
-}
-
 model DonationLink {
   donationLinkId     String             @id @default(cuid())
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
   address            String
   // user relation
-  User               User               @relation("UserDonationLinks", fields: [userId], references: [userId])
+  User               User               @relation("UserDonationLinks", fields: [userId], references: [id])
   userId             String
   // donation provider relation
   donationProvider   DonationProvider   @relation("DonationLink_DonationProvider", fields: [donationProviderId], references: [donationProviderId])
@@ -153,4 +132,67 @@ model DonationProvider {
   name               String
   // donation links relation
   DonationLink       DonationLink[]     @relation("DonationLink_DonationProvider")
+}
+
+// ########## Start of NextAuth.js models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model User {
+  id                String         @id @default(cuid())
+  name              String?
+  email             String?        @unique
+  emailVerified     DateTime?
+  image             String?
+  accounts          Account[]
+  sessions          Session[]
+  // above is NextAuth.js, below is custom
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  username          String         @unique @default(cuid())
+  imageId           String?
+  imageBlurDataURL  String?
+  // posts
+  posts             Post[]         @relation("AuthorPost")
+  // comments
+  PostComment       PostComment[]  @relation("PostCommentAuthor")
+  // likes
+  likedPosts        Post[]         @relation("PostLikes")
+  // upvotes
+  upvotedComments   PostComment[]  @relation("PostCommentUpvotes")
+  // downvotes
+  downvotedComments PostComment[]  @relation("PostCommentDownvotes")
+  // donation links
+  donationLinks     DonationLink[] @relation("UserDonationLinks")
 }

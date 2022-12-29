@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { procedure, protectedProcedure, router } from '../trpc'
 
 const defaultPostLikesSelect = Prisma.validator<Prisma.PostSelect>()({
-  likedBy: { select: { userId: true } },
+  likedBy: { select: { id: true } },
 })
 
 export const postLikesRouter = router({
@@ -41,7 +41,7 @@ export const postLikesRouter = router({
       const userIdAuth = ctx.userIdAuth
 
       const isAlreadyLiked = await ctx.prisma.user.findFirst({
-        where: { userId: userIdAuth, likedPosts: { some: { id: postId } } },
+        where: { id: userIdAuth, likedPosts: { some: { id: postId } } },
       })
 
       await ctx.prisma.post.update({
@@ -51,10 +51,10 @@ export const postLikesRouter = router({
         data: {
           likedBy: isAlreadyLiked
             ? {
-                disconnect: { userId: userIdAuth },
+                disconnect: { id: userIdAuth },
               }
             : {
-                connect: { userId: userIdAuth },
+                connect: { id: userIdAuth },
               },
         },
       })

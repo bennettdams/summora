@@ -25,7 +25,7 @@ async function updateUserImage({
 }) {
   try {
     return await prisma.user.update({
-      where: { userId },
+      where: { id: userId },
       data: {
         imageId,
         imageBlurDataURL,
@@ -76,7 +76,7 @@ export default async function _apiImageUploadAvatars(
           const fileForUpload = await convertImageForUpload(req)
 
           const userDb = await prisma.user.findUnique({
-            where: { userId },
+            where: { id: userId },
             select: { imageId: true },
           })
 
