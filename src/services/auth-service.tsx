@@ -2,7 +2,6 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { signOut as signOutNextAuth, useSession } from 'next-auth/react'
 import { z } from 'zod'
-import { apiUsersSignUp } from './api-service'
 import {
   createSupabaseClientFromRequest,
   signUpSupabase,
@@ -37,29 +36,6 @@ export function useAuth() {
     }
   }
 
-  /**
-   * @returns true if sign up was sucessful
-   */
-  async function signUpWithEmailAndPassword(
-    username: string,
-    email: string,
-    password: string
-  ): Promise<boolean> {
-    try {
-      const response = await apiUsersSignUp(username, email, password)
-      if (!response.ok) {
-        console.error('Error while sign up')
-        return false
-      } else {
-        console.info('Signed up')
-        return true
-      }
-    } catch (error) {
-      console.error('Something went wrong while signing up')
-    }
-    return false
-  }
-
   async function signOut() {
     return await signOutNextAuth()
   }
@@ -68,7 +44,6 @@ export function useAuth() {
     isLoadingAuth: status === 'loading',
     userIdAuth: sessionData?.user?.id ?? null,
     signInWithEmailAndPassword,
-    signUpWithEmailAndPassword,
     signOut,
   }
 }

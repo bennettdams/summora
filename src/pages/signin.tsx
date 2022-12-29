@@ -6,7 +6,7 @@ import { getServerAuthSession } from '../server/api-security'
 
 type Providers = Awaited<ReturnType<typeof getProviders>>
 
-export default function SignIn({ providers }: Props) {
+export default function _SignInPage({ providers }: Props) {
   return (
     <Page>
       <div className="flex items-center justify-center px-4 sm:px-6 lg:px-8">
