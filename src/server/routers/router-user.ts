@@ -1,5 +1,6 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
+import { AppMessage } from '../../lib/app-messages'
 import { schemaEditUsername } from '../../lib/schemas'
 import { avatarImageIdPrefix } from '../../pages/api/image-upload/avatars'
 import { deleteAvatarInStorage } from '../../services/use-cloud-storage'
@@ -73,10 +74,18 @@ export const userRouter = router({
         userId,
       })
 
-      await ctx.prisma.user.update({
-        where: { id: userId },
-        data: { username },
-      })
+      let message: AppMessage = 'ok'
+
+      try {
+        await ctx.prisma.user.update({
+          where: { id: userId },
+          data: { username },
+        })
+      } catch (error) {
+        message = 'errorUniqueUsername'
+      }
+
+      return message
     }),
   // REMOVE AVATAR
   removeAvatar: protectedProcedure

@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { AppMessage } from '../../lib/app-messages'
 import { schemaEditUsername } from '../../lib/schemas'
 import { UserPageProps } from '../../pages/user/[userId]'
 import { useAuth } from '../../services/auth-service'
@@ -89,9 +90,15 @@ function UserPageInternal({
   const { userIdAuth } = useAuth()
   const isOwnUser = userId === userIdAuth
 
+  const [hasUsernameError, setHasUsernameError] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
+
   const refUsername = useRef<HTMLDivElement>(null)
-  useOnClickOutside(refUsername, () => setIsEditMode(false))
+  useOnClickOutside(refUsername, () => {
+    if (!hasUsernameError) {
+      setIsEditMode(false)
+    }
+  })
 
   const {
     handleSubmit,
@@ -100,6 +107,8 @@ function UserPageInternal({
     formState: {
       errors: { username: usernameError },
     },
+    setError,
+    clearErrors,
   } = useZodForm({
     schema: schemaEditUsername,
     values: {
@@ -141,10 +150,31 @@ function UserPageInternal({
                 className={`${isEditMode ? 'block' : 'hidden'}`}
               >
                 <Form
-                  onBlur={handleSubmit((data) => {
+                  onBlur={handleSubmit(async (data) => {
                     // For `onBlur`, RHF does not validate like with `onSubmit`, so we check ourselves.
                     if (isSubmitEnabled) {
-                      editUsername.mutate({ userId, username: data.username })
+                      const result = await editUsername.mutateAsync({
+                        userId,
+                        username: data.username,
+                      })
+
+                      const errorExpected: AppMessage = 'errorUniqueUsername'
+
+                      if (result === errorExpected) {
+                        // the outside click will hide the edit mode, so we re-enable it
+                        if (!isEditMode) {
+                          setIsEditMode(true)
+                        }
+                        setHasUsernameError(true)
+                        setError('username', {
+                          message:
+                            'The username is already taken, please try another one.',
+                        })
+                      } else {
+                        setIsEditMode(false)
+                        setHasUsernameError(false)
+                        clearErrors('username')
+                      }
                     }
                   })}
                 >
