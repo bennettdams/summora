@@ -1,5 +1,6 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
+import { schemaEditUsername } from '../../lib/schemas'
 import { avatarImageIdPrefix } from '../../pages/api/image-upload/avatars'
 import { deleteAvatarInStorage } from '../../services/use-cloud-storage'
 import { ensureAuthorTRPC } from '../api-security'
@@ -59,6 +60,23 @@ export const userRouter = router({
       } else {
         return user
       }
+    }),
+  // EDIT USERNAME
+  editUsername: protectedProcedure
+    .input(schemaEditUsername)
+    .mutation(async ({ input, ctx }) => {
+      const { userId, username } = input
+
+      await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        userId,
+      })
+
+      await ctx.prisma.user.update({
+        where: { id: userId },
+        data: { username },
+      })
     }),
   // REMOVE AVATAR
   removeAvatar: protectedProcedure

@@ -1,11 +1,17 @@
+import { useRef, useState } from 'react'
+import { schemaEditUsername } from '../../lib/schemas'
 import { UserPageProps } from '../../pages/user/[userId]'
 import { useAuth } from '../../services/auth-service'
 import { trpc } from '../../util/trpc'
+import { useOnClickOutside } from '../../util/use-on-click-outside'
+import { useZodForm } from '../../util/use-zod-form'
 import { Avatar } from '../Avatar'
 import { Box } from '../Box'
 import { ButtonRemove } from '../Button'
 import { DateTime } from '../DateTime'
 import { UserDonations } from '../donation'
+import { EditOverlay } from '../EditOverlay'
+import { Form, Input, useIsSubmitEnabled } from '../form'
 import { LoadingAnimation } from '../LoadingAnimation'
 import { NoContent } from '../NoContent'
 import { Page, PageSection } from '../Page'
@@ -73,17 +79,85 @@ function UserPageInternal({
   const deleteAvatar = trpc.user.removeAvatar.useMutation({
     onSuccess: () => utils.user.byUserId.invalidate({ userId }),
   })
+  const editUsername = trpc.user.editUsername.useMutation({
+    onSuccess: () => {
+      utils.posts.invalidate()
+      utils.postComments.invalidate()
+      utils.user.invalidate()
+    },
+  })
   const { userIdAuth } = useAuth()
   const isOwnUser = userId === userIdAuth
+
+  const [isEditMode, setIsEditMode] = useState(false)
+  const refUsername = useRef<HTMLDivElement>(null)
+  useOnClickOutside(refUsername, () => setIsEditMode(false))
+
+  const {
+    handleSubmit,
+    register,
+    control,
+    formState: {
+      errors: { username: usernameError },
+    },
+  } = useZodForm({
+    schema: schemaEditUsername,
+    values: {
+      userId,
+      username,
+    },
+    mode: 'onBlur',
+    reValidateMode: 'onBlur',
+  })
+
+  const isSubmitEnabled = useIsSubmitEnabled({
+    isLoading: editUsername.isLoading,
+    control,
+  })
 
   return (
     <>
       <PageSection>
-        <div className="flex p-10">
-          <div className="w-1/4"></div>
+        <div className="flex flex-col p-10 lg:flex-row">
+          <div className="lg:w-1/4"></div>
 
-          <div className="w-2/4">
-            <h2 className="text-center text-5xl text-dprimary">{username}</h2>
+          <div className="w-full lg:w-2/4">
+            <EditOverlay
+              isEnabled={userId === userIdAuth && !isEditMode}
+              onClick={() => setIsEditMode(true)}
+            >
+              <div>
+                <h2
+                  className={`p-2 text-center text-5xl text-dprimary ${
+                    isEditMode ? 'hidden' : 'block'
+                  }`}
+                >
+                  {username}
+                </h2>
+              </div>
+
+              <div
+                ref={refUsername}
+                className={`${isEditMode ? 'block' : 'hidden'}`}
+              >
+                <Form
+                  onBlur={handleSubmit((data) => {
+                    // For `onBlur`, RHF does not validate like with `onSubmit`, so we check ourselves.
+                    if (isSubmitEnabled) {
+                      editUsername.mutate({ userId, username: data.username })
+                    }
+                  })}
+                >
+                  <Input
+                    {...register('username')}
+                    placeholder="Enter a username.."
+                    validationErrorMessage={usernameError?.message}
+                    isSpecial
+                    isLoading={editUsername.isLoading}
+                  />
+                </Form>
+              </div>
+            </EditOverlay>
 
             <div className="mt-6 text-center">
               <p className="uppercase tracking-widest">Member since</p>
@@ -97,7 +171,7 @@ function UserPageInternal({
             </div>
           </div>
 
-          <div className="grid w-1/4 place-items-center">
+          <div className="grid place-items-center lg:w-1/4">
             {/* `w-min` to prvent the hover color not spreading to the width of the container */}
             <div className="w-min">
               <Avatar
