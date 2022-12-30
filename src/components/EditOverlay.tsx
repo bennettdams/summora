@@ -13,22 +13,22 @@ export function EditOverlay({
   return (
     <div className="group relative z-10">
       {children}
-      <div
-        onClick={() => isEnabled && onClick()}
-        /*
-         * We use conditional CSS instead of conditional rendering so the children are not re-/mounted.
-         * This is e.g. needed because there is bug in React where unmounting does not trigger `onBlur`.
-         * See: https://github.com/facebook/react/issues/12363
-         */
-        className={`absolute inset-0 hidden place-items-center rounded-xl opacity-50 hover:bg-dtertiary ${
-          isEnabled && 'group-hover:grid'
-        } group-hover:transition-colors group-hover:duration-200 group-hover:ease-in-out`}
-      >
-        <IconEdit
-          className="text-transparent group-hover:text-white group-hover:opacity-100"
-          size="huge"
-        />
-      </div>
+      {isEnabled && (
+        <div
+          onClick={() => isEnabled && onClick()}
+          /*
+           * We use conditional CSS instead of conditional rendering so the children are not re-/mounted.
+           * This is e.g. needed because there is bug in React where unmounting does not trigger `onBlur`.
+           * See: https://github.com/facebook/react/issues/12363
+           */
+          className="absolute inset-0 grid place-items-center rounded-xl bg-dtertiary opacity-50 hover:bg-dtertiary group-hover:grid group-hover:transition-colors group-hover:duration-200 group-hover:ease-in-out lg:hidden"
+        >
+          <IconEdit
+            className="text-white group-hover:text-white group-hover:opacity-100 lg:text-transparent"
+            size="huge"
+          />
+        </div>
+      )}
     </div>
   )
 }
