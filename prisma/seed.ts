@@ -250,8 +250,8 @@ const postCategories: Prisma.PostCategoryCreateInput[] = [
 ]
 
 const donationProviders: Prisma.DonationProviderCreateInput[] = [
-  { donationProviderId: 'PAYPAL', name: 'Bitcoin' },
-  { donationProviderId: 'BITCOIN', name: 'PayPal' },
+  { donationProviderId: 'PAYPAL', name: 'PayPal' },
+  { donationProviderId: 'BITCOIN', name: 'Bitcoin' },
 ]
 
 const postTags: Prisma.PostTagCreateWithoutPostsInput[] = [

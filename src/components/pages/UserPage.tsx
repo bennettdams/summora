@@ -201,7 +201,7 @@ function UserPageInternal({
             </div>
           </div>
 
-          <div className="grid place-items-center lg:w-1/4">
+          <div className="mt-4 grid place-items-center lg:mt-0 lg:w-1/4">
             {/* `w-min` to prvent the hover color not spreading to the width of the container */}
             <div className="w-min">
               <Avatar
@@ -228,7 +228,7 @@ function UserPageInternal({
       </PageSection>
 
       <PageSection>
-        <div className="flex flex-row space-x-10">
+        <div className="grid grid-cols-2 gap-4 lg:mx-32 lg:grid-cols-4">
           <StatisticsCard
             label="Posts created"
             no={userStatistics.noOfPostsCreated}
@@ -249,7 +249,7 @@ function UserPageInternal({
       </PageSection>
 
       <PageSection label="Donation links">
-        <div className="mx-auto w-full md:px-10 lg:px-20">
+        <div className="mx-autdo w-full md:px-10 lg:px-20">
           <UserDonations
             isEditMode={userId === userIdAuth}
             userId={userId}
@@ -271,41 +271,43 @@ function UserPageInternal({
       {isOwnUser && (
         <PageSection label="Avatar preview">
           <Box>
-            <div className="grid auto-rows-min grid-cols-3 text-center">
-              <div className="col-start-1">
-                <div className="grid h-full place-items-center">
-                  <Avatar
-                    userId={userId}
-                    username={username}
-                    imageId={imageId}
-                    imageBlurDataURL={imageBlurDataURL}
-                    size="small"
-                  />
-                </div>
+            <div className="grid grid-cols-2 gap-10 p-10 text-center lg:grid-cols-3">
+              <div className="col-start-1 row-start-1 lg:col-auto">
+                <Avatar
+                  userId={userId}
+                  username={username}
+                  imageId={imageId}
+                  imageBlurDataURL={imageBlurDataURL}
+                  size="small"
+                />
+              </div>
+              <div className="col-start-1 row-start-2 lg:col-auto">
                 <p>Small</p>
               </div>
-              <div className="col-start-2">
-                <div className="grid h-full place-items-center">
-                  <Avatar
-                    userId={userId}
-                    username={username}
-                    imageId={imageId}
-                    imageBlurDataURL={imageBlurDataURL}
-                    size="medium"
-                  />
-                </div>
+
+              <div className="col-start-2 row-start-1 lg:col-auto">
+                <Avatar
+                  userId={userId}
+                  username={username}
+                  imageId={imageId}
+                  imageBlurDataURL={imageBlurDataURL}
+                  size="medium"
+                />
+              </div>
+              <div className="col-start-2 row-start-2 lg:col-auto">
                 <p>Medium</p>
               </div>
-              <div className="col-start-3">
-                <div className="grid h-full place-items-center">
-                  <Avatar
-                    userId={userId}
-                    username={username}
-                    imageId={imageId}
-                    imageBlurDataURL={imageBlurDataURL}
-                    size="large"
-                  />
-                </div>
+
+              <div className="col-span-2 row-start-3 lg:col-span-1 lg:row-start-1">
+                <Avatar
+                  userId={userId}
+                  username={username}
+                  imageId={imageId}
+                  imageBlurDataURL={imageBlurDataURL}
+                  size="large"
+                />
+              </div>
+              <div className="col-span-2 row-start-4 lg:col-span-1 lg:row-start-2">
                 <p>Large</p>
               </div>
             </div>
