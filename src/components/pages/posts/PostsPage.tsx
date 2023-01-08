@@ -63,7 +63,7 @@ export function PostsPage({
       </Head>
 
       <PageSection hideTopMargin>
-        <div className="flex flex-row space-x-10">
+        <div className="grid grid-cols-2 gap-10 lg:grid-cols-4">
           <StatisticsCard label="Posts" no={noOfPosts} />
 
           <StatisticsCard

@@ -111,7 +111,7 @@ function PostsListItem({
       <div className="text-center">
         <Link to={ROUTES.post(post.id)}>
           <div className="relative">
-            <div className="absolute top-0 left-0 inline">
+            <div className="absolute top-0 left-0 hidden lg:inline">
               <PostLikes postId={post.id} userId={userId} iconSize="big" />
             </div>
             <h2 className="text-xs font-semibold tracking-widest text-dsecondary">
@@ -124,7 +124,7 @@ function PostsListItem({
               {post.subtitle}
             </p>
 
-            <div className="my-4 flex h-32 snap-x flex-row flex-nowrap space-x-4 overflow-y-hidden">
+            <div className="my-4 flex h-28 snap-x flex-row flex-nowrap space-x-4 overflow-y-hidden">
               {isLoadingSegments ? (
                 <LoadingAnimation />
               ) : !segments || segments.length === 0 ? (
@@ -134,7 +134,7 @@ function PostsListItem({
                   return (
                     <div
                       key={segment.id}
-                      className="grid h-32 w-60 flex-none snap-start place-items-center rounded-lg bg-dlight p-5"
+                      className="grid h-20 w-60 flex-none snap-start place-items-center rounded-lg bg-dlight p-5"
                     >
                       <span className="block truncate whitespace-normal">
                         {segment.title}
@@ -147,8 +147,8 @@ function PostsListItem({
           </div>
         </Link>
 
-        <div className="flex h-14 text-center">
-          <div className="w-1/2 overflow-y-hidden">
+        <div className="flex flex-col gap-4 text-center lg:flex-row">
+          <div className="h-14 w-full overflow-y-hidden lg:w-1/2">
             {isLoadingTags ? (
               <LoadingAnimation />
             ) : (
@@ -156,9 +156,16 @@ function PostsListItem({
             )}
           </div>
 
-          <div className="flex h-full w-1/2 justify-end space-x-4 leading-none">
-            <div className="flex h-full w-1/2 flex-col">
-              <div className="flex-1 space-x-5">
+          <div className="flex h-full w-full justify-end space-x-4 leading-none lg:w-1/2">
+            <div className="flex h-full w-1/2 flex-col space-y-2">
+              <div className="flex flex-1 flex-row items-center justify-center space-x-5 text-center lg:space-x-2">
+                <span className="inline-block lg:hidden">
+                  <PostLikes
+                    postId={post.id}
+                    userId={userId}
+                    iconSize="medium"
+                  />
+                </span>
                 <ViewsIcon noOfViews={post.noOfViews} />
                 <CommentsIcon noOfComments={post.noOfComments} />
               </div>
