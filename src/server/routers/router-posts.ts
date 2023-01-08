@@ -97,6 +97,10 @@ export const postsRouter = router({
     .query(async ({ input, ctx }) => {
       const { postId } = input
 
+      const caller = postsRouter.createCaller({ prisma: ctx.prisma })
+      // we deliberately don't `await` to not block this request
+      caller.incrementViews({ postId })
+
       return await ctx.prisma.post.findUnique({
         where: { id: postId },
         select: defaultPostSelect,

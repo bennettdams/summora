@@ -60,18 +60,6 @@ export function PostPage(props: PostPageProps): JSX.Element {
   )
   const { userIdAuth } = useAuth()
 
-  const { refetch } = trpc.posts.incrementViews.useQuery(
-    { postId: props.postId },
-    { enabled: false }
-  )
-  const [hasViewsBeenIncremented, setHasViewBeenIncremented] = useState(false)
-  useEffect(() => {
-    if (!hasViewsBeenIncremented) {
-      setHasViewBeenIncremented(true)
-      refetch()
-    }
-  }, [hasViewsBeenIncremented, props.postId, refetch])
-
   return (
     <Page>
       {isLoadingPost ? (
