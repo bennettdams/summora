@@ -91,9 +91,13 @@ function UserDonationUpdateRow({
 
   return (
     <div
-      className="grid grid-cols-7 items-center gap-4"
+      className="grid grid-cols-7 items-center gap-4 border-b-2 pb-4 lg:border-b-0 lg:pb-0"
       key={userDonation.donationLinkId}
     >
+      <div className="col-span-full lg:hidden">
+        <FormLabel>Donation provider</FormLabel>
+      </div>
+
       <div className="col-span-1 flex justify-end">
         <Logo
           topic="donationProviderId"
@@ -101,11 +105,16 @@ function UserDonationUpdateRow({
         />
       </div>
 
-      <div className="col-span-2">{donationProviderSelect}</div>
+      <div className="col-span-6 lg:col-span-2">{donationProviderSelect}</div>
 
-      <div className="col-span-3">{children}</div>
+      <div className="col-span-4 lg:col-span-3">
+        <span className="inline lg:hidden">
+          <FormLabel>Address</FormLabel>
+        </span>
+        {children}
+      </div>
 
-      <div className="col-span-1">
+      <div className="col-span-3 flex h-full items-end justify-end lg:col-span-1">
         <ButtonRemove onClick={deleteItem} />
       </div>
     </div>
@@ -204,7 +213,7 @@ function UserDonationsUpdates({
     <div>
       {userDonations.length > 0 && (
         <Form
-          className="mx-auto mb-10 w-full space-y-4"
+          className="mx-auto mb-4 w-full space-y-4 lg:mb-10"
           onSubmit={handleSubmitUpdate((data) => {
             /** We only want to submit dirty fields, so we don't have to update all in the DB. */
             const donationLinksDirty = data.donationLinksToUpdate.filter(
@@ -217,18 +226,18 @@ function UserDonationsUpdates({
           })}
         >
           {/* This needs to match whatever is rendered in the form row. */}
-          <div className="grid grid-cols-7 place-items-start gap-4">
-            <div className="col-span-1"></div>
+          <div className="hidden grid-cols-7 items-center gap-4 border-b-2 pb-4 lg:grid lg:border-b-0 lg:pb-0">
+            <div className="col-span-1 flex justify-end"></div>
 
-            <div className="col-span-2">
+            <div className="col-span-6 lg:col-span-2">
               <FormLabel>Donation provider</FormLabel>
             </div>
 
-            <div className="col-span-3">
+            <div className="col-span-4 lg:col-span-3">
               <FormLabel>Address</FormLabel>
             </div>
 
-            <div className="col-span-1"></div>
+            <div className="col-span-3 flex justify-end lg:col-span-1"></div>
           </div>
 
           <div ref={animateRef} className="w-full space-y-4">
@@ -334,7 +343,11 @@ function UserDonationsUpdates({
           )
         })}
       >
-        <div className="grid grid-cols-7 items-center gap-4">
+        <div className="grid grid-cols-7 items-center gap-4 border-b-2 pb-4 lg:border-b-0 lg:pb-0">
+          <div className="col-span-full lg:hidden">
+            <FormLabel>Donation provider</FormLabel>
+          </div>
+
           <div className="col-span-1 flex justify-end">
             {newProviderIdFromInput && (
               <Logo
@@ -344,7 +357,7 @@ function UserDonationsUpdates({
             )}
           </div>
 
-          <div className="col-span-2">
+          <div className="col-span-6 lg:col-span-2">
             {!donationProviders ? (
               <NoContent>No donation providers available..</NoContent>
             ) : (
@@ -365,7 +378,10 @@ function UserDonationsUpdates({
             )}
           </div>
 
-          <div className="col-span-3">
+          <div className="col-span-4 lg:col-span-3">
+            <span className="inline lg:hidden">
+              <FormLabel>Address</FormLabel>
+            </span>
             <Input
               {...registerCreate('address')}
               placeholder="Enter an address.."
@@ -374,7 +390,7 @@ function UserDonationsUpdates({
             />
           </div>
 
-          <div className="col-span-1">
+          <div className="col-span-3 flex h-full items-end justify-end lg:col-span-1">
             <FormSubmit
               isInitiallySubmittable={true}
               isLoading={updateMany.isLoading}
