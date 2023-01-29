@@ -9,9 +9,9 @@ import { useRouteChange } from '../util/use-route-change'
 import { Avatar } from './Avatar'
 import { Button } from './Button'
 import {
-  IconBell,
   IconHome,
   IconMenu,
+  IconNotification,
   IconSignIn,
   IconSignOut,
   IconUser,
@@ -145,6 +145,7 @@ function UserNavbar() {
 export function Header(): JSX.Element {
   const isLoading = useRouteChange()
   const { asPath } = useRouter()
+  const { userIdAuth } = useAuth()
 
   return (
     <Disclosure
@@ -164,7 +165,11 @@ export function Header(): JSX.Element {
               </div>
 
               {/* Navbar content */}
-              <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+              <div className="relative flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+                <span className="absolute left-14 inline sm:hidden">
+                  {isLoading && <LoadingAnimation />}
+                </span>
+
                 <div className="flex shrink-0 items-center">
                   <Link to={ROUTES.home}>
                     <div className="text-left text-4xl font-extrabold leading-none tracking-tight">
@@ -201,19 +206,23 @@ export function Header(): JSX.Element {
 
               {/* Navbar right side */}
               <div className="absolute inset-y-0 right-0 flex items-center space-x-3 pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                {isLoading && <LoadingAnimation />}
+                <span className="hidden sm:inline">
+                  {isLoading && <LoadingAnimation />}
+                </span>
 
                 <div className="hidden sm:block">
                   <DynamicCreatePostModal />
                 </div>
 
-                <button
-                  type="button"
-                  className="group rounded-full p-1 hover:bg-dsecondary focus:outline-none focus:ring-2 focus:ring-white"
-                >
-                  <span className="sr-only">View notifications</span>
-                  <IconBell className="text-dsecondary group-hover:text-white" />
-                </button>
+                {!!userIdAuth && (
+                  <button
+                    type="button"
+                    className="group rounded-full p-1 hover:bg-dsecondary focus:outline-none focus:ring-2 focus:ring-white"
+                  >
+                    <span className="sr-only">View notifications</span>
+                    <IconNotification className="text-dsecondary group-hover:text-white" />
+                  </button>
+                )}
 
                 <UserNavbar />
               </div>

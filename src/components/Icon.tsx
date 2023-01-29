@@ -169,7 +169,7 @@ export function IconSelector(props: IconProps): JSX.Element {
   return <Icon {...props} iconName="ChevronUpDownIcon" />
 }
 
-export function IconBell(props: IconProps): JSX.Element {
+export function IconNotification(props: IconProps): JSX.Element {
   return <Icon {...props} iconName="BellIconOutline" />
 }
 

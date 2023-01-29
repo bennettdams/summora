@@ -761,7 +761,9 @@ function Comment({
   return (
     <>
       <div
-        className={`space-y-1 ${isRoot ? 'rounded-xl bg-white p-10' : 'ml-14'}`}
+        className={`space-y-1 ${
+          isRoot ? 'rounded-xl bg-white p-2 lg:p-10' : 'ml-4 lg:ml-14'
+        }`}
       >
         <div className="flex w-full">
           <div className="group relative grid w-10 place-items-center">
