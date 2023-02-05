@@ -429,7 +429,11 @@ function PostPageInternal<
           <TagsList
             tags={tags ?? null}
             onAddButtonClick={() => setIsShownTagSelection(true)}
-            onRemoveClick={(tagIdToRemove) => handleRemoveTag(tagIdToRemove)}
+            onRemoveClick={
+              !isPostEditable
+                ? undefined
+                : (tagIdToRemove) => handleRemoveTag(tagIdToRemove)
+            }
             showAddButton={isPostEditable && !isShownTagSelection}
           />
         )}

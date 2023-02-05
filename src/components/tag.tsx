@@ -77,7 +77,7 @@ export function Tag({
       // Don't execute on click when this tag is supposed to handle removing - this happens further down then.
       onClick={() => !handleRemoving && onClick?.(tag.tagId)}
     >
-      {!handleRemoving || !showRemoveConfirmation ? (
+      {!onClick || !handleRemoving || !showRemoveConfirmation ? (
         <span
           onClick={() => !!handleRemoving && setShowRemoveConfirmation(true)}
           className="inline-block text-xs uppercase tracking-widest"
