@@ -216,7 +216,6 @@ function PostsListItemShort({
           <h1 className="mt-1 text-xl font-semibold text-dprimary sm:text-2xl">
             {post.title}
           </h1>
-          <p className="mt-3 leading-relaxed text-dtertiary">{post.subtitle}</p>
           <div className="absolute bottom-0 mt-2 flex w-full justify-center space-x-4 py-3 text-center leading-none">
             <PostLikes postId={post.id} userId={userId} />
             <ViewsIcon noOfViews={post.noOfViews} />

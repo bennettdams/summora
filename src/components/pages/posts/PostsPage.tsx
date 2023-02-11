@@ -150,8 +150,10 @@ export function PostsPage({
           <div className="grid place-items-center">
             <LoadingAnimation />
           </div>
-        ) : isErrorCategories || !postCategories ? (
+        ) : isErrorCategories ? (
           <NoContent>Error while loading categories.</NoContent>
+        ) : !postCategories || postCategories.length === 0 ? (
+          <NoContent>No post categories found.</NoContent>
         ) : (
           <div className="grid grid-cols-2 gap-6 text-center text-lg md:grid-cols-4">
             {postCategories.map((category) => (
@@ -193,8 +195,10 @@ export function PostsPage({
           <div className="grid place-items-center">
             <LoadingAnimation />
           </div>
-        ) : isError || !postCategories ? (
+        ) : isError ? (
           <NoContent>Error while loading posts.</NoContent>
+        ) : !posts || posts.length === 0 ? (
+          <NoContent>No posts found.</NoContent>
         ) : (
           <PostsList
             posts={
