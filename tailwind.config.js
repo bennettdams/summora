@@ -11,6 +11,7 @@ const colors = require('tailwindcss/colors')
 // dsecondary: '#e08560',
 // dtertiary: '#d4ad9f',
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx}',
@@ -19,7 +20,11 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--global-font-condun)', ...defaultTheme.fontFamily.sans],
+        sans: ['var(--global-condun-font)', ...defaultTheme.fontFamily.sans],
+        serif: [
+          'var(--global-condun-font-serif)',
+          ...defaultTheme.fontFamily.serif,
+        ],
       },
       colors: {
         gray: colors.slate,

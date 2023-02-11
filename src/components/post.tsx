@@ -117,7 +117,7 @@ function PostsListItem({
             <h2 className="text-xs font-semibold tracking-widest text-dsecondary">
               {post.categoryTitle}
             </h2>
-            <h1 className="mt-1 text-xl font-semibold text-dprimary sm:text-2xl">
+            <h1 className="mt-1 font-serif text-2xl text-dprimary">
               {post.title}
             </h1>
             <p className="mt-3 leading-relaxed text-dsecondary">

@@ -50,7 +50,7 @@ export function PostsPage({
               </div>
             </div>
 
-            <p className="mt-2 text-center text-3xl font-extrabold leading-8 tracking-tight text-dprimary lg:text-4xl">
+            <p className="mt-2 text-center font-serif text-4xl font-extrabold leading-8 tracking-tight text-dprimary lg:text-5xl">
               Everything, but summarized.
             </p>
           </div>
@@ -83,7 +83,7 @@ export function PostsPage({
       <PageSection>
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
-            <p className="mt-2 text-4xl font-extrabold leading-8 tracking-tight text-dprimary lg:text-3xl">
+            <p className="mt-2 font-serif text-4xl font-extrabold leading-8 tracking-tight text-dprimary">
               <span>A </span>
               <span className="underline">faster</span> way to learn
             </p>
@@ -169,7 +169,7 @@ export function PostsPage({
 
       <PageSection>
         <div className="mx-auto max-w-7xl py-12 lg:flex lg:items-center lg:justify-between lg:py-16">
-          <h2 className="text-4xl font-extrabold tracking-tight text-dprimary lg:text-3xl">
+          <h2 className="font-serif text-4xl font-extrabold tracking-tight text-dprimary lg:text-3xl">
             <span className="block">
               Ready to make your knowledge to money?
             </span>

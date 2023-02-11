@@ -245,12 +245,12 @@ export function PostSegment({
                     }`}
                   >
                     <div className="ml-2 flex flex-col">
-                      <div className="flex-1 text-dprimary">
+                      <div className="flex-1 font-serif text-2xl text-dprimary">
                         <span>{segment.title}</span>
                       </div>
 
                       <div className="flex-1">
-                        <span className="text-lg italic text-dsecondary">
+                        <span className="font-serif text-base italic text-dsecondary">
                           {segment.subtitle}
                         </span>
                       </div>

@@ -337,9 +337,9 @@ function PostPageInternal<
 
                   {/* POST TITLE */}
                   <div>
-                    <h2 className="font-bold text-2xl leading-7 sm:text-3xl">
-                      <span className="text-dprimary">{post.title}</span>
-                    </h2>
+                    <p className="font-bold mx-0 font-serif text-3xl leading-7 text-dprimary md:mx-20 md:text-4xl">
+                      {post.title}
+                    </p>
                   </div>
 
                   <div className="flex-1">

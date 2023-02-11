@@ -1,4 +1,4 @@
-import { Nunito } from '@next/font/google'
+import { DM_Serif_Display, Nunito } from '@next/font/google'
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -17,7 +17,14 @@ import { trpc } from '../util/trpc'
 const globalFont = Nunito({
   subsets: ['latin'],
   weight: ['400', '500', '600', '800'],
-  variable: '--global-font-condun',
+  variable: '--global-condun-font',
+  display: 'swap',
+})
+
+const globalFontSerif = DM_Serif_Display({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--global-condun-font-serif',
   display: 'swap',
 })
 
@@ -62,7 +69,7 @@ const App: AppType<{ session: Session | null }> = ({
           </Head>
 
           <div
-            className={`${globalFont.variable} font-light flex h-screen min-h-screen flex-col bg-dlight font-sans text-gray-500 caret-dprimary selection:bg-dprimary selection:text-dtertiary`}
+            className={`${globalFont.variable} ${globalFontSerif.variable} font-light flex h-screen min-h-screen flex-col bg-dlight font-sans text-gray-500 caret-dprimary selection:bg-dprimary selection:text-dtertiary`}
           >
             <Header />
 

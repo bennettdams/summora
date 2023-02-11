@@ -137,7 +137,7 @@ function UserPageInternal({
             >
               <div>
                 <h2
-                  className={`p-2 text-center text-5xl text-dprimary ${
+                  className={`p-2 text-center font-serif text-5xl text-dprimary ${
                     isEditMode ? 'hidden' : 'block'
                   }`}
                 >
