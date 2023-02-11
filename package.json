@@ -43,6 +43,7 @@
     "@heroicons/react": "^2.0.15",
     "@hookform/resolvers": "^2.9.11",
     "@next-auth/prisma-adapter": "^1.0.5",
+    "@next/font": "^13.1.6",
     "@prisma/client": "^4.10.1",
     "@supabase/auth-helpers-nextjs": "^0.5.2",
     "@supabase/auth-helpers-react": "^0.3.1",

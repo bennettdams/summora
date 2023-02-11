@@ -19,7 +19,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Nunito', ...defaultTheme.fontFamily.sans],
+        sans: ['var(--global-font-condun)', ...defaultTheme.fontFamily.sans],
       },
       colors: {
         gray: colors.slate,
