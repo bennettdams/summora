@@ -519,9 +519,9 @@ function PostPageInternal<
         </PageSection>
       )}
 
-      <PageSection>
+      <PageSection hideTopMargin>
         {/* "items-start" to make "sticky" work. Without it, the sticky div has the full height of the flex container. */}
-        <div className="w-full items-start lg:flex">
+        <div className="mt-14 w-full items-start lg:flex">
           {isLoadingSegments ? (
             <div className="grid w-full place-items-center">
               <LoadingAnimation />

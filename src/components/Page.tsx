@@ -29,7 +29,7 @@ export function PageSection({
 }): JSX.Element {
   return (
     <section
-      className={`page-section w-full ${hideTopMargin ? 'mt-0' : 'mt-10'}`}
+      className={`page-section w-full ${hideTopMargin ? 'mt-0' : 'mt-28'}`}
     >
       {label && (
         <div className="page-section-title mb-10 w-full text-center">

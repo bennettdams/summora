@@ -80,8 +80,8 @@ export function PostsPage({
         </div>
       </PageSection>
 
-      <PageSection>
-        <div className="mx-auto max-w-7xl">
+      <PageSection hideTopMargin>
+        <div className="mx-auto mt-10 max-w-7xl">
           <div className="text-center">
             <p className="mt-2 font-serif text-4xl font-extrabold leading-8 tracking-tight text-dprimary">
               <span>A </span>
