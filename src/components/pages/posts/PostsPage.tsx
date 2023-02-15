@@ -2,9 +2,11 @@ import Head from 'next/head'
 import Image from 'next/image'
 import img from '../../../../public/assets/homepage-hero.jpg'
 import { PostsPageProps } from '../../../pages'
+import { ROUTES } from '../../../services/routing'
 import { trpc } from '../../../util/trpc'
 import { Box } from '../../Box'
-import { IconLightning } from '../../Icon'
+import { IconArrowCircleRight, IconLightning } from '../../Icon'
+import { Link } from '../../link'
 import { LoadingAnimation } from '../../LoadingAnimation'
 import { NoContent } from '../../NoContent'
 import { Page, PageSection } from '../../Page'
@@ -85,7 +87,10 @@ export function PostsPage({
           <div className="text-center">
             <p className="mt-2 font-serif text-4xl font-extrabold leading-8 tracking-tight text-dprimary">
               <span>A </span>
-              <span className="underline">faster</span> way to learn
+              <span className="underline decoration-dsecondary">
+                faster
+              </span>{' '}
+              way to learn
             </p>
             <p className="mt-4 flex max-w-2xl flex-col text-xl lg:mx-auto">
               <span>
@@ -99,6 +104,22 @@ export function PostsPage({
             </p>
           </div>
         </div>
+
+        <Link to={ROUTES.explore}>
+          <div className="mt-10 grid w-full place-items-center text-center">
+            <div className="cursor-pointer rounded-lg py-6 hover:bg-dtertiary lg:py-10">
+              <h1 className="px-20 font-serif text-4xl font-semibold tracking-wide text-dprimary underline decoration-dsecondary lg:text-5xl">
+                Start exploring
+                <span className="hidden w-full lg:ml-6 lg:inline lg:w-auto">
+                  <IconArrowCircleRight size="huge" />
+                </span>
+              </h1>
+              <span className="mt-4 block w-full lg:ml-4 lg:hidden lg:w-auto">
+                <IconArrowCircleRight size="huge" />
+              </span>
+            </div>
+          </div>
+        </Link>
       </PageSection>
 
       <PageSection>
