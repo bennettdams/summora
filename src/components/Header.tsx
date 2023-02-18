@@ -170,7 +170,7 @@ export function Header(): JSX.Element {
                   {isLoading && <LoadingAnimation />}
                 </span>
 
-                <div className="flex shrink-0 items-center">
+                <div className="absolute flex shrink-0 items-center sm:static">
                   <Link to={ROUTES.home}>
                     <div className="text-left text-4xl font-extrabold leading-none tracking-tight">
                       <p className="bg-gradient-to-b from-dsecondary to-orange-300 decoration-clone bg-clip-text text-3xl uppercase text-transparent">
