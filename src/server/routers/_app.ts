@@ -4,6 +4,7 @@
 import { router } from '../trpc'
 import { donationLinkRouter } from './router-donation-link'
 import { donationProviderRouter } from './router-donation-providers'
+import { imageUploadRouter } from './router-image-upload'
 import { postCategoriesRouter } from './router-post-categories'
 import { postCommentsRouter } from './router-post-comment'
 import { postLikesRouter } from './router-post-likes'
@@ -28,6 +29,7 @@ export const appRouter = router({
   donationLink: donationLinkRouter,
   donationProvider: donationProviderRouter,
   postComments: postCommentsRouter,
+  imageUpload: imageUploadRouter,
 })
 
 // export type definition of API

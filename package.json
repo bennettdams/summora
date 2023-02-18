@@ -38,6 +38,8 @@
     "depcheck": "npx depcheck"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.272.0",
+    "@aws-sdk/s3-presigned-post": "^3.272.0",
     "@formkit/auto-animate": "^1.0.0-beta.6",
     "@headlessui/react": "^1.7.11",
     "@heroicons/react": "^2.0.16",

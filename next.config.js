@@ -5,7 +5,10 @@ const nextConfig = {
   //   ignoreBuildErrors: true,
   // },
   images: {
-    domains: ['ndzyfvfhllgysznhllnw.supabase.co'],
+    domains: [
+      'ndzyfvfhllgysznhllnw.supabase.co',
+      'condun-bucket-dev.s3.amazonaws.com',
+    ],
   },
 }
 
