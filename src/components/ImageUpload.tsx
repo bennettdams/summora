@@ -1,10 +1,11 @@
 import { ChangeEvent, useState } from 'react'
 import { IconAdd } from '../components/Icon'
 import { LoadingAnimation } from '../components/LoadingAnimation'
-
-export const validExtensions = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG']
-// 5 MB
-export const maxFileSizeInBytes = 5 * 1024 * 1024
+import {
+  checkImageFileExtension,
+  maxFileSizeInBytes,
+  validExtensions,
+} from '../services/cloud-service'
 
 const validExtensionsBeautified = validExtensions
   .map((extension) => extension.toUpperCase())
@@ -38,9 +39,10 @@ export function ImageUpload({
         if (!file) {
           throw new Error('There is no file for your request.')
         } else {
-          const fileExtension = file.name.split('.').pop()
+          const { fileExtension, isValidImageExtension } =
+            checkImageFileExtension(file.type)
 
-          if (!fileExtension || !validExtensions.includes(fileExtension)) {
+          if (!isValidImageExtension) {
             setFailedUploadMessage(
               `You provided a ${fileExtension} file, but only the following are allowed: ${validExtensionsBeautified}`
             )

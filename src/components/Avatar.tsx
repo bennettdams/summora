@@ -1,27 +1,11 @@
-import { useMutation } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useState } from 'react'
-import { apiImageUploadAvatars } from '../services/api-service'
-import { useCloudStorage } from '../services/use-cloud-storage'
+import {
+  generatePublicURLAvatar,
+  uploadPresignedPost,
+} from '../services/cloud-service'
 import { trpc } from '../util/trpc'
 import { ImageUpload } from './ImageUpload'
-
-function useUserImageMutation(userId: string) {
-  const utils = trpc.useContext()
-
-  return useMutation({
-    mutationFn: apiImageUploadAvatars,
-    onSuccess: () => {
-      // USER DATA
-      utils.user.byUserId.invalidate({ userId })
-
-      // POSTS DATA
-      utils.posts.some.invalidate()
-      utils.posts.someByUserId.invalidate({ userId })
-      utils.posts.byPostId.invalidate()
-    },
-  })
-}
 
 /*
  * For the love of god, this file is very similar to "PostSegmentImage".
@@ -68,6 +52,7 @@ type Props = {
   username: string
   imageId: string | null
   imageBlurDataURL: string | null
+  imageFileExtension: string | null
   size: AvatarSize
   isEditable?: boolean
   placeholderColorVariant?: ColorVariant
@@ -83,20 +68,26 @@ function AvatarInternal({
   username,
   imageId,
   imageBlurDataURL,
+  imageFileExtension,
   size = 'medium',
   isEditable = false,
   placeholderColorVariant = 'brown',
 }: Props): JSX.Element {
   const [sizePixels] = useState(SIZES[size])
-  const updateUserImageIdMutation = useUserImageMutation(userId)
-  const { getPublicURLAvatar } = useCloudStorage()
-  const imageURL = !imageId
-    ? null
-    : // This implementation assumes that getting the public URL does not need a remote fetch, as this runs on every rerender.
-      getPublicURLAvatar({
-        userId,
-        imageId,
-      })
+  const imageURL =
+    !imageId || !imageFileExtension
+      ? null
+      : // This implementation assumes that getting the public URL does not need a remote fetch, as this runs on every rerender.
+        generatePublicURLAvatar({
+          userId,
+          imageId,
+          imageFileExtension,
+        })
+
+  const utils = trpc.useContext()
+
+  const avatarUploadMutation =
+    trpc.imageUpload.getPresignedUrlAvatar.useMutation()
 
   return (
     <div className="relative inline-grid h-full w-full place-items-center">
@@ -107,9 +98,30 @@ function AvatarInternal({
             <ImageUpload
               inputId={userId}
               onUpload={async (fileToUpload) => {
-                updateUserImageIdMutation.mutate(fileToUpload)
+                avatarUploadMutation.mutate(
+                  {
+                    fileType: fileToUpload.type,
+                  },
+                  {
+                    onSuccess: async (presignedPost) => {
+                      await uploadPresignedPost({
+                        file: fileToUpload,
+                        presignedPost,
+                        onSuccess: () => {
+                          // USER DATA
+                          utils.user.byUserId.invalidate({ userId })
+
+                          // POSTS DATA
+                          utils.posts.some.invalidate()
+                          utils.posts.someByUserId.invalidate({ userId })
+                          utils.posts.byPostId.invalidate()
+                        },
+                      })
+                    },
+                  }
+                )
               }}
-              isLoadingUpload={updateUserImageIdMutation.isLoading}
+              isLoadingUpload={avatarUploadMutation.isLoading}
             />
           </span>
         </div>
@@ -133,7 +145,8 @@ function AvatarInternal({
             src={imageURL}
             alt="Avatar"
             placeholder="blur"
-            fill={true}
+            height={sizePixels}
+            width={sizePixels}
             style={{ objectFit: 'cover' }}
             className="rounded-full"
             blurDataURL={imageBlurDataURL ?? undefined}
@@ -149,5 +162,3 @@ function AvatarInternal({
     </div>
   )
 }
-
-// brunes

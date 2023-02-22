@@ -2,8 +2,8 @@ import { Files, IncomingForm } from 'formidable'
 import fs from 'fs'
 import { NextApiRequest } from 'next'
 import sharp from 'sharp'
-import { maxFileSizeInBytes, validExtensions } from '../components/ImageUpload'
 import { FORM_DATA_FILE_KEY } from '../util/http'
+import { maxFileSizeInBytes, validExtensions } from './cloud-service'
 
 const validMimeTypes = validExtensions.map((extension) => `image/${extension}`)
 
