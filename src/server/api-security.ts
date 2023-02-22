@@ -70,10 +70,10 @@ export async function checkAuthTRPC(
 
 /**
  * Used to ensure the requester is the author of a given topic (like post, comment, etc.).
- * @returns the entity to check an author with
+ * @returns the entity the author was checked with
  */
 export async function ensureAuthorTRPC<
-  TEntity extends Record<string, unknown>
+  TEntity extends Record<string, unknown> | null
 >({
   topic,
   userIdAuth,
@@ -88,9 +88,9 @@ export async function ensureAuthorTRPC<
    */
   cbQueryEntity: () => Promise<{
     authorId: string
-    entity: TEntity | null
+    entity: TEntity
   }>
-}): Promise<TEntity | null> {
+}): Promise<TEntity> {
   const { authorId, entity } = await cbQueryEntity()
 
   if (authorId !== userIdAuth) {
@@ -99,7 +99,7 @@ export async function ensureAuthorTRPC<
       message: `You are not the author of this topic (${topic}).`,
     })
   } else {
-    return entity ?? null
+    return entity
   }
 }
 
