@@ -2,8 +2,9 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
 }
 
 generator client {
@@ -170,29 +171,30 @@ model VerificationToken {
 }
 
 model User {
-  id                String         @id @default(cuid())
-  name              String?
-  email             String?        @unique
-  emailVerified     DateTime?
-  image             String?
-  accounts          Account[]
-  sessions          Session[]
+  id                 String         @id @default(cuid())
+  name               String?
+  email              String?        @unique
+  emailVerified      DateTime?
+  image              String?
+  accounts           Account[]
+  sessions           Session[]
   // above is NextAuth.js, below is custom
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  username          String         @unique @default(cuid())
-  imageId           String?
-  imageBlurDataURL  String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  username           String         @unique @default(cuid())
+  imageId            String?
+  imageBlurDataURL   String?
+  imageFileExtension String?
   // posts
-  posts             Post[]         @relation("AuthorPost")
+  posts              Post[]         @relation("AuthorPost")
   // comments
-  PostComment       PostComment[]  @relation("PostCommentAuthor")
+  PostComment        PostComment[]  @relation("PostCommentAuthor")
   // likes
-  likedPosts        Post[]         @relation("PostLikes")
+  likedPosts         Post[]         @relation("PostLikes")
   // upvotes
-  upvotedComments   PostComment[]  @relation("PostCommentUpvotes")
+  upvotedComments    PostComment[]  @relation("PostCommentUpvotes")
   // downvotes
-  downvotedComments PostComment[]  @relation("PostCommentDownvotes")
+  downvotedComments  PostComment[]  @relation("PostCommentDownvotes")
   // donation links
-  donationLinks     DonationLink[] @relation("UserDonationLinks")
+  donationLinks      DonationLink[] @relation("UserDonationLinks")
 }
