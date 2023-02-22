@@ -352,9 +352,9 @@ export function PostSegment({
             <PostSegmentImage
               isEditable={isPostEditable}
               postId={postId}
-              authorId={authorId}
               postSegmentId={postSegmentId}
               imageId={segment.imageId}
+              imageFileExtension={segment.imageFileExtension}
             />
           </div>
 
@@ -408,9 +408,9 @@ export function PostSegment({
             <PostSegmentImage
               isEditable={isPostEditable}
               postId={postId}
-              authorId={authorId}
               postSegmentId={postSegmentId}
               imageId={segment.imageId}
+              imageFileExtension={segment.imageFileExtension}
             />
           )}
         </div>

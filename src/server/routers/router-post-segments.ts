@@ -16,6 +16,7 @@ const defaultPostSegmentSelect = Prisma.validator<Prisma.PostSegmentSelect>()({
   title: true,
   subtitle: true,
   imageId: true,
+  imageFileExtension: true,
   position: true,
   items: {
     select: { id: true, content: true, createdAt: true },

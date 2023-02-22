@@ -3,7 +3,6 @@ import { createPresignedPost as createPresignedPostAWS } from '@aws-sdk/s3-presi
 import {
   checkImageFileExtension,
   maxFileSizeInBytes,
-  storageImagesPath,
 } from '../services/cloud-service'
 import { serverOnly } from '../util/utils'
 
@@ -26,11 +25,11 @@ function getS3ClientConfig() {
 }
 
 export async function createPresignedPost({
-  userId,
   fileType,
+  storageImagePath,
 }: {
-  userId: string
   fileType: string
+  storageImagePath: string
 }) {
   serverOnly()
 
@@ -46,13 +45,12 @@ export async function createPresignedPost({
 
   const expiryInSeconds = 60
 
-  const { fileExtension, isValidImageExtension } =
-    checkImageFileExtension(fileType)
+  const { isValidImageExtension } = checkImageFileExtension(fileType)
 
   if (!isValidImageExtension) throw new Error('Invalid file image extension')
 
   return await createPresignedPostAWS(s3Client, {
-    Key: storageImagesPath.avatar({ userId, fileExtension }),
+    Key: storageImagePath,
     Bucket: s3Config.bucket,
     Fields: {
       'Content-Type': fileType,

@@ -12,6 +12,15 @@ export const storageImagesPath = {
     userId: string
     fileExtension: string
   }) => `avatars/${userId}.${fileExtension}`,
+  postSegmentImage: ({
+    postId,
+    postSegmentId,
+    fileExtension,
+  }: {
+    postId: string
+    postSegmentId: string
+    fileExtension: string
+  }) => `post-segment-images/${postId}/${postSegmentId}.${fileExtension}`,
 }
 
 export function checkImageFileExtension(
@@ -103,6 +112,27 @@ export function generatePublicURLAvatar({
     imageId,
     storageImageFullPath: storageImagesPath.avatar({
       userId,
+      fileExtension: imageFileExtension,
+    }),
+  })
+}
+
+export function generatePublicURLPostSegmentImage({
+  postId,
+  postSegmentId,
+  imageId,
+  imageFileExtension,
+}: {
+  postId: string
+  postSegmentId: string
+  imageId: string
+  imageFileExtension: string
+}): string {
+  return generateCloudStoragePath({
+    imageId,
+    storageImageFullPath: storageImagesPath.postSegmentImage({
+      postId,
+      postSegmentId,
       fileExtension: imageFileExtension,
     }),
   })

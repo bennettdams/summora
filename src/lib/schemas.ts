@@ -120,3 +120,5 @@ export const schemaEditUsername = z.object({
   userId: z.string().cuid(),
   username: z.string().min(2).max(40),
 })
+
+export const schemaImageFileType = z.string().startsWith('image/')

@@ -1,42 +1,47 @@
-import { useMutation } from '@tanstack/react-query'
 import Image from 'next/image'
-import { apiImageUploadPostSegments } from '../services/api-service'
-import { useCloudStorage } from '../services/use-cloud-storage'
+import {
+  generatePublicURLPostSegmentImage,
+  uploadPresignedPost,
+} from '../services/cloud-service'
 import { trpc } from '../util/trpc'
 import { ImageUpload } from './ImageUpload'
 import { Modal, useModal } from './modal'
 
+/*
+ * For the love of god, this file is very similar to "PostSegmentImage".
+ * This is because I didn't want to build an abstraction YET.
+ * If you change something here, change it there as well.
+ */
+
 export function PostSegmentImage({
   postId,
-  authorId,
   postSegmentId,
   imageId,
+  imageFileExtension,
   isEditable = false,
 }: {
   postId: string
-  authorId: string
   postSegmentId: string
   imageId: string | null
+  imageFileExtension: string | null
   isEditable?: boolean
 }): JSX.Element {
   const utils = trpc.useContext()
-  const updatePostSegmentImageIdMutation = useMutation({
-    mutationFn: apiImageUploadPostSegments,
-    onSuccess: () => {
-      utils.postSegments.byPostId.invalidate({ postId })
-    },
-  })
-  const { getPublicURLPostSegmentImage } = useCloudStorage()
-  const imageURL = !imageId
-    ? null
-    : // This implementation assumes that getting the public URL does not need a remote fetch, as this runs on every rerender.
-      getPublicURLPostSegmentImage({
-        postId,
-        authorId,
-        imageId,
-      })
+  const imageURL =
+    !imageId || !imageFileExtension
+      ? null
+      : // This implementation assumes that getting the public URL does not need a remote fetch, as this runs on every rerender.
+        generatePublicURLPostSegmentImage({
+          postId,
+          postSegmentId,
+          imageId,
+          imageFileExtension,
+        })
 
   const modalControls = useModal()
+
+  const imageUploadMutation =
+    trpc.imageUpload.getPresignedUrlPostSegmentImage.useMutation()
 
   return (
     <div
@@ -51,13 +56,25 @@ export function PostSegmentImage({
             <ImageUpload
               inputId={postSegmentId}
               onUpload={async (fileToUpload) => {
-                updatePostSegmentImageIdMutation.mutate({
-                  postId,
-                  postSegmentId,
-                  postSegmentImageFile: fileToUpload,
-                })
+                imageUploadMutation.mutate(
+                  {
+                    postSegmentId,
+                    fileType: fileToUpload.type,
+                  },
+                  {
+                    onSuccess: async (presignedPost) => {
+                      await uploadPresignedPost({
+                        file: fileToUpload,
+                        presignedPost,
+                        onSuccess: () => {
+                          utils.postSegments.byPostId.invalidate({ postId })
+                        },
+                      })
+                    },
+                  }
+                )
               }}
-              isLoadingUpload={updatePostSegmentImageIdMutation.isLoading}
+              isLoadingUpload={imageUploadMutation.isLoading}
             />
           </span>
         </div>

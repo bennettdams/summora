@@ -67,17 +67,18 @@ enum PostSegmentImagePosition {
 }
 
 model PostSegment {
-  id        String                   @id @default(cuid())
-  createdAt DateTime                 @default(now())
-  updatedAt DateTime                 @updatedAt
-  title     String
-  subtitle  String?
-  imageId   String?
-  position  PostSegmentImagePosition @default(RIGHT)
-  items     PostSegmentItem[]
+  id                 String                   @id @default(cuid())
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  title              String
+  subtitle           String?
+  imageId            String?
+  imageFileExtension String?
+  position           PostSegmentImagePosition @default(RIGHT)
+  items              PostSegmentItem[]
   // for Post.segments
-  Post      Post                     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId    String
+  Post               Post                     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId             String
   //
 }
 
