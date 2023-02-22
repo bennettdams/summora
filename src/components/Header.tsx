@@ -68,9 +68,10 @@ function UserNavbarInternal({ userId }: { userId: string }) {
             <div className="flex items-center sm:ml-2">
               <Avatar
                 userId={userId}
-                username={user.username ?? ''}
-                imageId={user.imageId ?? null}
-                imageBlurDataURL={user.imageBlurDataURL ?? null}
+                username={user.username}
+                imageId={user.imageId}
+                imageBlurDataURL={user.imageBlurDataURL}
+                imageFileExtension={user.imageFileExtension}
                 size="small"
                 placeholderColorVariant="orange"
               />

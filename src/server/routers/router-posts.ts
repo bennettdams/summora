@@ -31,6 +31,7 @@ const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
       username: true,
       imageId: true,
       imageBlurDataURL: true,
+      imageFileExtension: true,
     },
   },
 })

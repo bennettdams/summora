@@ -236,6 +236,7 @@ export function PostsPage({
                       username: post.author.username,
                       imageId: post.author.imageId,
                       imageBlurDataURL: post.author.imageBlurDataURL,
+                      imageFileExtension: post.author.imageFileExtension,
                     },
                     noOfViews: post.noOfViews,
                     noOfComments: post._count.comments,

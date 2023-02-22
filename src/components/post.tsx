@@ -31,6 +31,7 @@ type PostsPostsList =
         username: string
         imageId: string | null
         imageBlurDataURL: string | null
+        imageFileExtension: string | null
       }
     }[]
 
@@ -186,6 +187,7 @@ function PostsListItem({
                       username={post.author.username}
                       imageId={post.author.imageId}
                       imageBlurDataURL={post.author.imageBlurDataURL}
+                      imageFileExtension={post.author.imageFileExtension}
                       size="small"
                     />
                   </div>

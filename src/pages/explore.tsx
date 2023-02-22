@@ -17,7 +17,12 @@ async function findPostsViews(prisma: PrismaClient) {
       orderBy: { noOfViews: 'desc' },
       include: {
         author: {
-          select: { username: true, imageId: true, imageBlurDataURL: true },
+          select: {
+            username: true,
+            imageId: true,
+            imageBlurDataURL: true,
+            imageFileExtension: true,
+          },
         },
         category: { select: { name: true } },
       },

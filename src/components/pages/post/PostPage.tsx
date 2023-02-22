@@ -407,6 +407,7 @@ function PostPageInternal<
                   username={post.author.username}
                   imageId={post.author.imageId}
                   imageBlurDataURL={post.author.imageBlurDataURL}
+                  imageFileExtension={post.author.imageFileExtension}
                   size="medium"
                 />
 
@@ -703,6 +704,7 @@ type PostComment = {
   authorUsername: string
   authorImageId: string | null
   authorImageBlurDataURL: string | null
+  authorImageFileExtension: string | null
   upvotedBy: { userId: string }[]
   downvotedBy: { userId: string }[]
 }
@@ -818,6 +820,7 @@ function Comment({
                   username={comment.authorUsername}
                   imageId={comment.authorImageId}
                   imageBlurDataURL={comment.authorImageBlurDataURL}
+                  imageFileExtension={comment.authorImageFileExtension}
                 />
               </div>
 
@@ -932,6 +935,7 @@ function createRootComments(
     authorUsername: comm.author.username,
     authorImageId: comm.author.imageId,
     authorImageBlurDataURL: comm.author.imageBlurDataURL,
+    authorImageFileExtension: comm.author.imageFileExtension,
     upvotedBy: comm.upvotedBy.map((upvote) => ({ userId: upvote.id })),
     downvotedBy: comm.downvotedBy.map((downvote) => ({ userId: downvote.id })),
     commentChilds: [],

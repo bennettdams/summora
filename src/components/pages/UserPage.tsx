@@ -59,6 +59,7 @@ function UserPageInternal({
   updatedAt,
   imageId,
   imageBlurDataURL,
+  imageFileExtension,
   userStatistics,
 }: UserPageProps & {
   userId: string
@@ -67,6 +68,7 @@ function UserPageInternal({
   updatedAt: Date
   imageId: string | null
   imageBlurDataURL: string | null
+  imageFileExtension: string | null
 }): JSX.Element {
   const {
     data: posts,
@@ -210,6 +212,7 @@ function UserPageInternal({
                 username={username}
                 imageId={imageId}
                 imageBlurDataURL={imageBlurDataURL}
+                imageFileExtension={imageFileExtension}
                 size="large"
               />
             </div>
@@ -278,6 +281,7 @@ function UserPageInternal({
                   username={username}
                   imageId={imageId}
                   imageBlurDataURL={imageBlurDataURL}
+                  imageFileExtension={imageFileExtension}
                   size="small"
                 />
               </div>
@@ -291,6 +295,7 @@ function UserPageInternal({
                   username={username}
                   imageId={imageId}
                   imageBlurDataURL={imageBlurDataURL}
+                  imageFileExtension={imageFileExtension}
                   size="medium"
                 />
               </div>
@@ -304,6 +309,7 @@ function UserPageInternal({
                   username={username}
                   imageId={imageId}
                   imageBlurDataURL={imageBlurDataURL}
+                  imageFileExtension={imageFileExtension}
                   size="large"
                 />
               </div>
@@ -333,6 +339,7 @@ function UserPageInternal({
                 username: post.author.username,
                 imageId: post.author.imageId,
                 imageBlurDataURL: post.author.imageBlurDataURL,
+                imageFileExtension: post.author.imageFileExtension,
               },
               noOfViews: post.noOfViews,
               noOfComments: post._count.comments,

@@ -20,6 +20,7 @@ const defaultPostCommentSelect = Prisma.validator<Prisma.PostCommentSelect>()({
       username: true,
       imageId: true,
       imageBlurDataURL: true,
+      imageFileExtension: true,
     },
   },
 })
