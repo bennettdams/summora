@@ -3,9 +3,8 @@ import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { AppMessage } from '../../lib/app-messages'
 import { schemaEditUsername } from '../../lib/schemas'
-import { avatarImageIdPrefix } from '../../pages/api/image-upload/avatars'
-import { deleteAvatarInStorage } from '../../services/use-cloud-storage'
 import { ensureAuthorTRPC } from '../api-security'
+import { deleteAvatarInStorage } from '../cloud-storage'
 import { ContextTRPC } from '../context-trpc'
 import { procedure, protectedProcedure, router } from '../trpc'
 
@@ -28,13 +27,13 @@ async function ensureAuthor({
   prisma: ContextTRPC['prisma']
   userId: string
 }) {
-  await ensureAuthorTRPC({
+  return await ensureAuthorTRPC({
     topic: 'user',
     userIdAuth,
     cbQueryEntity: async () => {
       const user = await prisma.user.findUnique({
         where: { id: userId },
-        select: { id: true },
+        select: { id: true, imageFileExtension: true },
       })
 
       if (!user?.id) {
@@ -43,7 +42,7 @@ async function ensureAuthor({
           message: 'The user does not exist.',
         })
       } else {
-        return { authorId: user.id, entity: null }
+        return { authorId: user.id, entity: user }
       }
     },
   })
@@ -100,33 +99,34 @@ export const userRouter = router({
       return message
     }),
   // REMOVE AVATAR
-  removeAvatar: protectedProcedure
-    .input(
-      z.object({
-        userId: z.string().cuid(),
-        // min. 8:   avatar prefix + ID etc.
-        imageId: z.string().startsWith(avatarImageIdPrefix).min(8),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      const { userId, imageId } = input
+  removeAvatar: protectedProcedure.mutation(async ({ ctx }) => {
+    const userId = ctx.userIdAuth
 
-      await ensureAuthor({
-        userIdAuth: ctx.userIdAuth,
-        prisma: ctx.prisma,
-        userId,
-      })
+    const { imageFileExtension } = await ensureAuthor({
+      userIdAuth: ctx.userIdAuth,
+      prisma: ctx.prisma,
+      userId,
+    })
 
+    if (!imageFileExtension) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: `No image or file extension for user ID '${userId}'`,
+      })
+    } else {
       await deleteAvatarInStorage({
         userId,
-        imageId,
-        req: ctx.req,
-        res: ctx.res,
+        fileExtension: imageFileExtension,
       })
 
       await ctx.prisma.user.update({
         where: { id: userId },
-        data: { imageId: null, imageBlurDataURL: null },
+        data: {
+          imageId: null,
+          imageBlurDataURL: null,
+          imageFileExtension: null,
+        },
       })
-    }),
+    }
+  }),
 })

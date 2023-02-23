@@ -219,9 +219,7 @@ function UserPageInternal({
 
             <div className="grid place-items-center">
               {isOwnUser && !!imageId && (
-                <ButtonRemove
-                  onClick={() => deleteAvatar.mutate({ userId, imageId })}
-                >
+                <ButtonRemove onClick={() => deleteAvatar.mutate()}>
                   Delete avatar
                 </ButtonRemove>
               )}

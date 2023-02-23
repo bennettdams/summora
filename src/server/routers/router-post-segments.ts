@@ -5,8 +5,8 @@ import {
   schemaCreatePostSegmentItem,
   schemaUpdatePostSegment,
 } from '../../lib/schemas'
-import { deletePostSegmentImageInStorage } from '../../services/use-cloud-storage'
 import { ensureAuthorTRPC } from '../api-security'
+import { deletePostSegmentImageInStorage } from '../cloud-storage'
 import { ContextTRPC } from '../context-trpc'
 import { procedure, protectedProcedure, router } from '../trpc'
 
@@ -40,7 +40,7 @@ async function ensureAuthor({
       const postSegment = await prisma.postSegment.findUnique({
         where: { id: postSegmentId },
         select: {
-          imageId: true,
+          imageFileExtension: true,
           Post: { select: { authorId: true, id: true } },
         },
       })
@@ -148,18 +148,16 @@ export const postSegmentsRouter = router({
 
       if (res) {
         const {
-          imageId,
-          Post: { authorId, id: postId },
+          imageFileExtension,
+          Post: { id: postId },
         } = res
 
         // Delete the segment image in cloud storage
-        if (imageId) {
+        if (imageFileExtension) {
           await deletePostSegmentImageInStorage({
             postId,
-            authorId,
-            imageId,
-            req: ctx.req,
-            res: ctx.res,
+            postSegmentId: segmentId,
+            fileExtension: imageFileExtension,
           })
         }
 
