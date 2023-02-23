@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { AppMessage } from '../../lib/app-messages'
@@ -7,6 +8,16 @@ import { deleteAvatarInStorage } from '../../services/use-cloud-storage'
 import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
 import { procedure, protectedProcedure, router } from '../trpc'
+
+const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  username: true,
+  imageId: true,
+  imageBlurDataURL: true,
+  imageFileExtension: true,
+})
 
 async function ensureAuthor({
   userIdAuth,
@@ -51,6 +62,7 @@ export const userRouter = router({
 
       const user = await ctx.prisma.user.findUnique({
         where: { id: userId },
+        select: defaultUserSelect,
       })
 
       if (!user) {
