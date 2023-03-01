@@ -92,6 +92,13 @@ export function PostSegmentImage({
             (max-width: 768px) 100vw,
             (max-width: 1200px) 50vw,
             33vw"
+            // the following can be used to show a fade-in animation via placeholder, but it will delay when the image is visible
+            // placeholder="blur"
+            // blurDataURL={imageBlurDataURLFallback}
+            // className={`object-contain duration-500 ease-in-out ${
+            //   isLoadingImage ? 'blur-xl grayscale' : 'blur-0 grayscale-0'
+            // }`}
+            // onLoadingComplete={() => setLoadingIsLoadingImage(false)}
           />
           <Modal
             forceFullWidth

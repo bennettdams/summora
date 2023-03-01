@@ -67,6 +67,7 @@ function AvatarInternal({
   userId,
   username,
   imageId,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   imageBlurDataURL,
   imageFileExtension,
   size = 'medium',
@@ -144,12 +145,17 @@ function AvatarInternal({
           <Image
             src={imageURL}
             alt="Avatar"
-            placeholder="blur"
             height={sizePixels}
             width={sizePixels}
             style={{ objectFit: 'cover' }}
             className="rounded-full"
-            blurDataURL={imageBlurDataURL ?? undefined}
+            // the following can be used to show a fade-in animation via placeholder, but it will delay when the image is visible
+            // placeholder="blur"
+            // blurDataURL={imageBlurDataURL ?? imageBlurDataURLFallback}
+            // className={`rounded-full duration-75 ease-in-out ${
+            //   isLoadingImage ? 'blur-2xl grayscale' : 'blur-0 grayscale-0'
+            // }`}
+            // onLoadingComplete={() => setLoadingIsLoadingImage(false)}
           />
         </div>
       ) : (

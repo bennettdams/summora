@@ -4,6 +4,9 @@ import type { PresignedPost } from '@aws-sdk/s3-presigned-post'
 export const maxFileSizeInBytes = 5 * 1024 * 1024
 export const validExtensions = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG']
 
+// export const imageBlurDataURLFallback =
+//   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAACXBIWXMAAAF+AAABfgHNRE/uAAABQUlEQVR4nAE2Acn+AP//qtGYdK9cP7BsNt6+fv//1ffXab1dAM1wAMpuBQDo0XXVlG2yajyudkeeayzcrknQhRqyYxjbcgDDZg0AvYRJ4KiJxJFn1IxYkFUtcz4Av3EU05VK2p5H6JY1ANecYd6smsiSaeO2kLeWc2hDFKhlHqdxKKh1Lfe0NgDcrlbguaqwgWebfF/mzrLRwKh0WTdKKwBKLQCbYyIAtIA27c/A2rqpf1Q9zrKO69e91cWqm4pvk4FmmYNmAJR1O+O0kuvRvvHXyMicdqWCUdC1ite9mO/jxfXr1ABpTB66e0q9kWvdxKvOs596TyixjVm+m2q8n261m20AJxYAd0kftn5UrYRarYdcuXtNfU0mTz4lxaFouo5IABcAAFI3EMCFVpZhNI1aI8KFSn5OKgAAAD4vKLaTWXVdnITamnILAAAAAElFTkSuQmCC'
+
 export const storageImagesPath = {
   avatar: ({
     userId,
