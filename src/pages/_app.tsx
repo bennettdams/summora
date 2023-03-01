@@ -1,13 +1,11 @@
 import { DM_Serif_Display, Nunito } from '@next/font/google'
-import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs'
-import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { type Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import { type AppType } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { ErrorBoundary } from '../components/error'
 import { Footer } from '../components/Footer'
 import { Header } from '../components/Header'
@@ -52,41 +50,36 @@ const App: AppType<{ session: Session | null }> = ({
 
   // const [queryClient] = useState(() => new QueryClient())
 
-  // Create a new Supabase browser client on every first render.
-  const [supabaseClient] = useState(() => createBrowserSupabaseClient())
-
   return (
     <ErrorBoundary>
       <ReactQueryDevtools initialIsOpen={true} />
       <SessionProvider session={session}>
-        <SessionContextProvider supabaseClient={supabaseClient}>
-          {/* tRPC already brings the `QueryClientProvider` */}
-          {/* https://github.com/trpc/trpc/discussions/1594#discussioncomment-2303573 */}
-          {/* <QueryClientProvider client={queryClient}> */}
-          <Head>
-            <title>Condun</title>
-            <link rel="icon" href="/favicon.ico" />
-          </Head>
+        {/* tRPC already brings the `QueryClientProvider` */}
+        {/* https://github.com/trpc/trpc/discussions/1594#discussioncomment-2303573 */}
+        {/* <QueryClientProvider client={queryClient}> */}
+        <Head>
+          <title>Condun</title>
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
 
-          <div
-            className={`${globalFont.variable} ${globalFontSerif.variable} font-light flex h-screen min-h-screen flex-col bg-dlight font-sans text-gray-500 decoration-dsecondary caret-dprimary selection:bg-dprimary selection:text-dtertiary`}
-          >
-            <Header />
+        <div
+          className={`${globalFont.variable} ${globalFontSerif.variable} font-light flex h-screen min-h-screen flex-col bg-dlight font-sans text-gray-500 decoration-dsecondary caret-dprimary selection:bg-dprimary selection:text-dtertiary`}
+        >
+          <Header />
 
-            <div ref={mainContentRef} className="flex-grow overflow-y-auto">
-              <main className="h-full">
-                {/* boundary to catch errors where we can still show some UI (like the header and footer) */}
-                <ErrorBoundary>
-                  {/* <TailwindCSSBreakpoint /> */}
-                  <Component {...pageProps} />
-                </ErrorBoundary>
-              </main>
-            </div>
-
-            <Footer />
+          <div ref={mainContentRef} className="flex-grow overflow-y-auto">
+            <main className="h-full">
+              {/* boundary to catch errors where we can still show some UI (like the header and footer) */}
+              <ErrorBoundary>
+                {/* <TailwindCSSBreakpoint /> */}
+                <Component {...pageProps} />
+              </ErrorBoundary>
+            </main>
           </div>
-          {/* </QueryClientProvider> */}
-        </SessionContextProvider>
+
+          <Footer />
+        </div>
+        {/* </QueryClientProvider> */}
       </SessionProvider>
     </ErrorBoundary>
   )
