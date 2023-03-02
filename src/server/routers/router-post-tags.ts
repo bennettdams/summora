@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { schemaTagSearch } from '../../lib/schemas'
@@ -6,10 +6,10 @@ import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
 import { procedure, protectedProcedure, router } from '../trpc'
 
-const defaultPostTagsSelect = Prisma.validator<Prisma.PostTagSelect>()({
+const defaultPostTagsSelect = {
   tagId: true,
   label: true,
-})
+} satisfies Prisma.PostTagSelect
 
 async function ensureAuthor({
   userIdAuth,

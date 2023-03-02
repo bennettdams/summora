@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { schemaCreatePostComment } from '../../lib/schemas'
@@ -6,7 +6,7 @@ import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
 import { procedure, protectedProcedure, router } from '../trpc'
 
-const defaultPostCommentSelect = Prisma.validator<Prisma.PostCommentSelect>()({
+const defaultPostCommentSelect = {
   commentId: true,
   commentParentId: true,
   text: true,
@@ -23,7 +23,7 @@ const defaultPostCommentSelect = Prisma.validator<Prisma.PostCommentSelect>()({
       imageFileExtension: true,
     },
   },
-})
+} satisfies Prisma.PostCommentSelect
 
 async function ensureAuthor({
   userIdAuth,

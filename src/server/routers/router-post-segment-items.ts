@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { schemaUpdatePostSegmentItem } from '../../lib/schemas'
@@ -6,12 +6,11 @@ import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
 import { protectedProcedure, router } from '../trpc'
 
-const defaultPostSegmentItemSelect =
-  Prisma.validator<Prisma.PostSegmentItemSelect>()({
-    id: true,
-    createdAt: true,
-    content: true,
-  })
+const defaultPostSegmentItemSelect = {
+  id: true,
+  createdAt: true,
+  content: true,
+} satisfies Prisma.PostSegmentItemSelect
 
 async function ensureAuthor({
   userIdAuth,

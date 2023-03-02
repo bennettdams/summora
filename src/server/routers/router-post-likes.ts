@@ -1,11 +1,11 @@
-import { Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { procedure, protectedProcedure, router } from '../trpc'
 
-const defaultPostLikesSelect = Prisma.validator<Prisma.PostSelect>()({
+const defaultPostLikesSelect = {
   likedBy: { select: { id: true } },
-})
+} satisfies Prisma.PostSelect
 
 export const postLikesRouter = router({
   // READ

@@ -1,11 +1,10 @@
-import { Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
 import { procedure, router } from '../trpc'
 
-const defaultPostCategoriesSelect =
-  Prisma.validator<Prisma.PostCategorySelect>()({
-    id: true,
-    name: true,
-  })
+const defaultPostCategoriesSelect = {
+  id: true,
+  name: true,
+} satisfies Prisma.PostCategorySelect
 
 export const postCategoriesRouter = router({
   // READ ALL

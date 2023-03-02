@@ -1,11 +1,10 @@
-import { Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
 import { procedure, router } from '../trpc'
 
-const defaultDonationProvidersSelect =
-  Prisma.validator<Prisma.DonationProviderSelect>()({
-    name: true,
-    donationProviderId: true,
-  })
+const defaultDonationProvidersSelect = {
+  name: true,
+  donationProviderId: true,
+} satisfies Prisma.DonationProviderSelect
 
 export const donationProviderRouter = router({
   // READ ALL

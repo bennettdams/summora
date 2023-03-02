@@ -1,4 +1,4 @@
-import { DonationProviderId } from '@prisma/client'
+import type { DonationProviderId } from '@prisma/client'
 import { z } from 'zod'
 import { OmitStrict, Undefinable } from '../types/util-types'
 

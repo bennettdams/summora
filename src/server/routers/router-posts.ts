@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import {
@@ -10,7 +10,7 @@ import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
 import { procedure, protectedProcedure, router } from '../trpc'
 
-const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
+const defaultPostSelect = {
   id: true,
   createdAt: true,
   updatedAt: true,
@@ -34,7 +34,7 @@ const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
       imageFileExtension: true,
     },
   },
-})
+} satisfies Prisma.PostSelect
 
 async function ensureAuthor({
   userIdAuth,

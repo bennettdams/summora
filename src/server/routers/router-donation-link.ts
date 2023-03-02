@@ -2,7 +2,7 @@
  *
  * This is an example router, you can delete this file and then update `../pages/api/trpc/[trpc].tsx`
  */
-import { Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import {
@@ -17,15 +17,13 @@ import { procedure, protectedProcedure, router } from '../trpc'
  * It's important to always explicitly say which fields you want to return in order to not leak extra information
  * @see https://github.com/prisma/prisma/issues/9353
  */
-const defaultDonationLinkSelect = Prisma.validator<Prisma.DonationLinkSelect>()(
-  {
-    donationLinkId: true,
-    address: true,
-    donationProvider: {
-      select: { name: true, donationProviderId: true },
-    },
-  }
-)
+const defaultDonationLinkSelect = {
+  donationLinkId: true,
+  address: true,
+  donationProvider: {
+    select: { name: true, donationProviderId: true },
+  },
+} satisfies Prisma.DonationLinkSelect
 
 async function ensureAuthor({
   userIdAuth,

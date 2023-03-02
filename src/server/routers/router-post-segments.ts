@@ -10,7 +10,7 @@ import { deletePostSegmentImageInStorage } from '../cloud-storage'
 import { ContextTRPC } from '../context-trpc'
 import { procedure, protectedProcedure, router } from '../trpc'
 
-const defaultPostSegmentSelect = Prisma.validator<Prisma.PostSegmentSelect>()({
+const defaultPostSegmentSelect = {
   id: true,
   createdAt: true,
   title: true,
@@ -22,7 +22,7 @@ const defaultPostSegmentSelect = Prisma.validator<Prisma.PostSegmentSelect>()({
     select: { id: true, content: true, createdAt: true },
     orderBy: { createdAt: 'asc' },
   },
-})
+} satisfies Prisma.PostSegmentSelect
 
 async function ensureAuthor({
   userIdAuth,
