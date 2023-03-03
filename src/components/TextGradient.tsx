@@ -10,7 +10,7 @@ export function TextGradient({
   return (
     <div
       className={
-        'font-bold ml-4 inline-block text-center font-serif leading-none tracking-tight' +
+        'ml-4 inline-block text-center font-serif leading-none tracking-tight' +
         ` ${!big ? 'text-sm md:text-lg' : 'text-2xl md:text-5xl'}`
       }
     >

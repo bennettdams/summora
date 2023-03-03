@@ -337,7 +337,7 @@ function PostPageInternal<
 
                   {/* POST TITLE */}
                   <div>
-                    <p className="font-bold mx-0 font-serif text-3xl leading-7 text-dprimary md:mx-20 md:text-4xl">
+                    <p className="mx-0 font-serif text-3xl font-semibold leading-7 text-dprimary md:mx-20 md:text-4xl">
                       {post.title}
                     </p>
                   </div>
@@ -451,7 +451,7 @@ function PostPageInternal<
               <Box>
                 <div className="flex w-full items-center space-x-3">
                   <span className="italic">Search</span>
-                  <span className="font-bold text-dprimary">
+                  <span className="font-semibold text-dprimary">
                     {inputTagSearch}
                   </span>
                 </div>
@@ -773,12 +773,12 @@ function Comment({
       >
         <div className="flex w-full">
           <div className="group relative grid w-10 place-items-center">
-            <p className="font-bold block text-sm tracking-tight text-dsecondary group-hover:hidden">
+            <p className="block text-sm font-semibold tracking-tight text-dsecondary group-hover:hidden">
               {comment.upvotedBy.length - comment.downvotedBy.length}
             </p>
             <p
               title="Upvotes | Downvotes"
-              className="font-bold absolute hidden w-20 text-center text-xs tracking-tight text-dtertiary group-hover:block"
+              className="absolute hidden w-20 text-center text-xs tracking-tight text-dtertiary group-hover:block"
             >
               {comment.upvotedBy.length} | {comment.downvotedBy.length}
             </p>

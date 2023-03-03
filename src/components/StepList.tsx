@@ -18,7 +18,7 @@ export function StepList({
               </div>
             )}
 
-            <div className="font-bold relative inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-dsecondary text-xl leading-none text-white">
+            <div className="relative inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-dsecondary text-xl leading-none text-white">
               {step.no + 1}
             </div>
 
