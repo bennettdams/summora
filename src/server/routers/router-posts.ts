@@ -3,6 +3,7 @@ import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import {
   schemaCreatePost,
+  schemaPostSearch,
   schemaUpdatePost,
   schemaUpdatePostCategory,
 } from '../../lib/schemas'
@@ -196,4 +197,48 @@ export const postsRouter = router({
       // placeholder return as queries need one
       return null
     }),
+  // SEARCH
+  search: procedure.input(schemaPostSearch).query(async ({ input, ctx }) => {
+    const { searchInput } = input
+
+    return await ctx.prisma.post.findMany({
+      select: defaultPostSelect,
+      where: {
+        OR: [
+          { title: { contains: searchInput, mode: 'insensitive' } },
+          { subtitle: { contains: searchInput, mode: 'insensitive' } },
+          {
+            segments: {
+              some: {
+                OR: [
+                  { title: { contains: searchInput, mode: 'insensitive' } },
+                  { subtitle: { contains: searchInput, mode: 'insensitive' } },
+                ],
+              },
+            },
+          },
+          {
+            tags: {
+              some: {
+                OR: [
+                  {
+                    label: { contains: searchInput, mode: 'insensitive' },
+                  },
+                  {
+                    description: { contains: searchInput, mode: 'insensitive' },
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      },
+      orderBy: [
+        { likedBy: { _count: 'desc' } },
+        { noOfViews: 'desc' },
+        { title: 'asc' },
+      ],
+      take: 10,
+    })
+  }),
 })

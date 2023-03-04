@@ -89,7 +89,7 @@ export function Tag({
           className="flex"
           onClick={() => !!handleRemoving && onClick?.(tag.tagId)}
         >
-          <IconTrash size="small" />
+          <IconTrash size="small" className="hover:text-white" />
           <span className="inline-block text-xs font-semibold uppercase tracking-widest">
             Confirm
           </span>

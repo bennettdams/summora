@@ -200,7 +200,7 @@ function PostPageInternal<
   )
   const {
     handleSubmit: handleSubmitTagSearch,
-    register: registerTagSearchTagSearch,
+    register: registerTagSearch,
     watch: watchTagSearch,
   } = useZodForm({
     schema: schemaTagSearch,
@@ -217,11 +217,15 @@ function PostPageInternal<
   async function handleRemoveTag(tagId: string): Promise<void> {
     removeFromPost.mutate({ postId, tagId })
   }
+
   const inputTagSearchDebounced = useDebounce(inputTagSearch, 500)
   const { data: tagsSearchResult, isFetching } = trpc.postTags.search.useQuery(
     { searchInput: inputTagSearchDebounced },
     {
-      enabled: !!inputTagSearchDebounced && inputTagSearchDebounced.length >= 2,
+      enabled:
+        !!inputTagSearchDebounced &&
+        inputTagSearchDebounced.length >=
+          (schemaTagSearch.shape.searchInput.minLength ?? 2),
       keepPreviousData: true,
       refetchOnWindowFocus: false,
     }
@@ -462,7 +466,7 @@ function PostPageInternal<
                   })}
                 >
                   <Input
-                    {...registerTagSearchTagSearch('searchInput')}
+                    {...registerTagSearch('searchInput')}
                     placeholder="Search for tags.."
                     isSpecial
                     isLoading={isFetching}

@@ -36,8 +36,15 @@ type PostsPostsList =
     }[]
 
 type PostPostsList = NonNullable<PostsPostsList>[number]
+type ViewVariant = 'short' | 'long'
 
-export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
+export function PostsList({
+  posts,
+  initialViewVariant = 'long',
+}: {
+  posts: PostsPostsList
+  initialViewVariant?: ViewVariant
+}): JSX.Element {
   const { userIdAuth } = useAuth()
 
   const choiceSelectControl = useChoiceSelect(
@@ -53,7 +60,7 @@ export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
         icon: <IconShort className="text-dtertiary" />,
       },
     ],
-    'long'
+    initialViewVariant
   )
 
   const [animateRef] = useAutoAnimate<HTMLDivElement>()
@@ -64,10 +71,8 @@ export function PostsList({ posts }: { posts: PostsPostsList }): JSX.Element {
         <ChoiceSelect control={choiceSelectControl} />
       </div>
 
-      {!posts ? (
-        <NoContent>No posts</NoContent>
-      ) : posts.length === 0 ? (
-        <div>No posts yet.</div>
+      {!posts || posts.length === 0 ? (
+        <NoContent>No posts.</NoContent>
       ) : choiceSelectControl.selected.choiceId === 'long' ? (
         <div
           ref={animateRef}

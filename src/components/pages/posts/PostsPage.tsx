@@ -4,7 +4,6 @@ import img from '../../../../public/assets/homepage-hero.jpg'
 import { PostsPageProps } from '../../../pages'
 import { ROUTES } from '../../../services/routing'
 import { trpc } from '../../../util/trpc'
-import { Box } from '../../Box'
 import { IconArrowCircleRight, IconLightning } from '../../Icon'
 import { Link } from '../../link'
 import { LoadingAnimation } from '../../LoadingAnimation'
@@ -20,11 +19,6 @@ export function PostsPage({
   noOfCommentsCreatedLast24Hours,
 }: PostsPageProps): JSX.Element {
   const { data: posts, isLoading, isError } = trpc.posts.some.useQuery()
-  const {
-    data: postCategories,
-    isLoading: isLoadingCategories,
-    isError: isErrorCategories,
-  } = trpc.postCategories.all.useQuery()
 
   return (
     <Page
@@ -164,28 +158,6 @@ export function PostsPage({
             </p>
           </div>
         </div>
-      </PageSection>
-
-      <PageSection label="Find by category">
-        {isLoadingCategories ? (
-          <div className="grid place-items-center">
-            <LoadingAnimation />
-          </div>
-        ) : isErrorCategories ? (
-          <NoContent>Error while loading categories.</NoContent>
-        ) : !postCategories || postCategories.length === 0 ? (
-          <NoContent>No post categories found.</NoContent>
-        ) : (
-          <div className="grid grid-cols-2 gap-6 text-center text-lg md:grid-cols-4">
-            {postCategories.map((category) => (
-              <Box padding="small" key={category.id}>
-                <span className="hover:font-bold cursor-pointer">
-                  {category.name}
-                </span>
-              </Box>
-            ))}
-          </div>
-        )}
       </PageSection>
 
       <PageSection>
