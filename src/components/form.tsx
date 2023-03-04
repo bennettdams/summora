@@ -83,6 +83,8 @@ type InputProps = React.ComponentPropsWithoutRef<'input'> & {
   blurOnEnterPressed?: boolean
   isSpecial?: boolean
   isLoading?: boolean
+  icon?: ReactNode
+  textAlignCenter?: boolean
 }
 
 /**
@@ -101,6 +103,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     blurOnEnterPressed = false,
     isSpecial = false,
     isLoading = false,
+    textAlignCenter = false,
+    icon,
     ...props
   },
   ref
@@ -112,7 +116,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         <input
           type={props.type ?? 'text'}
           className={
-            'relative block w-full disabled:cursor-not-allowed ' +
+            `${textAlignCenter ? 'text-center' : 'text-left'}` +
+            ' relative block w-full disabled:cursor-not-allowed ' +
             (isSpecial
               ? `border-b-2 border-t-0 border-l-0 border-r-0 border-dtertiary bg-transparent outline-none focus:border-dprimary focus:ring-0 ${
                   small ? 'p-3 px-8' : 'p-6 px-12'
@@ -141,10 +146,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           ref={ref}
         />
 
-        {isLoading && (
+        {isLoading ? (
           <div className="absolute">
             <LoadingAnimation size="small" />
           </div>
+        ) : (
+          <div className="absolute">{icon}</div>
         )}
       </div>
 
