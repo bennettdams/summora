@@ -202,6 +202,9 @@ function PostPageInternal<
     handleSubmit: handleSubmitTagSearch,
     register: registerTagSearch,
     watch: watchTagSearch,
+    formState: {
+      errors: { searchInput: errorSearchInput },
+    },
   } = useZodForm({
     schema: schemaTagSearch,
     defaultValues: defaultValuesTagSearch,
@@ -471,6 +474,7 @@ function PostPageInternal<
                     isSpecial
                     isLoading={isFetching}
                     small
+                    validationErrorMessage={errorSearchInput?.message}
                   />
                 </Form>
 

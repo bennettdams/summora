@@ -78,7 +78,7 @@ export function FormSubmit<TFieldValues extends FieldValues>(
 type InputProps = React.ComponentPropsWithoutRef<'input'> & {
   small?: boolean
   hasLabel?: boolean
-  validationErrorMessage?: string
+  validationErrorMessage: string | undefined
   /** This is used in forms that should submit on blur. */
   blurOnEnterPressed?: boolean
   isSpecial?: boolean
