@@ -6,7 +6,7 @@ export function Footer(): JSX.Element {
           <span className="ml-3 text-xl">Condun</span>
         </a>
         <p className="hidden border-l-2 border-dtertiary text-sm sm:ml-4 sm:mt-0 sm:block sm:py-2 sm:pl-4">
-          © 2022 Condun —
+          © 2023 Condun —
         </p>
         <span className="inline-flex justify-center sm:mt-0 sm:justify-start">
           <a className="ml-3">

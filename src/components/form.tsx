@@ -89,11 +89,14 @@ type InputProps = React.ComponentPropsWithoutRef<'input'> & {
 
 /**
  * Additional props:
- * - small?: `boolean`
- * - hasLabel?: `boolean`
- * - validationErrorMessage?: `string`
- * - blurOnEnterPressed?: `boolean`
- * - isSpecial?: `boolean`
+ * - small?: boolean
+ * - hasLabel?: boolean
+ * - validationErrorMessage: string | undefined
+ * - blurOnEnterPressed?: boolean
+ * - isSpecial?: boolean
+ * - isLoading?: boolean
+ * - icon?: ReactNode
+ * - textAlignCenter?: boolean
  */
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {

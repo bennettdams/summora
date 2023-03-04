@@ -7,6 +7,7 @@ import { useDebounce } from '../../util/use-debounce'
 import { useZodForm } from '../../util/use-zod-form'
 import { Box } from '../Box'
 import { Form, Input } from '../form'
+import { IconSearch } from '../Icon'
 import { LoadingAnimation } from '../LoadingAnimation'
 import { NoContent } from '../NoContent'
 import { Page, PageSection } from '../Page'
@@ -73,20 +74,24 @@ export function ExplorePage({
     <Page>
       <PageSection label="Search for posts">
         <div className="space-y-8">
-          <Form
-            onSubmit={handleSubmitPostSearch(() => {
-              // noop, this is executed via debounce above
-            })}
-          >
-            <Input
-              {...registerPostSearch('searchInput')}
-              placeholder="Search for posts.."
-              isSpecial
-              isLoading={isFetching}
-              small
-              validationErrorMessage={errorSearchInput?.message}
-            />
-          </Form>
+          <div className="mx-auto my-12 w-full lg:w-1/2">
+            <Form
+              onSubmit={handleSubmitPostSearch(() => {
+                // noop, this is executed via debounce above
+              })}
+            >
+              <Input
+                {...registerPostSearch('searchInput')}
+                placeholder="What are you looking for?"
+                isSpecial
+                isLoading={isFetching}
+                small
+                validationErrorMessage={errorSearchInput?.message}
+                icon={<IconSearch size="big" className="text-dprimary" />}
+                textAlignCenter={true}
+              />
+            </Form>
+          </div>
 
           <Box>
             <p>Filter by topic..</p>

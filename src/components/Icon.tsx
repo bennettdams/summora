@@ -1,37 +1,38 @@
 import {
-  BookmarkSquareIcon as BookmarkSquareIconOutline,
-  BoltIcon as BoltIconOutline,
-  CheckCircleIcon as CheckCircleIconOutline,
-  HeartIcon as HeartIconOutline,
   ArrowLeftOnRectangleIcon as ArrowLeftOnRectangleIconOutline,
   ArrowRightOnRectangleIcon as ArrowRightOnRectangleIconOutline,
+  BellIcon as BellIconOutline,
+  BoltIcon as BoltIconOutline,
+  BookmarkSquareIcon as BookmarkSquareIconOutline,
+  CheckCircleIcon as CheckCircleIconOutline,
+  HeartIcon as HeartIconOutline,
+  HomeIcon as HomeIconOutline,
+  MagnifyingGlassIcon as MagnifyingGlassIconOutline,
   MinusCircleIcon as MinusCircleIconOutline,
   PlusCircleIcon as PlusCircleIconOutline,
-  BellIcon as BellIconOutline,
   UserCircleIcon as UserCircleIconOutline,
-  HomeIcon as HomeIconOutline,
 } from '@heroicons/react/24/outline'
 
 import {
-  Bars3Icon,
-  ChatBubbleBottomCenterTextIcon,
   ArrowDownCircleIcon,
   ArrowRightCircleIcon,
-  CheckIcon,
+  ArrowUturnLeftIcon,
+  Bars3Icon,
   CalendarIcon,
-  ChevronUpDownIcon,
+  ChatBubbleBottomCenterTextIcon,
+  CheckIcon,
   ChevronDownIcon,
+  ChevronUpDownIcon,
   CurrencyDollarIcon,
   EyeIcon,
   HeartIcon,
   PencilIcon,
   PlusIcon,
   QuestionMarkCircleIcon,
-  ArrowUturnLeftIcon,
+  Squares2X2Icon,
+  SquaresPlusIcon,
   TrashIcon,
   XMarkIcon,
-  SquaresPlusIcon,
-  Squares2X2Icon,
 } from '@heroicons/react/24/solid'
 
 const sizes = {
@@ -80,6 +81,7 @@ const icons = {
   XMarkIcon,
   SquaresPlusIcon,
   Squares2X2Icon,
+  MagnifyingGlassIconOutline,
 }
 
 type IconName = keyof typeof icons
@@ -223,4 +225,8 @@ export function IconHome(props: IconProps): JSX.Element {
 
 export function IconUser(props: IconProps): JSX.Element {
   return <Icon {...props} iconName="UserCircleIconOutline" />
+}
+
+export function IconSearch(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="MagnifyingGlassIconOutline" />
 }
