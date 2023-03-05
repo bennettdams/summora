@@ -1,7 +1,9 @@
-import { useMemo } from 'react'
+import { useRouter } from 'next/router'
+import { useEffect, useMemo, useState } from 'react'
 import { z } from 'zod'
 import { schemaPostSearch } from '../../lib/schemas'
 import { ExplorePageProps } from '../../pages/explore'
+import { getSearchParam } from '../../services/router-service'
 import { trpc } from '../../util/trpc'
 import { useDebounce } from '../../util/use-debounce'
 import { useZodForm } from '../../util/use-zod-form'
@@ -40,6 +42,8 @@ export function ExplorePage({
     isError: isErrorCategories,
   } = trpc.postCategories.all.useQuery()
 
+  const router = useRouter()
+
   const defaultValuesPostSearch: SchemaPostSearch = useMemo(
     () => ({ searchInput: '' }),
     []
@@ -48,6 +52,8 @@ export function ExplorePage({
     handleSubmit: handleSubmitPostSearch,
     register: registerPostSearch,
     watch: watchPostSearch,
+    resetField,
+    setValue,
     formState: {
       errors: { searchInput: errorSearchInput },
     },
@@ -58,17 +64,40 @@ export function ExplorePage({
   })
   const inputPostSearch = watchPostSearch('searchInput')
   const inputPostSearchDebounced = useDebounce(inputPostSearch, 500)
+
+  const isInputPostSearchValid =
+    !!inputPostSearchDebounced &&
+    inputPostSearchDebounced.length >=
+      (schemaPostSearch.shape.searchInput.minLength ?? 2)
+
   const { data: postsSearchResult, isFetching } = trpc.posts.search.useQuery(
     { searchInput: inputPostSearchDebounced },
     {
-      enabled:
-        !!inputPostSearchDebounced &&
-        inputPostSearchDebounced.length >=
-          (schemaPostSearch.shape.searchInput.minLength ?? 2),
+      enabled: isInputPostSearchValid,
       keepPreviousData: true,
       refetchOnWindowFocus: false,
     }
   )
+
+  const [isSearchParamsInitialized, setIsSearchParamsInitialized] =
+    useState(false)
+
+  useEffect(() => {
+    if (router.isReady && !isSearchParamsInitialized) {
+      const searchInputFromParamsRaw = getSearchParam('s', router.query)
+      if (searchInputFromParamsRaw) {
+        setValue('searchInput', searchInputFromParamsRaw)
+        resetField('searchInput', { defaultValue: searchInputFromParamsRaw })
+        setIsSearchParamsInitialized(true)
+      }
+    }
+  }, [
+    router.query,
+    router.isReady,
+    isSearchParamsInitialized,
+    resetField,
+    setValue,
+  ])
 
   return (
     <Page>
@@ -85,6 +114,7 @@ export function ExplorePage({
                 placeholder="What are you looking for?"
                 isSpecial
                 isLoading={isFetching}
+                autoFocus={true}
                 small
                 validationErrorMessage={errorSearchInput?.message}
                 icon={<IconSearch size="big" className="text-dprimary" />}

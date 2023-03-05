@@ -1,17 +1,23 @@
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { Fragment } from 'react'
+import { Fragment, useMemo, useState } from 'react'
+import { z } from 'zod'
+import { schemaPostSearch } from '../lib/schemas'
 import { useAuth } from '../services/auth-service'
+import { createRouteWithSearchParam } from '../services/router-service'
 import { ROUTES } from '../services/routing'
 import { trpc } from '../util/trpc'
 import { useRouteChange } from '../util/use-route-change'
+import { useZodForm } from '../util/use-zod-form'
 import { Avatar } from './Avatar'
 import { Button } from './Button'
+import { Form, Input } from './form'
 import {
   IconHome,
   IconMenu,
   IconNotification,
+  IconSearch,
   IconSignIn,
   IconSignOut,
   IconUser,
@@ -143,10 +149,82 @@ function UserNavbar() {
   )
 }
 
+type SchemaPostSearch = z.infer<typeof schemaPostSearch>
+
+function SearchInputIcon(): JSX.Element {
+  return <IconSearch size="big" className="text-dprimary" />
+}
+
+function SearchInput({
+  isMobileSearchInputActive,
+  onClick,
+}: {
+  isMobileSearchInputActive: boolean
+  onClick: () => void
+}): JSX.Element {
+  const router = useRouter()
+  const defaultValuesPostSearch: SchemaPostSearch = useMemo(
+    () => ({ searchInput: '' }),
+    []
+  )
+  const {
+    handleSubmit: handleSubmitPostSearch,
+    register: registerPostSearch,
+    reset,
+    formState: {
+      errors: { searchInput: errorSearchInput },
+    },
+  } = useZodForm({
+    schema: schemaPostSearch,
+    defaultValues: defaultValuesPostSearch,
+    mode: 'onSubmit',
+  })
+
+  return (
+    <div className="inline">
+      {!isMobileSearchInputActive && (
+        <span className="block cursor-pointer lg:hidden" onClick={onClick}>
+          <SearchInputIcon />
+        </span>
+      )}
+
+      <div
+        className={`${isMobileSearchInputActive ? 'block' : 'hidden lg:block'}`}
+      >
+        <Form
+          onSubmit={handleSubmitPostSearch((formData) => {
+            reset()
+            router.push(
+              createRouteWithSearchParam({
+                route: ROUTES.explore,
+                searchParamKey: 's',
+                value: formData.searchInput,
+              })
+            )
+          })}
+        >
+          <Input
+            {...registerPostSearch('searchInput')}
+            placeholder="What are you looking for?"
+            isSpecial
+            small
+            validationErrorMessage={errorSearchInput?.message}
+            icon={<SearchInputIcon />}
+            textAlignCenter={true}
+          />
+        </Form>
+      </div>
+    </div>
+  )
+}
+
 export function Header(): JSX.Element {
   const isLoading = useRouteChange()
   const { asPath } = useRouter()
   const { userIdAuth } = useAuth()
+
+  const [isMobileSearchInputActive, setIsMobileSearchInputActive] =
+    useState(false)
 
   return (
     <Disclosure
@@ -170,16 +248,25 @@ export function Header(): JSX.Element {
                 <span className="absolute left-14 inline sm:hidden">
                   {isLoading && <LoadingAnimation />}
                 </span>
+                <span className="absolute left-14 inline sm:hidden">
+                  <SearchInput
+                    isMobileSearchInputActive={isMobileSearchInputActive}
+                    onClick={() => setIsMobileSearchInputActive(true)}
+                  />
+                </span>
 
-                <div className="absolute flex shrink-0 items-center sm:static">
-                  <Link to={ROUTES.home}>
-                    <div className="text-left text-4xl font-extrabold leading-none tracking-tight">
-                      <p className="bg-gradient-to-b from-dsecondary to-orange-300 decoration-clone bg-clip-text text-3xl uppercase text-transparent">
-                        Condun
-                      </p>
-                    </div>
-                  </Link>
-                </div>
+                {/* We don't have enough space, so we hide the title when the search is active. */}
+                {!isMobileSearchInputActive && (
+                  <div className="absolute flex shrink-0 items-center sm:static">
+                    <Link to={ROUTES.home}>
+                      <div className="text-left text-4xl font-extrabold leading-none tracking-tight">
+                        <p className="bg-gradient-to-b from-dsecondary to-orange-300 decoration-clone bg-clip-text text-3xl uppercase text-transparent">
+                          Condun
+                        </p>
+                      </div>
+                    </Link>
+                  </div>
+                )}
 
                 {/* Navbar nav items */}
                 <div className="hidden sm:ml-6 sm:block">
@@ -207,7 +294,14 @@ export function Header(): JSX.Element {
 
               {/* Navbar right side */}
               <div className="absolute inset-y-0 right-0 flex items-center space-x-3 pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <span className="hidden sm:inline">
+                <div className="hidden sm:block">
+                  <SearchInput
+                    isMobileSearchInputActive={isMobileSearchInputActive}
+                    onClick={() => setIsMobileSearchInputActive(true)}
+                  />
+                </div>
+
+                <span className="hidden w-16 place-items-center sm:inline-grid">
                   {isLoading && <LoadingAnimation />}
                 </span>
 
