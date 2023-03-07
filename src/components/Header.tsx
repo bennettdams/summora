@@ -12,7 +12,7 @@ import { useRouteChange } from '../util/use-route-change'
 import { useZodForm } from '../util/use-zod-form'
 import { Avatar } from './Avatar'
 import { Button } from './Button'
-import { Form, Input } from './form'
+import { Form, Input, useIsSubmitEnabled } from './form'
 import {
   IconHome,
   IconMenu,
@@ -151,8 +151,12 @@ function UserNavbar() {
 
 type SchemaPostSearch = z.infer<typeof schemaPostSearch>
 
-function SearchInputIcon(): JSX.Element {
-  return <IconSearch size="big" className="text-dprimary" />
+function SearchInputIcon({ onClick }: { onClick: () => void }): JSX.Element {
+  return (
+    <span onClick={onClick}>
+      <IconSearch size="big" className="cursor-pointer text-dprimary" />
+    </span>
+  )
 }
 
 function SearchInput({
@@ -171,6 +175,8 @@ function SearchInput({
     handleSubmit: handleSubmitPostSearch,
     register: registerPostSearch,
     reset,
+    control,
+    getValues,
     formState: {
       errors: { searchInput: errorSearchInput },
     },
@@ -180,11 +186,33 @@ function SearchInput({
     mode: 'onSubmit',
   })
 
+  function handleSearch(searchInput: string) {
+    reset()
+    router.push(
+      createRouteWithSearchParam({
+        route: ROUTES.explore,
+        searchParamKey: 's',
+        value: searchInput,
+      })
+    )
+  }
+
+  const isSubmitEnabled = useIsSubmitEnabled({
+    control,
+    isLoading: false,
+  })
+
+  function handleProgrammaticSubmit() {
+    if (isSubmitEnabled) {
+      handleSearch(getValues('searchInput'))
+    }
+  }
+
   return (
     <div className="inline">
       {!isMobileSearchInputActive && (
         <span className="block cursor-pointer lg:hidden" onClick={onClick}>
-          <SearchInputIcon />
+          <SearchInputIcon onClick={handleProgrammaticSubmit} />
         </span>
       )}
 
@@ -193,14 +221,7 @@ function SearchInput({
       >
         <Form
           onSubmit={handleSubmitPostSearch((formData) => {
-            reset()
-            router.push(
-              createRouteWithSearchParam({
-                route: ROUTES.explore,
-                searchParamKey: 's',
-                value: formData.searchInput,
-              })
-            )
+            handleSearch(formData.searchInput)
           })}
         >
           <Input
@@ -209,7 +230,7 @@ function SearchInput({
             isSpecial
             small
             validationErrorMessage={errorSearchInput?.message}
-            icon={<SearchInputIcon />}
+            icon={<SearchInputIcon onClick={handleProgrammaticSubmit} />}
             textAlignCenter={true}
           />
         </Form>
