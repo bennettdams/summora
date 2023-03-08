@@ -12,6 +12,24 @@ export const authOptions: NextAuthOptions = {
       }
       return session
     },
+    async signIn({ user }) {
+      const email = user.email
+
+      const allowedMailAdressesRaw = process.env.ALLOWED_MAIL_ADRESSES
+
+      if (
+        !!email &&
+        !!allowedMailAdressesRaw &&
+        allowedMailAdressesRaw.split(',').includes(email)
+      ) {
+        return true
+      } else {
+        // Return false to display a default error message
+        return false
+        // Or you can return a URL to redirect to:
+        // return '/unauthorized'
+      }
+    },
   },
   pages: {
     signIn: '/signin',
