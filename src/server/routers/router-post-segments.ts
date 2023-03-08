@@ -70,6 +70,9 @@ export const postSegmentsRouter = router({
       return await ctx.prisma.postSegment.findMany({
         where: { postId },
         select: defaultPostSegmentSelect,
+        orderBy: {
+          createdAt: 'asc',
+        },
       })
     }),
   // EDIT

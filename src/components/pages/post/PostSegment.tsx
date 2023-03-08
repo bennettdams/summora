@@ -121,14 +121,14 @@ export function PostSegment({
   const choiceControl = useChoiceSelect(
     [
       {
-        choiceId: segmentImagePositionMap.RIGHT,
-        label: 'Right',
-        icon: <IconArrowCircleRight className="text-dtertiary" />,
-      },
-      {
         choiceId: segmentImagePositionMap.BOTTOM,
         label: 'Bottom',
         icon: <IconArrowCircleDown className="text-dtertiary" />,
+      },
+      {
+        choiceId: segmentImagePositionMap.RIGHT,
+        label: 'Right',
+        icon: <IconArrowCircleRight className="text-dtertiary" />,
       },
     ],
     segment.position
