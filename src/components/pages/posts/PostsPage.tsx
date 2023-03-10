@@ -194,26 +194,22 @@ export function PostsPage({
           <NoContent>No posts found.</NoContent>
         ) : (
           <PostsList
-            posts={
-              !posts
-                ? null
-                : posts.map((post) => ({
-                    id: post.id,
-                    categoryTitle: post.category.name,
-                    title: post.title,
-                    subtitle: post.subtitle,
-                    updatedAt: post.updatedAt,
-                    author: {
-                      id: post.authorId,
-                      username: post.author.username,
-                      imageId: post.author.imageId,
-                      imageBlurDataURL: post.author.imageBlurDataURL,
-                      imageFileExtension: post.author.imageFileExtension,
-                    },
-                    noOfViews: post.noOfViews,
-                    noOfComments: post._count.comments,
-                  }))
-            }
+            posts={posts.map((post) => ({
+              id: post.id,
+              categoryTitle: post.category.name,
+              title: post.title,
+              subtitle: post.subtitle,
+              updatedAt: post.updatedAt,
+              author: {
+                id: post.authorId,
+                username: post.author.username,
+                imageId: post.author.imageId,
+                imageBlurDataURL: post.author.imageBlurDataURL,
+                imageFileExtension: post.author.imageFileExtension,
+              },
+              noOfViews: post.noOfViews,
+              noOfComments: post._count.comments,
+            }))}
           />
         )}
       </PageSection>

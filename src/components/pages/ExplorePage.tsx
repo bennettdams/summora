@@ -2,7 +2,6 @@ import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import { z } from 'zod'
 import { schemaPostSearch } from '../../lib/schemas'
-import { ExplorePageProps } from '../../pages/explore'
 import { getSearchParam } from '../../services/router-service'
 import { trpc } from '../../util/trpc'
 import { useDebounce } from '../../util/use-debounce'
@@ -15,32 +14,25 @@ import { NoContent } from '../NoContent'
 import { Page, PageSection } from '../Page'
 import { PostsList } from '../post'
 
-function PostExplorePage({
-  title,
-  noOfX,
-}: {
-  title: string
-  noOfX: number
-}): JSX.Element {
-  return (
-    <Box padding="small">
-      <p>{title}</p>
-      <p>{noOfX}</p>
-    </Box>
-  )
-}
-
 type SchemaPostSearch = z.infer<typeof schemaPostSearch>
 
-export function ExplorePage({
-  postsViews,
-  postsLikes,
-}: ExplorePageProps): JSX.Element {
+export function ExplorePage(): JSX.Element {
   const {
     data: postCategories,
     isLoading: isLoadingCategories,
     isError: isErrorCategories,
   } = trpc.postCategories.all.useQuery()
+
+  const {
+    data: topPostsByLikes,
+    isLoading: isLoadingTopLikes,
+    isError: isErrorTopLikes,
+  } = trpc.posts.topByLikes.useQuery()
+  const {
+    data: topPostsByViews,
+    isLoading: isLoadingTopViews,
+    isError: isErrorTopViews,
+  } = trpc.posts.topByViews.useQuery()
 
   const router = useRouter()
 
@@ -181,49 +173,69 @@ export function ExplorePage({
       </PageSection>
 
       <PageSection label="Post of the day">
-        <p>Post abc</p>
-      </PageSection>
-
-      <PageSection label="Post of the day">
-        <div className="flex space-x-4">
-          {postsViews.map((post) => (
-            <div key={post.id} className="flex-1">
-              <PostExplorePage title={post.title} noOfX={post.noOfViews} />
-            </div>
-          ))}
-        </div>
+        <p>Some post..</p>
       </PageSection>
 
       <PageSection label="Top 5 posts by views">
-        <PostsList
-          posts={postsViews.map((post) => ({
-            id: post.id,
-            categoryTitle: post.category.name,
-            title: post.title,
-            subtitle: post.subtitle,
-            updatedAt: post.updatedAt,
-            author: {
-              id: post.authorId,
-              username: post.author.username,
-              imageId: post.author.imageId,
-              imageBlurDataURL: post.author.imageBlurDataURL,
-              imageFileExtension: post.author.imageFileExtension,
-            },
-            noOfViews: post.noOfViews,
-            noOfComments: 0,
-            // noOfComments: post._count?.comments ?? 0,
-          }))}
-        />
+        {isLoadingTopViews ? (
+          <div className="grid place-items-center">
+            <LoadingAnimation />
+          </div>
+        ) : isErrorTopViews ? (
+          <NoContent>Error while loading posts.</NoContent>
+        ) : !topPostsByViews || topPostsByViews.length === 0 ? (
+          <NoContent>No posts found.</NoContent>
+        ) : (
+          <PostsList
+            posts={topPostsByViews.map((post) => ({
+              id: post.id,
+              categoryTitle: post.category.name,
+              title: post.title,
+              subtitle: post.subtitle,
+              updatedAt: post.updatedAt,
+              author: {
+                id: post.authorId,
+                username: post.author.username,
+                imageId: post.author.imageId,
+                imageBlurDataURL: post.author.imageBlurDataURL,
+                imageFileExtension: post.author.imageFileExtension,
+              },
+              noOfViews: post.noOfViews,
+              noOfComments: post._count.comments,
+            }))}
+          />
+        )}
       </PageSection>
 
       <PageSection label="Top 5 posts by likes">
-        <ul>
-          {postsLikes.map((post) => (
-            <li key={post.id}>
-              <PostExplorePage title={post.title} noOfX={post._count.likedBy} />
-            </li>
-          ))}
-        </ul>
+        {isLoadingTopLikes ? (
+          <div className="grid place-items-center">
+            <LoadingAnimation />
+          </div>
+        ) : isErrorTopLikes ? (
+          <NoContent>Error while loading posts.</NoContent>
+        ) : !topPostsByLikes || topPostsByLikes.length === 0 ? (
+          <NoContent>No posts found.</NoContent>
+        ) : (
+          <PostsList
+            posts={topPostsByLikes.map((post) => ({
+              id: post.id,
+              categoryTitle: post.category.name,
+              title: post.title,
+              subtitle: post.subtitle,
+              updatedAt: post.updatedAt,
+              author: {
+                id: post.authorId,
+                username: post.author.username,
+                imageId: post.author.imageId,
+                imageBlurDataURL: post.author.imageBlurDataURL,
+                imageFileExtension: post.author.imageFileExtension,
+              },
+              noOfViews: post.noOfViews,
+              noOfComments: post._count.comments,
+            }))}
+          />
+        )}
       </PageSection>
     </Page>
   )

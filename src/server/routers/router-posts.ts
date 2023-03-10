@@ -142,6 +142,30 @@ export const postsRouter = router({
         data: { category: { connect: { id: categoryId } } },
       })
     }),
+  // TOP BY VIEWS
+  topByViews: procedure.query(async ({ ctx }) => {
+    return await ctx.prisma.post.findMany({
+      select: defaultPostSelect,
+      take: 3,
+      orderBy: [
+        { noOfViews: 'desc' },
+        { likedBy: { _count: 'desc' } },
+        { title: 'asc' },
+      ],
+    })
+  }),
+  // TOP BY LIKES
+  topByLikes: procedure.query(async ({ ctx }) => {
+    return await ctx.prisma.post.findMany({
+      select: defaultPostSelect,
+      take: 3,
+      orderBy: [
+        { likedBy: { _count: 'desc' } },
+        { noOfViews: 'desc' },
+        { title: 'asc' },
+      ],
+    })
+  }),
   // CREATE
   create: protectedProcedure
     .input(schemaCreatePost)
