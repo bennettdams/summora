@@ -4,7 +4,6 @@
     "vscode-icons-team.vscode-icons",
     "mhutchie.git-graph",
     "atlassian.atlascode",
-    "mongodb.mongodb-vscode",
     "christian-kohler.npm-intellisense",
     "christian-kohler.path-intellisense",
     "wix.vscode-import-cost",
@@ -15,8 +14,10 @@
     "msjsdiag.debugger-for-chrome",
     "DavidAnson.vscode-markdownlint",
     "antfu.icons-carbon",
-    "cdonohue.quill-icons"
-  ],
+    "cdonohue.quill-icons",
+    "usernamehw.errorlens"
+],
   // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
   "unwantedRecommendations": []
 }
+
