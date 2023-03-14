@@ -1,4 +1,5 @@
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { Analytics } from '@vercel/analytics/react'
 import { type Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import { type AppType } from 'next/app'
@@ -73,6 +74,7 @@ const App: AppType<{ session: Session | null }> = ({
               <ErrorBoundary>
                 {/* <TailwindCSSBreakpoint /> */}
                 <Component {...pageProps} />
+                <Analytics />
               </ErrorBoundary>
             </main>
           </div>
