@@ -4,7 +4,6 @@ import { useFormState } from 'react-hook-form'
 import { z } from 'zod'
 import {
   schemaCreatePostComment,
-  schemaTagSearch,
   schemaUpdatePost,
   schemaUpdatePostCategory,
 } from '../../../lib/schemas'
@@ -12,12 +11,10 @@ import { PostPageProps } from '../../../pages/post/[postId]'
 import { useAuth } from '../../../services/auth-service'
 import { ROUTES } from '../../../services/routing'
 import { RouterOutput, trpc } from '../../../util/trpc'
-import { useDebounce } from '../../../util/use-debounce'
 import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
 import { useZodForm } from '../../../util/use-zod-form'
 import { Avatar } from '../../Avatar'
-import { Box } from '../../Box'
 import { ButtonAdd } from '../../Button'
 import { CommentsIcon } from '../../CommentsIcon'
 import { DateTime } from '../../DateTime'
@@ -38,19 +35,17 @@ import { NoContent } from '../../NoContent'
 import { Page, PageSection } from '../../Page'
 import { PostLikes } from '../../post'
 import { StepList } from '../../StepList'
-import { Tag, TagsList } from '../../tag'
+import { TagsList, TagsSelection } from '../../tag'
 import { ViewsIcon } from '../../ViewsIcon'
 import { VoteIcon } from '../../VoteIcon'
 import { PostSegment } from './PostSegment'
 
 export type SegmentPostPage = RouterOutput['postSegments']['byPostId'][number]
 export type SegmentItemPostPage = SegmentPostPage['items'][number]
-type TagPostPage = RouterOutput['postTags']['byPostId'][number]
 
 type SchemaUpdate = z.infer<typeof schemaUpdatePost>
 type SchemaUpdateCategory = z.infer<typeof schemaUpdatePostCategory>
 type SchemaCreateComment = z.infer<typeof schemaCreatePostComment>
-type SchemaTagSearch = z.infer<typeof schemaTagSearch>
 
 export function PostPage(props: PostPageProps): JSX.Element {
   const { data: post, isLoading: isLoadingPost } = trpc.posts.byPostId.useQuery(
@@ -185,68 +180,10 @@ function PostPageInternal<
     onSuccess: invalidateTags,
   })
 
-  const { data: tagsPopular, isLoading: isLoadingTagsPopular } =
-    trpc.postTags.popularOverall.useQuery()
-  const {
-    data: tagsPopularByCategory,
-    isLoading: isLoadingTagsPopularByCategory,
-  } = trpc.postTags.popularByCategoryId.useQuery({
-    categoryId: post.postCategoryId,
-  })
-
-  const defaultValuesTagSearch: SchemaTagSearch = useMemo(
-    () => ({ searchInput: '' }),
-    []
-  )
-  const {
-    handleSubmit: handleSubmitTagSearch,
-    register: registerTagSearch,
-    watch: watchTagSearch,
-    formState: {
-      errors: { searchInput: errorSearchInput },
-    },
-  } = useZodForm({
-    schema: schemaTagSearch,
-    defaultValues: defaultValuesTagSearch,
-    mode: 'onSubmit',
-  })
-
-  const inputTagSearch = watchTagSearch('searchInput')
-
   const [isShownTagSelection, setIsShownTagSelection] = useState(false)
-  const refTagSelection = useRef<HTMLDivElement>(null)
-  useOnClickOutside(refTagSelection, () => setIsShownTagSelection(false))
 
   async function handleRemoveTag(tagId: string): Promise<void> {
     removeFromPost.mutate({ postId, tagId })
-  }
-
-  const inputTagSearchDebounced = useDebounce(inputTagSearch, 500)
-  const { data: tagsSearchResult, isFetching } = trpc.postTags.search.useQuery(
-    { searchInput: inputTagSearchDebounced },
-    {
-      enabled:
-        !!inputTagSearchDebounced &&
-        inputTagSearchDebounced.length >=
-          (schemaTagSearch.shape.searchInput.minLength ?? 2),
-      keepPreviousData: true,
-      refetchOnWindowFocus: false,
-    }
-  )
-
-  async function handleAddTag(tagId: string): Promise<void> {
-    addToPost.mutate({ postId, tagId })
-  }
-
-  /**
-   * Removes tags which are already included in a post from a list of tags.
-   */
-  function filterTags(tagsToFilter: TagPostPage[]): TagPostPage[] {
-    return !tags
-      ? tagsToFilter
-      : tagsToFilter.filter(
-          (tagToFilter) => !tags.some((tag) => tag.tagId === tagToFilter.tagId)
-        )
   }
 
   // COMMENTS
@@ -450,81 +387,12 @@ function PostPageInternal<
       {/* TAG SELECTION */}
       {isShownTagSelection && (
         <PageSection>
-          <div
-            className="flex flex-col space-y-6 lg:flex-row lg:space-x-10 lg:space-y-0"
-            ref={refTagSelection}
-          >
-            <div className="w-full flex-1">
-              <Box>
-                <div className="flex w-full items-center space-x-3">
-                  <span className="italic">Search</span>
-                  <span className="font-semibold text-dprimary">
-                    {inputTagSearch}
-                  </span>
-                </div>
-
-                <Form
-                  onSubmit={handleSubmitTagSearch(() => {
-                    // noop, this is executed via debounce above
-                  })}
-                >
-                  <Input
-                    {...registerTagSearch('searchInput')}
-                    placeholder="Search for tags.."
-                    isSpecial
-                    isLoading={isFetching}
-                    small
-                    validationErrorMessage={errorSearchInput?.message}
-                  />
-                </Form>
-
-                <div className="-m-1 mt-2 flex flex-wrap">
-                  {tagsSearchResult &&
-                    (tagsSearchResult.length === 0 ? (
-                      <NoContent>No results for your search</NoContent>
-                    ) : (
-                      filterTags(tagsSearchResult).map((tag) => (
-                        <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
-                      ))
-                    ))}
-                </div>
-              </Box>
-            </div>
-
-            <div className="flex-1">
-              <Box inline>
-                <p className="italic">Popular overall</p>
-                <div className="-m-1 mt-2 flex flex-wrap">
-                  {isLoadingTagsPopular ? (
-                    <LoadingAnimation />
-                  ) : !tagsPopular ? (
-                    <NoContent>No tags</NoContent>
-                  ) : (
-                    filterTags(tagsPopular).map((tag) => (
-                      <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
-                    ))
-                  )}
-                </div>
-              </Box>
-            </div>
-
-            <div className="flex-1">
-              <Box inline>
-                <p className="italic">Popular for this category</p>
-                <div className="-m-1 mt-2 flex flex-1 flex-wrap">
-                  {isLoadingTagsPopularByCategory ? (
-                    <LoadingAnimation />
-                  ) : !tagsPopularByCategory ? (
-                    <NoContent>No tags</NoContent>
-                  ) : (
-                    filterTags(tagsPopularByCategory).map((tag) => (
-                      <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
-                    ))
-                  )}
-                </div>
-              </Box>
-            </div>
-          </div>
+          <TagsSelection
+            onAdd={(tagId) => addToPost.mutate({ postId, tagId })}
+            onOutsideClick={() => setIsShownTagSelection(false)}
+            postCategoryId={post.postCategoryId}
+            tagsExisting={tags ?? []}
+          />
         </PageSection>
       )}
 
