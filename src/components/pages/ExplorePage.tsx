@@ -13,6 +13,7 @@ import { LoadingAnimation } from '../LoadingAnimation'
 import { NoContent } from '../NoContent'
 import { Page, PageSection } from '../Page'
 import { PostsList } from '../post'
+import { TagsList, TagsSelection } from '../tag'
 
 type SchemaPostSearch = z.infer<typeof schemaPostSearch>
 
@@ -37,7 +38,10 @@ export function ExplorePage(): JSX.Element {
   const router = useRouter()
 
   const defaultValuesPostSearch: SchemaPostSearch = useMemo(
-    () => ({ searchInput: '' }),
+    () => ({
+      searchInput: '',
+      tagIdsToFilter: [],
+    }),
     []
   )
   const {
@@ -62,8 +66,15 @@ export function ExplorePage(): JSX.Element {
     inputPostSearchDebounced.length >=
       (schemaPostSearch.shape.searchInput.minLength ?? 2)
 
+  const [tagsForFilter, setTagsForFilter] = useState<
+    { tagId: string; label: string }[]
+  >([])
+
   const { data: postsSearchResult, isFetching } = trpc.posts.search.useQuery(
-    { searchInput: inputPostSearchDebounced },
+    {
+      searchInput: inputPostSearchDebounced,
+      tagIdsToFilter: tagsForFilter.map((tag) => tag.tagId),
+    },
     {
       enabled: isInputPostSearchValid,
       keepPreviousData: true,
@@ -125,31 +136,58 @@ export function ExplorePage(): JSX.Element {
               <span>Post segments&apos; subtitle</span>
             </div>
           </Box>
-
-          <div>
-            {postsSearchResult && (
-              <PostsList
-                initialViewVariant="short"
-                posts={postsSearchResult.map((post) => ({
-                  id: post.id,
-                  categoryTitle: post.category.name,
-                  title: post.title,
-                  subtitle: post.subtitle,
-                  updatedAt: post.updatedAt,
-                  author: {
-                    id: post.authorId,
-                    username: post.author.username,
-                    imageId: post.author.imageId,
-                    imageBlurDataURL: post.author.imageBlurDataURL,
-                    imageFileExtension: post.author.imageFileExtension,
-                  },
-                  noOfViews: post.noOfViews,
-                  noOfComments: post._count.comments,
-                }))}
-              />
-            )}
-          </div>
         </div>
+      </PageSection>
+
+      <PageSection label="Include tags for filter" hideTopMargin>
+        <div className="space-y-4">
+          <TagsList
+            tags={tagsForFilter}
+            onRemoveClick={(tagIdToRemove) => {
+              setTagsForFilter((prev) =>
+                prev.filter((tagPrev) => tagPrev.tagId !== tagIdToRemove)
+              )
+            }}
+          />
+
+          <TagsSelection
+            onAdd={(tagToAdd) =>
+              setTagsForFilter((prev) => {
+                if (prev.some((tagPrev) => tagPrev.tagId === tagToAdd.tagId)) {
+                  return prev
+                } else {
+                  return [...prev, tagToAdd]
+                }
+              })
+            }
+            postCategoryId={null}
+            tagsExisting={tagsForFilter}
+          />
+        </div>
+      </PageSection>
+
+      <PageSection>
+        {postsSearchResult && (
+          <PostsList
+            initialViewVariant="short"
+            posts={postsSearchResult.map((post) => ({
+              id: post.id,
+              categoryTitle: post.category.name,
+              title: post.title,
+              subtitle: post.subtitle,
+              updatedAt: post.updatedAt,
+              author: {
+                id: post.authorId,
+                username: post.author.username,
+                imageId: post.author.imageId,
+                imageBlurDataURL: post.author.imageBlurDataURL,
+                imageFileExtension: post.author.imageFileExtension,
+              },
+              noOfViews: post.noOfViews,
+              noOfComments: post._count.comments,
+            }))}
+          />
+        )}
       </PageSection>
 
       <PageSection label="Find by category">

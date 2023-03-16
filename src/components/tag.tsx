@@ -36,15 +36,18 @@ export function TagsList({
 
   return (
     <>
-      <div ref={animateTagsRef} className="flex flex-wrap items-center">
+      <div
+        ref={animateTagsRef}
+        className="flex flex-wrap items-center justify-start"
+      >
         {!tags || tags.length === 0 ? (
-          <NoContent>No tags</NoContent>
+          <NoContent>No tags yet</NoContent>
         ) : (
           tags.map((tag) => (
             <Tag
               key={tag.tagId}
               tag={tag}
-              onClick={onRemoveClick}
+              onClick={(tag) => onRemoveClick?.(tag.tagId)}
               handleRemoving={!!onRemoveClick}
             />
           ))
@@ -65,7 +68,7 @@ export function Tag({
   handleRemoving = false,
 }: {
   tag: TagTagslist
-  onClick?: (tagId: string) => void
+  onClick?: (tag: TagTagslist) => void
   /**
    * Use to handle removing on click with confirmation.
    */
@@ -83,7 +86,7 @@ export function Tag({
       }`}
       key={tag.tagId}
       // Don't execute on click when this tag is supposed to handle removing - this happens further down then.
-      onClick={() => !handleRemoving && onClick?.(tag.tagId)}
+      onClick={() => !handleRemoving && onClick?.(tag)}
     >
       {!onClick || !handleRemoving || !showRemoveConfirmation ? (
         <span
@@ -95,7 +98,7 @@ export function Tag({
       ) : (
         <div
           className="flex"
-          onClick={() => !!handleRemoving && onClick?.(tag.tagId)}
+          onClick={() => !!handleRemoving && onClick?.(tag)}
         >
           <IconTrash size="small" className="hover:text-white" />
           <span className="inline-block text-xs font-semibold uppercase tracking-widest">
@@ -133,16 +136,16 @@ export function TagsSelection({
   tagsExisting,
   postCategoryId,
 }: {
-  onAdd: (tagId: string) => void
-  onOutsideClick: () => void
+  onAdd: (tag: TagTagslist) => void
   tagsExisting: TagTagslist[]
   postCategoryId: string | null
+  onOutsideClick?: () => void
 }): JSX.Element {
   const { data: tagsPopular, isLoading: isLoadingTagsPopular } =
     trpc.postTags.popularOverall.useQuery()
 
   const refTagSelection = useRef<HTMLDivElement>(null)
-  useOnClickOutside(refTagSelection, () => onOutsideClick())
+  useOnClickOutside(refTagSelection, () => onOutsideClick?.())
 
   const defaultValuesTagSearch: SchemaTagSearch = useMemo(
     () => ({ searchInput: '' }),
@@ -176,8 +179,8 @@ export function TagsSelection({
     }
   )
 
-  async function handleAddTag(tagId: string): Promise<void> {
-    onAdd(tagId)
+  async function handleAddTag(tag: TagTagslist): Promise<void> {
+    onAdd(tag)
   }
 
   return (
@@ -234,11 +237,12 @@ export function TagsSelection({
             ) : !tagsPopular ? (
               <NoContent>No tags</NoContent>
             ) : (
-              filterTags({ tagsToFilter: tagsPopular, tagsExisting }).map(
-                (tag) => (
-                  <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
-                )
-              )
+              filterTags({
+                tagsToFilter: tagsPopular,
+                tagsExisting,
+              }).map((tag) => (
+                <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
+              ))
             )}
           </div>
         </Box>
@@ -262,7 +266,7 @@ function TagsPopularCategory({
 }: {
   postCategoryId: string
   tagsExisting: TagTagslist[]
-  onAdd: (tagId: string) => void
+  onAdd: (tag: TagTagslist) => void
 }): JSX.Element {
   const {
     data: tagsPopularByCategory,
@@ -282,7 +286,7 @@ function TagsPopularCategory({
           {isLoadingTagsPopularByCategory ? (
             <LoadingAnimation />
           ) : !tagsPopularByCategory ? (
-            <NoContent>No tags</NoContent>
+            <NoContent>No tags yet</NoContent>
           ) : (
             filterTags({
               tagsToFilter: tagsPopularByCategory,

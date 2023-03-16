@@ -388,7 +388,7 @@ function PostPageInternal<
       {isShownTagSelection && (
         <PageSection>
           <TagsSelection
-            onAdd={(tagId) => addToPost.mutate({ postId, tagId })}
+            onAdd={(tag) => addToPost.mutate({ postId, tagId: tag.tagId })}
             onOutsideClick={() => setIsShownTagSelection(false)}
             postCategoryId={post.postCategoryId}
             tagsExisting={tags ?? []}
