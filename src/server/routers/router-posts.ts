@@ -223,39 +223,56 @@ export const postsRouter = router({
     }),
   // SEARCH
   search: procedure.input(schemaPostSearch).query(async ({ input, ctx }) => {
-    const { searchInput } = input
+    const {
+      searchInput,
+      tagIdsToFilter,
+      includeTitle,
+      includeSubtitle,
+      includeSegmentsTitle,
+      includeSegmentsSubtitle,
+    } = input
 
     return await ctx.prisma.post.findMany({
       select: defaultPostSelect,
       where: {
         OR: [
-          { title: { contains: searchInput, mode: 'insensitive' } },
-          { subtitle: { contains: searchInput, mode: 'insensitive' } },
+          {
+            title: !includeTitle
+              ? undefined
+              : { contains: searchInput, mode: 'insensitive' },
+          },
+          {
+            subtitle: !includeSubtitle
+              ? undefined
+              : { contains: searchInput, mode: 'insensitive' },
+          },
           {
             segments: {
               some: {
                 OR: [
-                  { title: { contains: searchInput, mode: 'insensitive' } },
-                  { subtitle: { contains: searchInput, mode: 'insensitive' } },
-                ],
-              },
-            },
-          },
-          {
-            tags: {
-              some: {
-                OR: [
                   {
-                    label: { contains: searchInput, mode: 'insensitive' },
+                    title: !includeSegmentsTitle
+                      ? undefined
+                      : { contains: searchInput, mode: 'insensitive' },
                   },
                   {
-                    description: { contains: searchInput, mode: 'insensitive' },
+                    subtitle: !includeSegmentsSubtitle
+                      ? undefined
+                      : { contains: searchInput, mode: 'insensitive' },
                   },
                 ],
               },
             },
           },
         ],
+        tags:
+          tagIdsToFilter.length === 0
+            ? undefined
+            : {
+                some: {
+                  tagId: { in: tagIdsToFilter },
+                },
+              },
       },
       orderBy: [
         { likedBy: { _count: 'desc' } },

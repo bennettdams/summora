@@ -93,7 +93,7 @@ export function CreatePostModal() {
             {isLoadingCategories ? (
               <LoadingAnimation />
             ) : !postCategories ? (
-              <NoContent>No categories</NoContent>
+              <NoContent>No categories.</NoContent>
             ) : (
               <>
                 <FormSelect

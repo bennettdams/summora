@@ -1,13 +1,13 @@
 import { useRouter } from 'next/router'
-import { useEffect, useMemo, useState } from 'react'
+import { ReactNode, useEffect, useMemo, useState } from 'react'
 import { z } from 'zod'
 import { schemaPostSearch } from '../../lib/schemas'
 import { getSearchParam } from '../../services/router-service'
-import { trpc } from '../../util/trpc'
+import { trpc, type RouterInput } from '../../util/trpc'
 import { useDebounce } from '../../util/use-debounce'
 import { useZodForm } from '../../util/use-zod-form'
 import { Box } from '../Box'
-import { Form, Input } from '../form'
+import { Form, Input, InputCheckbox } from '../form'
 import { IconSearch } from '../Icon'
 import { LoadingAnimation } from '../LoadingAnimation'
 import { NoContent } from '../NoContent'
@@ -41,6 +41,10 @@ export function ExplorePage(): JSX.Element {
     () => ({
       searchInput: '',
       tagIdsToFilter: [],
+      includeTitle: true,
+      includeSubtitle: true,
+      includeSegmentsTitle: true,
+      includeSegmentsSubtitle: true,
     }),
     []
   )
@@ -60,6 +64,12 @@ export function ExplorePage(): JSX.Element {
   })
   const inputPostSearch = watchPostSearch('searchInput')
   const inputPostSearchDebounced = useDebounce(inputPostSearch, 500)
+  const inputIncludeTitle = watchPostSearch('includeTitle')
+  const inputIncludeSubtitle = watchPostSearch('includeSubtitle')
+  const inputIncludeSegmentsTitle = watchPostSearch('includeSegmentsTitle')
+  const inputIncludeSegmentsSubtitle = watchPostSearch(
+    'includeSegmentsSubtitle'
+  )
 
   const isInputPostSearchValid =
     !!inputPostSearchDebounced &&
@@ -70,11 +80,27 @@ export function ExplorePage(): JSX.Element {
     { tagId: string; label: string }[]
   >([])
 
-  const { data: postsSearchResult, isFetching } = trpc.posts.search.useQuery(
-    {
+  const queryInput = useMemo(() => {
+    const x: RouterInput['posts']['search'] = {
       searchInput: inputPostSearchDebounced,
       tagIdsToFilter: tagsForFilter.map((tag) => tag.tagId),
-    },
+      includeTitle: inputIncludeTitle,
+      includeSubtitle: inputIncludeSubtitle,
+      includeSegmentsTitle: inputIncludeSegmentsTitle,
+      includeSegmentsSubtitle: inputIncludeSegmentsSubtitle,
+    }
+    return x
+  }, [
+    inputPostSearchDebounced,
+    tagsForFilter,
+    inputIncludeTitle,
+    inputIncludeSubtitle,
+    inputIncludeSegmentsTitle,
+    inputIncludeSegmentsSubtitle,
+  ])
+
+  const { data: postsSearchResult, isFetching } = trpc.posts.search.useQuery(
+    queryInput,
     {
       enabled: isInputPostSearchValid,
       keepPreviousData: true,
@@ -124,49 +150,93 @@ export function ExplorePage(): JSX.Element {
                 textAlignCenter={true}
               />
             </Form>
+
+            {!postsSearchResult ? (
+              <p className="mt-2">&nbsp;</p>
+            ) : (
+              <p className="mt-2 italic tracking-wide text-dprimary">
+                Found {postsSearchResult.length} posts.
+              </p>
+            )}
           </div>
-
-          <Box>
-            <p>Filter by topic..</p>
-            <div className="space-x-4">
-              <span>Title</span>
-              <span>Subtitle</span>
-              <span>Tags</span>
-              <span>Post segments&apos; title</span>
-              <span>Post segments&apos; subtitle</span>
-            </div>
-          </Box>
         </div>
       </PageSection>
 
-      <PageSection label="Include tags for filter" hideTopMargin>
-        <div className="space-y-4">
-          <TagsList
-            tags={tagsForFilter}
-            onRemoveClick={(tagIdToRemove) => {
-              setTagsForFilter((prev) =>
-                prev.filter((tagPrev) => tagPrev.tagId !== tagIdToRemove)
-              )
-            }}
-          />
+      <PageSection label="Filter your search" hideTopMargin>
+        <div className="grid auto-rows-min grid-cols-4 gap-6">
+          <Row label="By topic">
+            <Form>
+              <div className="space-x-10">
+                <InputCheckbox {...registerPostSearch('includeTitle')}>
+                  Title
+                </InputCheckbox>
+                <InputCheckbox {...registerPostSearch('includeSubtitle')}>
+                  Subtitle
+                </InputCheckbox>
+                <InputCheckbox {...registerPostSearch('includeSegmentsTitle')}>
+                  Segment&apos;s title
+                </InputCheckbox>
+                <InputCheckbox
+                  {...registerPostSearch('includeSegmentsSubtitle')}
+                >
+                  Segment&apos;s subtitle
+                </InputCheckbox>
+              </div>
+            </Form>
+          </Row>
 
-          <TagsSelection
-            onAdd={(tagToAdd) =>
-              setTagsForFilter((prev) => {
-                if (prev.some((tagPrev) => tagPrev.tagId === tagToAdd.tagId)) {
-                  return prev
-                } else {
-                  return [...prev, tagToAdd]
+          <Row label="By tags">
+            <div className="space-y-4">
+              <TagsList
+                tags={tagsForFilter}
+                onRemoveClick={(tagIdToRemove) => {
+                  setTagsForFilter((prev) =>
+                    prev.filter((tagPrev) => tagPrev.tagId !== tagIdToRemove)
+                  )
+                }}
+              />
+
+              <TagsSelection
+                onAdd={(tagToAdd) =>
+                  setTagsForFilter((prev) => {
+                    if (
+                      prev.some((tagPrev) => tagPrev.tagId === tagToAdd.tagId)
+                    ) {
+                      return prev
+                    } else {
+                      return [...prev, tagToAdd]
+                    }
+                  })
                 }
-              })
-            }
-            postCategoryId={null}
-            tagsExisting={tagsForFilter}
-          />
+                postCategoryId={null}
+                tagsExisting={tagsForFilter}
+              />
+            </div>
+          </Row>
+
+          <Row label="By category">
+            {isLoadingCategories ? (
+              <div className="grid place-items-center">
+                <LoadingAnimation />
+              </div>
+            ) : isErrorCategories ? (
+              <NoContent>Error while loading categories.</NoContent>
+            ) : !postCategories || postCategories.length === 0 ? (
+              <NoContent>No post categories found.</NoContent>
+            ) : (
+              <div className="grid grid-cols-2 gap-6 text-center text-lg md:grid-cols-4">
+                {postCategories.map((category) => (
+                  <Box padding="small" key={category.id}>
+                    <span>{category.name}</span>
+                  </Box>
+                ))}
+              </div>
+            )}
+          </Row>
         </div>
       </PageSection>
 
-      <PageSection>
+      <PageSection label="Search results">
         {postsSearchResult && (
           <PostsList
             initialViewVariant="short"
@@ -187,26 +257,6 @@ export function ExplorePage(): JSX.Element {
               noOfComments: post._count.comments,
             }))}
           />
-        )}
-      </PageSection>
-
-      <PageSection label="Find by category">
-        {isLoadingCategories ? (
-          <div className="grid place-items-center">
-            <LoadingAnimation />
-          </div>
-        ) : isErrorCategories ? (
-          <NoContent>Error while loading categories.</NoContent>
-        ) : !postCategories || postCategories.length === 0 ? (
-          <NoContent>No post categories found.</NoContent>
-        ) : (
-          <div className="grid grid-cols-2 gap-6 text-center text-lg md:grid-cols-4">
-            {postCategories.map((category) => (
-              <Box padding="small" key={category.id}>
-                <span>{category.name}</span>
-              </Box>
-            ))}
-          </div>
         )}
       </PageSection>
 
@@ -276,5 +326,24 @@ export function ExplorePage(): JSX.Element {
         )}
       </PageSection>
     </Page>
+  )
+}
+
+function Row({
+  label,
+  children,
+}: {
+  label: string
+  children: ReactNode
+}): JSX.Element {
+  return (
+    <>
+      <div className="col-span-1 row-span-1">
+        <p className="ml-20 text-3xl font-semibold uppercase tracking-widest text-dsecondary">
+          {label}
+        </p>
+      </div>
+      <div className="col-span-3 row-span-1">{children}</div>
+    </>
   )
 }

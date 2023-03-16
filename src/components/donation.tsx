@@ -85,7 +85,7 @@ function UserDonationUpdateRow({
   if (!userDonation)
     return (
       <div>
-        <NoContent>No user donation available..</NoContent>
+        <NoContent>No user donation available.</NoContent>
       </div>
     )
 
@@ -258,7 +258,7 @@ function UserDonationsUpdates({
               if (!donationProviders)
                 return (
                   <NoContent key={field.id}>
-                    No donation providers available..
+                    No donation providers available.
                   </NoContent>
                 )
 
@@ -359,7 +359,7 @@ function UserDonationsUpdates({
 
           <div className="col-span-6 lg:col-span-2">
             {!donationProviders ? (
-              <NoContent>No donation providers available..</NoContent>
+              <NoContent>No donation providers available.</NoContent>
             ) : (
               <FormSelect
                 // we throw away the component after a successful submit to reset the selection

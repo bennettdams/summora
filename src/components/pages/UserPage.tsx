@@ -40,7 +40,7 @@ export function UserPage(props: UserPageProps): JSX.Element {
       ) : isError ? (
         <p>Error loading user.</p>
       ) : !user ? (
-        <NoContent>No user</NoContent>
+        <NoContent>No user.</NoContent>
       ) : (
         <UserPageInternal
           {...user}

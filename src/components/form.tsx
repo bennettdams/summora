@@ -167,6 +167,28 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   )
 })
 
+export const InputCheckbox = forwardRef<
+  HTMLInputElement,
+  React.ComponentPropsWithoutRef<'input'>
+>(function InputCheckbox(props, ref): JSX.Element {
+  // remove `children` from props to not spread it onto `input`
+  const { children, ...rest } = props
+
+  return (
+    <div className="inline-flex items-center">
+      <input
+        type="checkbox"
+        className="h-4 w-4 rounded border-gray-300 text-dprimary focus:ring-dprimary"
+        {...rest}
+        ref={ref}
+      />
+      <label htmlFor={props.name} className="ml-2 block text-sm">
+        {children}
+      </label>
+    </div>
+  )
+})
+
 function FormError({ message }: { message: string | undefined }): JSX.Element {
   return (
     <p className="animate-fade-in text-sm text-yellow-500">

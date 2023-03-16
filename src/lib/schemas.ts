@@ -118,6 +118,11 @@ export const schemaTagSearch = z.object({
 
 export const schemaPostSearch = z.object({
   searchInput: z.string().min(2).max(128),
+  tagIdsToFilter: z.array(z.string().cuid()),
+  includeTitle: z.boolean(),
+  includeSubtitle: z.boolean(),
+  includeSegmentsTitle: z.boolean(),
+  includeSegmentsSubtitle: z.boolean(),
 })
 
 export const schemaEditUsername = z.object({

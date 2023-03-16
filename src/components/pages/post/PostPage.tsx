@@ -62,7 +62,7 @@ export function PostPage(props: PostPageProps): JSX.Element {
           <LoadingAnimation />
         </div>
       ) : !post ? (
-        <NoContent>No post</NoContent>
+        <NoContent>No post.</NoContent>
       ) : (
         <PostPageInternal
           post={post}

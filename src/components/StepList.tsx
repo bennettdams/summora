@@ -8,7 +8,7 @@ export function StepList({
   return (
     <div className="flex flex-col">
       {steps.length === 0 ? (
-        <NoContent>No steps yet</NoContent>
+        <NoContent>No steps yet.</NoContent>
       ) : (
         steps.map((step, index) => (
           <div key={step.no} className="relative flex pb-12">
