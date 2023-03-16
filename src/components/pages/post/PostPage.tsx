@@ -405,7 +405,7 @@ function PostPageInternal<
             </div>
           ) : !segments || segments.length === 0 ? (
             <div className="grid w-full place-items-center">
-              <NoContent>No post segments</NoContent>
+              <NoContent>No post segments.</NoContent>
             </div>
           ) : (
             <>
@@ -530,7 +530,7 @@ function CategorySelect({
       {isLoadingCategories ? (
         <LoadingAnimation />
       ) : !postCategories ? (
-        <NoContent>No categories</NoContent>
+        <NoContent>No categories.</NoContent>
       ) : shouldShowDropdown ? (
         <Form
           onChange={handleSubmit((data) => {
@@ -875,7 +875,7 @@ export function PostComments({
       {isLoading ? (
         <LoadingAnimation />
       ) : !comments || comments.length === 0 ? (
-        <NoContent>No comments</NoContent>
+        <NoContent>No comments.</NoContent>
       ) : (
         // For the root level tree, we use "null" as comment ID. See "createCommentTree" docs.
         createCommentTree(createRootComments(comments), null).map((comment) => (

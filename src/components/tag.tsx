@@ -41,7 +41,7 @@ export function TagsList({
         className="flex flex-wrap items-center justify-start"
       >
         {!tags || tags.length === 0 ? (
-          <NoContent>No tags yet</NoContent>
+          <NoContent>No tags yet.</NoContent>
         ) : (
           tags.map((tag) => (
             <Tag
@@ -215,7 +215,7 @@ export function TagsSelection({
           <div className="-m-1 mt-2 flex flex-wrap">
             {tagsSearchResult &&
               (tagsSearchResult.length === 0 ? (
-                <NoContent>No results for your search</NoContent>
+                <NoContent>No results for your search.</NoContent>
               ) : (
                 filterTags({
                   tagsToFilter: tagsSearchResult,
@@ -235,7 +235,7 @@ export function TagsSelection({
             {isLoadingTagsPopular ? (
               <LoadingAnimation />
             ) : !tagsPopular ? (
-              <NoContent>No tags</NoContent>
+              <NoContent>No tags.</NoContent>
             ) : (
               filterTags({
                 tagsToFilter: tagsPopular,
@@ -286,7 +286,7 @@ function TagsPopularCategory({
           {isLoadingTagsPopularByCategory ? (
             <LoadingAnimation />
           ) : !tagsPopularByCategory ? (
-            <NoContent>No tags yet</NoContent>
+            <NoContent>No tags yet.</NoContent>
           ) : (
             filterTags({
               tagsToFilter: tagsPopularByCategory,

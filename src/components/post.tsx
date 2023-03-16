@@ -134,7 +134,7 @@ function PostsListItem({
               {isLoadingSegments ? (
                 <LoadingAnimation />
               ) : !segments || segments.length === 0 ? (
-                <NoContent>No segments yet</NoContent>
+                <NoContent>No segments yet.</NoContent>
               ) : (
                 segments.map((segment) => {
                   return (
