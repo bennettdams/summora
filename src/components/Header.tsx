@@ -168,7 +168,14 @@ function SearchInput({
 }): JSX.Element {
   const router = useRouter()
   const defaultValuesPostSearch: SchemaPostSearch = useMemo(
-    () => ({ searchInput: '' }),
+    () => ({
+      searchInput: '',
+      includeTitle: true,
+      includeSubtitle: true,
+      includeSegmentsTitle: true,
+      includeSegmentsSubtitle: true,
+      tagIdsToFilter: [],
+    }),
     []
   )
   const {
