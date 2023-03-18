@@ -198,7 +198,7 @@ function SearchInput({
     reset()
     router.push(
       createRouteWithSearchParam({
-        route: ROUTES.explore,
+        route: ROUTES.search,
         searchParamKey: 's',
         value: searchInput,
       })
