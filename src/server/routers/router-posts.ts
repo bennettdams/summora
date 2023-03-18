@@ -230,6 +230,7 @@ export const postsRouter = router({
       includeSubtitle,
       includeSegmentsTitle,
       includeSegmentsSubtitle,
+      categoryIdsToFilter,
     } = input
 
     return await ctx.prisma.post.findMany({
@@ -265,6 +266,10 @@ export const postsRouter = router({
             },
           },
         ],
+        postCategoryId:
+          categoryIdsToFilter.length === 0
+            ? undefined
+            : { in: categoryIdsToFilter },
         tags:
           tagIdsToFilter.length === 0
             ? undefined

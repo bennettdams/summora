@@ -175,6 +175,7 @@ function SearchInput({
       includeSegmentsTitle: true,
       includeSegmentsSubtitle: true,
       tagIdsToFilter: [],
+      categoryIdsToFilter: [],
     }),
     []
   )

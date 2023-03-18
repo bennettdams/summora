@@ -6,7 +6,6 @@ import { getSearchParam } from '../../services/router-service'
 import { trpc, type RouterInput } from '../../util/trpc'
 import { useDebounce } from '../../util/use-debounce'
 import { useZodForm } from '../../util/use-zod-form'
-import { Box } from '../Box'
 import { Form, Input, InputCheckbox } from '../form'
 import { IconSearch } from '../Icon'
 import { LoadingAnimation } from '../LoadingAnimation'
@@ -18,12 +17,6 @@ import { TagsList, TagsSelection } from '../tag'
 type SchemaPostSearch = z.infer<typeof schemaPostSearch>
 
 export function ExplorePage(): JSX.Element {
-  const {
-    data: postCategories,
-    isLoading: isLoadingCategories,
-    isError: isErrorCategories,
-  } = trpc.postCategories.all.useQuery()
-
   const {
     data: topPostsByLikes,
     isLoading: isLoadingTopLikes,
@@ -40,11 +33,12 @@ export function ExplorePage(): JSX.Element {
   const defaultValuesPostSearch: SchemaPostSearch = useMemo(
     () => ({
       searchInput: '',
-      tagIdsToFilter: [],
       includeTitle: true,
       includeSubtitle: true,
       includeSegmentsTitle: true,
       includeSegmentsSubtitle: true,
+      tagIdsToFilter: [],
+      categoryIdsToFilter: [],
     }),
     []
   )
@@ -80,23 +74,27 @@ export function ExplorePage(): JSX.Element {
     { tagId: string; label: string }[]
   >([])
 
+  const [categoryIdsForFilter, setCategoryIdsForFilter] = useState<string[]>([])
+
   const queryInput = useMemo(() => {
     const x: RouterInput['posts']['search'] = {
       searchInput: inputPostSearchDebounced,
-      tagIdsToFilter: tagsForFilter.map((tag) => tag.tagId),
       includeTitle: inputIncludeTitle,
       includeSubtitle: inputIncludeSubtitle,
       includeSegmentsTitle: inputIncludeSegmentsTitle,
       includeSegmentsSubtitle: inputIncludeSegmentsSubtitle,
+      tagIdsToFilter: tagsForFilter.map((tag) => tag.tagId),
+      categoryIdsToFilter: categoryIdsForFilter,
     }
     return x
   }, [
     inputPostSearchDebounced,
-    tagsForFilter,
     inputIncludeTitle,
     inputIncludeSubtitle,
     inputIncludeSegmentsTitle,
     inputIncludeSegmentsSubtitle,
+    tagsForFilter,
+    categoryIdsForFilter,
   ])
 
   const { data: postsSearchResult, isFetching } = trpc.posts.search.useQuery(
@@ -215,23 +213,19 @@ export function ExplorePage(): JSX.Element {
           </Row>
 
           <Row label="By category">
-            {isLoadingCategories ? (
-              <div className="grid place-items-center">
-                <LoadingAnimation />
-              </div>
-            ) : isErrorCategories ? (
-              <NoContent>Error while loading categories.</NoContent>
-            ) : !postCategories || postCategories.length === 0 ? (
-              <NoContent>No post categories found.</NoContent>
-            ) : (
-              <div className="grid grid-cols-2 gap-6 text-center text-lg md:grid-cols-4">
-                {postCategories.map((category) => (
-                  <Box padding="small" key={category.id}>
-                    <span>{category.name}</span>
-                  </Box>
-                ))}
-              </div>
-            )}
+            <CategorySelectionList
+              selectedIds={categoryIdsForFilter}
+              onSelect={(categoryId) =>
+                setCategoryIdsForFilter((prev) => {
+                  const isIncluded = prev.includes(categoryId)
+                  if (isIncluded) {
+                    return prev.filter((prevId) => prevId !== categoryId)
+                  } else {
+                    return [...prev, categoryId]
+                  }
+                })
+              }
+            />
           </Row>
         </div>
       </PageSection>
@@ -345,5 +339,73 @@ function Row({
       </div>
       <div className="col-span-3 row-span-1">{children}</div>
     </>
+  )
+}
+
+function CategorySelectionList({
+  selectedIds,
+  onSelect,
+}: {
+  selectedIds: string[]
+  onSelect: (categoryId: string) => void
+}): JSX.Element {
+  const {
+    data: postCategories,
+    isLoading,
+    isError,
+  } = trpc.postCategories.all.useQuery()
+
+  return (
+    <div>
+      {isLoading ? (
+        <div className="grid place-items-center">
+          <LoadingAnimation />
+        </div>
+      ) : isError ? (
+        <NoContent>Error while loading categories.</NoContent>
+      ) : !postCategories || postCategories.length === 0 ? (
+        <NoContent>No post categories found.</NoContent>
+      ) : (
+        <div className="grid grid-cols-2 gap-6 text-center text-lg md:grid-cols-4">
+          {postCategories.map((category) => (
+            <CategorySelectItem
+              key={category.id}
+              categoryId={category.id}
+              categoryName={category.name}
+              onClick={onSelect}
+              isSelected={selectedIds.includes(category.id)}
+            />
+          ))}
+        </div>
+      )}
+
+      <p className="mt-4 italic">
+        Selecting no category means every is included in the filter.
+      </p>
+    </div>
+  )
+}
+
+function CategorySelectItem({
+  categoryId,
+  categoryName,
+  isSelected,
+  onClick,
+}: {
+  categoryId: string
+  categoryName: string
+  isSelected: boolean
+  onClick: (categoryId: string) => void
+}): JSX.Element {
+  return (
+    <div
+      key={categoryId}
+      className={`cursor-pointer rounded-lg border p-2 text-white ring-orange-500 hover:bg-dsecondary active:bg-dprimary/40 ${
+        isSelected ? 'bg-dsecondary' : 'bg-dtertiary'
+      }`}
+      onClick={() => onClick(categoryId)}
+    >
+      <span>{categoryName}</span>
+    </div>
   )
 }
