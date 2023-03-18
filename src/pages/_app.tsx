@@ -69,7 +69,8 @@ const App: AppType<{ session: Session | null }> = ({
           <Header />
 
           <div ref={mainContentRef} className="flex-grow overflow-y-auto">
-            <main className="h-full">
+            {/* Horizontal overflow disabled because on iOS Safari the user would move the page while scrolling vertically otherwise. */}
+            <main className="h-full overflow-x-hidden">
               {/* boundary to catch errors where we can still show some UI (like the header and footer) */}
               <ErrorBoundary>
                 {/* <TailwindCSSBreakpoint /> */}

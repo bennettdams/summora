@@ -113,9 +113,7 @@ function AvatarInternal({
                           utils.user.byUserId.invalidate({ userId })
 
                           // POSTS DATA
-                          utils.posts.some.invalidate()
-                          utils.posts.someByUserId.invalidate({ userId })
-                          utils.posts.byPostId.invalidate()
+                          utils.posts.invalidate()
                         },
                       })
                     },

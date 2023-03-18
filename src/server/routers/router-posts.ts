@@ -72,14 +72,6 @@ async function ensureAuthor({
 }
 
 export const postsRouter = router({
-  // SOME
-  some: procedure.query(async ({ ctx }) => {
-    return await ctx.prisma.post.findMany({
-      take: 20,
-      orderBy: { createdAt: 'desc' },
-      select: defaultPostSelect,
-    })
-  }),
   // SOME BY USER ID
   someByUserId: procedure
     .input(z.object({ userId: z.string().cuid() }))
@@ -146,7 +138,7 @@ export const postsRouter = router({
   topByViews: procedure.query(async ({ ctx }) => {
     return await ctx.prisma.post.findMany({
       select: defaultPostSelect,
-      take: 3,
+      take: 5,
       orderBy: [
         { noOfViews: 'desc' },
         { likedBy: { _count: 'desc' } },
@@ -158,7 +150,7 @@ export const postsRouter = router({
   topByLikes: procedure.query(async ({ ctx }) => {
     return await ctx.prisma.post.findMany({
       select: defaultPostSelect,
-      take: 3,
+      take: 5,
       orderBy: [
         { likedBy: { _count: 'desc' } },
         { noOfViews: 'desc' },
