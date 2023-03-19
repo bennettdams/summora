@@ -198,6 +198,10 @@ export function SearchPage(): JSX.Element {
                 postCategoryId={null}
                 tagsExisting={tagsForFilter}
               />
+
+              <p className="mt-4 italic">
+                Selecting no tag means every is included in the filter.
+              </p>
             </div>
           </Row>
 

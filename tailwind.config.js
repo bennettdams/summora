@@ -50,4 +50,12 @@ module.exports = {
     },
   },
   plugins: [require('@tailwindcss/forms')],
+  future: {
+    /**
+     * Fixes "sticky hover" for touch devices. We e.g. had this problem in the "category selection"
+     * at the search page where the buttons then just kept their "selected" style.
+     * See: https://github.com/tailwindlabs/tailwindcss/pull/8394
+     */
+    hoverOnlyWhenSupported: true,
+  },
 }
