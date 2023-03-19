@@ -11,6 +11,7 @@ import { trpc } from '../util/trpc'
 import { useOnClickOutside } from '../util/use-on-click-outside'
 import { useRouteChange } from '../util/use-route-change'
 import { useZodForm } from '../util/use-zod-form'
+import { AuthenticateButton } from './AuthenticateButton'
 import { Avatar } from './Avatar'
 import { Button } from './Button'
 import { Form, Input, useIsSubmitEnabled } from './form'
@@ -19,7 +20,6 @@ import {
   IconMenu,
   IconNotification,
   IconSearch,
-  IconSignIn,
   IconSignOut,
   IconUser,
   IconX,
@@ -99,12 +99,7 @@ function UserNavbar() {
         {isLoadingAuth ? (
           <LoadingAnimation />
         ) : !userIdAuth ? (
-          <Link to={ROUTES.signIn}>
-            {/* TODO Should be a ButtonNav */}
-            <Button icon={<IconSignIn />} onClick={() => console.info('')}>
-              Sign in
-            </Button>
-          </Link>
+          <AuthenticateButton />
         ) : (
           <UserNavbarInternal userId={userIdAuth} />
         )}

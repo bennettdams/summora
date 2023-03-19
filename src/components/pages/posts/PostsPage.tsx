@@ -4,6 +4,7 @@ import img from '../../../../public/assets/homepage-hero.jpg'
 import { PostsPageProps } from '../../../pages'
 import { ROUTES } from '../../../services/routing'
 import { trpc } from '../../../util/trpc'
+import { AuthenticateButton } from '../../AuthenticateButton'
 import {
   IconArrowCircleRight,
   IconIdea,
@@ -167,7 +168,7 @@ export function PostsPage({
       </PageSection>
 
       <PageSection>
-        <div className="mx-auto max-w-7xl py-12 lg:flex lg:items-center lg:justify-between lg:py-16">
+        <div className="mx-auto max-w-7xl py-12 lg:flex lg:items-center lg:py-16">
           <h2 className="font-serif text-4xl font-extrabold tracking-tight text-dprimary lg:text-3xl">
             <span className="block">
               Ready to make your knowledge to money?
@@ -176,15 +177,8 @@ export function PostsPage({
               Create an account for free today.
             </span>
           </h2>
-          <div className="mt-8 flex lg:mt-0 lg:shrink-0">
-            <div className="inline-flex rounded-md shadow">
-              <a
-                href="#"
-                className="inline-flex items-center justify-center rounded-md border border-transparent bg-dprimary px-5 py-3 text-base font-semibold text-white hover:bg-dsecondary"
-              >
-                Sign Up
-              </a>
-            </div>
+          <div className="mt-8 grid place-items-center lg:ml-20 lg:mt-0 lg:shrink-0">
+            <AuthenticateButton isSignUp={true} />
           </div>
         </div>
       </PageSection>
