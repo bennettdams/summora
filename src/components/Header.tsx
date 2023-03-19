@@ -224,8 +224,9 @@ function SearchInput(): JSX.Element {
       <Input
         {...registerPostSearch('searchInput')}
         placeholder="What are you looking for?"
-        isSpecial
-        small
+        autoFocus={true}
+        isSpecial={true}
+        small={true}
         validationErrorMessage={errorSearchInput?.message}
         icon={<SearchInputIcon onClick={handleProgrammaticSubmit} />}
         textAlignCenter={true}

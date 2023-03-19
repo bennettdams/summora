@@ -153,7 +153,7 @@ export function SearchPage(): JSX.Element {
         <div className="grid auto-rows-min grid-cols-4 gap-6">
           <Row label="By topic">
             <Form>
-              <div className="space-x-10">
+              <div className="flex flex-wrap gap-10">
                 <InputCheckbox {...registerPostSearch('includeTitle')}>
                   Title
                 </InputCheckbox>
@@ -255,12 +255,12 @@ function Row({
 }): JSX.Element {
   return (
     <>
-      <div className="col-span-1 row-span-1">
-        <p className="ml-20 text-3xl font-semibold uppercase tracking-widest text-dsecondary">
+      <div className="col-span-full row-span-1 lg:col-span-1">
+        <p className="ml-0 text-2xl font-semibold uppercase tracking-widest text-dsecondary lg:ml-20 lg:text-3xl">
           {label}
         </p>
       </div>
-      <div className="col-span-3 row-span-1">{children}</div>
+      <div className="col-span-full row-span-1 lg:col-span-3">{children}</div>
     </>
   )
 }
