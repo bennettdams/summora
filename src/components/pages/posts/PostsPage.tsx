@@ -33,9 +33,7 @@ export function PostsPage({
         <div className="mt-20 grid place-items-center text-center">
           <div>
             <div className="relative grid h-96 place-items-center text-center text-4xl font-extrabold leading-none tracking-tight">
-              <p className="z-10 bg-gradient-to-b from-dsecondary to-orange-300 decoration-clone bg-clip-text text-6xl uppercase text-transparent">
-                Condun
-              </p>
+              <p className="z-10 text-6xl uppercase text-dlight">Condun</p>
 
               {/* Background glow */}
               <div className="absolute top-0 h-96 w-96 rounded-full bg-dtertiary opacity-20 blur-2xl filter"></div>
