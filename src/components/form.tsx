@@ -85,6 +85,7 @@ type InputProps = React.ComponentPropsWithoutRef<'input'> & {
   isLoading?: boolean
   icon?: ReactNode
   textAlignCenter?: boolean
+  hideBottomBorderForSpecial?: boolean
 }
 
 /**
@@ -97,6 +98,7 @@ type InputProps = React.ComponentPropsWithoutRef<'input'> & {
  * - isLoading?: boolean
  * - icon?: ReactNode
  * - textAlignCenter?: boolean
+ * - hideBottomBorderForSpecial?: boolean
  */
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
@@ -107,6 +109,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     isSpecial = false,
     isLoading = false,
     textAlignCenter = false,
+    hideBottomBorderForSpecial = false,
     icon,
     ...props
   },
@@ -122,7 +125,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             `${textAlignCenter ? 'text-center' : 'text-left'}` +
             ' relative block w-full disabled:cursor-not-allowed ' +
             (isSpecial
-              ? `border-b-2 border-t-0 border-l-0 border-r-0 border-dtertiary bg-transparent outline-none focus:border-dprimary focus:ring-0 ${
+              ? `${
+                  hideBottomBorderForSpecial ? 'border-none' : 'border-b-2'
+                } border-t-0 border-l-0 border-r-0 border-dtertiary bg-transparent outline-none focus:border-dprimary focus:ring-0 ${
                   small ? 'p-3 px-8' : 'p-6 px-12'
                 }`
               : 'rounded-md placeholder:text-indigo-300 hover:shadow-md disabled:bg-gray-100' +

@@ -1,13 +1,14 @@
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, useMemo, useRef, useState } from 'react'
 import { z } from 'zod'
 import { schemaPostSearch } from '../lib/schemas'
 import { useAuth } from '../services/auth-service'
 import { createRouteWithSearchParam } from '../services/router-service'
 import { ROUTES } from '../services/routing'
 import { trpc } from '../util/trpc'
+import { useOnClickOutside } from '../util/use-on-click-outside'
 import { useRouteChange } from '../util/use-route-change'
 import { useZodForm } from '../util/use-zod-form'
 import { Avatar } from './Avatar'
@@ -159,13 +160,7 @@ function SearchInputIcon({ onClick }: { onClick: () => void }): JSX.Element {
   )
 }
 
-function SearchInput({
-  isMobileSearchInputActive,
-  onClick,
-}: {
-  isMobileSearchInputActive: boolean
-  onClick: () => void
-}): JSX.Element {
+function SearchInput(): JSX.Element {
   const router = useRouter()
   const defaultValuesPostSearch: SchemaPostSearch = useMemo(
     () => ({
@@ -194,8 +189,14 @@ function SearchInput({
     mode: 'onSubmit',
   })
 
+  const popoverSearchRef = useRef<HTMLDivElement | null>(null)
+  useOnClickOutside(popoverSearchRef, () =>
+    setIsPopoverSearchInputActive(false)
+  )
+
   function handleSearch(searchInput: string) {
     reset()
+    setIsPopoverSearchInputActive(false)
     router.push(
       createRouteWithSearchParam({
         route: ROUTES.search,
@@ -216,32 +217,61 @@ function SearchInput({
     }
   }
 
+  const [isPopoverSearchInputActive, setIsPopoverSearchInputActive] =
+    useState(false)
+
+  const FormElement = (
+    <Form
+      onSubmit={handleSubmitPostSearch((formData) => {
+        handleSearch(formData.searchInput)
+      })}
+    >
+      <Input
+        {...registerPostSearch('searchInput')}
+        placeholder="What are you looking for?"
+        isSpecial
+        small
+        validationErrorMessage={errorSearchInput?.message}
+        icon={<SearchInputIcon onClick={handleProgrammaticSubmit} />}
+        textAlignCenter={true}
+        hideBottomBorderForSpecial={true}
+      />
+    </Form>
+  )
+
   return (
     <div className="inline">
-      {!isMobileSearchInputActive && (
-        <span className="block cursor-pointer lg:hidden" onClick={onClick}>
-          <SearchInputIcon onClick={handleProgrammaticSubmit} />
-        </span>
-      )}
+      <span
+        className="block cursor-pointer lg:hidden"
+        onClick={() => setIsPopoverSearchInputActive(true)}
+      >
+        <SearchInputIcon onClick={handleProgrammaticSubmit} />
+      </span>
 
       <div
-        className={`${isMobileSearchInputActive ? 'block' : 'hidden lg:block'}`}
+        ref={popoverSearchRef}
+        className="fixed left-0 top-20 block w-screen lg:hidden"
       >
-        <Form
-          onSubmit={handleSubmitPostSearch((formData) => {
-            handleSearch(formData.searchInput)
-          })}
+        <Transition
+          show={isPopoverSearchInputActive}
+          as={Fragment}
+          enter="transition ease-out duration-300"
+          enterFrom="opacity-0 translate-y-1"
+          enterTo="opacity-100 translate-y-0"
+          leave="transition ease-in duration-500"
+          leaveFrom="opacity-100 translate-y-0"
+          leaveTo="opacity-0 translate-y-1"
         >
-          <Input
-            {...registerPostSearch('searchInput')}
-            placeholder="What are you looking for?"
-            isSpecial
-            small
-            validationErrorMessage={errorSearchInput?.message}
-            icon={<SearchInputIcon onClick={handleProgrammaticSubmit} />}
-            textAlignCenter={true}
-          />
-        </Form>
+          <div className="px-4">
+            <div className="w-full overflow-hidden rounded-lg bg-white px-4 shadow-lg ring-1 ring-black ring-opacity-5">
+              {isPopoverSearchInputActive && FormElement}
+            </div>
+          </div>
+        </Transition>
+      </div>
+
+      <div className="hidden lg:block">
+        {!isPopoverSearchInputActive && FormElement}
       </div>
     </div>
   )
@@ -251,9 +281,6 @@ export function Header(): JSX.Element {
   const isLoading = useRouteChange()
   const { asPath } = useRouter()
   const { userIdAuth } = useAuth()
-
-  const [isMobileSearchInputActive, setIsMobileSearchInputActive] =
-    useState(false)
 
   return (
     <Disclosure
@@ -275,27 +302,18 @@ export function Header(): JSX.Element {
               {/* Navbar content */}
               <div className="relative flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <span className="absolute left-14 inline sm:hidden">
-                  {isLoading && <LoadingAnimation />}
-                </span>
-                <span className="absolute left-14 inline sm:hidden">
-                  <SearchInput
-                    isMobileSearchInputActive={isMobileSearchInputActive}
-                    onClick={() => setIsMobileSearchInputActive(true)}
-                  />
+                  <SearchInput />
                 </span>
 
-                {/* We don't have enough space, so we hide the title when the search is active. */}
-                {!isMobileSearchInputActive && (
-                  <div className="absolute flex shrink-0 items-center sm:static">
-                    <Link to={ROUTES.home}>
-                      <div className="text-left text-4xl font-extrabold leading-none tracking-tight">
-                        <p className="bg-gradient-to-b from-dsecondary to-orange-300 decoration-clone bg-clip-text text-3xl uppercase text-transparent">
-                          Condun
-                        </p>
-                      </div>
-                    </Link>
-                  </div>
-                )}
+                <div className="absolute flex shrink-0 items-center sm:static">
+                  <Link to={ROUTES.home}>
+                    <div className="text-left text-4xl font-extrabold leading-none tracking-tight">
+                      <p className="bg-gradient-to-b from-dsecondary to-orange-300 decoration-clone bg-clip-text text-3xl uppercase text-transparent">
+                        Condun
+                      </p>
+                    </div>
+                  </Link>
+                </div>
 
                 {/* Navbar nav items */}
                 <div className="hidden sm:ml-6 sm:block">
@@ -324,20 +342,19 @@ export function Header(): JSX.Element {
               {/* Navbar right side */}
               <div className="absolute inset-y-0 right-0 flex items-center space-x-3 pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 <div className="hidden sm:block">
-                  <SearchInput
-                    isMobileSearchInputActive={isMobileSearchInputActive}
-                    onClick={() => setIsMobileSearchInputActive(true)}
-                  />
+                  <SearchInput />
                 </div>
-
-                <span className="hidden w-16 place-items-center sm:inline-grid">
-                  {isLoading && <LoadingAnimation />}
+                <span className="inline-grid w-3 place-items-end sm:w-16 sm:place-items-center">
+                  <span className="inline sm:hidden">
+                    {isLoading && <LoadingAnimation size="small" />}
+                  </span>
+                  <span className="hidden sm:inline">
+                    {isLoading && <LoadingAnimation />}
+                  </span>
                 </span>
-
                 <div className="hidden sm:block">
                   <DynamicCreatePostModal />
                 </div>
-
                 {!!userIdAuth && (
                   <button
                     type="button"
