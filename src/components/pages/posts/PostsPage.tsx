@@ -4,7 +4,13 @@ import img from '../../../../public/assets/homepage-hero.jpg'
 import { PostsPageProps } from '../../../pages'
 import { ROUTES } from '../../../services/routing'
 import { trpc } from '../../../util/trpc'
-import { IconArrowCircleRight, IconLightning } from '../../Icon'
+import {
+  IconArrowCircleRight,
+  IconIdea,
+  IconKnowledge,
+  IconLightning,
+  IconMoney,
+} from '../../Icon'
 import { Link } from '../../link'
 import { LoadingAnimation } from '../../LoadingAnimation'
 import { NoContent } from '../../NoContent'
@@ -117,10 +123,10 @@ export function PostsPage({
       </PageSection>
 
       <PageSection>
-        <div className="grid grid-cols-2 grid-rows-2 gap-8 md:px-44">
+        <div className="grid grid-cols-1 gap-8 md:px-44 lg:grid-cols-2">
           <div className="justify-left flex items-center">
             <div className="rounded-md bg-dsecondary p-3">
-              <IconLightning size="big" className="text-white" />
+              <IconIdea size="big" className="text-white" />
             </div>
 
             <p className="ml-6 text-lg font-semibold leading-6">
@@ -140,7 +146,7 @@ export function PostsPage({
 
           <div className="justify-left flex items-center">
             <div className="rounded-md bg-dsecondary p-3">
-              <IconLightning size="big" className="text-white" />
+              <IconMoney size="big" className="text-white" />
             </div>
 
             <p className="ml-6 text-lg font-semibold leading-6">
@@ -150,7 +156,7 @@ export function PostsPage({
 
           <div className="justify-left flex items-center">
             <div className="rounded-md bg-dsecondary p-3">
-              <IconLightning size="big" className="text-white" />
+              <IconKnowledge size="big" className="text-white" />
             </div>
 
             <p className="ml-6 text-lg font-semibold leading-6">

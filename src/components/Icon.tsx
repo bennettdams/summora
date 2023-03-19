@@ -1,12 +1,15 @@
 import {
+  AcademicCapIcon as AcademicCapIconOutline,
   ArrowLeftOnRectangleIcon as ArrowLeftOnRectangleIconOutline,
   ArrowRightOnRectangleIcon as ArrowRightOnRectangleIconOutline,
+  BanknotesIcon as BanknotesIconOutline,
   BellIcon as BellIconOutline,
   BoltIcon as BoltIconOutline,
   BookmarkSquareIcon as BookmarkSquareIconOutline,
   CheckCircleIcon as CheckCircleIconOutline,
   HeartIcon as HeartIconOutline,
   HomeIcon as HomeIconOutline,
+  LightBulbIcon as LightBulbIconOutline,
   MagnifyingGlassIcon as MagnifyingGlassIconOutline,
   MinusCircleIcon as MinusCircleIconOutline,
   PlusCircleIcon as PlusCircleIconOutline,
@@ -82,6 +85,9 @@ const icons = {
   SquaresPlusIcon,
   Squares2X2Icon,
   MagnifyingGlassIconOutline,
+  AcademicCapIconOutline,
+  LightBulbIconOutline,
+  BanknotesIconOutline,
 }
 
 type IconName = keyof typeof icons
@@ -229,4 +235,16 @@ export function IconUser(props: IconProps): JSX.Element {
 
 export function IconSearch(props: IconProps): JSX.Element {
   return <Icon {...props} iconName="MagnifyingGlassIconOutline" />
+}
+
+export function IconKnowledge(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="AcademicCapIconOutline" />
+}
+
+export function IconIdea(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="LightBulbIconOutline" />
+}
+
+export function IconMoney(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="BanknotesIconOutline" />
 }
