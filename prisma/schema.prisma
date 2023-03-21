@@ -46,7 +46,7 @@ model PostComment {
   updatedAt       DateTime      @updatedAt
   isDeleted       Boolean       @default(false)
   // post
-  Post            Post          @relation("PostComments", fields: [postId], references: [id])
+  post            Post          @relation("PostComments", fields: [postId], references: [id])
   postId          String
   // comment tree
   commentParentId String?
@@ -77,7 +77,7 @@ model PostSegment {
   position           PostSegmentImagePosition @default(RIGHT)
   items              PostSegmentItem[]
   // for Post.segments
-  Post               Post                     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post               Post                     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId             String
   //
 }
@@ -88,7 +88,7 @@ model PostSegmentItem {
   updatedAt     DateTime    @updatedAt
   content       String
   // for PostSegment.items
-  PostSegment   PostSegment @relation(fields: [postSegmentId], references: [id], onDelete: Cascade)
+  postSegment   PostSegment @relation(fields: [postSegmentId], references: [id], onDelete: Cascade)
   postSegmentId String
   //
 }
@@ -97,7 +97,7 @@ model PostCategory {
   id          String @id
   name        String
   description String
-  Post        Post[] @relation("Post_PostCategory")
+  posts       Post[] @relation("Post_PostCategory")
 }
 
 model PostTag {
@@ -117,7 +117,7 @@ model DonationLink {
   updatedAt          DateTime           @updatedAt
   address            String
   // user relation
-  User               User               @relation("UserDonationLinks", fields: [userId], references: [id])
+  user               User               @relation("UserDonationLinks", fields: [userId], references: [id])
   userId             String
   // donation provider relation
   donationProvider   DonationProvider   @relation("DonationLink_DonationProvider", fields: [donationProviderId], references: [donationProviderId])
@@ -133,7 +133,7 @@ model DonationProvider {
   donationProviderId DonationProviderId @id
   name               String
   // donation links relation
-  DonationLink       DonationLink[]     @relation("DonationLink_DonationProvider")
+  donationLinks      DonationLink[]     @relation("DonationLink_DonationProvider")
 }
 
 // ########## Start of NextAuth.js models
@@ -189,7 +189,7 @@ model User {
   // posts
   posts              Post[]         @relation("AuthorPost")
   // comments
-  PostComment        PostComment[]  @relation("PostCommentAuthor")
+  comments           PostComment[]  @relation("PostCommentAuthor")
   // likes
   likedPosts         Post[]         @relation("PostLikes")
   // upvotes
