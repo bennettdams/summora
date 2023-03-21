@@ -41,16 +41,16 @@ async function ensureAuthor({
         where: { id: postSegmentId },
         select: {
           imageFileExtension: true,
-          Post: { select: { authorId: true, id: true } },
+          post: { select: { authorId: true, id: true } },
         },
       })
-      if (!postSegment?.Post.authorId) {
+      if (!postSegment?.post.authorId) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'The post segment does not exist.',
         })
       } else {
-        return { authorId: postSegment.Post.authorId, entity: postSegment }
+        return { authorId: postSegment.post.authorId, entity: postSegment }
       }
     },
   })
@@ -152,7 +152,7 @@ export const postSegmentsRouter = router({
       if (res) {
         const {
           imageFileExtension,
-          Post: { id: postId },
+          post: { id: postId },
         } = res
 
         // Delete the segment image in cloud storage

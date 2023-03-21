@@ -58,7 +58,7 @@ export const getStaticProps: GetStaticProps<
         prisma.user.findUnique({
           where: { id: userId },
           select: {
-            _count: { select: { PostComment: true, posts: true } },
+            _count: { select: { comments: true, posts: true } },
           },
         }),
         ssg.donationLink.byUserId.prefetch({ userId }),
@@ -70,7 +70,7 @@ export const getStaticProps: GetStaticProps<
       let noOfCommentsWritten = 0
       if (isPromiseFulfilled(statistics)) {
         noOfPostsCreated = statistics.value?._count.posts ?? 0
-        noOfCommentsWritten = statistics.value?._count.PostComment ?? 0
+        noOfCommentsWritten = statistics.value?._count.comments ?? 0
       }
 
       let noOfLikesReceived = 0

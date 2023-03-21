@@ -28,9 +28,9 @@ async function ensureAuthor({
       const segmentItem = await prisma.postSegmentItem.findUnique({
         where: { id: segmentItemId },
         select: {
-          PostSegment: {
+          postSegment: {
             select: {
-              Post: {
+              post: {
                 select: { authorId: true },
               },
             },
@@ -38,7 +38,7 @@ async function ensureAuthor({
         },
       })
 
-      const postAuthorId = segmentItem?.PostSegment.Post.authorId
+      const postAuthorId = segmentItem?.postSegment.post.authorId
       if (!postAuthorId) {
         throw new TRPCError({
           code: 'NOT_FOUND',

@@ -87,7 +87,7 @@ export const postCommentsRouter = router({
 
       await ctx.prisma.postComment.create({
         data: {
-          Post: { connect: { id: postId } },
+          post: { connect: { id: postId } },
           author: { connect: { id: ctx.userIdAuth } },
           commentParent: !commentParentId
             ? undefined

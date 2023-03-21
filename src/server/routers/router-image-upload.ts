@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { schemaImageFileType } from '../../lib/schemas'
 import {
   extractFileExtensionFromFileType,
-  storageImagesPath
+  storageImagesPath,
 } from '../../services/cloud-service'
 import { ensureAuthorTRPC } from '../api-security'
 import { createPresignedPost } from '../cloud-storage'
@@ -57,16 +57,16 @@ export const imageUploadRouter = router({
           const postSegment = await ctx.prisma.postSegment.findUnique({
             where: { id: postSegmentId },
             select: {
-              Post: { select: { authorId: true, id: true } },
+              post: { select: { authorId: true, id: true } },
             },
           })
-          if (!postSegment?.Post.authorId) {
+          if (!postSegment?.post.authorId) {
             throw new TRPCError({
               code: 'NOT_FOUND',
               message: 'The post segment does not exist.',
             })
           } else {
-            return { authorId: postSegment.Post.authorId, entity: postSegment }
+            return { authorId: postSegment.post.authorId, entity: postSegment }
           }
         },
       })
@@ -85,7 +85,7 @@ export const imageUploadRouter = router({
       return await createPresignedPost({
         fileType,
         storageImagePath: storageImagesPath.postSegmentImage({
-          postId: postForPostSegment.Post.id,
+          postId: postForPostSegment.post.id,
           postSegmentId,
           fileExtension,
         }),

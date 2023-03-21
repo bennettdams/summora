@@ -81,7 +81,7 @@ export const donationLinkRouter = router({
               donationProviderId: newDonationLink.donationProviderId,
             },
           },
-          User: { connect: { id: ctx.userIdAuth } },
+          user: { connect: { id: ctx.userIdAuth } },
         },
         select: defaultDonationLinkSelect,
       })
