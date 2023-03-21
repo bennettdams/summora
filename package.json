@@ -5,6 +5,8 @@
   "scripts": {
     "/////////////// Meta": "",
     "postinstall": "npm run p:generate",
+    "/////////////// DEPLOY": "",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
     "/////////////// RUN": "",
     "dev": "next dev -p 3000",
     "build": "next build",
@@ -37,6 +39,9 @@
     "clean-install": "rm -rf .next && rm -rf node_modules && npm i",
     "depcheck": "npx depcheck"
   },
+  "//scripts": [
+    "vercel-build is used in the CI/CD pipeline. It uses Vercel's build step to run the prisma migrate deploy command to apply the migrations before Vercel deploys the serverless functions. See https://www.prisma.io/docs/guides/deployment/deployment-guides/deploying-to-vercel#prisma-workflow"
+  ],
   "dependencies": {
     "@aws-sdk/client-s3": "^3.294.0",
     "@aws-sdk/s3-presigned-post": "^3.294.0",
