@@ -16,14 +16,14 @@ import { trpc } from '../util/trpc'
 const globalFont = Nunito({
   subsets: ['latin'],
   weight: ['400', '500', '600', '800'],
-  variable: '--global-condun-font',
+  variable: '--global-summora-font',
   display: 'swap',
 })
 
 const globalFontSerif = DM_Serif_Display({
   subsets: ['latin'],
   weight: ['400'],
-  variable: '--global-condun-font-serif',
+  variable: '--global-summora-font-serif',
   display: 'swap',
 })
 
@@ -59,7 +59,7 @@ const App: AppType<{ session: Session | null }> = ({
         {/* https://github.com/trpc/trpc/discussions/1594#discussioncomment-2303573 */}
         {/* <QueryClientProvider client={queryClient}> */}
         <Head>
-          <title>Condun</title>
+          <title>Summora</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
 

@@ -20,9 +20,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--global-condun-font)', ...defaultTheme.fontFamily.sans],
+        sans: ['var(--global-summora-font)', ...defaultTheme.fontFamily.sans],
         serif: [
-          'var(--global-condun-font-serif)',
+          'var(--global-summora-font-serif)',
           ...defaultTheme.fontFamily.serif,
         ],
       },
