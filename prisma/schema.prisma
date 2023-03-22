@@ -12,30 +12,30 @@ generator client {
 }
 
 model Post {
-  id             String        @id @default(cuid())
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  id             String         @id @default(cuid())
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   title          String
   subtitle       String?
-  noOfViews      Int           @default(0)
+  noOfViews      Int            @default(0)
   // segments
   segments       PostSegment[]
   // category
-  category       PostCategory  @relation("Post_PostCategory", fields: [postCategoryId], references: [id])
-  postCategoryId String
+  category       PostCategory   @relation("Post_PostCategory", fields: [postCategoryId], references: [id])
+  postCategoryId PostCategoryId
   //
   // tags
   tags           PostTag[]
   //
   // user
-  author         User          @relation("AuthorPost", fields: [authorId], references: [id])
+  author         User           @relation("AuthorPost", fields: [authorId], references: [id])
   authorId       String
   //
   // comments
-  comments       PostComment[] @relation("PostComments")
+  comments       PostComment[]  @relation("PostComments")
   //
   // likes
-  likedBy        User[]        @relation("PostLikes")
+  likedBy        User[]         @relation("PostLikes")
   //
 }
 
@@ -93,11 +93,32 @@ model PostSegmentItem {
   //
 }
 
+enum PostCategoryId {
+  books
+  movies
+  series
+  music
+  gaming
+  pcelectronics
+  household
+  animals
+  nature
+  beauty
+  vehicles
+  fooddrinks
+  education
+  babys
+  fashion
+  sports
+  travel
+  programming
+}
+
 model PostCategory {
-  id          String @id
+  id          PostCategoryId @id
   name        String
   description String
-  posts       Post[] @relation("Post_PostCategory")
+  posts       Post[]         @relation("Post_PostCategory")
 }
 
 model PostTag {
