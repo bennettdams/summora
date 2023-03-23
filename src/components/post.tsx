@@ -187,22 +187,28 @@ function PostsListItem({
               </div>
             </div>
 
-            <div className="h-full w-1/2">
-              <div className="flex h-full justify-end">
-                <Link to={ROUTES.user(post.author.id)}>
-                  <div className="flex h-full items-center space-x-4 rounded-lg px-4 hover:bg-dtertiary hover:text-white">
-                    <span>{post.author.username}</span>
-                    <Avatar
-                      userId={post.author.id}
-                      username={post.author.username}
-                      imageId={post.author.imageId}
-                      imageBlurDataURL={post.author.imageBlurDataURL}
-                      imageFileExtension={post.author.imageFileExtension}
-                      size="small"
-                    />
+            <div className="flex h-full w-1/2 flex-col space-y-2">
+              <Link to={ROUTES.user(post.author.id)}>
+                <div className="flex h-full max-w-full items-center rounded-lg p-1.5 hover:bg-dsecondary hover:text-white">
+                  <div className="w-2/3">
+                    <p className="truncate text-right">
+                      {post.author.username}
+                    </p>
                   </div>
-                </Link>
-              </div>
+                  <div className="flex w-1/3 items-end justify-end">
+                    <div>
+                      <Avatar
+                        userId={post.author.id}
+                        username={post.author.username}
+                        imageId={post.author.imageId}
+                        imageBlurDataURL={post.author.imageBlurDataURL}
+                        imageFileExtension={post.author.imageFileExtension}
+                        size="small"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </Link>
             </div>
           </div>
         </div>
