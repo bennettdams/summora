@@ -1,4 +1,5 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
+import type { PostCategoryId } from '@prisma/client'
 import { MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { useFormState } from 'react-hook-form'
 import { z } from 'zod'
@@ -495,7 +496,7 @@ function CategorySelect({
   refExternal,
 }: {
   postId: string
-  categoryIdInitial: string
+  categoryIdInitial: PostCategoryId
   shouldShowDropdown: boolean
   refExternal: MutableRefObject<HTMLDivElement>
 }): JSX.Element {

@@ -1,4 +1,5 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
+import type { PostCategoryId } from '@prisma/client'
 import { useMemo, useRef, useState } from 'react'
 import { z } from 'zod'
 import { schemaTagSearch } from '../lib/schemas'
@@ -138,7 +139,7 @@ export function TagsSelection({
 }: {
   onAdd: (tag: TagTagslist) => void
   tagsExisting: TagTagslist[]
-  postCategoryId: string | null
+  postCategoryId: PostCategoryId | null
   onOutsideClick?: () => void
 }): JSX.Element {
   const { data: tagsPopular, isLoading: isLoadingTagsPopular } =
@@ -264,7 +265,7 @@ function TagsPopularCategory({
   tagsExisting,
   onAdd,
 }: {
-  postCategoryId: string
+  postCategoryId: PostCategoryId
   tagsExisting: TagTagslist[]
   onAdd: (tag: TagTagslist) => void
 }): JSX.Element {

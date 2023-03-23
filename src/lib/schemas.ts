@@ -1,4 +1,4 @@
-import type { DonationProviderId } from '@prisma/client'
+import { DonationProviderId, PostCategoryId } from '@prisma/client'
 import { z } from 'zod'
 import { OmitStrict, Undefinable } from '../types/util-types'
 
@@ -32,10 +32,29 @@ export const generalFormErrorKey = 'general-form-error-key'
 
 export const addressSchema = z.string().min(1).max(128)
 
-const postCategorySchema = z
-  .string({ required_error: 'Category required' })
-  .min(1)
-  .max(128)
+const postCategoryIdsMap: { [K in PostCategoryId]: K } = {
+  animals: 'animals',
+  babys: 'babys',
+  beauty: 'beauty',
+  books: 'books',
+  education: 'education',
+  fashion: 'fashion',
+  fooddrinks: 'fooddrinks',
+  gaming: 'gaming',
+  household: 'household',
+  movies: 'movies',
+  music: 'music',
+  nature: 'nature',
+  pcelectronics: 'pcelectronics',
+  programming: 'programming',
+  series: 'series',
+  sports: 'sports',
+  travel: 'travel',
+  vehicles: 'vehicles',
+}
+export const schemaPostCategoryId = z.nativeEnum(postCategoryIdsMap, {
+  required_error: 'Category ID required',
+})
 
 export const schemaUpdatePost = z
   .object({
@@ -50,13 +69,13 @@ export const schemaUpdatePost = z
 
 export const schemaUpdatePostCategory = z.object({
   postId: z.string().cuid(),
-  categoryId: postCategorySchema,
+  categoryId: schemaPostCategoryId,
 })
 
 export const schemaCreatePost = z.object({
   title: z.string().min(1),
   subtitle: z.string().optional(),
-  categoryId: postCategorySchema,
+  categoryId: schemaPostCategoryId,
 })
 
 export const schemaUpdateDonationLink = z.object({
@@ -123,7 +142,7 @@ export const schemaPostSearch = z.object({
   includeSegmentsTitle: z.boolean(),
   includeSegmentsSubtitle: z.boolean(),
   tagIdsToFilter: z.array(z.string().cuid()),
-  categoryIdsToFilter: z.array(postCategorySchema),
+  categoryIdsToFilter: z.array(schemaPostCategoryId),
 })
 
 export const schemaEditUsername = z.object({

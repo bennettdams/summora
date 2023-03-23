@@ -1,7 +1,7 @@
 import type { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { schemaTagSearch } from '../../lib/schemas'
+import { schemaPostCategoryId, schemaTagSearch } from '../../lib/schemas'
 import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
 import { procedure, protectedProcedure, router } from '../trpc'
@@ -71,7 +71,7 @@ export const postTagsRouter = router({
     })
   }),
   popularByCategoryId: procedure
-    .input(z.object({ categoryId: z.string().min(1) }))
+    .input(z.object({ categoryId: schemaPostCategoryId }))
     .query(async ({ input, ctx }) => {
       const { categoryId } = input
       return await ctx.prisma.postTag.findMany({

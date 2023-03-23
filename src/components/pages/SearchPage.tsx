@@ -1,3 +1,4 @@
+import type { PostCategoryId } from '@prisma/client'
 import { useRouter } from 'next/router'
 import { ReactNode, useEffect, useMemo, useState } from 'react'
 import { z } from 'zod'
@@ -63,7 +64,9 @@ export function SearchPage(): JSX.Element {
     { tagId: string; label: string }[]
   >([])
 
-  const [categoryIdsForFilter, setCategoryIdsForFilter] = useState<string[]>([])
+  const [categoryIdsForFilter, setCategoryIdsForFilter] = useState<
+    PostCategoryId[]
+  >([])
 
   const queryInput = useMemo(() => {
     const x: RouterInput['posts']['search'] = {
@@ -273,8 +276,8 @@ function CategorySelectionList({
   selectedIds,
   onSelect,
 }: {
-  selectedIds: string[]
-  onSelect: (categoryId: string) => void
+  selectedIds: PostCategoryId[]
+  onSelect: (categoryId: PostCategoryId) => void
 }): JSX.Element {
   const {
     data: postCategories,
@@ -319,10 +322,10 @@ function CategorySelectItem({
   isSelected,
   onClick,
 }: {
-  categoryId: string
+  categoryId: PostCategoryId
   categoryName: string
   isSelected: boolean
-  onClick: (categoryId: string) => void
+  onClick: (categoryId: PostCategoryId) => void
 }): JSX.Element {
   return (
     <div
