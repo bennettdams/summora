@@ -28,7 +28,6 @@ async function drop() {
   await prisma.postSegmentItem.deleteMany({})
   await prisma.postSegment.deleteMany({})
   await prisma.post.deleteMany({})
-  await prisma.postCategory.deleteMany({})
   await prisma.postTag.deleteMany({})
   await prisma.donationLink.deleteMany({})
   await prisma.donationProvider.deleteMany({})
@@ -39,7 +38,6 @@ async function sleep() {
 }
 
 async function fill() {
-  await prisma.postCategory.createMany({ data: postCategories })
   const postCategoriesCreated = await prisma.postCategory.findMany()
 
   await prisma.postTag.createMany({ data: postTags })
@@ -227,27 +225,6 @@ async function createSegments(): Promise<
 
   return segments
 }
-
-const postCategories: Prisma.PostCategoryCreateInput[] = [
-  { id: 'books', name: 'Books', description: '..' },
-  { id: 'movies', name: 'Movies', description: '..' },
-  { id: 'series', name: 'Series', description: '..' },
-  { id: 'music', name: 'Music', description: '..' },
-  { id: 'gaming', name: 'Gaming', description: '..' },
-  { id: 'pc-electronics', name: 'PC & Electronics', description: '..' },
-  { id: 'household', name: 'Household', description: '..' },
-  { id: 'animals', name: 'Animals', description: '..' },
-  { id: 'nature', name: 'Nature', description: '..' },
-  { id: 'beauty', name: 'Beauty', description: '..' },
-  { id: 'vehicles', name: 'Vehicles', description: '..' },
-  { id: 'food-drinks', name: 'Food & drinks', description: '..' },
-  { id: 'education', name: 'Education', description: '..' },
-  { id: 'babys', name: 'Babys', description: '..' },
-  { id: 'fashion', name: 'Fashion', description: '..' },
-  { id: 'sports', name: 'Sports', description: '..' },
-  { id: 'travel', name: 'Travel', description: '..' },
-  { id: 'programming', name: 'Programming', description: '..' },
-]
 
 const donationProviders: Prisma.DonationProviderCreateInput[] = [
   { donationProviderId: 'PAYPAL', name: 'PayPal' },
