@@ -129,7 +129,7 @@ function UserPageInternal({
   return (
     <>
       <PageSection>
-        <div className="flex flex-col p-10 lg:flex-row">
+        <div className="flex flex-col p-2 lg:flex-row lg:p-10">
           <div className="lg:w-1/4"></div>
 
           <div className="w-full lg:w-2/4">
@@ -137,15 +137,13 @@ function UserPageInternal({
               isEnabled={userId === userIdAuth && !isEditMode}
               onClick={() => setIsEditMode(true)}
             >
-              <div>
-                <h2
-                  className={`p-2 text-center font-serif text-5xl text-dprimary ${
-                    isEditMode ? 'hidden' : 'block'
-                  }`}
-                >
-                  {username}
-                </h2>
-              </div>
+              <h2
+                className={`truncate p-2 text-center font-serif text-5xl text-dprimary ${
+                  isEditMode ? 'hidden' : 'block'
+                }`}
+              >
+                {username}
+              </h2>
 
               <div
                 ref={refUsername}
