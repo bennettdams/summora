@@ -216,90 +216,98 @@ export function TagsSelection({
   }
 
   return (
-    <div
-      className="flex flex-col space-y-6 lg:flex-row lg:space-x-10 lg:space-y-0"
-      ref={refTagSelection}
-    >
-      <div className="w-full flex-1 space-y-6">
+    <div className="space-y-6">
+      <div className="text-center">
         <Title>Select or create a tag</Title>
-        <Box>
-          <Form
-            onSubmit={handleSubmitTagSearch(() => {
-              // noop, this is executed via debounce above
-            })}
-            className={
-              showCreateButton ? 'flex flex-row items-center space-x-4' : ''
-            }
-          >
-            <Input
-              {...registerTagSearch('searchInput')}
-              placeholder="Search for tags.."
-              isSpecial
-              isLoading={isFetching}
-              small
-              validationErrorMessage={errorSearchInput?.message}
-            />
+      </div>
 
-            {showCreateButton && (
-              <>
-                <p className="uppercase tracking-wide">or</p>
+      <div
+        className="flex flex-col space-y-6 lg:flex-row lg:space-x-10 lg:space-y-0"
+        ref={refTagSelection}
+      >
+        <div className="w-full flex-1 space-y-6">
+          <Box>
+            <Form
+              onSubmit={handleSubmitTagSearch(() => {
+                // noop, this is executed via debounce above
+              })}
+              className={
+                showCreateButton ? 'flex flex-row items-center space-x-4' : ''
+              }
+            >
+              <Input
+                {...registerTagSearch('searchInput')}
+                placeholder="Search for tags.."
+                isSpecial
+                isLoading={isFetching}
+                small
+                validationErrorMessage={errorSearchInput?.message}
+              />
 
-                <ButtonAdd disabled={!inputTagSearch} onClick={handleCreateTag}>
-                  Create
-                </ButtonAdd>
-              </>
-            )}
-          </Form>
+              {showCreateButton && (
+                <>
+                  <p className="uppercase tracking-wide">or</p>
 
-          <div className="-m-1 mt-2 flex flex-wrap">
-            {tagsSearchResult &&
-              (tagsSearchResult.length === 0 ? (
-                <div className="flex basis-full items-center px-1 text-center">
-                  <div className="flex-1 text-sm">
-                    <p>No results for your search.</p>
-                    {showCreateButton && (
-                      <p>Maybe you want to create this tag?</p>
-                    )}
+                  <ButtonAdd
+                    disabled={!inputTagSearch}
+                    onClick={handleCreateTag}
+                  >
+                    Create
+                  </ButtonAdd>
+                </>
+              )}
+            </Form>
+
+            <div className="-m-1 mt-2 flex flex-wrap">
+              {tagsSearchResult &&
+                (tagsSearchResult.length === 0 ? (
+                  <div className="flex basis-full items-center px-1 text-center">
+                    <div className="flex-1 text-sm">
+                      <p>No results for your search.</p>
+                      {showCreateButton && (
+                        <p>Maybe you want to create this tag?</p>
+                      )}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  filterTags({
+                    tagsToFilter: tagsSearchResult,
+                    tagsExisting,
+                  }).map((tag) => (
+                    <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
+                  ))
+                ))}
+            </div>
+          </Box>
+        </div>
+
+        {postCategoryId && (
+          <TagsPopularCategory
+            tagsExisting={tagsExisting}
+            onAdd={handleAddTag}
+            postCategoryId={postCategoryId}
+          />
+        )}
+
+        <div className="flex-1">
+          <Box inline>
+            <p className="italic">Popular overall</p>
+            <div className="-m-1 mt-2 flex flex-wrap">
+              {isLoadingTagsPopular ? (
+                <LoadingAnimation />
+              ) : !tagsPopular ? (
+                <NoContent>No tags.</NoContent>
               ) : (
                 filterTags({
-                  tagsToFilter: tagsSearchResult,
+                  tagsToFilter: tagsPopular,
                   tagsExisting,
                 }).map((tag) => (
                   <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
                 ))
-              ))}
-          </div>
-        </Box>
-      </div>
-
-      {postCategoryId && (
-        <TagsPopularCategory
-          tagsExisting={tagsExisting}
-          onAdd={handleAddTag}
-          postCategoryId={postCategoryId}
-        />
-      )}
-
-      <div className="flex-1">
-        <Box inline>
-          <p className="italic">Popular overall</p>
-          <div className="-m-1 mt-2 flex flex-wrap">
-            {isLoadingTagsPopular ? (
-              <LoadingAnimation />
-            ) : !tagsPopular ? (
-              <NoContent>No tags.</NoContent>
-            ) : (
-              filterTags({
-                tagsToFilter: tagsPopular,
-                tagsExisting,
-              }).map((tag) => (
-                <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
-              ))
-            )}
-          </div>
-        </Box>
+              )}
+            </div>
+          </Box>
+        </div>
       </div>
     </div>
   )
