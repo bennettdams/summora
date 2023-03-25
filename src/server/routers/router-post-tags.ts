@@ -146,9 +146,6 @@ export const postTagsRouter = router({
           {
             label: { contains: searchInput, mode: 'insensitive' },
           },
-          {
-            description: { contains: searchInput, mode: 'insensitive' },
-          },
         ],
       },
       orderBy: { posts: { _count: 'desc' } },
@@ -162,7 +159,6 @@ export const postTagsRouter = router({
     return await ctx.prisma.postTag.create({
       data: {
         label: tagLabel,
-        description: '-',
         posts: { connect: { id: postId } },
       },
     })
