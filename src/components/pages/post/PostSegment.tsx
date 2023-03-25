@@ -342,7 +342,7 @@ export function PostSegment({
           {/* POST SEGMENT IMAGE - BOTTOM */}
           <div
             className={
-              'grid w-full place-items-center' +
+              'mt-6 grid w-full place-items-center' +
               // placeholder doesn't need to be as big as an image
               ` ${segment.imageId ? 'min-h-[250px]' : 'min-h-[100px]'}` +
               // on mobile, we always show the image at the bottom, so we hide it here on larger screens if necessary

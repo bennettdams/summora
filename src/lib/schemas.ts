@@ -131,8 +131,15 @@ export const schemaCreatePostComment = z.object({
   text: z.string().min(1),
 })
 
+const schemaTagSearchInput = z.string().min(2).max(20)
+
 export const schemaTagSearch = z.object({
-  searchInput: z.string().min(2).max(128),
+  searchInput: schemaTagSearchInput,
+})
+
+export const schemaCreateTag = z.object({
+  tagLabel: schemaTagSearchInput,
+  postId: z.string().cuid(),
 })
 
 export const schemaPostSearch = z.object({

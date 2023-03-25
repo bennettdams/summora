@@ -266,19 +266,19 @@ function PostPageInternal<
             showAddButton={isPostEditable && !isShownTagSelection}
           />
         )}
-      </PageSection>
 
-      {/* TAG SELECTION */}
-      {isShownTagSelection && (
-        <PageSection>
-          <TagsSelection
-            onAdd={(tag) => addToPost.mutate({ postId, tagId: tag.tagId })}
-            onOutsideClick={() => setIsShownTagSelection(false)}
-            postCategoryId={post.postCategoryId}
-            tagsExisting={tags ?? []}
-          />
-        </PageSection>
-      )}
+        <div className="mt-6">
+          {isShownTagSelection && (
+            <TagsSelection
+              postId={postId}
+              onAdd={(tag) => addToPost.mutate({ postId, tagId: tag.tagId })}
+              onOutsideClick={() => setIsShownTagSelection(false)}
+              postCategoryId={post.postCategoryId}
+              tagsExisting={tags ?? []}
+            />
+          )}
+        </div>
+      </PageSection>
 
       <PageSection hideTopMargin>
         {/* "items-start" to make "sticky" work. Without it, the sticky div has the full height of the flex container. */}

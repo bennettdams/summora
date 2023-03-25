@@ -1,7 +1,11 @@
 import type { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { schemaPostCategoryId, schemaTagSearch } from '../../lib/schemas'
+import {
+  schemaCreateTag,
+  schemaPostCategoryId,
+  schemaTagSearch,
+} from '../../lib/schemas'
 import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
 import { procedure, protectedProcedure, router } from '../trpc'
@@ -149,6 +153,18 @@ export const postTagsRouter = router({
       },
       orderBy: { posts: { _count: 'desc' } },
       take: 20,
+    })
+  }),
+  // CREATE
+  create: procedure.input(schemaCreateTag).mutation(async ({ input, ctx }) => {
+    const { tagLabel, postId } = input
+
+    return await ctx.prisma.postTag.create({
+      data: {
+        label: tagLabel,
+        description: '-',
+        posts: { connect: { id: postId } },
+      },
     })
   }),
 })

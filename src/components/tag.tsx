@@ -8,11 +8,12 @@ import { useDebounce } from '../util/use-debounce'
 import { useOnClickOutside } from '../util/use-on-click-outside'
 import { useZodForm } from '../util/use-zod-form'
 import { Box } from './Box'
-import { ButtonAddSpecial } from './Button'
+import { ButtonAdd, ButtonAddSpecial } from './Button'
 import { Form, Input } from './form'
 import { IconTrash } from './Icon'
 import { LoadingAnimation } from './LoadingAnimation'
 import { NoContent } from './NoContent'
+import { Title } from './Title'
 
 type TagTagslist = {
   tagId: string
@@ -132,18 +133,23 @@ function filterTags({
 }
 
 export function TagsSelection({
+  postId,
   onAdd,
   onOutsideClick,
   tagsExisting,
   postCategoryId,
 }: {
+  postId: string
   onAdd: (tag: TagTagslist) => void
   tagsExisting: TagTagslist[]
   postCategoryId: PostCategoryId | null
   onOutsideClick?: () => void
 }): JSX.Element {
+  const utils = trpc.useContext()
   const { data: tagsPopular, isLoading: isLoadingTagsPopular } =
     trpc.postTags.popularOverall.useQuery()
+
+  const createPostTag = trpc.postTags.create.useMutation()
 
   const refTagSelection = useRef<HTMLDivElement>(null)
   useOnClickOutside(refTagSelection, () => onOutsideClick?.())
@@ -156,6 +162,7 @@ export function TagsSelection({
     handleSubmit: handleSubmitTagSearch,
     register: registerTagSearch,
     watch: watchTagSearch,
+    resetField,
     formState: {
       errors: { searchInput: errorSearchInput },
     },
@@ -184,24 +191,36 @@ export function TagsSelection({
     onAdd(tag)
   }
 
+  function handleCreateTag() {
+    if (!inputTagSearch)
+      throw new Error(
+        'There is no input for the tag label, this should not have happened.'
+      )
+    createPostTag.mutate(
+      { postId, tagLabel: inputTagSearch },
+      {
+        onSuccess: () => {
+          resetField('searchInput')
+          utils.postTags.invalidate()
+          utils.posts.invalidate()
+        },
+      }
+    )
+  }
+
   return (
     <div
       className="flex flex-col space-y-6 lg:flex-row lg:space-x-10 lg:space-y-0"
       ref={refTagSelection}
     >
-      <div className="w-full flex-1">
+      <div className="w-full flex-1 space-y-6">
+        <Title>Select or create a tag</Title>
         <Box>
-          <div className="flex w-full items-center space-x-3">
-            <span className="italic">Search</span>
-            <span className="font-semibold text-dprimary">
-              {inputTagSearch}
-            </span>
-          </div>
-
           <Form
             onSubmit={handleSubmitTagSearch(() => {
               // noop, this is executed via debounce above
             })}
+            className="flex flex-row items-center space-x-4"
           >
             <Input
               {...registerTagSearch('searchInput')}
@@ -211,12 +230,23 @@ export function TagsSelection({
               small
               validationErrorMessage={errorSearchInput?.message}
             />
+
+            <p className="uppercase tracking-wide">or</p>
+
+            <ButtonAdd disabled={!inputTagSearch} onClick={handleCreateTag}>
+              Create
+            </ButtonAdd>
           </Form>
 
           <div className="-m-1 mt-2 flex flex-wrap">
             {tagsSearchResult &&
               (tagsSearchResult.length === 0 ? (
-                <NoContent>No results for your search.</NoContent>
+                <div className="flex basis-full items-center px-1 text-center">
+                  <div className="flex-1 text-sm">
+                    <p>No results for your search.</p>
+                    <p>Maybe you want to create this tag?</p>
+                  </div>
+                </div>
               ) : (
                 filterTags({
                   tagsToFilter: tagsSearchResult,
@@ -228,6 +258,14 @@ export function TagsSelection({
           </div>
         </Box>
       </div>
+
+      {postCategoryId && (
+        <TagsPopularCategory
+          tagsExisting={tagsExisting}
+          onAdd={handleAddTag}
+          postCategoryId={postCategoryId}
+        />
+      )}
 
       <div className="flex-1">
         <Box inline>
@@ -248,14 +286,6 @@ export function TagsSelection({
           </div>
         </Box>
       </div>
-
-      {postCategoryId && (
-        <TagsPopularCategory
-          tagsExisting={tagsExisting}
-          onAdd={handleAddTag}
-          postCategoryId={postCategoryId}
-        />
-      )}
     </div>
   )
 }
