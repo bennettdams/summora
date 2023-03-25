@@ -14,7 +14,7 @@ import { ImageUpload } from './ImageUpload'
  */
 
 const SIZES = {
-  tiny: 25,
+  tiny: 20,
   small: 40,
   medium: 100,
   large: 180,
@@ -74,7 +74,7 @@ function AvatarInternal({
   isEditable = false,
   placeholderColorVariant = 'brown',
 }: Props): JSX.Element {
-  const [sizePixels] = useState(SIZES[size])
+  const [sizePixels] = useState(() => SIZES[size])
   const imageURL =
     !imageId || !imageFileExtension
       ? null

@@ -7,6 +7,7 @@ import {
   BoltIcon as BoltIconOutline,
   BookmarkSquareIcon as BookmarkSquareIconOutline,
   CheckCircleIcon as CheckCircleIconOutline,
+  EllipsisHorizontalIcon as EllipsisHorizontalIconOutline,
   HeartIcon as HeartIconOutline,
   HomeIcon as HomeIconOutline,
   LightBulbIcon as LightBulbIconOutline,
@@ -88,6 +89,7 @@ const icons = {
   AcademicCapIconOutline,
   LightBulbIconOutline,
   BanknotesIconOutline,
+  EllipsisHorizontalIconOutline,
 }
 
 type IconName = keyof typeof icons
@@ -247,4 +249,8 @@ export function IconIdea(props: IconProps): JSX.Element {
 
 export function IconMoney(props: IconProps): JSX.Element {
   return <Icon {...props} iconName="BanknotesIconOutline" />
+}
+
+export function IconOptions(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="EllipsisHorizontalIconOutline" />
 }

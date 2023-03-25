@@ -16,7 +16,7 @@ import { useHover } from '../../../util/use-hover'
 import { useOnClickOutside } from '../../../util/use-on-click-outside'
 import { useZodForm } from '../../../util/use-zod-form'
 import { Avatar } from '../../Avatar'
-import { ButtonAdd } from '../../Button'
+import { ButtonAdd, ButtonRemove } from '../../Button'
 import { CommentsIcon } from '../../CommentsIcon'
 import { DateTime } from '../../DateTime'
 import { DonateButton } from '../../donation'
@@ -29,9 +29,10 @@ import {
   Input,
   useIsSubmitEnabled,
 } from '../../form'
-import { IconCategory, IconDate, IconReply, IconTrash } from '../../Icon'
+import { IconCategory, IconDate, IconOptions, IconReply } from '../../Icon'
 import { Link } from '../../link'
 import { LoadingAnimation } from '../../LoadingAnimation'
+import { Modal, useModal } from '../../modal'
 import { NoContent } from '../../NoContent'
 import { Page, PageSection } from '../../Page'
 import { PostLikes } from '../../post'
@@ -616,7 +617,6 @@ function Comment({
   onDownvote: (commentId: string) => void
 }) {
   const [showCommentInput, setShowCommentInput] = useState(false)
-  const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
 
   const refCommentInput = useRef<HTMLDivElement>(null)
   useOnClickOutside(refCommentInput, () => setShowCommentInput(false))
@@ -660,7 +660,8 @@ function Comment({
               {comment.upvotedBy.length} | {comment.downvotedBy.length}
             </p>
           </div>
-          <div className="ml-2 grow">
+
+          <div className="ml-2 grow text-sm lg:text-base">
             {comment.isDeleted ? (
               <span className="line-through">deleted</span>
             ) : (
@@ -669,7 +670,7 @@ function Comment({
           </div>
         </div>
 
-        <div className="m-0 flex w-full text-sm">
+        <div className="flex items-center justify-between space-x-2 py-1 lg:py-2">
           <div className="flex w-10 flex-row items-center justify-center text-center leading-none text-dtertiary">
             <VoteIcon
               size="small"
@@ -688,70 +689,53 @@ function Comment({
               onClick={() => onDownvote(comment.commentId)}
             />
           </div>
-          <Link to={ROUTES.user(comment.authorId)} disablePrefetch>
-            <div className="group flex">
-              <div className="bold flex w-10 flex-col items-center text-center leading-none">
-                <Avatar
-                  size="tiny"
-                  userId={comment.authorId}
-                  username={comment.authorUsername}
-                  imageId={comment.authorImageId}
-                  imageBlurDataURL={comment.authorImageBlurDataURL}
-                  imageFileExtension={comment.authorImageFileExtension}
-                />
-              </div>
 
-              <div className="flex items-center space-x-2 leading-none text-dprimary group-hover:underline">
-                <span className="ml-2">{comment.authorUsername}</span>
-              </div>
+          <div className="flex flex-1 items-center overflow-hidden">
+            <div>
+              <Avatar
+                size="tiny"
+                userId={comment.authorId}
+                username={comment.authorUsername}
+                imageId={comment.authorImageId}
+                imageBlurDataURL={comment.authorImageBlurDataURL}
+                imageFileExtension={comment.authorImageFileExtension}
+              />
             </div>
-          </Link>
 
-          <div className="flex items-center space-x-2 leading-none text-gray-400">
-            <span className="ml-2">
-              <DateTime format="MM-DD hh:mm" date={comment.createdAt} />
-            </span>
-          </div>
-
-          <div className="group ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-dsecondary">
-            {!showCommentInput && (
-              <div
-                className="flex items-center"
-                onClick={() => setShowCommentInput(true)}
-              >
-                <IconReply size="small" className="group-hover:text-white" />
-                <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dsecondary group-hover:text-white">
-                  Reply
+            <Link
+              className="group items-center overflow-hidden"
+              to={ROUTES.user(comment.authorId)}
+              disablePrefetch
+            >
+              <div className="flex items-center space-x-2 leading-none text-dprimary group-hover:underline">
+                <span className="ml-2 truncate text-sm lg:text-base">
+                  {comment.authorUsername}
                 </span>
               </div>
-            )}
-          </div>
+            </Link>
 
-          {!!userId && comment.authorId === userId && !comment.isDeleted && (
-            <div className="group ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-dsecondary">
-              {!showRemoveConfirmation ? (
+            <div className="group ml-2 flex items-center rounded hover:cursor-pointer hover:bg-dsecondary lg:ml-4">
+              {!showCommentInput && (
                 <div
                   className="flex items-center"
-                  onClick={() => setShowRemoveConfirmation(true)}
+                  onClick={() => setShowCommentInput(true)}
                 >
-                  <IconTrash size="small" className="group-hover:text-white" />
+                  <IconReply size="small" className="group-hover:text-white" />
                   <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dsecondary group-hover:text-white">
-                    Remove
-                  </span>
-                </div>
-              ) : (
-                <div
-                  className="flex items-center"
-                  onClick={() => onRemove(comment.commentId)}
-                >
-                  <IconTrash size="small" className="group-hover:text-white" />
-                  <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dsecondary group-hover:text-white">
-                    Confirm
+                    Reply
                   </span>
                 </div>
               )}
             </div>
-          )}
+
+            <div className="ml-2 lg:ml-4">
+              <CommentOptions
+                comment={comment}
+                userId={userId}
+                onRemove={onRemove}
+              />
+            </div>
+          </div>
         </div>
 
         {!!showCommentInput && (
@@ -799,6 +783,57 @@ function Comment({
           ))}
         </div>
       </div>
+    </>
+  )
+}
+
+function CommentOptions({
+  comment,
+  userId,
+  onRemove,
+}: {
+  comment: PostCommentTreeComment
+  userId: string | null
+  onRemove: (commentId: string) => void
+}): JSX.Element {
+  const { isOpen, open, close } = useModal()
+
+  function handleRemove() {
+    onRemove(comment.commentId)
+    close()
+  }
+
+  return (
+    <>
+      <div onClick={open}>
+        <IconOptions />
+      </div>
+
+      <Modal
+        isOpen={isOpen}
+        close={close}
+        title=""
+        forceHalfWidth
+        onConfirm={async () => console.log('Confirmed')}
+        isSubmit={true}
+      >
+        <div className="flex flex-col items-center space-y-12">
+          <div className="flex flex-col items-center space-x-2 leading-none text-gray-400">
+            <p className="uppercase tracking-widest text-dprimary">
+              Created at
+            </p>
+            <p className="mt-2">
+              <DateTime format="YYYY-MM-DD hh:mm" date={comment.createdAt} />
+            </p>
+          </div>
+
+          {!!userId && comment.authorId === userId && !comment.isDeleted && (
+            <div className="group ml-4 flex items-center rounded px-2 hover:cursor-pointer hover:bg-dsecondary">
+              <ButtonRemove onClick={handleRemove} />
+            </div>
+          )}
+        </div>
+      </Modal>
     </>
   )
 }
