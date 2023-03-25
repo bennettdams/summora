@@ -270,6 +270,7 @@ function PostPageInternal<
         <div className="mt-6">
           {isShownTagSelection && (
             <TagsSelection
+              showCreateButton={true}
               postId={postId}
               onAdd={(tag) => addToPost.mutate({ postId, tagId: tag.tagId })}
               onOutsideClick={() => setIsShownTagSelection(false)}

@@ -133,18 +133,21 @@ function filterTags({
 }
 
 export function TagsSelection({
-  postId,
   onAdd,
   onOutsideClick,
   tagsExisting,
   postCategoryId,
+  showCreateButton = false,
+  postId,
 }: {
-  postId: string
   onAdd: (tag: TagTagslist) => void
   tagsExisting: TagTagslist[]
   postCategoryId: PostCategoryId | null
   onOutsideClick?: () => void
-}): JSX.Element {
+} & (
+  | { showCreateButton: true; postId: string }
+  | { showCreateButton?: false; postId?: null }
+)): JSX.Element {
   const utils = trpc.useContext()
   const { data: tagsPopular, isLoading: isLoadingTagsPopular } =
     trpc.postTags.popularOverall.useQuery()
@@ -196,6 +199,10 @@ export function TagsSelection({
       throw new Error(
         'There is no input for the tag label, this should not have happened.'
       )
+    if (!postId)
+      throw new Error(
+        'Wanted to create a tag but post ID is null, show not have happened.'
+      )
     createPostTag.mutate(
       { postId, tagLabel: inputTagSearch },
       {
@@ -220,7 +227,9 @@ export function TagsSelection({
             onSubmit={handleSubmitTagSearch(() => {
               // noop, this is executed via debounce above
             })}
-            className="flex flex-row items-center space-x-4"
+            className={
+              showCreateButton ? 'flex flex-row items-center space-x-4' : ''
+            }
           >
             <Input
               {...registerTagSearch('searchInput')}
@@ -231,11 +240,15 @@ export function TagsSelection({
               validationErrorMessage={errorSearchInput?.message}
             />
 
-            <p className="uppercase tracking-wide">or</p>
+            {showCreateButton && (
+              <>
+                <p className="uppercase tracking-wide">or</p>
 
-            <ButtonAdd disabled={!inputTagSearch} onClick={handleCreateTag}>
-              Create
-            </ButtonAdd>
+                <ButtonAdd disabled={!inputTagSearch} onClick={handleCreateTag}>
+                  Create
+                </ButtonAdd>
+              </>
+            )}
           </Form>
 
           <div className="-m-1 mt-2 flex flex-wrap">
@@ -244,7 +257,9 @@ export function TagsSelection({
                 <div className="flex basis-full items-center px-1 text-center">
                   <div className="flex-1 text-sm">
                     <p>No results for your search.</p>
-                    <p>Maybe you want to create this tag?</p>
+                    {showCreateButton && (
+                      <p>Maybe you want to create this tag?</p>
+                    )}
                   </div>
                 </div>
               ) : (
