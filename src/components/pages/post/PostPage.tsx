@@ -691,7 +691,7 @@ function Comment({
           </div>
 
           <div className="flex flex-1 items-center overflow-hidden">
-            <div>
+            <div className="grid place-items-center">
               <Avatar
                 size="tiny"
                 userId={comment.authorId}
@@ -805,8 +805,11 @@ function CommentOptions({
 
   return (
     <>
-      <div onClick={open}>
-        <IconOptions />
+      <div
+        className="cursor-pointer rounded-full hover:bg-dsecondary"
+        onClick={open}
+      >
+        <IconOptions className="text-current hover:text-white" />
       </div>
 
       <Modal
