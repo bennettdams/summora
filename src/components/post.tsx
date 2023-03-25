@@ -128,7 +128,7 @@ function PostsListItem({
             <h2 className="text-xs font-semibold tracking-widest text-dsecondary">
               {post.categoryTitle}
             </h2>
-            <h1 className="mt-1 font-serif text-2xl text-dprimary">
+            <h1 className="mt-1 font-serif text-2xl text-dprimary line-clamp-3">
               {post.title}
             </h1>
             <p className="mt-3 leading-relaxed text-dsecondary">
@@ -227,11 +227,11 @@ function PostsListItemShort({
   return (
     <Link to={ROUTES.post(post.id)}>
       <Box padding="small" showShadow>
-        <div className="relative h-48 w-full text-center">
+        <div className="relative h-32 w-full text-center">
           <h2 className="text-xs font-semibold tracking-widest text-dsecondary">
             {post.categoryTitle}
           </h2>
-          <h1 className="mt-1 text-xl font-semibold text-dprimary sm:text-2xl">
+          <h1 className="mt-1 text-xl font-semibold text-dprimary line-clamp-2 sm:text-2xl">
             {post.title}
           </h1>
           <div className="absolute bottom-0 mt-2 flex w-full justify-center space-x-4 py-3 text-center leading-none">
