@@ -23,7 +23,6 @@ import { DonateButton } from '../../donation'
 import { EditOverlay } from '../../EditOverlay'
 import {
   Form,
-  FormFieldError,
   FormLabel,
   FormSelect,
   Input,
@@ -548,11 +547,6 @@ function CategorySelect({
             }))}
             validationErrorMessage={errors.categoryId?.message}
             unselectedLabel="Please select a category."
-          />
-          <FormFieldError
-            noMargin
-            errors={errors}
-            fieldName="general-form-error-key"
           />
         </Form>
       ) : (

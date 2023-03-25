@@ -77,7 +77,7 @@ export function DropdownSelect({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <Listbox.Options className="absolute z-40 mt-1 max-h-72 w-full overflow-auto rounded-md bg-white py-3 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm md:w-72">
+          <Listbox.Options className="absolute z-40 mt-1 max-h-72 w-full min-w-[18rem] overflow-auto rounded-md bg-white py-3 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm md:w-72">
             {!items ? (
               <div className="py-2">
                 <NoContent>No options available.</NoContent>
@@ -93,15 +93,15 @@ export function DropdownSelect({
                   value={item.itemId}
                 >
                   {({ active, selected }) => (
-                    <div className="ml-4 flex items-center justify-start">
-                      <span className={`w-12 ${active && 'text-white'}`}>
+                    <div className="ml-4 flex items-center justify-start text-sm lg:text-base">
+                      <span className={`w-8 lg:w-12 ${active && 'text-white'}`}>
                         {selected && (
                           <IconOk
                             className={active ? 'text-white' : undefined}
                           />
                         )}
                       </span>
-                      <span className="">{item.label}</span>
+                      <span className="truncate">{item.label}</span>
                     </div>
                   )}
                 </Listbox.Option>
