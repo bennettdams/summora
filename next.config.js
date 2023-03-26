@@ -5,7 +5,10 @@ const nextConfig = {
   //   ignoreBuildErrors: true,
   // },
   images: {
-    domains: ['condun-bucket-dev.s3.amazonaws.com'],
+    domains: [
+      'summora-prod.s3.amazonaws.com',
+      'condun-bucket-dev.s3.amazonaws.com',
+    ],
   },
 }
 
