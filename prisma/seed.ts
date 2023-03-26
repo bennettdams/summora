@@ -43,9 +43,6 @@ async function fill() {
   await prisma.postTag.createMany({ data: postTags })
   const postTagsCreated = await prisma.postTag.findMany()
 
-  await prisma.donationProvider.createMany({ data: donationProviders })
-  // const donationProvidersCreated = await prisma.donationProvider.findMany()
-
   if ((await prisma.user.findMany()).length === 0) {
     await prisma.user.createMany({
       data: [
@@ -225,11 +222,6 @@ async function createSegments(): Promise<
 
   return segments
 }
-
-const donationProviders: Prisma.DonationProviderCreateInput[] = [
-  { donationProviderId: 'PAYPAL', name: 'PayPal' },
-  { donationProviderId: 'BITCOIN', name: 'Bitcoin' },
-]
 
 const postTags: Prisma.PostTagCreateWithoutPostsInput[] = [
   ...new Array(100),
