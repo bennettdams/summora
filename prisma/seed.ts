@@ -30,7 +30,6 @@ async function drop() {
   await prisma.post.deleteMany({})
   await prisma.postTag.deleteMany({})
   await prisma.donationLink.deleteMany({})
-  await prisma.donationProvider.deleteMany({})
 }
 
 async function sleep() {
@@ -226,17 +225,16 @@ async function createSegments(): Promise<
 const postTags: Prisma.PostTagCreateWithoutPostsInput[] = [
   ...new Array(100),
 ].flatMap((_, i) => [
-  { label: 'Tutorial' + i, description: '..' },
-  { label: 'Summary' + i, description: '..' },
-  { label: 'How-to' + i, description: '..' },
-  { label: 'Knowledge' + i, description: '..' },
-  { label: 'Legal' + i, description: '..' },
+  { label: 'Tutorial' + i },
+  { label: 'Summary' + i },
+  { label: 'How-to' + i },
+  { label: 'Knowledge' + i },
+  { label: 'Legal' + i },
   {
     label: 'Everyday life' + i,
-    description: '..',
   },
-  { label: 'For dummies' + i, description: '..' },
-  { label: 'History' + i, description: '..' },
+  { label: 'For dummies' + i },
+  { label: 'History' + i },
 ])
 
 function getRandomNumberForRange(min: number, max: number): number {
