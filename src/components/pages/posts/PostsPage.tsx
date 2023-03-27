@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import img from '../../../../public/assets/homepage-hero.jpg'
+import img from '../../../../public/assets/homepage-hero.png'
 import { PostsPageProps } from '../../../pages'
 import { ROUTES } from '../../../services/routing'
 import { trpc } from '../../../util/trpc'
@@ -33,8 +33,6 @@ export function PostsPage({
         <div className="mt-20 grid place-items-center text-center">
           <div>
             <div className="relative grid h-96 place-items-center text-center text-4xl font-extrabold leading-none tracking-tight">
-              <p className="z-10 text-5xl uppercase text-dlight">Summora</p>
-
               {/* Background glow */}
               <div className="absolute top-0 h-96 w-96 rounded-full bg-dtertiary opacity-20 blur-2xl filter"></div>
               <div className="absolute top-0 h-56 w-96 rounded-full bg-dprimary opacity-30 blur-2xl filter"></div>
@@ -51,7 +49,13 @@ export function PostsPage({
               </div>
             </div>
 
-            <p className="mt-2 text-center font-serif text-4xl font-extrabold leading-8 tracking-tight text-dprimary lg:text-5xl">
+            <div className="text-center text-6xl font-extrabold leading-none tracking-tight lg:text-7xl">
+              <p className="bg-gradient-to-b from-dprimary to-dtertiary decoration-clone bg-clip-text uppercase text-transparent">
+                Summora
+              </p>
+            </div>
+
+            <p className="mt-4 text-center font-serif text-4xl font-extrabold leading-8 tracking-tight text-dsecondary lg:text-5xl">
               Everything, but summarized.
             </p>
           </div>
