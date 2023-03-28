@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import img from '../../../../public/assets/homepage-hero.png'
+import img from '../../../../public/assets/summora-logo.png'
 import { PostsPageProps } from '../../../pages'
 import { ROUTES } from '../../../services/routing'
 import { trpc } from '../../../util/trpc'
@@ -40,14 +40,11 @@ export function PostsPage({
 
               <div className="relative h-48 w-48 lg:h-64 lg:w-64">
                 <Image
-                  className="z-0 inline-block  object-contain"
+                  className="z-0 inline-block object-contain"
                   src={img}
                   alt="Homepage header image"
                   fill={true}
-                  sizes="
-                  (max-width: 768px) 100vw,
-                  (max-width: 1200px) 50vw,
-                  33vw"
+                  sizes="(max-width: 768px) 33vw, (max-width: 1200px) 33vw, 50vw"
                 />
               </div>
             </div>

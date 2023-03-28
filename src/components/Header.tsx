@@ -1,8 +1,10 @@
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { Fragment, useMemo, useRef, useState } from 'react'
 import { z } from 'zod'
+import img from '../../public/assets/summora-logo.png'
 import { schemaPostSearch } from '../lib/schemas'
 import { useAuth } from '../services/auth-service'
 import { createRouteWithSearchParam } from '../services/router-service'
@@ -302,8 +304,17 @@ export function Header(): JSX.Element {
                 </span>
 
                 <div className="absolute flex shrink-0 items-center sm:static">
-                  <Link to={ROUTES.home}>
-                    <div className="text-left text-4xl font-extrabold leading-none tracking-tight">
+                  <Link to={ROUTES.home} className="flex flex-row">
+                    <div className="relative hidden h-8 w-8 sm:block">
+                      <Image
+                        className="z-0 inline-block object-contain"
+                        src={img}
+                        alt="Homepage header image"
+                        fill={true}
+                        sizes="10vw"
+                      />
+                    </div>
+                    <div className="ml-2 text-left text-4xl font-extrabold leading-none tracking-tight">
                       <p className="bg-gradient-to-b from-dprimary to-dtertiary decoration-clone bg-clip-text text-3xl uppercase text-transparent">
                         Summora
                       </p>
@@ -377,10 +388,6 @@ export function Header(): JSX.Element {
             leaveTo="opacity-0 scale-95"
           >
             <Disclosure.Panel className="sm:hidden">
-              <div className="grid place-items-center">
-                <DynamicCreatePostModal />
-              </div>
-
               <div className="space-y-2 px-2 pt-2 pb-3">
                 {NAV_ROUTES.map((route) => (
                   <div key={route.name}>
@@ -402,6 +409,20 @@ export function Header(): JSX.Element {
                     </Link>
                   </div>
                 ))}
+              </div>
+
+              <div className="mt-2 grid place-items-center">
+                <DynamicCreatePostModal />
+              </div>
+
+              <div className="relative mx-auto my-6 grid h-14 w-14 place-items-center">
+                <Image
+                  className="z-0 inline-block object-contain"
+                  src={img}
+                  alt="Homepage header image"
+                  fill={true}
+                  sizes="10vw"
+                />
               </div>
             </Disclosure.Panel>
           </Transition>
