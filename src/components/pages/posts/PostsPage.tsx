@@ -32,19 +32,22 @@ export function PostsPage({
       pageHeader={
         <div className="mt-20 grid place-items-center text-center">
           <div>
-            <div className="relative grid h-96 place-items-center text-center text-4xl font-extrabold leading-none tracking-tight">
+            <div className="relative grid h-64 place-items-center text-center text-4xl font-extrabold leading-none tracking-tight lg:h-80">
               {/* Background glow */}
-              <div className="absolute top-0 h-96 w-96 rounded-full bg-dtertiary opacity-20 blur-2xl filter"></div>
-              <div className="absolute top-0 h-56 w-96 rounded-full bg-dprimary opacity-30 blur-2xl filter"></div>
-              <div className="absolute top-0 h-96 w-96 rounded-full bg-dsecondary opacity-20 blur-2xl filter"></div>
+              <div className="absolute top-0 h-64 w-64 rounded-full bg-dtertiary opacity-20 blur-2xl filter lg:h-80 lg:w-80"></div>
+              <div className="absolute top-0 h-56 w-64 rounded-full bg-dprimary opacity-30 blur-2xl filter lg:w-80"></div>
+              <div className="absolute top-0 h-64 w-64 rounded-full bg-dsecondary opacity-20 blur-2xl filter lg:h-80 lg:w-80"></div>
 
-              <div className="absolute z-0">
+              <div className="relative h-48 w-48 lg:h-64 lg:w-64">
                 <Image
-                  className="z-0 inline-block aspect-square rounded-full"
-                  width={300}
-                  height={300}
+                  className="z-0 inline-block  object-contain"
                   src={img}
                   alt="Homepage header image"
+                  fill={true}
+                  sizes="
+                  (max-width: 768px) 100vw,
+                  (max-width: 1200px) 50vw,
+                  33vw"
                 />
               </div>
             </div>
