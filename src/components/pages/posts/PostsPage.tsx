@@ -55,8 +55,11 @@ export function PostsPage({
               </p>
             </div>
 
-            <p className="mt-4 text-center font-serif text-4xl font-extrabold leading-8 tracking-tight text-dsecondary lg:text-5xl">
-              Everything, in summary.
+            <p className="mt-4 break-words text-center font-serif text-4xl font-extrabold leading-8 tracking-tight text-dsecondary md:inline-block lg:text-5xl">
+              <p className="md:inline">Everything,</p>
+              <p className="md:ml-2 md:inline-block">
+                <span>in summary.</span>
+              </p>
             </p>
           </div>
         </div>
@@ -88,11 +91,17 @@ export function PostsPage({
       <PageSection hideTopMargin>
         <div className="mx-auto mt-10 max-w-7xl">
           <div className="text-center">
-            <p className="mt-2 font-serif text-4xl font-extrabold leading-8 tracking-tight text-dprimary">
-              <span>Less fluff, more </span>
-              <span className="underline decoration-dsecondary">facts</span>
-              <span>.</span>
+            <p className="mt-2 break-words text-center font-serif text-4xl font-extrabold leading-8 tracking-tight text-dprimary md:inline-block">
+              <p className="md:inline">Less fluff,</p>
+              <p className="md:ml-2 md:inline-block">
+                <span>more</span>
+                <span className="ml-2 underline decoration-dsecondary">
+                  facts
+                </span>
+                <span>.</span>
+              </p>
             </p>
+
             <p className="mt-4 flex max-w-2xl flex-col text-xl lg:mx-auto">
               <span>
                 Summora is home of an endless stream of articles in every
