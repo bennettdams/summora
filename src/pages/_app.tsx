@@ -63,6 +63,16 @@ const App: AppType<{ session: Session | null }> = ({
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
+        {/* This is a hack needed for `next/font` being loaded in React portals (like our modal).
+         * See: https://github.com/vercel/next.js/issues/43674
+         */}
+        <style jsx global>{`
+          :root {
+            --global-summora-font: ${globalFont.style.fontFamily};
+            --global-summora-font-serif: ${globalFontSerif.style.fontFamily};
+          }
+        `}</style>
+
         <div
           className={`${globalFont.variable} ${globalFontSerif.variable} font-light flex h-screen min-h-screen flex-col bg-dlight font-sans text-gray-500 decoration-dsecondary caret-dprimary selection:bg-dprimary selection:text-dtertiary`}
         >
