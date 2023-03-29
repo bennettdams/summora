@@ -56,7 +56,7 @@ export function PostsPage({
             </div>
 
             <p className="mt-4 text-center font-serif text-4xl font-extrabold leading-8 tracking-tight text-dsecondary lg:text-5xl">
-              Everything, but summarized.
+              Everything, in summary.
             </p>
           </div>
         </div>
@@ -89,11 +89,9 @@ export function PostsPage({
         <div className="mx-auto mt-10 max-w-7xl">
           <div className="text-center">
             <p className="mt-2 font-serif text-4xl font-extrabold leading-8 tracking-tight text-dprimary">
-              <span>A </span>
-              <span className="underline decoration-dsecondary">
-                faster
-              </span>{' '}
-              way to learn
+              <span>Less fluff, more </span>
+              <span className="underline decoration-dsecondary">facts</span>
+              <span>.</span>
             </p>
             <p className="mt-4 flex max-w-2xl flex-col text-xl lg:mx-auto">
               <span>
