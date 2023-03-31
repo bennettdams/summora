@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { Title } from './Title'
+import { Title } from './typography'
 
 export function Page({
   children,

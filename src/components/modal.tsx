@@ -2,7 +2,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, KeyboardEvent, ReactNode, useRef, useState } from 'react'
 import { OmitStrict } from '../types/util-types'
 import { Button } from './Button'
-import { Title } from './Title'
+import { Title } from './typography'
 
 interface ModalControl {
   isOpen: boolean

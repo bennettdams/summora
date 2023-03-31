@@ -1,5 +1,9 @@
 import { ReactNode } from 'react'
 
+export function Title({ children }: { children: ReactNode }): JSX.Element {
+  return <TextGradient big>{children}</TextGradient>
+}
+
 export function TextGradient({
   children,
   big = false,
