@@ -19,8 +19,16 @@ import { Avatar } from '../../Avatar'
 import { ButtonAdd, ButtonRemove } from '../../Button'
 import { CommentsIcon } from '../../CommentsIcon'
 import { DateTime } from '../../DateTime'
-import { DonateButton } from '../../donation'
 import { EditOverlay } from '../../EditOverlay'
+import { IconCategory, IconDate, IconOptions, IconReply } from '../../Icon'
+import { LoadingAnimation } from '../../LoadingAnimation'
+import { NoContent } from '../../NoContent'
+import { Page, PageSection } from '../../Page'
+import { StepList } from '../../StepList'
+import { Title } from '../../Title'
+import { ViewsIcon } from '../../ViewsIcon'
+import { VoteIcon } from '../../VoteIcon'
+import { DonateButton } from '../../donation'
 import {
   Form,
   FormLabel,
@@ -28,17 +36,10 @@ import {
   Input,
   useIsSubmitEnabled,
 } from '../../form'
-import { IconCategory, IconDate, IconOptions, IconReply } from '../../Icon'
 import { Link } from '../../link'
-import { LoadingAnimation } from '../../LoadingAnimation'
 import { Modal, useModal } from '../../modal'
-import { NoContent } from '../../NoContent'
-import { Page, PageSection } from '../../Page'
 import { PostLikes } from '../../post'
-import { StepList } from '../../StepList'
 import { TagsList, TagsSelection } from '../../tag'
-import { ViewsIcon } from '../../ViewsIcon'
-import { VoteIcon } from '../../VoteIcon'
 import { PostSegment } from './PostSegment'
 
 export type SegmentPostPage = RouterOutput['postSegments']['byPostId'][number]
@@ -266,17 +267,19 @@ function PostPageInternal<
             showAddButton={isPostEditable && !isShownTagSelection}
           />
         )}
-
-        <div className="mt-6">
+        <div className="mt-6 space-y-6 text-center">
           {isShownTagSelection && (
-            <TagsSelection
-              showCreateButton={true}
-              postId={postId}
-              onAdd={(tag) => addToPost.mutate({ postId, tagId: tag.tagId })}
-              onOutsideClick={() => setIsShownTagSelection(false)}
-              postCategoryId={post.postCategoryId}
-              tagsExisting={tags ?? []}
-            />
+            <>
+              <Title>Select or create a tag</Title>
+              <TagsSelection
+                showCreateButton={true}
+                postId={postId}
+                onAdd={(tag) => addToPost.mutate({ postId, tagId: tag.tagId })}
+                onOutsideClick={() => setIsShownTagSelection(false)}
+                postCategoryId={post.postCategoryId}
+                tagsExisting={tags ?? []}
+              />
+            </>
           )}
         </div>
       </PageSection>

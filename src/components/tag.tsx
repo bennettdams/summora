@@ -9,11 +9,10 @@ import { useOnClickOutside } from '../util/use-on-click-outside'
 import { useZodForm } from '../util/use-zod-form'
 import { Box } from './Box'
 import { ButtonAdd, ButtonAddSpecial } from './Button'
-import { Form, Input } from './form'
 import { IconTrash } from './Icon'
 import { LoadingAnimation } from './LoadingAnimation'
 import { NoContent } from './NoContent'
-import { Title } from './Title'
+import { Form, Input } from './form'
 
 type TagTagslist = {
   tagId: string
@@ -216,98 +215,89 @@ export function TagsSelection({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <Title>Select or create a tag</Title>
-      </div>
+    <div
+      className="flex flex-col space-y-6 lg:flex-row lg:space-x-10 lg:space-y-0"
+      ref={refTagSelection}
+    >
+      <div className="w-full flex-1 space-y-6">
+        <Box>
+          <Form
+            onSubmit={handleSubmitTagSearch(() => {
+              // noop, this is executed via debounce above
+            })}
+            className={
+              showCreateButton ? 'flex flex-row items-center space-x-4' : ''
+            }
+          >
+            <Input
+              {...registerTagSearch('searchInput')}
+              placeholder="Search for tags.."
+              isSpecial
+              isLoading={isFetching}
+              small
+              validationErrorMessage={errorSearchInput?.message}
+            />
 
-      <div
-        className="flex flex-col space-y-6 lg:flex-row lg:space-x-10 lg:space-y-0"
-        ref={refTagSelection}
-      >
-        <div className="w-full flex-1 space-y-6">
-          <Box>
-            <Form
-              onSubmit={handleSubmitTagSearch(() => {
-                // noop, this is executed via debounce above
-              })}
-              className={
-                showCreateButton ? 'flex flex-row items-center space-x-4' : ''
-              }
-            >
-              <Input
-                {...registerTagSearch('searchInput')}
-                placeholder="Search for tags.."
-                isSpecial
-                isLoading={isFetching}
-                small
-                validationErrorMessage={errorSearchInput?.message}
-              />
+            {showCreateButton && (
+              <>
+                <p className="uppercase tracking-wide">or</p>
 
-              {showCreateButton && (
-                <>
-                  <p className="uppercase tracking-wide">or</p>
+                <ButtonAdd disabled={!inputTagSearch} onClick={handleCreateTag}>
+                  Create
+                </ButtonAdd>
+              </>
+            )}
+          </Form>
 
-                  <ButtonAdd
-                    disabled={!inputTagSearch}
-                    onClick={handleCreateTag}
-                  >
-                    Create
-                  </ButtonAdd>
-                </>
-              )}
-            </Form>
-
-            <div className="-m-1 mt-2 flex flex-wrap">
-              {tagsSearchResult &&
-                (tagsSearchResult.length === 0 ? (
-                  <div className="flex basis-full items-center px-1 text-center">
-                    <div className="flex-1 text-sm">
-                      <p>No results for your search.</p>
-                      {showCreateButton && (
-                        <p>Maybe you want to create this tag?</p>
-                      )}
-                    </div>
+          <div className="-m-1 mt-2 flex flex-wrap">
+            {tagsSearchResult &&
+              (tagsSearchResult.length === 0 ? (
+                <div className="flex basis-full items-center px-1 text-center">
+                  <div className="flex-1 text-sm">
+                    <p>No results for your search.</p>
+                    {showCreateButton && (
+                      <p>Maybe you want to create this tag?</p>
+                    )}
                   </div>
-                ) : (
-                  filterTags({
-                    tagsToFilter: tagsSearchResult,
-                    tagsExisting,
-                  }).map((tag) => (
-                    <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
-                  ))
-                ))}
-            </div>
-          </Box>
-        </div>
-
-        {postCategoryId && (
-          <TagsPopularCategory
-            tagsExisting={tagsExisting}
-            onAdd={handleAddTag}
-            postCategoryId={postCategoryId}
-          />
-        )}
-
-        <div className="flex-1">
-          <Box inline>
-            <p className="italic">Popular overall</p>
-            <div className="-m-1 mt-2 flex flex-wrap">
-              {isLoadingTagsPopular ? (
-                <LoadingAnimation />
-              ) : !tagsPopular ? (
-                <NoContent>No tags.</NoContent>
+                </div>
               ) : (
                 filterTags({
-                  tagsToFilter: tagsPopular,
+                  tagsToFilter: tagsSearchResult,
                   tagsExisting,
                 }).map((tag) => (
                   <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
                 ))
-              )}
-            </div>
-          </Box>
-        </div>
+              ))}
+          </div>
+        </Box>
+      </div>
+
+      {postCategoryId && (
+        <TagsPopularCategory
+          tagsExisting={tagsExisting}
+          onAdd={handleAddTag}
+          postCategoryId={postCategoryId}
+        />
+      )}
+
+      <div className="flex-1">
+        <Box inline>
+          <p className="italic">Popular overall</p>
+          <div className="-m-1 mt-2 flex flex-wrap">
+            {isLoadingTagsPopular ? (
+              <LoadingAnimation />
+            ) : !tagsPopular ? (
+              <NoContent>No tags.</NoContent>
+            ) : (
+              filterTags({
+                tagsToFilter: tagsPopular,
+                tagsExisting,
+              }).map((tag) => (
+                <Tag key={tag.tagId} tag={tag} onClick={handleAddTag} />
+              ))
+            )}
+          </div>
+        </Box>
       </div>
     </div>
   )
