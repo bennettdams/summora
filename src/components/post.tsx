@@ -10,11 +10,11 @@ import { CommentsIcon } from './CommentsIcon'
 import { DateTime } from './DateTime'
 import { IconLong, IconShort, IconSize } from './Icon'
 import { LikesIcon } from './LikesIcon'
-import { Link } from './link'
 import { LoadingAnimation } from './LoadingAnimation'
 import { NoContent } from './NoContent'
-import { TagsList } from './tag'
 import { ViewsIcon } from './ViewsIcon'
+import { Link } from './link'
+import { TagsList } from './tag'
 
 type PostsPostsList =
   | null
@@ -128,7 +128,7 @@ function PostsListItem({
             <h2 className="text-xs font-semibold tracking-widest text-dsecondary">
               {post.categoryTitle}
             </h2>
-            <h1 className="mt-1 font-serif text-2xl text-dprimary line-clamp-3">
+            <h1 className="mt-1 font-serif text-2xl font-semibold text-dprimary line-clamp-3">
               {post.title}
             </h1>
             <p className="mt-3 leading-relaxed text-dsecondary">
@@ -231,7 +231,7 @@ function PostsListItemShort({
           <h2 className="text-xs font-semibold tracking-widest text-dsecondary">
             {post.categoryTitle}
           </h2>
-          <h1 className="mt-1 text-xl font-semibold text-dprimary line-clamp-2 sm:text-2xl">
+          <h1 className="mt-1 font-serif text-xl font-semibold text-dprimary line-clamp-2 sm:text-2xl">
             {post.title}
           </h1>
           <div className="absolute bottom-0 mt-2 flex w-full justify-center space-x-4 py-3 text-center leading-none">

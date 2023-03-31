@@ -14,11 +14,11 @@ export function TextGradient({
   return (
     <div
       className={
-        'ml-4 inline-block text-center font-serif leading-none tracking-tight' +
-        ` ${!big ? 'text-xl md:text-2xl' : 'text-3xl md:text-5xl'}`
+        'inline-block text-center font-serif font-semibold leading-none tracking-tight' +
+        ` ${!big ? 'text-xl lg:text-3xl' : 'text-3xl lg:text-4xl'}`
       }
     >
-      <span className="dvia-dtertiary bg-gradient-to-br from-dsecondary to-dtertiary decoration-clone bg-clip-text uppercase text-transparent">
+      <span className="bg-gradient-to-br from-dsecondary to-dtertiary decoration-clone bg-clip-text text-transparent">
         {children}
       </span>
     </div>
