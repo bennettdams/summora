@@ -4,6 +4,7 @@ import { PostsPage } from '../components/pages/posts/PostsPage'
 import { prisma } from '../server/db/client'
 import { createPrefetchHelpersArgs } from '../server/prefetch-helpers'
 import { ServerPageProps } from '../types/PageProps'
+import { createDateFromThePast } from '../util/date-helpers'
 
 export type PostsPageProps = {
   noOfPosts: number
@@ -17,8 +18,7 @@ const revalidateInSeconds = 5 * 60
 type Props = PostsPageProps & ServerPageProps
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const now = new Date()
-  const nowYesterday = new Date(now.setHours(now.getHours() - 24))
+  const yesterday = createDateFromThePast('day')
 
   const ssg = createProxySSGHelpers(await createPrefetchHelpersArgs())
 
@@ -31,10 +31,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     prisma.post.count(),
     prisma.postComment.count(),
     prisma.post.count({
-      where: { createdAt: { gte: nowYesterday } },
+      where: { createdAt: { gte: yesterday } },
     }),
     prisma.postComment.count({
-      where: { createdAt: { gte: nowYesterday } },
+      where: { createdAt: { gte: yesterday } },
     }),
     ssg.posts.topByLikes.prefetch(),
   ])
