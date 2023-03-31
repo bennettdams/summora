@@ -12,12 +12,12 @@ import {
   IconLightning,
   IconMoney,
 } from '../../Icon'
-import { Link } from '../../link'
 import { LoadingAnimation } from '../../LoadingAnimation'
 import { NoContent } from '../../NoContent'
 import { Page, PageSection } from '../../Page'
-import { PostsList } from '../../post'
 import { StatisticsCard } from '../../StatisticsCard'
+import { Link } from '../../link'
+import { PostsList } from '../../post'
 
 export function PostsPage({
   noOfPosts,
@@ -55,12 +55,12 @@ export function PostsPage({
               </p>
             </div>
 
-            <p className="mt-4 break-words text-center font-serif text-4xl font-extrabold leading-8 tracking-tight text-dsecondary md:inline-block lg:text-5xl">
+            <div className="mt-4 break-words text-center font-serif text-4xl font-extrabold leading-8 tracking-tight text-dsecondary md:inline-block lg:text-5xl">
               <p className="md:inline">Everything,</p>
               <p className="md:ml-2 md:inline-block">
                 <span>in summary.</span>
               </p>
-            </p>
+            </div>
           </div>
         </div>
       }
@@ -91,7 +91,7 @@ export function PostsPage({
       <PageSection hideTopMargin>
         <div className="mx-auto mt-10 max-w-7xl">
           <div className="text-center">
-            <p className="mt-2 break-words text-center font-serif text-4xl font-extrabold leading-8 tracking-tight text-dprimary md:inline-block">
+            <div className="mt-2 break-words text-center font-serif text-4xl font-extrabold leading-8 tracking-tight text-dprimary md:inline-block">
               <p className="md:inline">Less fluff,</p>
               <p className="md:ml-2 md:inline-block">
                 <span>more</span>
@@ -100,7 +100,7 @@ export function PostsPage({
                 </span>
                 <span>.</span>
               </p>
-            </p>
+            </div>
 
             <p className="mt-4 flex max-w-2xl flex-col text-xl lg:mx-auto">
               <span>
