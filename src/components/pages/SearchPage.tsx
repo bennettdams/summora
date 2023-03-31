@@ -7,13 +7,14 @@ import { getSearchParam } from '../../services/router-service'
 import { trpc, type RouterInput } from '../../util/trpc'
 import { useDebounce } from '../../util/use-debounce'
 import { useZodForm } from '../../util/use-zod-form'
-import { Form, Input, InputCheckbox } from '../form'
 import { IconSearch } from '../Icon'
 import { LoadingAnimation } from '../LoadingAnimation'
 import { NoContent } from '../NoContent'
 import { Page, PageSection } from '../Page'
+import { Form, Input, InputCheckbox } from '../form'
 import { PostsList } from '../post'
 import { TagsList, TagsSelection } from '../tag'
+import { Subtitle } from '../typography'
 
 type SchemaPostSearch = z.infer<typeof schemaPostSearch>
 
@@ -263,9 +264,7 @@ function Row({
   return (
     <>
       <div className="col-span-full row-span-1 lg:col-span-1">
-        <p className="ml-0 text-2xl font-semibold uppercase tracking-widest text-dsecondary lg:ml-20 lg:text-3xl">
-          {label}
-        </p>
+        <Subtitle>{label}</Subtitle>
       </div>
       <div className="col-span-full row-span-1 lg:col-span-3">{children}</div>
     </>
