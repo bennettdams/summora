@@ -3,8 +3,8 @@ import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import {
   schemaCreatePost,
-  schemaDateFromPast,
   schemaPostSearch,
+  schemaPostsExplore,
   schemaUpdatePost,
   schemaUpdatePostCategory,
 } from '../../lib/schemas'
@@ -138,9 +138,9 @@ export const postsRouter = router({
     }),
   // TOP BY VIEWS
   topByViews: procedure
-    .input(z.object({ dateFromPast: schemaDateFromPast }))
+    .input(schemaPostsExplore)
     .query(async ({ ctx, input }) => {
-      const { dateFromPast } = input
+      const { dateFromPast, tagIdsToFilter, categoryIdsToFilter } = input
 
       // keep in sync with other "top" query
       return await ctx.prisma.post.findMany({
@@ -148,6 +148,18 @@ export const postsRouter = router({
         take: 5,
         where: {
           updatedAt: { gte: createDateFromThePast(dateFromPast) },
+          postCategoryId:
+            categoryIdsToFilter.length === 0
+              ? undefined
+              : { in: categoryIdsToFilter },
+          tags:
+            tagIdsToFilter.length === 0
+              ? undefined
+              : {
+                  some: {
+                    tagId: { in: tagIdsToFilter },
+                  },
+                },
         },
         orderBy: [
           { noOfViews: 'desc' },
@@ -158,9 +170,9 @@ export const postsRouter = router({
     }),
   // TOP BY LIKES
   topByLikes: procedure
-    .input(z.object({ dateFromPast: schemaDateFromPast }))
+    .input(schemaPostsExplore)
     .query(async ({ ctx, input }) => {
-      const { dateFromPast } = input
+      const { dateFromPast, tagIdsToFilter, categoryIdsToFilter } = input
 
       // keep in sync with other "top" query
       return await ctx.prisma.post.findMany({
@@ -168,6 +180,18 @@ export const postsRouter = router({
         take: 5,
         where: {
           updatedAt: { gte: createDateFromThePast(dateFromPast) },
+          postCategoryId:
+            categoryIdsToFilter.length === 0
+              ? undefined
+              : { in: categoryIdsToFilter },
+          tags:
+            tagIdsToFilter.length === 0
+              ? undefined
+              : {
+                  some: {
+                    tagId: { in: tagIdsToFilter },
+                  },
+                },
         },
         orderBy: [
           { likedBy: { _count: 'desc' } },

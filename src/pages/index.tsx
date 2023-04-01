@@ -36,7 +36,11 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     prisma.postComment.count({
       where: { createdAt: { gte: yesterday } },
     }),
-    ssg.posts.topByLikes.prefetch({ dateFromPast: 'week' }),
+    ssg.posts.topByLikes.prefetch({
+      dateFromPast: 'week',
+      tagIdsToFilter: [],
+      categoryIdsToFilter: [],
+    }),
   ])
 
   return {

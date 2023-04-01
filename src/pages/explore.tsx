@@ -9,8 +9,16 @@ export const getStaticProps: GetStaticProps = async () => {
   const ssg = createProxySSGHelpers(await createPrefetchHelpersArgs())
 
   await Promise.all([
-    ssg.posts.topByLikes.prefetch({ dateFromPast: 'week' }),
-    ssg.posts.topByViews.prefetch({ dateFromPast: 'week' }),
+    ssg.posts.topByLikes.prefetch({
+      dateFromPast: 'week',
+      tagIdsToFilter: [],
+      categoryIdsToFilter: [],
+    }),
+    ssg.posts.topByViews.prefetch({
+      dateFromPast: 'week',
+      tagIdsToFilter: [],
+      categoryIdsToFilter: [],
+    }),
   ])
 
   return {

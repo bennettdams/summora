@@ -29,7 +29,11 @@ export function PostsPage({
     data: posts,
     isLoading,
     isError,
-  } = trpc.posts.topByLikes.useQuery({ dateFromPast: 'week' })
+  } = trpc.posts.topByLikes.useQuery({
+    dateFromPast: 'week',
+    tagIdsToFilter: [],
+    categoryIdsToFilter: [],
+  })
 
   return (
     <Page

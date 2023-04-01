@@ -166,8 +166,8 @@ export const schemaDateFromPast = z.union([
 ])
 export type DateFromPast = z.infer<typeof schemaDateFromPast>
 
-export const schemaTopPostsMetric = z.union([
-  z.literal('views'),
-  z.literal('likes'),
-])
-export type TopPostsMetric = z.infer<typeof schemaTopPostsMetric>
+export const schemaPostsExplore = z.object({
+  tagIdsToFilter: z.array(z.string().cuid()),
+  categoryIdsToFilter: z.array(schemaPostCategoryId),
+  dateFromPast: schemaDateFromPast,
+})

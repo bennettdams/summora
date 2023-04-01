@@ -1,10 +1,17 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { trpc } from '../../util/trpc'
+import { Button } from '../Button'
 import { ChoiceSelect, useChoiceSelect } from '../ChoiceSelect'
+import { IconView } from '../Icon'
 import { LoadingAnimation } from '../LoadingAnimation'
 import { NoContent } from '../NoContent'
 import { Page, PageSection } from '../Page'
+import {
+  CategorySelectionList,
+  useCategorySelectionList,
+} from '../category-selection'
 import { PostsList } from '../post'
+import { TagsList, TagsSelection } from '../tag'
 import { Subtitle } from '../typography'
 
 function Choice({
@@ -72,12 +79,21 @@ export function ExplorePage(): JSX.Element {
     'week'
   )
 
+  const [tagsForFilter, setTagsForFilter] = useState<
+    { tagId: string; label: string }[]
+  >([])
+
+  const [categoryIdsForFilter, setCategoryIdsForFilter] =
+    useCategorySelectionList()
+
   const {
     data: topPostsByLikes,
     isLoading: isLoadingTopLikes,
     isError: isErrorTopLikes,
   } = trpc.posts.topByLikes.useQuery({
     dateFromPast: choiceSelectControlTimeRange.selected.choiceId,
+    tagIdsToFilter: tagsForFilter.map((tag) => tag.tagId),
+    categoryIdsToFilter: categoryIdsForFilter,
   })
   const {
     data: topPostsByViews,
@@ -85,7 +101,11 @@ export function ExplorePage(): JSX.Element {
     isError: isErrorTopViews,
   } = trpc.posts.topByViews.useQuery({
     dateFromPast: choiceSelectControlTimeRange.selected.choiceId,
+    tagIdsToFilter: tagsForFilter.map((tag) => tag.tagId),
+    categoryIdsToFilter: categoryIdsForFilter,
   })
+
+  const [showFilters, setShowFilters] = useState(false)
 
   return (
     <Page>
@@ -97,7 +117,67 @@ export function ExplorePage(): JSX.Element {
           <Choice label="Metric:">
             <ChoiceSelect control={choiceSelectControlMetric} />
           </Choice>
+          <Choice label="Tags & categories:">
+            <div>
+              <Button
+                onClick={() => setShowFilters((prev) => !prev)}
+                icon={<IconView />}
+              >
+                {showFilters ? 'Hide' : 'Show'} filters
+              </Button>
+            </div>
+
+            <div className="flex flex-col lg:flex-row">
+              <p>Selected tags:</p>
+
+              <div className="flex-1 lg:ml-4">
+                <TagsList
+                  tags={tagsForFilter}
+                  onRemoveClick={(tagIdToRemove) => {
+                    setTagsForFilter((prev) =>
+                      prev.filter((tagPrev) => tagPrev.tagId !== tagIdToRemove)
+                    )
+                  }}
+                />
+              </div>
+            </div>
+          </Choice>
         </div>
+
+        {showFilters && (
+          <div className="mt-8 grid max-w-7xl auto-rows-min grid-cols-4 gap-6">
+            <Row label="By tags">
+              <div className="space-y-4">
+                <TagsSelection
+                  onAdd={(tagToAdd) =>
+                    setTagsForFilter((prev) => {
+                      if (
+                        prev.some((tagPrev) => tagPrev.tagId === tagToAdd.tagId)
+                      ) {
+                        return prev
+                      } else {
+                        return [...prev, tagToAdd]
+                      }
+                    })
+                  }
+                  postCategoryId={null}
+                  tagsExisting={tagsForFilter}
+                />
+
+                <p className="mt-4 italic">
+                  Selecting no tag means every is included in the filter.
+                </p>
+              </div>
+            </Row>
+
+            <Row label="By category">
+              <CategorySelectionList
+                selectedIds={categoryIdsForFilter}
+                setSelectedIds={setCategoryIdsForFilter}
+              />
+            </Row>
+          </div>
+        )}
       </PageSection>
 
       {choiceSelectControlMetric.selected.choiceId === 'likes' ? (
