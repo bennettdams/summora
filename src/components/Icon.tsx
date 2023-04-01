@@ -29,6 +29,7 @@ import {
   ChevronUpDownIcon,
   CurrencyDollarIcon,
   EyeIcon,
+  FunnelIcon,
   HeartIcon,
   PencilIcon,
   PlusIcon,
@@ -90,6 +91,7 @@ const icons = {
   LightBulbIconOutline,
   BanknotesIconOutline,
   EllipsisHorizontalIconOutline,
+  FunnelIcon,
 }
 
 type IconName = keyof typeof icons
@@ -253,4 +255,8 @@ export function IconMoney(props: IconProps): JSX.Element {
 
 export function IconOptions(props: IconProps): JSX.Element {
   return <Icon {...props} iconName="EllipsisHorizontalIconOutline" />
+}
+
+export function IconFilter(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="FunnelIcon" />
 }

@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { trpc } from '../../util/trpc'
 import { Button } from '../Button'
 import { ChoiceSelect, useChoiceSelect } from '../ChoiceSelect'
-import { IconView } from '../Icon'
+import { IconFilter, IconLiked, IconView } from '../Icon'
 import { LoadingAnimation } from '../LoadingAnimation'
 import { NoContent } from '../NoContent'
 import { Page, PageSection } from '../Page'
@@ -52,10 +52,12 @@ export function ExplorePage(): JSX.Element {
       {
         choiceId: 'likes',
         label: 'Likes',
+        icon: <IconLiked />,
       },
       {
         choiceId: 'views',
         label: 'Views',
+        icon: <IconView />,
       },
     ],
     'likes'
@@ -121,7 +123,7 @@ export function ExplorePage(): JSX.Element {
             <div>
               <Button
                 onClick={() => setShowFilters((prev) => !prev)}
-                icon={<IconView />}
+                icon={<IconFilter />}
               >
                 {showFilters ? 'Hide' : 'Show'} filters
               </Button>
