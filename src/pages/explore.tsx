@@ -1,5 +1,6 @@
 import { createProxySSGHelpers } from '@trpc/react-query/ssg'
 import { GetStaticProps } from 'next'
+import Head from 'next/head'
 import { ExplorePage } from '../components/pages/ExplorePage'
 import { createPrefetchHelpersArgs } from '../server/prefetch-helpers'
 
@@ -30,5 +31,12 @@ export const getStaticProps: GetStaticProps = async () => {
 }
 
 export default function _ExplorePage(): JSX.Element {
-  return <ExplorePage />
+  return (
+    <>
+      <Head>
+        <title>Summora · Explore</title>
+      </Head>
+      <ExplorePage />
+    </>
+  )
 }

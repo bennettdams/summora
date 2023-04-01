@@ -1,5 +1,6 @@
 import { createProxySSGHelpers } from '@trpc/react-query/ssg'
 import { GetStaticPaths, GetStaticProps } from 'next'
+import Head from 'next/head'
 import type { ParsedUrlQuery } from 'querystring'
 import { PostPage } from '../../../components/pages/post/PostPage'
 import { createPrefetchHelpersArgs } from '../../../server/prefetch-helpers'
@@ -64,5 +65,12 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
 }
 
 export default function _PostPage(props: Props): JSX.Element {
-  return <PostPage postId={props.postId} />
+  return (
+    <>
+      <Head>
+        <title>Summora · Post</title>
+      </Head>
+      <PostPage postId={props.postId} />
+    </>
+  )
 }

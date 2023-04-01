@@ -1,5 +1,6 @@
 import { createProxySSGHelpers } from '@trpc/react-query/ssg'
 import type { GetStaticPaths, GetStaticProps } from 'next'
+import Head from 'next/head'
 import type { ParsedUrlQuery } from 'querystring'
 import { UserPage } from '../../components/pages/UserPage'
 import { prisma } from '../../server/db/client'
@@ -105,6 +106,11 @@ export const getStaticProps: GetStaticProps<
 
 export default function _UserPage(props: UserPageServerProps): JSX.Element {
   return (
-    <UserPage userId={props.userId} userStatistics={props.userStatistics} />
+    <>
+      <Head>
+        <title>Summora · User</title>
+      </Head>
+      <UserPage userId={props.userId} userStatistics={props.userStatistics} />
+    </>
   )
 }
