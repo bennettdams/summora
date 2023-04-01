@@ -1,4 +1,6 @@
-export function createDateFromThePast(variant: 'day' | 'week' | 'month'): Date {
+import type { DateFromPast } from '../lib/schemas'
+
+export function createDateFromThePast(variant: DateFromPast): Date {
   const now = new Date()
   /** Used to multiply with 24 to resemble the given time range. */
   let modifierDays = null

@@ -25,7 +25,11 @@ export function PostsPage({
   noOfComments,
   noOfCommentsCreatedLast24Hours,
 }: PostsPageProps): JSX.Element {
-  const { data: posts, isLoading, isError } = trpc.posts.topByLikes.useQuery()
+  const {
+    data: posts,
+    isLoading,
+    isError,
+  } = trpc.posts.topByLikes.useQuery({ dateFromPast: 'week' })
 
   return (
     <Page

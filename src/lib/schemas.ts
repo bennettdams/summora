@@ -158,3 +158,16 @@ export const schemaEditUsername = z.object({
 })
 
 export const schemaImageFileType = z.string().startsWith('image/')
+
+export const schemaDateFromPast = z.union([
+  z.literal('day'),
+  z.literal('week'),
+  z.literal('month'),
+])
+export type DateFromPast = z.infer<typeof schemaDateFromPast>
+
+export const schemaTopPostsMetric = z.union([
+  z.literal('views'),
+  z.literal('likes'),
+])
+export type TopPostsMetric = z.infer<typeof schemaTopPostsMetric>

@@ -3,10 +3,12 @@ import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import {
   schemaCreatePost,
+  schemaDateFromPast,
   schemaPostSearch,
   schemaUpdatePost,
   schemaUpdatePostCategory,
 } from '../../lib/schemas'
+import { createDateFromThePast } from '../../util/date-helpers'
 import { ensureAuthorTRPC } from '../api-security'
 import { ContextTRPC } from '../context-trpc'
 import { procedure, protectedProcedure, router } from '../trpc'
@@ -135,29 +137,45 @@ export const postsRouter = router({
       })
     }),
   // TOP BY VIEWS
-  topByViews: procedure.query(async ({ ctx }) => {
-    return await ctx.prisma.post.findMany({
-      select: defaultPostSelect,
-      take: 5,
-      orderBy: [
-        { noOfViews: 'desc' },
-        { likedBy: { _count: 'desc' } },
-        { title: 'asc' },
-      ],
-    })
-  }),
+  topByViews: procedure
+    .input(z.object({ dateFromPast: schemaDateFromPast }))
+    .query(async ({ ctx, input }) => {
+      const { dateFromPast } = input
+
+      // keep in sync with other "top" query
+      return await ctx.prisma.post.findMany({
+        select: defaultPostSelect,
+        take: 5,
+        where: {
+          updatedAt: { gte: createDateFromThePast(dateFromPast) },
+        },
+        orderBy: [
+          { noOfViews: 'desc' },
+          { likedBy: { _count: 'desc' } },
+          { title: 'asc' },
+        ],
+      })
+    }),
   // TOP BY LIKES
-  topByLikes: procedure.query(async ({ ctx }) => {
-    return await ctx.prisma.post.findMany({
-      select: defaultPostSelect,
-      take: 5,
-      orderBy: [
-        { likedBy: { _count: 'desc' } },
-        { noOfViews: 'desc' },
-        { title: 'asc' },
-      ],
-    })
-  }),
+  topByLikes: procedure
+    .input(z.object({ dateFromPast: schemaDateFromPast }))
+    .query(async ({ ctx, input }) => {
+      const { dateFromPast } = input
+
+      // keep in sync with other "top" query
+      return await ctx.prisma.post.findMany({
+        select: defaultPostSelect,
+        take: 5,
+        where: {
+          updatedAt: { gte: createDateFromThePast(dateFromPast) },
+        },
+        orderBy: [
+          { likedBy: { _count: 'desc' } },
+          { noOfViews: 'desc' },
+          { title: 'asc' },
+        ],
+      })
+    }),
   // CREATE
   create: protectedProcedure
     .input(schemaCreatePost)
