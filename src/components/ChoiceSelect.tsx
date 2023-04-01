@@ -1,6 +1,7 @@
 import { RadioGroup } from '@headlessui/react'
 import type { Dispatch, ReactNode, SetStateAction } from 'react'
-import { useState } from 'react'
+import { cloneElement, isValidElement, useState } from 'react'
+import { IconProps } from './Icon'
 
 type Choice<TChoiceId extends string> = {
   choiceId: TChoiceId
@@ -58,7 +59,7 @@ export function ChoiceSelect<
     <RadioGroup
       by="choiceId"
       value={control.selected}
-      onChange={(val: typeof control.choices[number]) => {
+      onChange={(val: (typeof control.choices)[number]) => {
         control.setSelected(val)
         onSelect?.(val)
       }}
@@ -109,7 +110,15 @@ export function ChoiceSelect<
                   </div>
 
                   {choice.icon && (
-                    <div className="ml-2 shrink-0">{choice.icon}</div>
+                    <div className="ml-2 shrink-0">
+                      {isValidElement<IconProps>(choice.icon) ? (
+                        cloneElement<IconProps>(choice.icon, {
+                          className: 'text-dtertiary',
+                        })
+                      ) : (
+                        <></>
+                      )}
+                    </div>
                   )}
                 </div>
               </>

@@ -15,10 +15,10 @@ import { Box } from '../../Box'
 import { ButtonRemove } from '../../Button'
 import { ChoiceSelect, useChoiceSelect } from '../../ChoiceSelect'
 import { EditOverlay } from '../../EditOverlay'
-import { Form, FormLabel, Input, useIsSubmitEnabled } from '../../form'
 import { IconArrowCircleDown, IconArrowCircleRight } from '../../Icon'
 import { LoadingAnimation } from '../../LoadingAnimation'
 import { PostSegmentImage } from '../../PostSegmentImage'
+import { Form, FormLabel, Input, useIsSubmitEnabled } from '../../form'
 import { SegmentPostPage } from './PostPage'
 import { PostSegmentItem } from './PostSegmentItem'
 
@@ -123,12 +123,12 @@ export function PostSegment({
       {
         choiceId: segmentImagePositionMap.BOTTOM,
         label: 'Bottom',
-        icon: <IconArrowCircleDown className="text-dtertiary" />,
+        icon: <IconArrowCircleDown />,
       },
       {
         choiceId: segmentImagePositionMap.RIGHT,
         label: 'Right',
-        icon: <IconArrowCircleRight className="text-dtertiary" />,
+        icon: <IconArrowCircleRight />,
       },
     ],
     segment.position

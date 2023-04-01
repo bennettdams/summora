@@ -52,12 +52,12 @@ export function PostsList({
       {
         choiceId: 'long',
         label: 'Long',
-        icon: <IconLong className="text-dtertiary" />,
+        icon: <IconLong />,
       },
       {
         choiceId: 'short',
         label: 'Short',
-        icon: <IconShort className="text-dtertiary" />,
+        icon: <IconShort />,
       },
     ],
     initialViewVariant
