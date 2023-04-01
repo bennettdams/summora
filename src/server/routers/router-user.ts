@@ -114,19 +114,18 @@ export const userRouter = router({
         message: `No image or file extension for user ID '${userId}'`,
       })
     } else {
-      await deleteAvatarInStorage({
-        userId,
-        fileExtension: imageFileExtension,
-      })
+      const res = await deleteAvatarInStorage(userId)
 
-      await ctx.prisma.user.update({
-        where: { id: userId },
-        data: {
-          imageId: null,
-          imageBlurDataURL: null,
-          imageFileExtension: null,
-        },
-      })
+      if (res.ok) {
+        await ctx.prisma.user.update({
+          where: { id: userId },
+          data: {
+            imageId: null,
+            imageBlurDataURL: null,
+            imageFileExtension: null,
+          },
+        })
+      }
     }
   }),
 })

@@ -40,7 +40,7 @@ async function ensureAuthor({
       const postSegment = await prisma.postSegment.findUnique({
         where: { id: postSegmentId },
         select: {
-          imageFileExtension: true,
+          imageId: true,
           post: { select: { authorId: true, id: true } },
         },
       })
@@ -151,16 +151,19 @@ export const postSegmentsRouter = router({
 
       if (res) {
         const {
-          imageFileExtension,
+          imageId,
           post: { id: postId },
         } = res
 
-        // Delete the segment image in cloud storage
-        if (imageFileExtension) {
+        /**
+         * This execution setup means that if deleting the images fails for whatever reason,
+         * the segment will still be deleted. It is more important for the user to delete the
+         * segment, so we need to take care of removing "dead" images separately.
+         */
+        if (imageId) {
           await deletePostSegmentImageInStorage({
             postId,
             postSegmentId: segmentId,
-            fileExtension: imageFileExtension,
           })
         }
 

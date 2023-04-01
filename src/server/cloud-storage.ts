@@ -1,9 +1,13 @@
-import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import {
+  DeleteObjectsCommand,
+  ListObjectsV2Command,
+  S3Client,
+} from '@aws-sdk/client-s3'
 import { createPresignedPost as createPresignedPostAWS } from '@aws-sdk/s3-presigned-post'
 import {
   checkImageFileExtension,
   maxFileSizeInBytes,
-  storageImagesPath,
+  storageFolderPaths,
 } from '../services/cloud-service'
 import { serverOnly } from '../util/utils'
 
@@ -37,6 +41,72 @@ function newS3Client() {
   })
 
   return { s3Client, s3Config }
+}
+
+/**
+ * Delete a folder with all its files and subfolders.
+ * @param folderPath without trailing slash
+ */
+async function deleteFolder(folderPath: string): Promise<{ ok: boolean }> {
+  try {
+    const { bucket: bucketName } = getS3ClientConfig()
+
+    const folderPathSanitizedForTrailingSlash = folderPath.endsWith('/')
+      ? folderPath.slice(0, -1)
+      : folderPath
+    /**
+     * The trailing slash in the folder path is necessary to ensure that only objects within that specific folder
+     * (and not objects with similar prefixes) are returned by the `listObjectsV2` method.
+     */
+    const folderPathWithTrailingSlash = `${folderPathSanitizedForTrailingSlash}/`
+
+    const listParams = {
+      Bucket: bucketName,
+      Prefix: folderPathWithTrailingSlash,
+    }
+
+    const { s3Client } = newS3Client()
+
+    const listResponse = await s3Client.send(
+      new ListObjectsV2Command(listParams)
+    )
+
+    if (!listResponse.Contents) {
+      console.log('Wanted to delete, but folder is empty')
+      return { ok: false }
+    } else {
+      const deleteParams = {
+        Bucket: bucketName,
+        Delete: {
+          Objects: listResponse.Contents.map(({ Key }) => ({ Key })),
+          Quiet: false,
+        },
+      }
+
+      const res = await s3Client.send(new DeleteObjectsCommand(deleteParams))
+
+      // a 200 response status code does not really mean that the delete operation was succesful, only the request...
+      if (res.$metadata.httpStatusCode !== 200) {
+        throw new Error('Something went wrong while deleting')
+      } else if (!!res.Errors && res.Errors.length > 0) {
+        const err = res.Errors.at(0)
+        throw new Error(err?.Message ?? 'Something went wrong while deleting')
+      } else {
+        if (!res.Deleted) {
+          throw new Error(
+            'Deletion request was succesful, but nothing was deleted.'
+          )
+        } else {
+          return {
+            ok: true,
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error while deleting folder:', error)
+    return { ok: false }
+  }
 }
 
 export async function createPresignedPost({
@@ -73,54 +143,15 @@ export async function createPresignedPost({
 export async function deletePostSegmentImageInStorage({
   postId,
   postSegmentId,
-  fileExtension,
 }: {
   postId: string
   postSegmentId: string
-  fileExtension: string
-}): Promise<void> {
-  const storageImagePath = storageImagesPath.postSegmentImage({
-    postId,
-    postSegmentId,
-    fileExtension,
-  })
-
-  const { s3Client, s3Config } = newS3Client()
-
-  try {
-    await s3Client.send(
-      new DeleteObjectCommand({
-        Key: storageImagePath,
-        Bucket: s3Config.bucket,
-      })
-    )
-  } catch (err) {
-    console.log('Error deleting image:', err)
-  }
+}) {
+  return await deleteFolder(
+    storageFolderPaths.postSegmentImages({ postId, postSegmentId })
+  )
 }
 
-export async function deleteAvatarInStorage({
-  userId,
-  fileExtension,
-}: {
-  userId: string
-  fileExtension: string
-}): Promise<void> {
-  const storageImagePath = storageImagesPath.avatar({
-    userId,
-    fileExtension,
-  })
-
-  const { s3Client, s3Config } = newS3Client()
-
-  try {
-    await s3Client.send(
-      new DeleteObjectCommand({
-        Key: storageImagePath,
-        Bucket: s3Config.bucket,
-      })
-    )
-  } catch (err) {
-    console.log('Error deleting image:', err)
-  }
+export async function deleteAvatarInStorage(userId: string) {
+  return await deleteFolder(storageFolderPaths.avatars(userId))
 }
