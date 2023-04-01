@@ -1,4 +1,3 @@
-import type { PostCategoryId } from '@prisma/client'
 import { useRouter } from 'next/router'
 import { ReactNode, useEffect, useMemo, useState } from 'react'
 import { z } from 'zod'
@@ -8,9 +7,11 @@ import { trpc, type RouterInput } from '../../util/trpc'
 import { useDebounce } from '../../util/use-debounce'
 import { useZodForm } from '../../util/use-zod-form'
 import { IconSearch } from '../Icon'
-import { LoadingAnimation } from '../LoadingAnimation'
-import { NoContent } from '../NoContent'
 import { Page, PageSection } from '../Page'
+import {
+  CategorySelectionList,
+  useCategorySelectionList,
+} from '../category-selection'
 import { Form, Input, InputCheckbox } from '../form'
 import { PostsList } from '../post'
 import { TagsList, TagsSelection } from '../tag'
@@ -65,9 +66,8 @@ export function SearchPage(): JSX.Element {
     { tagId: string; label: string }[]
   >([])
 
-  const [categoryIdsForFilter, setCategoryIdsForFilter] = useState<
-    PostCategoryId[]
-  >([])
+  const [categoryIdsForFilter, setCategoryIdsForFilter] =
+    useCategorySelectionList()
 
   const queryInput = useMemo(() => {
     const x: RouterInput['posts']['search'] = {
@@ -212,16 +212,7 @@ export function SearchPage(): JSX.Element {
           <Row label="By category">
             <CategorySelectionList
               selectedIds={categoryIdsForFilter}
-              onSelect={(categoryId) =>
-                setCategoryIdsForFilter((prev) => {
-                  const isIncluded = prev.includes(categoryId)
-                  if (isIncluded) {
-                    return prev.filter((prevId) => prevId !== categoryId)
-                  } else {
-                    return [...prev, categoryId]
-                  }
-                })
-              }
+              setSelectedIds={setCategoryIdsForFilter}
             />
           </Row>
         </div>
@@ -268,73 +259,5 @@ function Row({
       </div>
       <div className="col-span-full row-span-1 lg:col-span-3">{children}</div>
     </>
-  )
-}
-
-function CategorySelectionList({
-  selectedIds,
-  onSelect,
-}: {
-  selectedIds: PostCategoryId[]
-  onSelect: (categoryId: PostCategoryId) => void
-}): JSX.Element {
-  const {
-    data: postCategories,
-    isLoading,
-    isError,
-  } = trpc.postCategories.all.useQuery()
-
-  return (
-    <div>
-      {isLoading ? (
-        <div className="grid place-items-center">
-          <LoadingAnimation />
-        </div>
-      ) : isError ? (
-        <NoContent>Error while loading categories.</NoContent>
-      ) : !postCategories || postCategories.length === 0 ? (
-        <NoContent>No post categories found.</NoContent>
-      ) : (
-        <div className="grid grid-cols-2 gap-6 text-center text-lg md:grid-cols-4">
-          {postCategories.map((category) => (
-            <CategorySelectItem
-              key={category.id}
-              categoryId={category.id}
-              categoryName={category.name}
-              onClick={onSelect}
-              isSelected={selectedIds.includes(category.id)}
-            />
-          ))}
-        </div>
-      )}
-
-      <p className="mt-4 italic">
-        Selecting no category means every is included in the filter.
-      </p>
-    </div>
-  )
-}
-
-function CategorySelectItem({
-  categoryId,
-  categoryName,
-  isSelected,
-  onClick,
-}: {
-  categoryId: PostCategoryId
-  categoryName: string
-  isSelected: boolean
-  onClick: (categoryId: PostCategoryId) => void
-}): JSX.Element {
-  return (
-    <div
-      key={categoryId}
-      className={`cursor-pointer rounded-lg border p-2 text-white ring-orange-500 hover:bg-dsecondary active:bg-dprimary/40 ${
-        isSelected ? 'bg-dsecondary' : 'bg-dtertiary'
-      }`}
-      onClick={() => onClick(categoryId)}
-    >
-      <span>{categoryName}</span>
-    </div>
   )
 }
