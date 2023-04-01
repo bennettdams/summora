@@ -25,6 +25,7 @@ export interface ButtonProps {
   isSubmit?: boolean
   icon?: ReactNode
   showLoading?: boolean
+  variant?: 'primary' | 'secondary'
 }
 
 export function Button({
@@ -36,6 +37,7 @@ export function Button({
   showLoading = false,
   isSubmit = false,
   isBig = false,
+  variant = 'primary',
 }: ButtonProps & { isBig?: boolean }): JSX.Element {
   const buttonRef = useRef<HTMLButtonElement>(null)
   useOnClickOutside(buttonRef, onClickOutside ?? (() => undefined))
@@ -49,8 +51,17 @@ export function Button({
       className={
         'group shadow-md outline-none focus:outline-none disabled:cursor-not-allowed' +
         // keep in sync with "Choice" component
-        ' bg-dprimary bg-gradient-to-r from-dprimary to-dprimary/90 text-white ring-orange-500 hover:bg-pink-900 hover:bg-none active:bg-dprimary/40 disabled:text-gray-300' +
-        ` ${!isBig ? 'rounded py-2 px-2' : 'rounded-xl px-8 py-6 text-xl'}`
+        '  text-white ring-orange-500 hover:bg-none disabled:text-gray-300' +
+        ` ${
+          variant === 'primary'
+            ? 'bg-dprimary bg-gradient-to-r from-dprimary to-dprimary/90 hover:bg-pink-900 active:bg-dprimary/40'
+            : 'bg-dsecondary bg-gradient-to-r from-dsecondary to-dsecondary/90 hover:bg-blue-900 active:bg-dsecondary/40'
+        }` +
+        ` ${
+          !isBig
+            ? 'rounded py-2 px-2 text-base'
+            : 'rounded-xl px-8 py-6 text-xl'
+        }`
       }
     >
       <div className="flex items-center justify-center">
