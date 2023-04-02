@@ -10,6 +10,7 @@ import {
 } from '../../lib/schemas'
 import { createDateFromThePast } from '../../util/date-helpers'
 import { ensureAuthorTRPC } from '../api-security'
+import { deletePostInStorage } from '../cloud-storage'
 import { ContextTRPC } from '../context-trpc'
 import { procedure, protectedProcedure, router } from '../trpc'
 
@@ -321,4 +322,30 @@ export const postsRouter = router({
       take: 10,
     })
   }),
+  // DELETE
+  delete: protectedProcedure
+    .input(
+      z.object({
+        postId: z.string().cuid(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { postId } = input
+
+      await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        postId,
+      })
+
+      /*
+       * TODO
+       * This execution setup means that if deleting the images fails for whatever reason,
+       * the post will still be deleted. It is more important for the user to delete the
+       * post, so we need to take care of removing "dead" images separately.
+       */
+      await deletePostInStorage(postId)
+
+      await ctx.prisma.post.delete({ where: { id: postId } })
+    }),
 })

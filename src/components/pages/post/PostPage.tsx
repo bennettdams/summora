@@ -1,5 +1,6 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import type { PostCategoryId } from '@prisma/client'
+import { useRouter } from 'next/router'
 import { MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { useFormState } from 'react-hook-form'
 import { z } from 'zod'
@@ -99,10 +100,13 @@ function PostPageInternal<
   post: TPostType
   userId: string | null
 }): JSX.Element {
+  const router = useRouter()
   const { data: segments, isLoading: isLoadingSegments } =
     trpc.postSegments.byPostId.useQuery({
       postId,
     })
+
+  const deletePost = trpc.posts.delete.useMutation()
 
   const utils = trpc.useContext()
 
@@ -283,35 +287,22 @@ function PostPageInternal<
             </div>
           </div>
 
-      {/* TAGS */}
-      <PageSection hideTopMargin>
-        {isLoadingTags ? (
-          <LoadingAnimation />
-        ) : (
-          <TagsList
-            tags={tags ?? null}
-            onAddButtonClick={() => setIsShownTagSelection(true)}
-            onRemoveClick={
-              !isPostEditable
-                ? undefined
-                : (tagIdToRemove) => handleRemoveTag(tagIdToRemove)
-            }
-            showAddButton={isPostEditable && !isShownTagSelection}
-          />
-        )}
-        <div className="mt-6 space-y-6 text-center">
-          {isShownTagSelection && (
-            <>
-              <Title>Select or create a tag</Title>
-              <TagsSelection
-                showCreateButton={true}
-                postId={postId}
-                onAdd={(tag) => addToPost.mutate({ postId, tagId: tag.tagId })}
-                onOutsideClick={() => setIsShownTagSelection(false)}
-                postCategoryId={post.postCategoryId}
-                tagsExisting={tags ?? []}
-              />
-            </>
+          {/* DELETE POST */}
+          {isPostEditable && (
+            <div className="col-span-4 mt-8 flex items-center text-sm lg:col-span-1 lg:col-start-4">
+              <ButtonRemove
+                showLoading={deletePost.isLoading}
+                onClick={() => {
+                  deletePost.mutate(
+                    { postId },
+                    { onSuccess: () => router.push(ROUTES.home) }
+                  )
+                }}
+                variant="secondary"
+              >
+                Delete post
+              </ButtonRemove>
+            </div>
           )}
         </div>
       </PageSection>

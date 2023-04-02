@@ -155,7 +155,8 @@ export const postSegmentsRouter = router({
           post: { id: postId },
         } = res
 
-        /**
+        /*
+         * TODO
          * This execution setup means that if deleting the images fails for whatever reason,
          * the segment will still be deleted. It is more important for the user to delete the
          * segment, so we need to take care of removing "dead" images separately.

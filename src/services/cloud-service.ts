@@ -8,14 +8,15 @@ export const validExtensions = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG']
 //   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAACXBIWXMAAAF+AAABfgHNRE/uAAABQUlEQVR4nAE2Acn+AP//qtGYdK9cP7BsNt6+fv//1ffXab1dAM1wAMpuBQDo0XXVlG2yajyudkeeayzcrknQhRqyYxjbcgDDZg0AvYRJ4KiJxJFn1IxYkFUtcz4Av3EU05VK2p5H6JY1ANecYd6smsiSaeO2kLeWc2hDFKhlHqdxKKh1Lfe0NgDcrlbguaqwgWebfF/mzrLRwKh0WTdKKwBKLQCbYyIAtIA27c/A2rqpf1Q9zrKO69e91cWqm4pvk4FmmYNmAJR1O+O0kuvRvvHXyMicdqWCUdC1ite9mO/jxfXr1ABpTB66e0q9kWvdxKvOs596TyixjVm+m2q8n261m20AJxYAd0kftn5UrYRarYdcuXtNfU0mTz4lxaFouo5IABcAAFI3EMCFVpZhNI1aI8KFSn5OKgAAAD4vKLaTWXVdnITamnILAAAAAElFTkSuQmCC'
 
 export const storageFolderPaths = {
-  avatars: (userId: string) => `avatars/${userId}`,
-  postSegmentImages: ({
+  post: (postId: string) => `posts/${postId}`,
+  avatar: (userId: string) => `avatars/${userId}`,
+  postSegmentImage: ({
     postId,
     postSegmentId,
   }: {
     postId: string
     postSegmentId: string
-  }) => `posts/${postId}/segment-images/${postSegmentId}`,
+  }) => `${storageFolderPaths.post(postId)}/segment-images/${postSegmentId}`,
 }
 
 export const storageImagesPath = {
@@ -25,7 +26,7 @@ export const storageImagesPath = {
   }: {
     userId: string
     fileExtension: string
-  }) => `${storageFolderPaths.avatars(userId)}/${userId}.${fileExtension}`,
+  }) => `${storageFolderPaths.avatar(userId)}/${userId}.${fileExtension}`,
   postSegmentImage: ({
     postId,
     postSegmentId,
@@ -35,7 +36,7 @@ export const storageImagesPath = {
     postSegmentId: string
     fileExtension: string
   }) =>
-    `${storageFolderPaths.postSegmentImages({
+    `${storageFolderPaths.postSegmentImage({
       postId,
       postSegmentId,
     })}/${postSegmentId}.${fileExtension}`,

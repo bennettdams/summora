@@ -140,6 +140,10 @@ export async function createPresignedPost({
   })
 }
 
+export async function deletePostInStorage(postId: string) {
+  return await deleteFolder(storageFolderPaths.post(postId))
+}
+
 export async function deletePostSegmentImageInStorage({
   postId,
   postSegmentId,
@@ -148,10 +152,10 @@ export async function deletePostSegmentImageInStorage({
   postSegmentId: string
 }) {
   return await deleteFolder(
-    storageFolderPaths.postSegmentImages({ postId, postSegmentId })
+    storageFolderPaths.postSegmentImage({ postId, postSegmentId })
   )
 }
 
 export async function deleteAvatarInStorage(userId: string) {
-  return await deleteFolder(storageFolderPaths.avatars(userId))
+  return await deleteFolder(storageFolderPaths.avatar(userId))
 }
