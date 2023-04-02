@@ -46,7 +46,7 @@ model PostComment {
   updatedAt       DateTime      @updatedAt
   isDeleted       Boolean       @default(false)
   // post
-  post            Post          @relation("PostComments", fields: [postId], references: [id])
+  post            Post          @relation("PostComments", fields: [postId], references: [id], onDelete: Cascade)
   postId          String
   // comment tree
   commentParentId String?
