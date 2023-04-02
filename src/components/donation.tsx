@@ -12,6 +12,9 @@ import {
 import { trpc } from '../util/trpc'
 import { useZodForm } from '../util/use-zod-form'
 import { ButtonRemove } from './Button'
+import { IconArrowDown, IconDonate } from './Icon'
+import { LoadingAnimation } from './LoadingAnimation'
+import { NoContent } from './NoContent'
 import {
   Form,
   FormFieldError,
@@ -20,11 +23,8 @@ import {
   FormSubmit,
   Input,
 } from './form'
-import { IconArrowDown, IconDonate } from './Icon'
 import { LinkExternal } from './link'
-import { LoadingAnimation } from './LoadingAnimation'
 import { Logo } from './logo'
-import { NoContent } from './NoContent'
 
 function DonationLink({
   userDonation,
@@ -504,7 +504,8 @@ export function DonateButton({ userId }: { userId: string }): JSX.Element {
 
                 <div className="bg-dlight p-4">
                   <p className="font-medium text-sm">
-                    All donations go <span className="underline">directly</span>{' '}
+                    All donations go
+                    <span className="mx-1 underline">directly</span>
                     to the author of the post.
                   </p>
                   <p className="font-medium text-sm">
