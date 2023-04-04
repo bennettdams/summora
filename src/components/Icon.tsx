@@ -1,6 +1,7 @@
 import {
   AcademicCapIcon as AcademicCapIconOutline,
   ArrowLeftOnRectangleIcon as ArrowLeftOnRectangleIconOutline,
+  ArrowPathIcon as ArrowPathIconOutline,
   ArrowRightOnRectangleIcon as ArrowRightOnRectangleIconOutline,
   BanknotesIcon as BanknotesIconOutline,
   BellIcon as BellIconOutline,
@@ -94,6 +95,7 @@ const icons = {
   EllipsisHorizontalIconOutline,
   FunnelIcon,
   SparklesIconOutline,
+  ArrowPathIconOutline,
 }
 
 type IconName = keyof typeof icons
@@ -265,4 +267,8 @@ export function IconFilter(props: IconProps): JSX.Element {
 
 export function IconExplore(props: IconProps): JSX.Element {
   return <Icon {...props} iconName="SparklesIconOutline" />
+}
+
+export function IconRefresh(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="ArrowPathIconOutline" />
 }
