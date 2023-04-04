@@ -141,19 +141,11 @@ export function SearchPage(): JSX.Element {
                 textAlignCenter={true}
               />
             </Form>
-
-            {!postsSearchResult ? (
-              <p className="mt-2">&nbsp;</p>
-            ) : (
-              <p className="mt-2 italic tracking-wide text-dprimary">
-                Found {postsSearchResult.length} posts.
-              </p>
-            )}
           </div>
         </div>
       </PageSection>
 
-      <PageSection label="Search results">
+      <PageSection hideTopMargin label="Search results">
         {postsSearchResult && (
           <PostsList
             initialViewVariant="short"
