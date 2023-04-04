@@ -1,4 +1,4 @@
-import { RefObject, useEffect } from 'react'
+import { useEffect, type RefObject } from 'react'
 
 export const useOnClickOutside = (
   ref: RefObject<HTMLElement>,
@@ -6,6 +6,7 @@ export const useOnClickOutside = (
 ): void => {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
+      // don't execute if the taget is the given element
       if (ref.current && !ref.current.contains(event.target as Node)) {
         // TODO needed?
         // if (document.activeElement === ref.current) {

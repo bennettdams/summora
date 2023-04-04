@@ -245,6 +245,7 @@ function SearchInput(): JSX.Element {
     <div className="inline">
       <span
         className="flex cursor-pointer flex-row items-center"
+        // TODO Clicking on the search icon should hide the bar again, but right now this is prevented from the "outside click" implementation, which interfers here.
         onClick={() => setIsPopoverSearchInputActive(true)}
       >
         <SearchInputIcon onClick={handleProgrammaticSubmit} />
@@ -263,13 +264,13 @@ function SearchInput(): JSX.Element {
           enter="transition ease-out duration-300"
           enterFrom="opacity-0 translate-y-1"
           enterTo="opacity-100 translate-y-0"
-          leave="transition ease-in duration-500"
+          leave="transition ease-in duration-200"
           leaveFrom="opacity-100 translate-y-0"
           leaveTo="opacity-0 translate-y-1"
         >
           <div className="px-4">
             <div className="mx-auto grid h-14 max-w-3xl place-items-center overflow-hidden rounded-lg	 bg-white px-4 shadow-2xl ring-1 ring-black ring-opacity-5 lg:h-20">
-              {isPopoverSearchInputActive && (
+              {!!isPopoverSearchInputActive && (
                 <Form
                   onSubmit={handleSubmitPostSearch((formData) => {
                     handleSearch(formData.searchInput)

@@ -84,8 +84,8 @@ export function Tag({
   return (
     <div
       ref={tagRef}
-      className={`m-1 inline rounded bg-dtertiary py-0.5 px-1.5 leading-none text-white hover:bg-dsecondary ${
-        onClick && 'cursor-pointer'
+      className={`m-1 inline rounded bg-dtertiary py-0.5 px-1.5 leading-none text-white ${
+        onClick && 'cursor-pointer hover:bg-dsecondary'
       }`}
       key={tag.tagId}
       // Don't execute on click when this tag is supposed to handle removing - this happens further down then.
