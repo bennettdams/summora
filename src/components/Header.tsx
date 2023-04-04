@@ -2,7 +2,15 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { Fragment, useMemo, useRef, useState } from 'react'
+import {
+  Fragment,
+  ReactNode,
+  cloneElement,
+  isValidElement,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { z } from 'zod'
 import img from '../../public/assets/summora-logo.png'
 import { schemaPostSearch } from '../lib/schemas'
@@ -17,11 +25,14 @@ import { AuthenticateButton } from './AuthenticateButton'
 import { Avatar } from './Avatar'
 import { Button } from './Button'
 import {
+  IconExplore,
   IconHome,
   IconMenu,
   IconNotification,
+  IconProps,
   IconSearch,
   IconSignOut,
+  IconSize,
   IconUser,
   IconX,
 } from './Icon'
@@ -38,12 +49,25 @@ const NAV_ROUTES = [
   {
     name: 'Home',
     href: ROUTES.home,
-    icon: (
-      <IconHome size="big" className="text-dsecondary group-hover:text-white" />
-    ),
+    icon: <IconHome />,
+    iconSize: 'big',
+    hideNameOnLargeScreen: true,
   },
-  { name: 'Explore', href: ROUTES.explore, icon: null },
-] as const
+
+  {
+    name: 'Explore',
+    href: ROUTES.explore,
+    icon: <IconExplore />,
+    iconSize: 'medium',
+    hideNameOnLargeScreen: false,
+  },
+] as const satisfies readonly {
+  name: string
+  href: string
+  icon: ReactNode
+  hideNameOnLargeScreen: boolean
+  iconSize: IconSize
+}[]
 
 function classNames(...classes: unknown[]) {
   return classes.filter(Boolean).join(' ')
@@ -337,7 +361,17 @@ export function Header(): JSX.Element {
                             route.href === asPath ? 'page' : undefined
                           }
                         >
-                          {route.icon ?? route.name}
+                          {isValidElement<IconProps>(route.icon)
+                            ? cloneElement<IconProps>(route.icon, {
+                                className: `${
+                                  !route.hideNameOnLargeScreen && 'mr-2'
+                                } text-dsecondary group-hover:text-white`,
+                                size: route.iconSize,
+                              })
+                            : undefined}
+                          <span>
+                            {!route.hideNameOnLargeScreen && route.name}
+                          </span>
                         </span>
                       </Link>
                     ))}
@@ -403,7 +437,14 @@ export function Header(): JSX.Element {
                           route.href === asPath ? 'page' : undefined
                         }
                       >
-                        {route.name}
+                        {isValidElement<IconProps>(route.icon)
+                          ? cloneElement<IconProps>(route.icon, {
+                              className:
+                                'mr-2 text-dtertiary group-hover:text-white',
+                              size: route.iconSize,
+                            })
+                          : undefined}
+                        <span>{route.name}</span>
                       </Disclosure.Button>
                     </Link>
                   </div>
