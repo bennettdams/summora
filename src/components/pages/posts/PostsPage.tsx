@@ -2,10 +2,12 @@ import Head from 'next/head'
 import Image from 'next/image'
 import img from '../../../../public/assets/summora-logo.png'
 import { PostsPageProps } from '../../../pages'
+import { useAuth } from '../../../services/auth-service'
 import { ROUTES } from '../../../services/routing'
 import { trpc } from '../../../util/trpc'
 import { AuthenticateButton } from '../../AuthenticateButton'
 import { Button } from '../../Button'
+import { CreatePostModal } from '../../CreatePostModal'
 import {
   IconExplore,
   IconIdea,
@@ -35,6 +37,8 @@ export function PostsPage({
     tagIdsToFilter: [],
     categoryIdsToFilter: [],
   })
+
+  const { userIdAuth } = useAuth()
 
   return (
     <Page
@@ -139,7 +143,7 @@ export function PostsPage({
 
       <PageSection>
         <div className="grid grid-cols-1 gap-8 md:px-44 lg:grid-cols-2">
-          <div className="justify-left flex items-center">
+          <div className="flex items-center">
             <div className="rounded-md bg-dsecondary p-3">
               <IconIdea size="big" className="text-white" />
             </div>
@@ -149,7 +153,7 @@ export function PostsPage({
             </p>
           </div>
 
-          <div className="justify-left flex items-center">
+          <div className="flex items-center">
             <div className="rounded-md bg-dsecondary p-3">
               <IconLightning size="big" className="text-white" />
             </div>
@@ -159,7 +163,7 @@ export function PostsPage({
             </p>
           </div>
 
-          <div className="justify-left flex items-center">
+          <div className="flex items-center">
             <div className="rounded-md bg-dsecondary p-3">
               <IconMoney size="big" className="text-white" />
             </div>
@@ -169,7 +173,7 @@ export function PostsPage({
             </p>
           </div>
 
-          <div className="justify-left flex items-center">
+          <div className="flex items-center">
             <div className="rounded-md bg-dsecondary p-3">
               <IconKnowledge size="big" className="text-white" />
             </div>
@@ -182,17 +186,25 @@ export function PostsPage({
       </PageSection>
 
       <PageSection>
-        <div className="mx-auto max-w-7xl py-12 lg:flex lg:items-center lg:py-16">
-          <h2 className="font-serif text-4xl font-extrabold tracking-tight text-dprimary lg:text-3xl">
-            <span className="block">
-              Ready to make your knowledge to money?
-            </span>
-            <span className="block text-dtertiary">
-              Create an account for free today.
-            </span>
-          </h2>
-          <div className="mt-8 grid place-items-center lg:ml-20 lg:mt-0 lg:shrink-0">
-            <AuthenticateButton isSignUp={true} />
+        <div className="grid grid-cols-1 gap-8 md:px-44 lg:grid-cols-4">
+          <div className="col-span-3 flex items-center">
+            <h2 className="font-serif text-4xl font-extrabold tracking-tight text-dprimary lg:text-3xl">
+              <span className="block">
+                Ready to make your knowledge to money?
+              </span>
+              <span className="block text-dtertiary">
+                {!userIdAuth
+                  ? 'Create an account for free today.'
+                  : 'Create a post an see where it goes.'}
+              </span>
+            </h2>
+          </div>
+          <div className="col-span-1 flex items-center justify-center lg:justify-start">
+            {!userIdAuth ? (
+              <AuthenticateButton isSignUp={true} />
+            ) : (
+              <CreatePostModal />
+            )}
           </div>
         </div>
       </PageSection>
