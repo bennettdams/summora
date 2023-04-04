@@ -169,7 +169,7 @@ export function SearchPage(): JSX.Element {
         )}
       </PageSection>
 
-      <PageSection label="Filter your search" hideTopMargin>
+      <PageSection label="Filter your search">
         <div className="grid auto-rows-min grid-cols-4 gap-6">
           <Row label="By topic">
             <Form>
