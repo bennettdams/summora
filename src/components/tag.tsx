@@ -48,7 +48,9 @@ export function TagsList({
             <Tag
               key={tag.tagId}
               tag={tag}
-              onClick={(tag) => onRemoveClick?.(tag.tagId)}
+              onClick={
+                !onRemoveClick ? undefined : (tag) => onRemoveClick(tag.tagId)
+              }
               handleRemoving={!!onRemoveClick}
             />
           ))

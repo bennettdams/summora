@@ -253,7 +253,7 @@ function PostPageInternal<
           </div>
 
           {/* TAGS */}
-          <div className="col-span-4 mt-8 lg:col-span-2 lg:col-start-2">
+          <div className="col-span-4 mt-6 lg:col-span-2 lg:col-start-2">
             {isLoadingTags ? (
               <LoadingAnimation />
             ) : (
@@ -268,28 +268,11 @@ function PostPageInternal<
                 showAddButton={isPostEditable && !isShownTagSelection}
               />
             )}
-            <div className="mt-6 space-y-6 text-center">
-              {isShownTagSelection && (
-                <>
-                  <Title>Select or create a tag</Title>
-                  <TagsSelection
-                    showCreateButton={true}
-                    postId={postId}
-                    onAdd={(tag) =>
-                      addToPost.mutate({ postId, tagId: tag.tagId })
-                    }
-                    onOutsideClick={() => setIsShownTagSelection(false)}
-                    postCategoryId={post.postCategoryId}
-                    tagsExisting={tags ?? []}
-                  />
-                </>
-              )}
-            </div>
           </div>
 
           {/* DELETE POST */}
           {isPostEditable && (
-            <div className="col-span-4 mt-8 flex items-center text-sm lg:col-span-1 lg:col-start-4">
+            <div className="col-span-4 mt-6 flex items-center text-sm lg:col-span-1 lg:col-start-4">
               <ButtonRemove
                 showLoading={deletePost.isLoading}
                 onClick={() => {
@@ -304,6 +287,24 @@ function PostPageInternal<
               </ButtonRemove>
             </div>
           )}
+
+          <div className="col-span-4 mt-6 space-y-6 text-center">
+            {isShownTagSelection && (
+              <>
+                <Title>Select or create a tag</Title>
+                <TagsSelection
+                  showCreateButton={true}
+                  postId={postId}
+                  onAdd={(tag) =>
+                    addToPost.mutate({ postId, tagId: tag.tagId })
+                  }
+                  onOutsideClick={() => setIsShownTagSelection(false)}
+                  postCategoryId={post.postCategoryId}
+                  tagsExisting={tags ?? []}
+                />
+              </>
+            )}
+          </div>
         </div>
       </PageSection>
 

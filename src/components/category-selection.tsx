@@ -75,7 +75,7 @@ function CategorySelectItem({
   return (
     <div
       key={categoryId}
-      className={`cursor-pointer rounded-lg border p-2 text-white ring-orange-500 hover:bg-dsecondary active:bg-dprimary/40 ${
+      className={`cursor-pointer select-none rounded-lg border p-2 text-white ring-orange-500 hover:bg-dsecondary active:bg-dprimary/40 ${
         isSelected ? 'bg-dsecondary' : 'bg-dtertiary'
       }`}
       onClick={() => onClick(categoryId)}

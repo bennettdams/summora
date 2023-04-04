@@ -153,6 +153,30 @@ export function SearchPage(): JSX.Element {
         </div>
       </PageSection>
 
+      <PageSection label="Search results">
+        {postsSearchResult && (
+          <PostsList
+            initialViewVariant="short"
+            posts={postsSearchResult.map((post) => ({
+              id: post.id,
+              categoryTitle: post.category.name,
+              title: post.title,
+              subtitle: post.subtitle,
+              updatedAt: post.updatedAt,
+              author: {
+                id: post.authorId,
+                username: post.author.username,
+                imageId: post.author.imageId,
+                imageBlurDataURL: post.author.imageBlurDataURL,
+                imageFileExtension: post.author.imageFileExtension,
+              },
+              noOfViews: post.noOfViews,
+              noOfComments: post._count.comments,
+            }))}
+          />
+        )}
+      </PageSection>
+
       <PageSection label="Filter your search" hideTopMargin>
         <div className="grid auto-rows-min grid-cols-4 gap-6">
           <Row label="By topic">
@@ -216,30 +240,6 @@ export function SearchPage(): JSX.Element {
             />
           </Row>
         </div>
-      </PageSection>
-
-      <PageSection label="Search results">
-        {postsSearchResult && (
-          <PostsList
-            initialViewVariant="short"
-            posts={postsSearchResult.map((post) => ({
-              id: post.id,
-              categoryTitle: post.category.name,
-              title: post.title,
-              subtitle: post.subtitle,
-              updatedAt: post.updatedAt,
-              author: {
-                id: post.authorId,
-                username: post.author.username,
-                imageId: post.author.imageId,
-                imageBlurDataURL: post.author.imageBlurDataURL,
-                imageFileExtension: post.author.imageFileExtension,
-              },
-              noOfViews: post.noOfViews,
-              noOfComments: post._count.comments,
-            }))}
-          />
-        )}
       </PageSection>
     </Page>
   )
