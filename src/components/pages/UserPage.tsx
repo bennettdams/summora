@@ -10,14 +10,14 @@ import { Avatar } from '../Avatar'
 import { Box } from '../Box'
 import { ButtonRemove } from '../Button'
 import { DateTime } from '../DateTime'
-import { UserDonations } from '../donation'
 import { EditOverlay } from '../EditOverlay'
-import { Form, Input, useIsSubmitEnabled } from '../form'
 import { LoadingAnimation } from '../LoadingAnimation'
 import { NoContent } from '../NoContent'
 import { Page, PageSection } from '../Page'
-import { PostsList } from '../post'
 import { StatisticsCard } from '../StatisticsCard'
+import { UserDonations } from '../donation'
+import { Form, Input, useIsSubmitEnabled } from '../form'
+import { PostsList } from '../post'
 
 export function UserPage(props: UserPageProps): JSX.Element {
   const {
@@ -184,6 +184,7 @@ function UserPageInternal({
                     validationErrorMessage={usernameError?.message}
                     isSpecial
                     isLoading={editUsername.isLoading}
+                    blurOnEnterPressed={true}
                   />
                 </Form>
               </div>
