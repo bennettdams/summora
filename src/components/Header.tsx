@@ -16,7 +16,6 @@ import { useZodForm } from '../util/use-zod-form'
 import { AuthenticateButton } from './AuthenticateButton'
 import { Avatar } from './Avatar'
 import { Button } from './Button'
-import { Form, Input, useIsSubmitEnabled } from './form'
 import {
   IconHome,
   IconMenu,
@@ -26,8 +25,9 @@ import {
   IconUser,
   IconX,
 } from './Icon'
-import { Link } from './link'
 import { LoadingAnimation } from './LoadingAnimation'
+import { Form, Input, useIsSubmitEnabled } from './form'
+import { Link } from './link'
 
 const DynamicCreatePostModal = dynamic(
   () => import('./CreatePostModal').then((mod) => mod.CreatePostModal),
@@ -217,38 +217,21 @@ function SearchInput(): JSX.Element {
   const [isPopoverSearchInputActive, setIsPopoverSearchInputActive] =
     useState(false)
 
-  const FormElement = (
-    <Form
-      onSubmit={handleSubmitPostSearch((formData) => {
-        handleSearch(formData.searchInput)
-      })}
-    >
-      <Input
-        {...registerPostSearch('searchInput')}
-        placeholder="What are you looking for?"
-        autoFocus={true}
-        isSpecial={true}
-        small={true}
-        validationErrorMessage={errorSearchInput?.message}
-        icon={<SearchInputIcon onClick={handleProgrammaticSubmit} />}
-        textAlignCenter={true}
-        hideBottomBorderForSpecial={true}
-      />
-    </Form>
-  )
-
   return (
     <div className="inline">
       <span
-        className="block cursor-pointer lg:hidden"
+        className="flex cursor-pointer flex-row items-center"
         onClick={() => setIsPopoverSearchInputActive(true)}
       >
         <SearchInputIcon onClick={handleProgrammaticSubmit} />
+        <span className="hidden text-dsecondary lg:block">
+          What are you looking for?
+        </span>
       </span>
 
       <div
         ref={popoverSearchRef}
-        className="fixed left-0 top-20 block w-screen lg:hidden"
+        className="fixed left-0 top-20 block w-screen lg:top-40"
       >
         <Transition
           show={isPopoverSearchInputActive}
@@ -261,15 +244,31 @@ function SearchInput(): JSX.Element {
           leaveTo="opacity-0 translate-y-1"
         >
           <div className="px-4">
-            <div className="w-full overflow-hidden rounded-lg bg-white px-4 shadow-lg ring-1 ring-black ring-opacity-5">
-              {isPopoverSearchInputActive && FormElement}
+            <div className="mx-auto max-w-3xl overflow-hidden rounded-lg bg-white px-4 shadow-lg ring-1 ring-black ring-opacity-5">
+              {isPopoverSearchInputActive && (
+                <Form
+                  onSubmit={handleSubmitPostSearch((formData) => {
+                    handleSearch(formData.searchInput)
+                  })}
+                >
+                  <Input
+                    {...registerPostSearch('searchInput')}
+                    placeholder="What are you looking for?"
+                    autoFocus={true}
+                    isSpecial={true}
+                    small={true}
+                    validationErrorMessage={errorSearchInput?.message}
+                    icon={
+                      <SearchInputIcon onClick={handleProgrammaticSubmit} />
+                    }
+                    textAlignCenter={true}
+                    hideBottomBorderForSpecial={true}
+                  />
+                </Form>
+              )}
             </div>
           </div>
         </Transition>
-      </div>
-
-      <div className="hidden lg:block">
-        {!isPopoverSearchInputActive && FormElement}
       </div>
     </div>
   )
