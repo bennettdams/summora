@@ -35,7 +35,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 }
 
-const revalidateInSeconds = 5 * 60
+const revalidateInSeconds = 1
 
 type UserPageServerProps = UserPageProps & ServerPageProps
 

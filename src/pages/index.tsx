@@ -13,7 +13,7 @@ export type PostsPageProps = {
   noOfCommentsCreatedLast24Hours: number
 }
 
-const revalidateInSeconds = 5 * 60
+const revalidateInSeconds = 1
 
 type Props = PostsPageProps & ServerPageProps
 

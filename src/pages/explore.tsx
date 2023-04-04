@@ -4,7 +4,7 @@ import Head from 'next/head'
 import { ExplorePage } from '../components/pages/ExplorePage'
 import { createPrefetchHelpersArgs } from '../server/prefetch-helpers'
 
-const revalidateInSeconds = 5 * 60
+const revalidateInSeconds = 1
 
 export const getStaticProps: GetStaticProps = async () => {
   const ssg = createProxySSGHelpers(await createPrefetchHelpersArgs())

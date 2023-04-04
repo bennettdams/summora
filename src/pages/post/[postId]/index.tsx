@@ -25,7 +25,7 @@ interface Params extends ParsedUrlQuery {
   postId: string
 }
 
-const revalidateInSeconds = 5 * 60
+const revalidateInSeconds = 1
 
 type Props = PostPageProps & ServerPageProps
 

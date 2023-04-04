@@ -3,7 +3,6 @@ import { getProviders, signIn } from 'next-auth/react'
 import Head from 'next/head'
 import { Button } from '../components/Button'
 import { Page } from '../components/Page'
-import { getServerAuthSession } from '../server/api-security'
 
 type Providers = Awaited<ReturnType<typeof getProviders>>
 
@@ -101,9 +100,9 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 export const getServerSideProps: GetServerSideProps<{
   providers: Providers
-}> = async (ctx) => {
+}> = async () => {
   const providers = await getProviders()
   return {
-    props: { providers, session: await getServerAuthSession(ctx) },
+    props: { providers },
   }
 }

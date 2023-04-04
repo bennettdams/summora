@@ -5,7 +5,7 @@ import { SearchPage } from '../components/pages/SearchPage'
 import { createPrefetchHelpersArgs } from '../server/prefetch-helpers'
 
 // once a day
-const revalidateInSeconds = 24 * 60 * 60
+const revalidateInSeconds = 1
 
 export const getStaticProps: GetStaticProps = async () => {
   const ssg = createProxySSGHelpers(await createPrefetchHelpersArgs())
