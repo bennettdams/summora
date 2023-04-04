@@ -1,5 +1,6 @@
-import { useState, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { trpc } from '../../util/trpc'
+import { useOnClickOutside } from '../../util/use-on-click-outside'
 import { Button } from '../Button'
 import { ChoiceSelect, useChoiceSelect } from '../ChoiceSelect'
 import { IconFilter, IconLiked, IconView } from '../Icon'
@@ -109,15 +110,18 @@ export function ExplorePage(): JSX.Element {
 
   const [showFilters, setShowFilters] = useState(false)
 
+  const refFilterSection = useRef<HTMLDivElement | null>(null)
+  useOnClickOutside(refFilterSection, () => setShowFilters(false))
+
   return (
     <Page>
       <PageSection>
         <div className="mx-auto flex max-w-sm flex-col space-y-4">
-          <Choice label="Time range:">
-            <ChoiceSelect control={choiceSelectControlTimeRange} />
-          </Choice>
           <Choice label="Metric:">
             <ChoiceSelect control={choiceSelectControlMetric} />
+          </Choice>
+          <Choice label="Time range:">
+            <ChoiceSelect control={choiceSelectControlTimeRange} />
           </Choice>
           <Choice label="Tags & categories:">
             <div>
@@ -147,7 +151,10 @@ export function ExplorePage(): JSX.Element {
         </div>
 
         {showFilters && (
-          <div className="mt-8 grid max-w-7xl auto-rows-min grid-cols-4 gap-6">
+          <div
+            ref={refFilterSection}
+            className="mt-8 grid max-w-7xl auto-rows-min grid-cols-4 gap-6"
+          >
             <Row label="By tags">
               <div className="space-y-4">
                 <TagsSelection
