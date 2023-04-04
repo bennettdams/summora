@@ -12,7 +12,7 @@ import { ButtonAdd, ButtonAddSpecial } from './Button'
 import { IconTrash } from './Icon'
 import { LoadingAnimation } from './LoadingAnimation'
 import { NoContent } from './NoContent'
-import { Form, Input } from './form'
+import { Form, Input, useIsSubmitEnabled } from './form'
 
 type TagTagslist = {
   tagId: string
@@ -166,6 +166,7 @@ export function TagsSelection({
     handleSubmit: handleSubmitTagSearch,
     register: registerTagSearch,
     watch: watchTagSearch,
+    control: controlTagSearch,
     resetField,
     formState: {
       errors: { searchInput: errorSearchInput },
@@ -173,16 +174,22 @@ export function TagsSelection({
   } = useZodForm({
     schema: schemaTagSearch,
     defaultValues: defaultValuesTagSearch,
-    mode: 'onSubmit',
+    mode: 'onChange',
   })
 
   const inputTagSearch = watchTagSearch('searchInput')
+
+  const isSubmitEnabled = useIsSubmitEnabled({
+    control: controlTagSearch,
+    isLoading: false,
+  })
 
   const inputTagSearchDebounced = useDebounce(inputTagSearch, 500)
   const { data: tagsSearchResult, isFetching } = trpc.postTags.search.useQuery(
     { searchInput: inputTagSearchDebounced },
     {
       enabled:
+        isSubmitEnabled &&
         !!inputTagSearchDebounced &&
         inputTagSearchDebounced.length >=
           (schemaTagSearch.shape.searchInput.minLength ?? 2),
@@ -196,24 +203,26 @@ export function TagsSelection({
   }
 
   function handleCreateTag() {
-    if (!inputTagSearch)
-      throw new Error(
-        'There is no input for the tag label, this should not have happened.'
+    if (isSubmitEnabled) {
+      if (!inputTagSearch)
+        throw new Error(
+          'There is no input for the tag label, this should not have happened.'
+        )
+      if (!postId)
+        throw new Error(
+          'Wanted to create a tag but post ID is null, show not have happened.'
+        )
+      createPostTag.mutate(
+        { postId, tagLabel: inputTagSearch },
+        {
+          onSuccess: () => {
+            resetField('searchInput')
+            utils.postTags.invalidate()
+            utils.posts.invalidate()
+          },
+        }
       )
-    if (!postId)
-      throw new Error(
-        'Wanted to create a tag but post ID is null, show not have happened.'
-      )
-    createPostTag.mutate(
-      { postId, tagLabel: inputTagSearch },
-      {
-        onSuccess: () => {
-          resetField('searchInput')
-          utils.postTags.invalidate()
-          utils.posts.invalidate()
-        },
-      }
-    )
+    }
   }
 
   return (
@@ -244,7 +253,10 @@ export function TagsSelection({
               <>
                 <p className="uppercase tracking-wide">or</p>
 
-                <ButtonAdd disabled={!inputTagSearch} onClick={handleCreateTag}>
+                <ButtonAdd
+                  disabled={!inputTagSearch || !isSubmitEnabled}
+                  onClick={handleCreateTag}
+                >
                   Create
                 </ButtonAdd>
               </>
@@ -255,7 +267,7 @@ export function TagsSelection({
             {tagsSearchResult &&
               (tagsSearchResult.length === 0 ? (
                 <div className="flex basis-full items-center px-1 text-center">
-                  <div className="flex-1 text-sm">
+                  <div className="mt-10 flex-1 text-sm">
                     <p>No results for your search.</p>
                     {showCreateButton && (
                       <p>Maybe you want to create this tag?</p>

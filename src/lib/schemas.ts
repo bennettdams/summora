@@ -131,7 +131,10 @@ export const schemaCreatePostComment = z.object({
   text: z.string().min(1),
 })
 
-const schemaTagSearchInput = z.string().min(2).max(20)
+const schemaTagSearchInput = z
+  .string()
+  .min(2, 'Please use at least 2 characters.')
+  .max(20, 'Please use less than 20 characters.')
 
 export const schemaTagSearch = z.object({
   searchInput: schemaTagSearchInput,
