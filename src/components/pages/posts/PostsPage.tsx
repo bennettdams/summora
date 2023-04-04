@@ -5,8 +5,9 @@ import { PostsPageProps } from '../../../pages'
 import { ROUTES } from '../../../services/routing'
 import { trpc } from '../../../util/trpc'
 import { AuthenticateButton } from '../../AuthenticateButton'
+import { Button } from '../../Button'
 import {
-  IconArrowCircleRight,
+  IconExplore,
   IconIdea,
   IconKnowledge,
   IconLightning,
@@ -125,17 +126,13 @@ export function PostsPage({
 
         <Link to={ROUTES.explore}>
           <div className="mt-10 grid w-full place-items-center text-center">
-            <div className="cursor-pointer rounded-lg py-6 hover:bg-dtertiary lg:py-10">
-              <h1 className="px-20 font-serif text-4xl font-semibold tracking-wide text-dprimary underline decoration-dsecondary lg:text-5xl">
-                Start exploring
-                <span className="hidden w-full lg:ml-6 lg:inline lg:w-auto">
-                  <IconArrowCircleRight size="huge" />
-                </span>
-              </h1>
-              <span className="mt-4 block w-full lg:ml-4 lg:hidden lg:w-auto">
-                <IconArrowCircleRight size="huge" />
-              </span>
-            </div>
+            <Button
+              variant="secondary"
+              isBig={true}
+              icon={<IconExplore size="huge" />}
+            >
+              <h1 className="text-2xl">Start exploring</h1>
+            </Button>
           </div>
         </Link>
       </PageSection>

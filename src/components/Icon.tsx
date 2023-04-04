@@ -14,6 +14,7 @@ import {
   MagnifyingGlassIcon as MagnifyingGlassIconOutline,
   MinusCircleIcon as MinusCircleIconOutline,
   PlusCircleIcon as PlusCircleIconOutline,
+  SparklesIcon as SparklesIconOutline,
   UserCircleIcon as UserCircleIconOutline,
 } from '@heroicons/react/24/outline'
 
@@ -92,6 +93,7 @@ const icons = {
   BanknotesIconOutline,
   EllipsisHorizontalIconOutline,
   FunnelIcon,
+  SparklesIconOutline,
 }
 
 type IconName = keyof typeof icons
@@ -259,4 +261,8 @@ export function IconOptions(props: IconProps): JSX.Element {
 
 export function IconFilter(props: IconProps): JSX.Element {
   return <Icon {...props} iconName="FunnelIcon" />
+}
+
+export function IconExplore(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="SparklesIconOutline" />
 }
