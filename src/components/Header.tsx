@@ -268,7 +268,7 @@ function SearchInput(): JSX.Element {
           leaveTo="opacity-0 translate-y-1"
         >
           <div className="px-4">
-            <div className="mx-auto max-w-3xl overflow-hidden rounded-lg bg-white px-4 shadow-lg ring-1 ring-black ring-opacity-5">
+            <div className="mx-auto grid h-14 max-w-3xl place-items-center overflow-hidden rounded-lg	 bg-white px-4 shadow-2xl ring-1 ring-black ring-opacity-5 lg:h-20">
               {isPopoverSearchInputActive && (
                 <Form
                   onSubmit={handleSubmitPostSearch((formData) => {

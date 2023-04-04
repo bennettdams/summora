@@ -4,7 +4,6 @@ import Head from 'next/head'
 import { SearchPage } from '../components/pages/SearchPage'
 import { createPrefetchHelpersArgs } from '../server/prefetch-helpers'
 
-// once a day
 const revalidateInSeconds = 1
 
 export const getStaticProps: GetStaticProps = async () => {
