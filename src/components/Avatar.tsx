@@ -58,12 +58,7 @@ type Props = {
   placeholderColorVariant?: ColorVariant
 }
 
-export function Avatar(props: Props): JSX.Element {
-  // image ID as key to be sure to throw the component away when changing the image
-  return <AvatarInternal key={props.imageId} {...props} />
-}
-
-function AvatarInternal({
+export function Avatar({
   userId,
   username,
   imageId,
@@ -90,6 +85,10 @@ function AvatarInternal({
   const avatarUploadMutation =
     trpc.imageUpload.getPresignedUrlAvatar.useMutation()
 
+  const [isLoadingImageForUpload, setIsLoadingImageForUpload] = useState(
+    () => false
+  )
+
   return (
     <div className="relative inline-grid h-full w-full place-items-center">
       {/* TODO use EditOverlay instead */}
@@ -105,6 +104,8 @@ function AvatarInternal({
                   },
                   {
                     onSuccess: async (presignedPost) => {
+                      setIsLoadingImageForUpload(true)
+
                       await uploadPresignedPost({
                         file: fileToUpload,
                         presignedPost,
@@ -120,7 +121,9 @@ function AvatarInternal({
                   }
                 )
               }}
-              isLoadingUpload={avatarUploadMutation.isLoading}
+              isLoadingUpload={
+                avatarUploadMutation.isLoading || isLoadingImageForUpload
+              }
             />
           </span>
         </div>
@@ -152,7 +155,7 @@ function AvatarInternal({
             // className={`rounded-full duration-75 ease-in-out ${
             //   isLoadingImage ? 'blur-2xl grayscale' : 'blur-0 grayscale-0'
             // }`}
-            // onLoadingComplete={() => setLoadingIsLoadingImage(false)}
+            onLoadingComplete={() => setIsLoadingImageForUpload(false)}
           />
         </div>
       ) : (
