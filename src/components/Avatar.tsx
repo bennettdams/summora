@@ -134,7 +134,7 @@ function AvatarInternal({
          * See: https://github.com/vercel/next.js/issues/30033
          */
         <div
-          className="relative block overflow-hidden rounded-full"
+          className="flex overflow-hidden rounded-full"
           style={{
             width: sizePixels,
             height: sizePixels,
@@ -146,7 +146,6 @@ function AvatarInternal({
             height={sizePixels}
             width={sizePixels}
             style={{ objectFit: 'cover' }}
-            className="rounded-full"
             // the following can be used to show a fade-in animation via placeholder, but it will delay when the image is visible
             // placeholder="blur"
             // blurDataURL={imageBlurDataURL ?? imageBlurDataURLFallback}
