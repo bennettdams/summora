@@ -17,10 +17,12 @@ export function ImageUpload({
   inputId,
   onUpload,
   isLoadingUpload = false,
+  isRounded = false,
 }: {
   onUpload: (fileToUpload: File) => Promise<void>
   inputId: string
   isLoadingUpload: boolean
+  isRounded?: boolean
 }): JSX.Element {
   const [isUploading, setIsUploading] = useState(false)
   const [failedUploadMessage, setFailedUploadMessage] = useState<string | null>(
@@ -81,7 +83,11 @@ export function ImageUpload({
         htmlFor={inputId}
       >
         {isUploading || isLoadingUpload ? (
-          <div className="grid h-full w-full place-items-center rounded-full bg-dtertiary bg-opacity-80 p-4">
+          <div
+            className={`${
+              isRounded && 'rounded-full'
+            } grid h-full w-full place-items-center bg-dtertiary bg-opacity-80 p-4`}
+          >
             <LoadingAnimation />
           </div>
         ) : (

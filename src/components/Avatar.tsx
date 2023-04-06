@@ -96,6 +96,7 @@ export function Avatar({
         <div className="group absolute z-30 h-full w-full rounded-full hover:cursor-pointer hover:bg-dtertiary hover:bg-opacity-50">
           <span className="grid h-full w-full place-items-center">
             <ImageUpload
+              isRounded={true}
               inputId={userId}
               onUpload={async (fileToUpload) => {
                 avatarUploadMutation.mutate(
