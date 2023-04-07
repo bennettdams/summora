@@ -2,7 +2,10 @@ import { useRouter } from 'next/router'
 import { ReactNode, useEffect, useMemo, useState } from 'react'
 import { z } from 'zod'
 import { schemaPostSearch } from '../../lib/schemas'
-import { getSearchParam } from '../../services/router-service'
+import {
+  getSearchParam,
+  useSyncSearchParamFromState,
+} from '../../services/router-service'
 import { trpc, type RouterInput } from '../../util/trpc'
 import { useDebounce } from '../../util/use-debounce'
 import { useZodForm } from '../../util/use-zod-form'
@@ -46,7 +49,8 @@ export function SearchPage(): JSX.Element {
   } = useZodForm({
     schema: schemaPostSearch,
     defaultValues: defaultValuesPostSearch,
-    mode: 'onSubmit',
+    // validation on every change so e.g. the URL search param synchronization gets the most recent "is valid" result
+    mode: 'onChange',
   })
   const inputPostSearch = watchPostSearch('searchInput')
   const inputPostSearchDebounced = useDebounce(inputPostSearch, 500)
@@ -98,6 +102,16 @@ export function SearchPage(): JSX.Element {
       refetchOnWindowFocus: false,
     }
   )
+
+  // #############     URL SEARCH PARAMS
+  useSyncSearchParamFromState({
+    isEnabled: isInputPostSearchValid,
+    searchParamKey: 's',
+    value: inputPostSearchDebounced,
+    pathname: router.pathname,
+    push: router.push,
+    query: router.query,
+  })
 
   const [isSearchParamsInitialized, setIsSearchParamsInitialized] =
     useState(false)
