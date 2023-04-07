@@ -860,7 +860,6 @@ function CommentOptions({
         close={close}
         title=""
         forceHalfWidth
-        onConfirm={async () => console.log('Confirmed')}
         isSubmit={true}
       >
         <div className="flex flex-col items-center space-y-12">

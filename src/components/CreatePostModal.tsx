@@ -6,11 +6,11 @@ import { ROUTES } from '../services/routing'
 import { trpc } from '../util/trpc'
 import { useZodForm } from '../util/use-zod-form'
 import { Button } from './Button'
-import { Form, FormFieldError, FormSelect, FormSubmit, Input } from './form'
 import { IconEdit } from './Icon'
 import { LoadingAnimation } from './LoadingAnimation'
-import { Modal, useModal } from './modal'
 import { NoContent } from './NoContent'
+import { Form, FormFieldError, FormSelect, FormSubmit, Input } from './form'
+import { Modal, useModal } from './modal'
 
 type SchemaCreatePost = z.infer<typeof schemaCreatePost>
 
@@ -46,7 +46,6 @@ export function CreatePostModal() {
         close={close}
         title="Create a post"
         forceHalfWidth
-        onConfirm={async () => console.log('Confirmed')}
         isSubmit={true}
       >
         <div className="mt-2 text-center">

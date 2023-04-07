@@ -72,7 +72,7 @@ async function deleteFolder(folderPath: string): Promise<{ ok: boolean }> {
     )
 
     if (!listResponse.Contents) {
-      console.log('Wanted to delete, but folder is empty')
+      console.info('Wanted to delete, but folder is empty')
       return { ok: false }
     } else {
       const deleteParams = {

@@ -95,7 +95,7 @@ export async function uploadPresignedPost({
   })
 
   if (upload.ok) {
-    console.log('Uploaded successfully.')
+    console.info('Uploaded successfully.')
     onSuccess()
   } else {
     console.error('Upload failed.')
