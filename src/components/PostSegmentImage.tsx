@@ -1,3 +1,4 @@
+import type { PostSegmentImagePosition } from '@prisma/client'
 import Image from 'next/image'
 import {
   generatePublicURLPostSegmentImage,
@@ -19,11 +20,14 @@ export function PostSegmentImage({
   imageId,
   imageFileExtension,
   isEditable = false,
+  position,
 }: {
   postId: string
   postSegmentId: string
   imageId: string | null
   imageFileExtension: string | null
+  /** We need the position to have a unique form ID in the `ImageUpload` component. */
+  position: PostSegmentImagePosition
   isEditable?: boolean
 }): JSX.Element {
   const utils = trpc.useContext()
@@ -54,7 +58,7 @@ export function PostSegmentImage({
         <div className="absolute z-10 h-full w-full rounded-xl hover:cursor-pointer hover:bg-dtertiary hover:bg-opacity-50">
           <span className="grid h-full w-full place-items-center">
             <ImageUpload
-              inputId={postSegmentId}
+              inputId={postSegmentId + position}
               onUpload={async (fileToUpload) => {
                 imageUploadMutation.mutate(
                   {

@@ -355,6 +355,7 @@ export function PostSegment({
               postSegmentId={postSegmentId}
               imageId={segment.imageId}
               imageFileExtension={segment.imageFileExtension}
+              position="BOTTOM"
             />
           </div>
 
@@ -411,6 +412,7 @@ export function PostSegment({
               postSegmentId={postSegmentId}
               imageId={segment.imageId}
               imageFileExtension={segment.imageFileExtension}
+              position="RIGHT"
             />
           )}
         </div>
