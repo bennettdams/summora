@@ -1,5 +1,6 @@
 import type { PostSegmentImagePosition } from '@prisma/client'
 import Image from 'next/image'
+import { useState } from 'react'
 import {
   generatePublicURLPostSegmentImage,
   uploadPresignedPost,
@@ -47,6 +48,10 @@ export function PostSegmentImage({
   const imageUploadMutation =
     trpc.imageUpload.getPresignedUrlPostSegmentImage.useMutation()
 
+  const [isLoadingImageForUpload, setIsLoadingImageForUpload] = useState(
+    () => false
+  )
+
   return (
     <div
       className={`relative inline-grid h-full w-full place-items-center ${
@@ -67,6 +72,8 @@ export function PostSegmentImage({
                   },
                   {
                     onSuccess: async (presignedPost) => {
+                      setIsLoadingImageForUpload(true)
+
                       await uploadPresignedPost({
                         file: fileToUpload,
                         presignedPost,
@@ -78,7 +85,9 @@ export function PostSegmentImage({
                   }
                 )
               }}
-              isLoadingUpload={imageUploadMutation.isLoading}
+              isLoadingUpload={
+                imageUploadMutation.isLoading || isLoadingImageForUpload
+              }
             />
           </span>
         </div>
@@ -102,7 +111,7 @@ export function PostSegmentImage({
             // className={`object-contain duration-500 ease-in-out ${
             //   isLoadingImage ? 'blur-xl grayscale' : 'blur-0 grayscale-0'
             // }`}
-            // onLoadingComplete={() => setLoadingIsLoadingImage(false)}
+            onLoadingComplete={() => setIsLoadingImageForUpload(false)}
           />
           <Modal
             forceFullWidth
