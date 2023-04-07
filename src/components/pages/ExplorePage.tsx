@@ -111,7 +111,12 @@ export function ExplorePage(): JSX.Element {
   const [showFilters, setShowFilters] = useState(false)
 
   const refFilterSection = useRef<HTMLDivElement | null>(null)
-  useOnClickOutside(refFilterSection, () => setShowFilters(false))
+  const refToggleFiltersButton = useRef<HTMLDivElement | null>(null)
+  useOnClickOutside(
+    refFilterSection,
+    () => setShowFilters(false),
+    refToggleFiltersButton
+  )
 
   return (
     <Page>
@@ -124,7 +129,7 @@ export function ExplorePage(): JSX.Element {
             <ChoiceSelect control={choiceSelectControlTimeRange} />
           </Choice>
           <Choice label="Tags & categories:">
-            <div>
+            <div ref={refToggleFiltersButton}>
               <Button
                 onClick={() => setShowFilters((prev) => !prev)}
                 icon={<IconFilter />}
