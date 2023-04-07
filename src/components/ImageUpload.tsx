@@ -28,6 +28,8 @@ export function ImageUpload({
   const [failedUploadMessage, setFailedUploadMessage] = useState<string | null>(
     null
   )
+  const isLoading = isLoadingUpload || isUploading
+  const isInputDisabled = isLoading
 
   async function handleUpload(event: ChangeEvent<HTMLInputElement>) {
     try {
@@ -79,10 +81,12 @@ export function ImageUpload({
       encType="multipart/form-data"
     >
       <label
-        className="grid h-full w-full cursor-pointer place-items-center"
+        className={`grid h-full w-full place-items-center ${
+          isInputDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
+        }`}
         htmlFor={inputId}
       >
-        {isUploading || isLoadingUpload ? (
+        {isLoading ? (
           <div
             className={`${
               isRounded && 'rounded-full'
@@ -113,7 +117,7 @@ export function ImageUpload({
         className="hidden"
         accept="image/jpg, image/jpeg, image/png"
         onChange={handleUpload}
-        disabled={isUploading}
+        disabled={isInputDisabled}
       ></input>
     </form>
   )
