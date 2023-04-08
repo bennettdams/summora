@@ -403,9 +403,11 @@ export function PostSegment({
         </div>
 
         {/* POST SEGMENT IMAGE - RIGHT */}
-        {/* the parent container uses "items-stretch" so the image can "fill" the height */}
-        <div className="hidden min-h-[150px] w-full place-items-center lg:grid lg:w-1/5">
-          {choiceControl.selected.choiceId === 'RIGHT' && (
+        {/* The parent container uses "items-stretch" so the image can "fill" the height. */}
+        {/* Also, by not rendering the div, we allow the "BOTTOM" image to take the full width of the segment, */}
+        {/* that's why the whole div here is rendered conditionally. */}
+        {choiceControl.selected.choiceId === 'RIGHT' && (
+          <div className="hidden min-h-[150px] w-full place-items-center lg:grid lg:w-1/5">
             <PostSegmentImage
               isEditable={isPostEditable}
               postId={postId}
@@ -414,8 +416,8 @@ export function PostSegment({
               imageFileExtension={segment.imageFileExtension}
               position="RIGHT"
             />
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </Box>
   )
