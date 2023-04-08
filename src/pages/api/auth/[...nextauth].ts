@@ -14,14 +14,11 @@ export const authOptions: NextAuthOptions = {
     },
     async signIn({ user }) {
       const email = user.email
+      const adminMailAdressesRaw = process.env.ADMIN_MAIL_ADRESSES
+      const adminMailAdresses = adminMailAdressesRaw?.split(',')
 
-      const allowedMailAdressesRaw = process.env.ALLOWED_MAIL_ADRESSES
-
-      if (
-        !!email &&
-        !!allowedMailAdressesRaw &&
-        allowedMailAdressesRaw.split(',').includes(email)
-      ) {
+      // admins are always allowed to sign in/sign up
+      if (!!email && !!adminMailAdresses && adminMailAdresses.includes(email)) {
         return true
       } else {
         // Return false to display a default error message
