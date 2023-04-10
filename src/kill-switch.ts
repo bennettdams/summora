@@ -4,6 +4,8 @@
  * Rename this file to "middleware" and uncomment all lines to activate it.
  */
 
+export {}
+
 // import type { NextRequest } from 'next/server'
 // import { NextResponse } from 'next/server'
 
