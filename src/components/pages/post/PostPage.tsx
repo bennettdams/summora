@@ -114,8 +114,6 @@ function PostPageInternal<
     await utils.postSegments.byPostId.invalidate({ postId })
   }
 
-  const createComment = useCreateComment(postId)
-
   const [isPostEditable, setIsPostEditable] = useState(userId === post.authorId)
   useEffect(
     () => setIsPostEditable(userId === post.authorId),
@@ -154,24 +152,6 @@ function PostPageInternal<
   async function handleRemoveTag(tagId: string): Promise<void> {
     removeFromPost.mutate({ postId, tagId })
   }
-
-  // COMMENTS
-  const defaultValuesCreateComment: SchemaCreateComment = useMemo(
-    () => ({ postId, commentParentId: null, text: '' }),
-    [postId]
-  )
-  const {
-    handleSubmit: handleSubmitCreateComment,
-    register: registerCreateComment,
-    formState: {
-      errors: { text: errorText },
-    },
-    reset: resetCreateComment,
-  } = useZodForm({
-    schema: schemaCreatePostComment,
-    defaultValues: defaultValuesCreateComment,
-    mode: 'onSubmit',
-  })
 
   const [animateRef] = useAutoAnimate<HTMLDivElement>()
 
@@ -370,26 +350,7 @@ function PostPageInternal<
 
       <PageSection label="Comments">
         <div className="mx-auto w-2/3">
-          <Form
-            onSubmit={handleSubmitCreateComment((data) => {
-              createComment.mutate(
-                { postId, commentParentId: null, text: data.text },
-                {
-                  onSuccess: () => {
-                    resetCreateComment()
-                  },
-                }
-              )
-            })}
-          >
-            <Input
-              {...registerCreateComment('text')}
-              placeholder="Enter a comment.."
-              validationErrorMessage={errorText?.message}
-              isSpecial
-              isLoading={createComment.isLoading}
-            />
-          </Form>
+          <PostCreateComment postId={postId} />
         </div>
       </PageSection>
 
@@ -397,6 +358,59 @@ function PostPageInternal<
         <PostComments postId={postId} userId={userId} />
       </PageSection>
     </>
+  )
+}
+
+function PostCreateComment({ postId }: { postId: string }): JSX.Element {
+  const createComment = useCreateComment(postId)
+
+  const defaultValuesCreateComment: SchemaCreateComment = useMemo(
+    () => ({ postId, commentParentId: null, text: '' }),
+    [postId]
+  )
+
+  const {
+    handleSubmit,
+    register,
+    formState: {
+      errors: { text: errorText },
+    },
+    reset,
+    control,
+  } = useZodForm({
+    schema: schemaCreatePostComment,
+    defaultValues: defaultValuesCreateComment,
+    mode: 'onSubmit',
+  })
+
+  const isSubmitEnabled = useIsSubmitEnabled({
+    isLoading: createComment.isLoading,
+    control,
+  })
+
+  return (
+    <Form
+      onBlur={handleSubmit((data) => {
+        if (isSubmitEnabled) {
+          createComment.mutate(
+            { postId, commentParentId: null, text: data.text },
+            {
+              onSuccess: () => {
+                reset()
+              },
+            }
+          )
+        }
+      })}
+    >
+      <Input
+        {...register('text')}
+        placeholder="Enter a comment.."
+        validationErrorMessage={errorText?.message}
+        isSpecial
+        isLoading={createComment.isLoading}
+      />
+    </Form>
   )
 }
 
@@ -662,7 +676,10 @@ function Comment({
   const [showCommentInput, setShowCommentInput] = useState(false)
 
   const refCommentInput = useRef<HTMLDivElement>(null)
-  useOnClickOutside(refCommentInput, () => setShowCommentInput(false))
+  useOnClickOutside(refCommentInput, () => {
+    // this is a hack to give the `Form`'s `onBlur` some time to execute before the input is hidden
+    setTimeout(() => setShowCommentInput(false), 1)
+  })
 
   const [animateRef] = useAutoAnimate<HTMLDivElement>()
 
@@ -678,10 +695,16 @@ function Comment({
       errors: { text: errorText },
     },
     reset,
+    control,
   } = useZodForm({
     schema: schemaCreatePostComment,
     defaultValues: defaultValues,
     mode: 'onSubmit',
+  })
+
+  const isSubmitEnabled = useIsSubmitEnabled({
+    isLoading: false,
+    control,
   })
 
   return (
@@ -764,7 +787,7 @@ function Comment({
                   onClick={() => setShowCommentInput(true)}
                 >
                   <IconReply size="small" className="group-hover:text-white" />
-                  <span className="ml-1 inline-block text-xs uppercase leading-none tracking-widest text-dsecondary group-hover:text-white">
+                  <span className="ml-1 inline-block p-1.5 text-xs uppercase leading-none tracking-widest text-dsecondary group-hover:text-white">
                     Reply
                   </span>
                 </div>
@@ -784,18 +807,20 @@ function Comment({
         {!!showCommentInput && (
           <div ref={refCommentInput} className="md:w-2/3">
             <Form
-              onSubmit={handleSubmit((data) => {
-                onAdd({
-                  /*
-                   * Using `commentId` instead of `commentParentId` is confusing on first sight, but we use `commentId` here instead of `commentParentId`
-                   * because we create a NEW comment "below" in the tree. Think about it like this: THIS comment (`commentId`) is the future parent of
-                   * the comment we want to create right now.
-                   */
-                  commentParentId: comment.commentId,
-                  text: data.text,
-                })
-                setShowCommentInput(false)
-                reset()
+              onBlur={handleSubmit((data) => {
+                if (isSubmitEnabled) {
+                  onAdd({
+                    /*
+                     * Using `commentId` instead of `commentParentId` is confusing on first sight, but we use `commentId` here instead of `commentParentId`
+                     * because we create a NEW comment "below" in the tree. Think about it like this: THIS comment (`commentId`) is the future parent of
+                     * the comment we want to create right now.
+                     */
+                    commentParentId: comment.commentId,
+                    text: data.text,
+                  })
+                  setShowCommentInput(false)
+                  reset()
+                }
               })}
             >
               <Input
