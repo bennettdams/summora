@@ -184,7 +184,7 @@ function UserPageInternal({
                     validationErrorMessage={usernameError?.message}
                     isSpecial
                     isLoading={editUsername.isLoading}
-                    blurOnEnterPressed={true}
+                    blurOnEnterPressed
                   />
                 </Form>
               </div>

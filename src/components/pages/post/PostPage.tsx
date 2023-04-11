@@ -409,6 +409,7 @@ function PostCreateComment({ postId }: { postId: string }): JSX.Element {
         validationErrorMessage={errorText?.message}
         isSpecial
         isLoading={createComment.isLoading}
+        blurOnEnterPressed
       />
     </Form>
   )
@@ -825,6 +826,7 @@ function Comment({
             >
               <Input
                 {...register('text')}
+                blurOnEnterPressed
                 placeholder="Enter a comment.."
                 validationErrorMessage={errorText?.message}
                 isSpecial
