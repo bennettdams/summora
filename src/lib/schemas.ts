@@ -146,7 +146,7 @@ export const schemaCreateTag = z.object({
 })
 
 export const schemaPostSearch = z.object({
-  searchInput: z.string().min(2).max(128),
+  searchInput: z.string().min(1).max(128),
   includeTitle: z.boolean(),
   includeSubtitle: z.boolean(),
   includeSegmentsTitle: z.boolean(),
