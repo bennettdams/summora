@@ -374,6 +374,7 @@ function PostCreateComment({ postId }: { postId: string }): JSX.Element {
     register,
     formState: {
       errors: { text: errorText },
+      dirtyFields: { text: isInputDirty },
     },
     reset,
     control,
@@ -381,6 +382,7 @@ function PostCreateComment({ postId }: { postId: string }): JSX.Element {
     schema: schemaCreatePostComment,
     defaultValues: defaultValuesCreateComment,
     mode: 'onSubmit',
+    shouldFocusError: false,
   })
 
   const isSubmitEnabled = useIsSubmitEnabled({
@@ -406,7 +408,7 @@ function PostCreateComment({ postId }: { postId: string }): JSX.Element {
       <Input
         {...register('text')}
         placeholder="Enter a comment.."
-        validationErrorMessage={errorText?.message}
+        validationErrorMessage={!isInputDirty ? undefined : errorText?.message}
         isSpecial
         isLoading={createComment.isLoading}
         blurOnEnterPressed
