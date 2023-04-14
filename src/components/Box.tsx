@@ -23,9 +23,9 @@ export function Box({
     <div
       onClick={() => onClick && onClick()}
       ref={refExternal}
-      className={`box rounded-xl ${showShadow && 'hover:shadow-xl'} ${
-        !hideBorder && 'border border-gray-300'
-      } ${
+      className={`box rounded-xl ${
+        showShadow && 'transition duration-200 hover:shadow-xl'
+      } ${!hideBorder && 'border border-gray-300'} ${
         padding === false
           ? 'p-0'
           : padding === 'small'

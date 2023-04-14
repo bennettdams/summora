@@ -195,7 +195,7 @@ export function PostsPage({
               <span className="block text-dtertiary">
                 {!userIdAuth
                   ? 'Create an account for free today.'
-                  : 'Create a post an see where it goes.'}
+                  : 'Create a post and see where it goes.'}
               </span>
             </h2>
           </div>

@@ -89,7 +89,7 @@ function UserNavbarInternal({ userId }: { userId: string }) {
   )
 
   return (
-    <Menu.Button className="flex rounded-full text-sm hover:bg-dsecondary hover:text-white focus:outline-none focus:ring-2 focus:ring-dlight">
+    <Menu.Button className="flex rounded-full text-sm transition duration-200 hover:bg-dsecondary hover:text-white focus:outline-none focus:ring-2 focus:ring-dlight">
       <div className="flex flex-row items-center font-semibold">
         {isLoading ? (
           <LoadingAnimation />
@@ -355,8 +355,8 @@ export function Header(): JSX.Element {
                           className={classNames(
                             route.href === asPath && route.href !== '/'
                               ? 'border-b border-b-dprimary text-dprimary'
-                              : 'hover:rounded-md hover:bg-dsecondary hover:text-white',
-                            'group px-3 py-2.5 text-sm font-semibold'
+                              : 'transition duration-200 hover:bg-dsecondary hover:text-white',
+                            'group rounded-md px-3 py-2.5 text-sm font-semibold'
                           )}
                           aria-current={
                             route.href === asPath ? 'page' : undefined

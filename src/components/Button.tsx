@@ -49,7 +49,7 @@ export function Button({
       ref={buttonRef}
       type={isSubmit ? 'submit' : 'button'}
       className={
-        'group shadow-md outline-none focus:outline-none disabled:cursor-not-allowed' +
+        'group shadow-md outline-none transition duration-200 focus:outline-none disabled:cursor-not-allowed' +
         // keep in sync with "Choice" component
         '  text-white ring-orange-500 hover:bg-none disabled:text-gray-300' +
         ` ${
