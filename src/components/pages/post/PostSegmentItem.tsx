@@ -76,11 +76,11 @@ export function PostSegmentItem({
       isHighlighted={isEditMode}
     >
       <div className="flex flex-row items-center">
-        <div className="inline-flex basis-8 items-center italic">
+        <div className="inline-flex basis-10 items-center italic">
           {isLoading ? (
             <LoadingAnimation size="small" />
           ) : (
-            <p className="text-dsecondary">{index + 1}</p>
+            <p className="ml-1 text-dsecondary">{index + 1}</p>
           )}
         </div>
 
@@ -89,9 +89,8 @@ export function PostSegmentItem({
          * This is e.g. needed because there is bug in React where unmounting does not trigger `onBlur`.
          * See: https://github.com/facebook/react/issues/12363
          */}
-        <div className={`grow ${isEditMode ? 'inline' : 'hidden'}`}>
+        <div className={`w-full ${isEditMode ? 'block' : 'hidden'}`}>
           <Form
-            className="space-y-4"
             onBlur={handleSubmit((data) => {
               // For `onBlur`, RHF does not validate like with `onSubmit`, so we check ourselves.
               if (isSubmitEnabled) {
@@ -120,10 +119,10 @@ export function PostSegmentItem({
           />
         </div>
 
-        <div className="w-full pr-4 lg:pr-10">
+        <div className={`${!isEditMode ? 'w-full' : 'w-0'}`}>
           <span
             className={`overflow-hidden text-ellipsis ${
-              isEditMode ? 'hidden' : 'block'
+              isEditMode ? 'hidden' : 'block pr-4 lg:pr-10'
             }`}
           >
             {itemContent}
