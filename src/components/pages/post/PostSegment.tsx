@@ -170,7 +170,7 @@ export function PostSegment({
         className="flex w-full flex-col items-stretch rounded-xl bg-white lg:flex-row"
       >
         <div
-          className={`px-4 ${
+          className={`px-1 lg:px-4 ${
             choiceControl.selected.choiceId === 'RIGHT'
               ? // keep width in sync with post segment image
                 'w-full lg:w-4/5'
@@ -261,7 +261,10 @@ export function PostSegment({
 
               {/* SEGMENT ITEMS */}
               {/* `relative` here needed for auto-animate. Without it, the edit overlay is shown loosely below the list, instead of overlaying the list. */}
-              <div ref={animateRef} className="relative mt-8 space-y-4">
+              <div
+                ref={animateRef}
+                className="relative mt-8 space-y-2 lg:space-y-4"
+              >
                 {segment.items.map((item, index) => (
                   <PostSegmentItem
                     key={item.id}
@@ -344,7 +347,11 @@ export function PostSegment({
             className={
               'mt-6 grid w-full place-items-center' +
               // placeholder doesn't need to be as big as an image
-              ` ${segment.imageId ? 'min-h-[250px]' : 'min-h-[100px]'}` +
+              ` ${
+                segment.imageId
+                  ? 'min-h-[150px] lg:min-h-[250px]'
+                  : 'min-h-[100px]'
+              }` +
               // on mobile, we always show the image at the bottom, so we hide it here on larger screens if necessary
               ` ${choiceControl.selected.choiceId !== 'BOTTOM' && 'lg:hidden'}`
             }

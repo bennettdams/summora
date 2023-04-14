@@ -4,8 +4,8 @@ import { trpc } from '../../../util/trpc'
 import { useZodForm } from '../../../util/use-zod-form'
 import { Box } from '../../Box'
 import { ButtonRemove } from '../../Button'
-import { Form, Input, useIsSubmitEnabled } from '../../form'
 import { LoadingAnimation } from '../../LoadingAnimation'
+import { Form, Input, useIsSubmitEnabled } from '../../form'
 
 export function PostSegmentItem({
   postSegmentItemId,
@@ -75,12 +75,12 @@ export function PostSegmentItem({
       padding={false}
       isHighlighted={isEditMode}
     >
-      <div className="flex flex-row items-center space-x-2">
-        <div className="ml-2 inline-flex w-10 items-center italic">
+      <div className="flex flex-row items-center">
+        <div className="inline-flex basis-8 items-center italic">
           {isLoading ? (
-            <LoadingAnimation />
+            <LoadingAnimation size="small" />
           ) : (
-            <span className="text-dsecondary">{index + 1}</span>
+            <p className="text-dsecondary">{index + 1}</p>
           )}
         </div>
 
@@ -120,13 +120,15 @@ export function PostSegmentItem({
           />
         </div>
 
-        <span
-          className={`overflow-hidden text-ellipsis pr-10 ${
-            isEditMode ? 'hidden' : 'block'
-          }`}
-        >
-          {itemContent}
-        </span>
+        <div className="w-full pr-4 lg:pr-10">
+          <span
+            className={`overflow-hidden text-ellipsis ${
+              isEditMode ? 'hidden' : 'block'
+            }`}
+          >
+            {itemContent}
+          </span>
+        </div>
       </div>
     </Box>
   )
