@@ -1,5 +1,5 @@
-import { createProxySSGHelpers } from '@trpc/react-query/ssg'
-import { GetStaticProps } from 'next'
+import { createServerSideHelpers } from '@trpc/react-query/server'
+import type { GetStaticProps } from 'next'
 import Head from 'next/head'
 import { SearchPage } from '../components/pages/SearchPage'
 import { createPrefetchHelpersArgs } from '../server/prefetch-helpers'
@@ -7,7 +7,7 @@ import { createPrefetchHelpersArgs } from '../server/prefetch-helpers'
 const revalidateInSeconds = 1
 
 export const getStaticProps: GetStaticProps = async () => {
-  const ssg = createProxySSGHelpers(await createPrefetchHelpersArgs())
+  const ssg = createServerSideHelpers(await createPrefetchHelpersArgs())
 
   await ssg.postCategories.all.prefetch()
 

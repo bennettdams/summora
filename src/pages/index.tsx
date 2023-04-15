@@ -1,9 +1,9 @@
-import { createProxySSGHelpers } from '@trpc/react-query/ssg'
-import { GetStaticProps } from 'next'
+import { createServerSideHelpers } from '@trpc/react-query/server'
+import type { GetStaticProps } from 'next'
 import { PostsPage } from '../components/pages/posts/PostsPage'
 import { prisma } from '../server/db/client'
 import { createPrefetchHelpersArgs } from '../server/prefetch-helpers'
-import { ServerPageProps } from '../types/PageProps'
+import type { ServerPageProps } from '../types/PageProps'
 import { createDateFromThePast } from '../util/date-helpers'
 
 export type PostsPageProps = {
@@ -20,7 +20,7 @@ type Props = PostsPageProps & ServerPageProps
 export const getStaticProps: GetStaticProps<Props> = async () => {
   const yesterday = createDateFromThePast('day')
 
-  const ssg = createProxySSGHelpers(await createPrefetchHelpersArgs())
+  const ssg = createServerSideHelpers(await createPrefetchHelpersArgs())
 
   const [
     noOfPosts,

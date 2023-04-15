@@ -49,7 +49,7 @@ module.exports = {
       extrabold: 800,
     },
   },
-  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/line-clamp')],
+  plugins: [require('@tailwindcss/forms')],
   future: {
     /**
      * Fixes "sticky hover" for touch devices. We e.g. had this problem in the "category selection"

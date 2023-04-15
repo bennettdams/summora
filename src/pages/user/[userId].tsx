@@ -1,11 +1,11 @@
-import { createProxySSGHelpers } from '@trpc/react-query/ssg'
+import { createServerSideHelpers } from '@trpc/react-query/server'
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import Head from 'next/head'
 import type { ParsedUrlQuery } from 'querystring'
 import { UserPage } from '../../components/pages/UserPage'
 import { prisma } from '../../server/db/client'
 import { createPrefetchHelpersArgs } from '../../server/prefetch-helpers'
-import { ServerPageProps } from '../../types/PageProps'
+import type { ServerPageProps } from '../../types/PageProps'
 import { isPromiseFulfilled } from '../../util/utils'
 
 type UserStatistics = {
@@ -48,7 +48,7 @@ export const getStaticProps: GetStaticProps<
     return { notFound: true }
   } else {
     const userId = params.userId
-    const ssg = createProxySSGHelpers(await createPrefetchHelpersArgs())
+    const ssg = createServerSideHelpers(await createPrefetchHelpersArgs())
     const user = await ssg.user.byUserId.fetch({ userId })
 
     if (!user) {

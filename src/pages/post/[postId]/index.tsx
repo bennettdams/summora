@@ -1,10 +1,10 @@
-import { createProxySSGHelpers } from '@trpc/react-query/ssg'
-import { GetStaticPaths, GetStaticProps } from 'next'
+import { createServerSideHelpers } from '@trpc/react-query/server'
+import type { GetStaticPaths, GetStaticProps } from 'next'
 import Head from 'next/head'
 import type { ParsedUrlQuery } from 'querystring'
 import { PostPage } from '../../../components/pages/post/PostPage'
 import { createPrefetchHelpersArgs } from '../../../server/prefetch-helpers'
-import { ServerPageProps } from '../../../types/PageProps'
+import type { ServerPageProps } from '../../../types/PageProps'
 
 export interface PostPageProps {
   postId: string
@@ -38,7 +38,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
   } else {
     const postId = params.postId
 
-    const ssg = createProxySSGHelpers(await createPrefetchHelpersArgs())
+    const ssg = createServerSideHelpers(await createPrefetchHelpersArgs())
     const post = await ssg.posts.byPostId.fetch({ postId: params.postId })
 
     if (!post) {
