@@ -72,6 +72,14 @@ export const schemaUpdatePostCategory = z.object({
   categoryId: schemaPostCategoryId,
 })
 
+export const schemaUpdatePostSourceURL = z.object({
+  postId: z.string().cuid(),
+  sourceURL: z
+    .string()
+    .url('Please use a valid URL, e.g. https://summora.com')
+    .nullable(),
+})
+
 export const schemaCreatePost = z.object({
   title: z.string().min(1),
   subtitle: z.string().optional(),

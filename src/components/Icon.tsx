@@ -16,6 +16,7 @@ import {
   MinusCircleIcon as MinusCircleIconOutline,
   PlusCircleIcon as PlusCircleIconOutline,
   SparklesIcon as SparklesIconOutline,
+  Square3Stack3DIcon as Square3Stack3DIconOutline,
   UserCircleIcon as UserCircleIconOutline,
 } from '@heroicons/react/24/outline'
 
@@ -96,6 +97,7 @@ const icons = {
   FunnelIcon,
   SparklesIconOutline,
   ArrowPathIconOutline,
+  Square3Stack3DIconOutline,
 }
 
 type IconName = keyof typeof icons
@@ -271,4 +273,8 @@ export function IconExplore(props: IconProps): JSX.Element {
 
 export function IconRefresh(props: IconProps): JSX.Element {
   return <Icon {...props} iconName="ArrowPathIconOutline" />
+}
+
+export function IconSource(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="Square3Stack3DIconOutline" />
 }

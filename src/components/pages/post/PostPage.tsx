@@ -1,13 +1,22 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
+import { Popover, Transition } from '@headlessui/react'
 import type { PostCategoryId } from '@prisma/client'
 import { useRouter } from 'next/router'
-import { MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Fragment,
+  MutableRefObject,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useFormState } from 'react-hook-form'
 import { z } from 'zod'
 import {
   schemaCreatePostComment,
   schemaUpdatePost,
   schemaUpdatePostCategory,
+  schemaUpdatePostSourceURL,
 } from '../../../lib/schemas'
 import { PostPageProps } from '../../../pages/post/[postId]'
 import { useAuth } from '../../../services/auth-service'
@@ -21,7 +30,13 @@ import { ButtonAdd, ButtonRemove } from '../../Button'
 import { CommentsIcon } from '../../CommentsIcon'
 import { DateTime } from '../../DateTime'
 import { EditOverlay } from '../../EditOverlay'
-import { IconCategory, IconDate, IconOptions, IconReply } from '../../Icon'
+import {
+  IconCategory,
+  IconDate,
+  IconOptions,
+  IconReply,
+  IconSource,
+} from '../../Icon'
 import { LoadingAnimation } from '../../LoadingAnimation'
 import { NoContent } from '../../NoContent'
 import { Page, PageSection } from '../../Page'
@@ -36,7 +51,7 @@ import {
   Input,
   useIsSubmitEnabled,
 } from '../../form'
-import { Link } from '../../link'
+import { Link, LinkExternal } from '../../link'
 import { Modal, useModal } from '../../modal'
 import { PostLikes } from '../../post'
 import { TagsList, TagsSelection } from '../../tag'
@@ -87,6 +102,149 @@ function useCreateComment(postId: string) {
   return trpc.postComments.create.useMutation({
     onSuccess: invalidateComments,
   })
+}
+
+export function SourceURLPopover({
+  postId,
+  isPostEditable,
+  sourceURL,
+}: {
+  postId: string
+  isPostEditable: boolean
+  sourceURL: string | null
+}): JSX.Element {
+  const utils = trpc.useContext()
+
+  const updateSourceURL = trpc.posts.editSourceURL.useMutation()
+
+  function invalidate() {
+    utils.posts.invalidate()
+  }
+
+  const {
+    handleSubmit,
+    register,
+    control,
+    formState: {
+      errors: { sourceURL: errorSourceURL },
+    },
+  } = useZodForm({
+    schema: schemaUpdatePostSourceURL,
+    shouldFocusError: false,
+    values: {
+      postId,
+      sourceURL,
+    },
+    mode: 'onChange',
+  })
+
+  const isSubmitEnabled = useIsSubmitEnabled({
+    control,
+    isLoading: false,
+  })
+
+  return (
+    <Popover>
+      {({ open }) => (
+        <>
+          <Popover.Button
+            className={`group inline-flex items-center border-none text-sm hover:text-opacity-100 focus-visible:outline-none ${
+              open ? '' : 'text-opacity-90'
+            } ${
+              sourceURL || isPostEditable ? 'cursor-pointer' : 'cursor-auto'
+            }`}
+          >
+            {/* min-w-0 so the icon is not squeezed */}
+            <div className="min-w-0">
+              <IconSource size="small" />
+            </div>
+
+            <div className={`ml-1 ${sourceURL && 'hover:underline'}`}>
+              <span>
+                {isPostEditable
+                  ? !sourceURL
+                    ? 'Add a source'
+                    : 'Edit source'
+                  : !sourceURL
+                  ? 'No source'
+                  : 'Show source'}
+              </span>
+            </div>
+          </Popover.Button>
+
+          <Transition
+            as={Fragment}
+            enter="transition ease-out duration-200"
+            enterFrom="opacity-0 translate-y-1"
+            enterTo="opacity-100 translate-y-0"
+            leave="transition ease-in duration-150"
+            leaveFrom="opacity-100 translate-y-0"
+            leaveTo="opacity-0 translate-y-1"
+          >
+            <Popover.Panel className="absolute left-1/2 z-20 mt-3 w-screen max-w-sm -translate-x-1/2 transform px-4 sm:px-0 lg:max-w-xl">
+              <div className="overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+                <div className="relative p-4 lg:p-8">
+                  {isPostEditable ? (
+                    <Form
+                      onBlur={handleSubmit((formData) => {
+                        if (isSubmitEnabled) {
+                          updateSourceURL.mutate(
+                            { postId, sourceURL: formData.sourceURL },
+                            {
+                              onSuccess: () => {
+                                invalidate()
+                              },
+                            }
+                          )
+                        }
+                      })}
+                    >
+                      <Input
+                        {...register('sourceURL')}
+                        placeholder="What is the source for your post?"
+                        validationErrorMessage={errorSourceURL?.message}
+                        textAlignCenter={true}
+                        hideBottomBorderForSpecial={true}
+                        blurOnEnterPressed={true}
+                      />
+                    </Form>
+                  ) : sourceURL ? (
+                    <LinkExternal to={sourceURL}>
+                      <p className="break-words text-center underline hover:text-dprimary">
+                        {sourceURL}
+                      </p>
+                    </LinkExternal>
+                  ) : (
+                    <p className="text-center">No source.</p>
+                  )}
+
+                  {isPostEditable && (
+                    <div className="mt-8">
+                      <ButtonRemove
+                        disabled={!sourceURL}
+                        onClick={() =>
+                          updateSourceURL.mutate(
+                            { postId, sourceURL: null },
+                            { onSuccess: () => invalidate() }
+                          )
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="bg-dlight p-4">
+                  <p className="font-medium text-sm">
+                    {!isPostEditable && 'Check the link before clicking!'}
+                  </p>
+                </div>
+              </div>
+            </Popover.Panel>
+          </Transition>
+        </>
+      )}
+    </Popover>
+  )
 }
 
 function PostPageInternal<
@@ -169,7 +327,7 @@ function PostPageInternal<
 
       {/* META */}
       <PageSection hideTopMargin>
-        <div className="relative grid grid-cols-4 place-items-center">
+        <div className="relative grid grid-cols-5 place-items-center gap-2 lg:gap-0">
           {/* LIKES */}
           {/* Negative margin to push the button up. */}
           <div className="absolute top-0 right-0 -mt-10 lg:hidden">
@@ -177,7 +335,7 @@ function PostPageInternal<
           </div>
 
           {/* CATEGORY */}
-          <div className="col-span-4 flex h-10 w-full items-center justify-center lg:col-span-1 lg:justify-end lg:pr-2">
+          <div className="col-span-5 flex h-10 w-full items-center justify-center lg:col-span-1 lg:justify-end lg:pr-2">
             <CategorySelect
               postId={postId}
               categoryIdInitial={post.postCategoryId}
@@ -187,30 +345,33 @@ function PostPageInternal<
           </div>
 
           {/* META INFO */}
-          <div className="col-span-4 flex w-full items-center justify-center gap-6 lg:col-span-1 lg:justify-start lg:pl-2">
-            <div className="flex items-center text-sm">
-              <ViewsIcon noOfViews={post.noOfViews} />
-            </div>
+          <div className="col-span-5 flex w-full items-center justify-center gap-2 lg:col-span-2 lg:justify-start lg:gap-6 lg:pl-2">
+            <ViewsIcon noOfViews={post.noOfViews} />
+            <CommentsIcon noOfComments={post._count.comments} />
 
-            <div className="flex items-center text-sm">
-              <CommentsIcon noOfComments={post._count.comments} />
-            </div>
-
-            <div className="flex items-center text-sm">
-              <IconDate />
+            <div className="inline-flex items-center text-sm">
+              <div className="min-w-0">
+                <IconDate size="small" />
+              </div>
               <span className="ml-1">
                 <DateTime format="MM-DD hh:mm" date={post.createdAt} />
               </span>
             </div>
+
+            <SourceURLPopover
+              postId={postId}
+              sourceURL={post.sourceURL}
+              isPostEditable={isPostEditable}
+            />
           </div>
 
           {/* DONATE */}
-          <div className="col-span-2 lg:col-span-1 lg:flex lg:w-full lg:justify-end">
+          <div className="col-span-3 lg:col-span-1 lg:flex lg:w-full lg:justify-end">
             <DonateButton userId={post.authorId} />
           </div>
 
           {/* AVATAR */}
-          <div className="col-span-2 lg:col-span-1">
+          <div className="col-span-2 col-start-4 lg:col-span-1">
             <Link to={ROUTES.user(post.authorId)}>
               <div className="flex flex-col items-center justify-center rounded-xl py-2 px-10 duration-200 hover:bg-white hover:transition-colors hover:ease-in-out">
                 <Avatar
@@ -226,14 +387,14 @@ function PostPageInternal<
           </div>
 
           {/* USERNAME */}
-          <div className="col-span-2 col-start-3 max-w-full lg:col-span-1 lg:col-start-4">
+          <div className="col-span-2 col-start-4 max-w-full lg:col-span-1 lg:col-start-5">
             <h2 className="truncate text-lg font-semibold leading-none text-dprimary">
               {post.author.username}
             </h2>
           </div>
 
           {/* TAGS */}
-          <div className="col-span-4 mt-6 lg:col-span-2 lg:col-start-2">
+          <div className="col-span-5 mt-6 lg:col-span-3 lg:col-start-2">
             {isLoadingTags ? (
               <LoadingAnimation />
             ) : (
@@ -252,7 +413,7 @@ function PostPageInternal<
 
           {/* DELETE POST */}
           {isPostEditable && (
-            <div className="col-span-4 mt-6 flex items-center text-sm lg:col-span-1 lg:col-start-4">
+            <div className="col-span-5 mt-6 flex items-center text-sm lg:col-span-1 lg:col-start-5">
               <ButtonRemove
                 showLoading={deletePost.isLoading}
                 onClick={() => {
@@ -268,7 +429,7 @@ function PostPageInternal<
             </div>
           )}
 
-          <div className="col-span-4 mt-6 space-y-6 text-center">
+          <div className="col-span-5 mt-6 space-y-6 text-center">
             {isShownTagSelection && (
               <>
                 <Title>Select or create a tag</Title>

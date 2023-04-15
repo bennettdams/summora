@@ -7,6 +7,7 @@ import {
   schemaPostsExplore,
   schemaUpdatePost,
   schemaUpdatePostCategory,
+  schemaUpdatePostSourceURL,
 } from '../../lib/schemas'
 import { createDateFromThePast } from '../../util/date-helpers'
 import { ensureAuthorTRPC } from '../api-security'
@@ -23,6 +24,7 @@ const defaultPostSelect = {
   authorId: true,
   postCategoryId: true,
   noOfViews: true,
+  sourceURL: true,
   _count: {
     select: {
       comments: true,
@@ -118,6 +120,23 @@ export const postsRouter = router({
       await ctx.prisma.post.update({
         where: { id: postId },
         data: { title, subtitle },
+      })
+    }),
+  // EDIT SOURCE URL
+  editSourceURL: protectedProcedure
+    .input(schemaUpdatePostSourceURL)
+    .mutation(async ({ input, ctx }) => {
+      const { postId, sourceURL } = input
+
+      await ensureAuthor({
+        userIdAuth: ctx.userIdAuth,
+        prisma: ctx.prisma,
+        postId,
+      })
+
+      await ctx.prisma.post.update({
+        where: { id: postId },
+        data: { sourceURL },
       })
     }),
   // EDIT CATEGORY
