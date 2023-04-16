@@ -94,6 +94,7 @@ export function PostSegment({
     defaultValues: defaultValuesCreate,
     mode: 'onBlur',
     reValidateMode: 'onBlur',
+    shouldFocusError: false
   })
   const {
     errors: { content: errorContent },
