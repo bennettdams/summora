@@ -416,8 +416,10 @@ export function UserDonations({
   userDonations,
   isEditMode,
   userId,
+  username,
 }: {
   userDonations: UserDonation[]
+  username: string
 } & (
   | { isEditMode?: false; userId?: string }
   | { isEditMode: true; userId: string }
@@ -427,7 +429,7 @@ export function UserDonations({
       {isEditMode === true ? (
         <UserDonationsUpdates userId={userId} userDonations={userDonations} />
       ) : userDonations.length === 0 ? (
-        <NoContent>This user has not provided any donation links.</NoContent>
+        <NoContent>{username} has not provided any donation links.</NoContent>
       ) : (
         userDonations.map((userDonation) => (
           <DonationLink
@@ -440,9 +442,12 @@ export function UserDonations({
   )
 }
 
-export function DonateButton({ userId }: { userId: string }): JSX.Element {
-  const { data: donationLinks, isLoading } =
-    trpc.donationLink.byUserId.useQuery({ userId })
+export function DonateButton({ userId,username }: { userId: string; username:string }): JSX.Element {
+  const {
+    data: donationLinks,
+    isLoading,
+    isError,
+  } = trpc.donationLink.byUserId.useQuery({ userId })
 
   return (
     <Popover>
@@ -479,13 +484,16 @@ export function DonateButton({ userId }: { userId: string }): JSX.Element {
                     <div className="grid place-items-center">
                       <LoadingAnimation />
                     </div>
-                  ) : !!donationLinks && donationLinks.length > 0 ? (
+                  ) : isError || !donationLinks ? (
+                    <NoContent>Error receiving donation links.</NoContent>
+                  ) : (
                     <>
                       <p className="mb-4 text-center text-xl text-dprimary">
                         Donate via..
                       </p>
 
                       <UserDonations
+                        username={username}
                         userDonations={donationLinks.map((dL) => ({
                           donationLinkId: dL.donationLinkId,
                           donationAddress: dL.address,
@@ -495,10 +503,6 @@ export function DonateButton({ userId }: { userId: string }): JSX.Element {
                         }))}
                       />
                     </>
-                  ) : (
-                    <p className="text-center">
-                      This user has not provided any donation links.
-                    </p>
                   )}
                 </div>
 

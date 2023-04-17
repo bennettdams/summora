@@ -76,7 +76,11 @@ function UserPageInternal({
     isError: isErrorPosts,
   } = trpc.posts.someByUserId.useQuery({ userId })
   const utils = trpc.useContext()
-  const { data: donationLinks } = trpc.donationLink.byUserId.useQuery({
+  const {
+    data: donationLinks,
+    isLoading: isLoadingDonationLinks,
+    isError: isErrorDonationLinks,
+  } = trpc.donationLink.byUserId.useQuery({
     userId,
   })
   const deleteAvatar = trpc.user.removeAvatar.useMutation({
@@ -249,22 +253,27 @@ function UserPageInternal({
       </PageSection>
 
       <PageSection label="Donation links">
-        <div className="mx-autdo w-full md:px-10 lg:px-20">
-          <UserDonations
-            isEditMode={userId === userIdAuth}
-            userId={userId}
-            userDonations={
-              !donationLinks
-                ? []
-                : donationLinks.map((donationLink) => ({
-                    donationLinkId: donationLink.donationLinkId,
-                    donationProviderId:
-                      donationLink.donationProvider.donationProviderId,
-                    donationProviderName: donationLink.donationProvider.name,
-                    donationAddress: donationLink.address,
-                  }))
-            }
-          />
+        <div className="w-full md:px-10 lg:px-20">
+          {isLoadingDonationLinks ? (
+            <div className="grid w-full place-items-center">
+              <LoadingAnimation />
+            </div>
+          ) : isErrorDonationLinks || !donationLinks ? (
+            <NoContent>Error receiving donation links.</NoContent>
+          ) : (
+            <UserDonations
+              isEditMode={userId === userIdAuth}
+              userId={userId}
+              username={username}
+              userDonations={donationLinks.map((donationLink) => ({
+                donationLinkId: donationLink.donationLinkId,
+                donationProviderId:
+                  donationLink.donationProvider.donationProviderId,
+                donationProviderName: donationLink.donationProvider.name,
+                donationAddress: donationLink.address,
+              }))}
+            />
+          )}
         </div>
       </PageSection>
 

@@ -330,7 +330,7 @@ function PostPageInternal<
         <div className="relative grid grid-cols-5 place-items-center gap-2 lg:gap-0">
           {/* LIKES */}
           {/* Negative margin to push the button up. */}
-          <div className="absolute top-0 right-0 -mt-10 lg:hidden">
+          <div className="absolute right-0 top-0 -mt-10 lg:hidden">
             <PostLikes iconSize="huge" postId={postId} userId={userId} />
           </div>
 
@@ -367,13 +367,16 @@ function PostPageInternal<
 
           {/* DONATE */}
           <div className="col-span-3 lg:col-span-1 lg:flex lg:w-full lg:justify-end">
-            <DonateButton userId={post.authorId} />
+            <DonateButton
+              userId={post.authorId}
+              username={post.author.username}
+            />
           </div>
 
           {/* AVATAR */}
           <div className="col-span-2 col-start-4 lg:col-span-1">
             <Link to={ROUTES.user(post.authorId)}>
-              <div className="flex flex-col items-center justify-center rounded-xl py-2 px-10 duration-200 hover:bg-white hover:transition-colors hover:ease-in-out">
+              <div className="flex flex-col items-center justify-center rounded-xl px-10 py-2 duration-200 hover:bg-white hover:transition-colors hover:ease-in-out">
                 <Avatar
                   userId={post.authorId}
                   username={post.author.username}
