@@ -3,6 +3,7 @@ export const ROUTES = {
   explore: '/explore',
   signIn: '/signin',
   search: '/search',
+  about: '/about',
   user: (userId: string) => `/user/${userId}`,
   post: (postId: string) => `/post/${postId}`,
 } as const

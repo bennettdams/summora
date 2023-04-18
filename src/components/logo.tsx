@@ -8,6 +8,7 @@ function createAssetPath(assetId: string): string {
 
 type AssetInfo = {
   assetId: string
+  fileExtension: string
   width: number
   height: number
 }
@@ -18,24 +19,41 @@ type AssetInfo = {
  * We use this as another prop to access logos, so changing/removing one produces
  * type errors in the code where it is used.
  */
-const TOPIC_IDS = ['donationProviderId', 'some-other-topic'] as const
-type TopicId = typeof TOPIC_IDS[number]
+const TOPIC_IDS = ['donationProviderId', 'signin'] as const
+type TopicId = (typeof TOPIC_IDS)[number]
 
-/** If you need custom logo IDs, use the following */
-// const LOGO_IDS = ['some-custom-id'] as const
-// type LogoId = typeof LOGO_IDS[number] | DonationProviderId
-type LogoId = DonationProviderId
+const LOGO_IDS = ['GOOGLE_SIGNIN'] as const
+type LogoId = (typeof LOGO_IDS)[number] | DonationProviderId
 
 type LogoInfo = { topics: TopicId[]; assetInfo: AssetInfo }
 
 const LOGOS: Record<LogoId, LogoInfo> = {
   PAYPAL: {
     topics: ['donationProviderId'],
-    assetInfo: { assetId: 'logo-paypal', width: 72, height: 16 },
+    assetInfo: {
+      assetId: 'logo-paypal',
+      width: 72,
+      height: 16,
+      fileExtension: 'svg',
+    },
   },
   BITCOIN: {
-    topics: ['some-other-topic'],
-    assetInfo: { assetId: 'logo-bitcoin', width: 24, height: 24 },
+    topics: ['donationProviderId'],
+    assetInfo: {
+      assetId: 'logo-bitcoin',
+      width: 24,
+      height: 24,
+      fileExtension: 'svg',
+    },
+  },
+  GOOGLE_SIGNIN: {
+    topics: ['signin'],
+    assetInfo: {
+      assetId: 'logo-google-signin',
+      width: 191,
+      height: 46,
+      fileExtension: 'png',
+    },
   },
 }
 
@@ -62,7 +80,9 @@ export function Logo({
   } else {
     return (
       <Image
-        src={createAssetPath(`${logo.assetInfo.assetId}.svg`)}
+        src={createAssetPath(
+          `${logo.assetInfo.assetId}.${logo.assetInfo.fileExtension}`
+        )}
         className="inline"
         alt={logo.assetInfo.assetId}
         width={logo.assetInfo.width}
