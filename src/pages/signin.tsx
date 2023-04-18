@@ -68,6 +68,10 @@ export default function _SignInPage({ providers }: Props) {
                 </Link>
               </div>
             </div>
+
+            <p className="mt-0 text-center text-sm tracking-widest">
+              <Link to={ROUTES.about}>Privacy policy and more about us</Link>
+            </p>
           </div>
         </div>
       </Page>
