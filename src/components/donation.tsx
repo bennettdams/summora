@@ -442,7 +442,13 @@ export function UserDonations({
   )
 }
 
-export function DonateButton({ userId,username }: { userId: string; username:string }): JSX.Element {
+export function DonateButton({
+  userId,
+  username,
+}: {
+  userId: string
+  username: string
+}): JSX.Element {
   const {
     data: donationLinks,
     isLoading,

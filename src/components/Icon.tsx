@@ -31,6 +31,7 @@ import {
   ChevronDownIcon,
   ChevronUpDownIcon,
   CurrencyDollarIcon,
+  EnvelopeIcon,
   EyeIcon,
   FunnelIcon,
   HeartIcon,
@@ -98,6 +99,7 @@ const icons = {
   SparklesIconOutline,
   ArrowPathIconOutline,
   Square3Stack3DIconOutline,
+  EnvelopeIcon,
 }
 
 type IconName = keyof typeof icons
@@ -277,4 +279,8 @@ export function IconRefresh(props: IconProps): JSX.Element {
 
 export function IconSource(props: IconProps): JSX.Element {
   return <Icon {...props} iconName="Square3Stack3DIconOutline" />
+}
+
+export function IconMail(props: IconProps): JSX.Element {
+  return <Icon {...props} iconName="EnvelopeIcon" />
 }

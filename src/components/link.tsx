@@ -30,13 +30,20 @@ export function Link({
 export function LinkExternal({
   to,
   children,
+  className,
 }: {
   to: string
   children: ReactNode
+  className?: string
 }): JSX.Element {
   return (
-    <a href={to} target="_blank" rel="noreferrer">
-      <div className="cursor-pointer">{children}</div>
+    <a
+      href={to}
+      target="_blank"
+      rel="noreferrer"
+      className={`cursor-pointer ${className}`}
+    >
+      {children}
     </a>
   )
 }
