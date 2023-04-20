@@ -220,7 +220,7 @@ function UserPageInternal({
               />
             </div>
 
-            <div className="grid place-items-center">
+            <div className="mt-2 grid place-items-center">
               {isOwnUser && !!imageId && (
                 <ButtonRemove onClick={() => deleteAvatar.mutate()}>
                   Delete avatar

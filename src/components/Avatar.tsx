@@ -90,7 +90,13 @@ export function Avatar({
   )
 
   return (
-    <div className="relative inline-grid h-full w-full place-items-center">
+    <div
+      className="relative h-full w-full"
+      style={{
+        width: sizePixels,
+        height: sizePixels,
+      }}
+    >
       {/* TODO use EditOverlay instead */}
       {isEditable && (
         <div className="group absolute z-30 h-full w-full rounded-full hover:cursor-pointer hover:bg-dtertiary hover:bg-opacity-50">
@@ -137,19 +143,12 @@ export function Avatar({
          * Next.js v12.1.4
          * See: https://github.com/vercel/next.js/issues/30033
          */
-        <div
-          className="flex overflow-hidden rounded-full"
-          style={{
-            width: sizePixels,
-            height: sizePixels,
-          }}
-        >
+        <div className="flex overflow-hidden rounded-full">
           <Image
             src={imageURL}
             alt="Avatar"
             height={sizePixels}
             width={sizePixels}
-            style={{ objectFit: 'cover' }}
             // the following can be used to show a fade-in animation via placeholder, but it will delay when the image is visible
             // placeholder="blur"
             // blurDataURL={imageBlurDataURL ?? imageBlurDataURLFallback}
