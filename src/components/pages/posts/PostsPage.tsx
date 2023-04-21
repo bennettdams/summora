@@ -38,7 +38,7 @@ export function PostsPage({
     categoryIdsToFilter: [],
   })
 
-  const { userIdAuth } = useAuth()
+  const { userIdAuth, isLoadingAuth } = useAuth()
 
   return (
     <Page
@@ -201,7 +201,7 @@ export function PostsPage({
           </div>
           <div className="col-span-1 flex items-center justify-center lg:justify-start">
             {!userIdAuth ? (
-              <AuthenticateButton isSignUp={true} />
+              <AuthenticateButton isLoading={isLoadingAuth} isSignUp={true} />
             ) : (
               <CreatePostModal />
             )}
