@@ -122,10 +122,10 @@ function UserNavbar() {
   return (
     <Menu as="div" className="relative">
       <div className="grid place-items-end md:min-w-[150px]">
-        {isLoadingAuth ? (
-          <LoadingAnimation />
-        ) : !userIdAuth ? (
-          <AuthenticateButton />
+        {!userIdAuth ? (
+          <div className="ml-2">
+            <AuthenticateButton isLoading={isLoadingAuth} />
+          </div>
         ) : (
           <UserNavbarInternal userId={userIdAuth} />
         )}
@@ -329,7 +329,7 @@ export function Header(): JSX.Element {
 
                 <div className="absolute flex shrink-0 items-center sm:static">
                   <Link to={ROUTES.home} className="flex flex-row">
-                    <div className="relative hidden h-8 w-8 sm:block">
+                    <div className="relative h-12 w-12">
                       <Image
                         className="z-0 inline-block object-contain"
                         src={img}
@@ -338,7 +338,8 @@ export function Header(): JSX.Element {
                         sizes="10vw"
                       />
                     </div>
-                    <div className="ml-2 text-left text-4xl font-extrabold leading-none tracking-tight">
+
+                    <div className="ml-2 hidden text-left text-4xl font-extrabold leading-none tracking-tight sm:block">
                       <p className="bg-gradient-to-b from-dprimary to-dtertiary decoration-clone bg-clip-text text-3xl uppercase text-transparent">
                         Summora
                       </p>
@@ -422,7 +423,7 @@ export function Header(): JSX.Element {
             leaveTo="opacity-0 scale-95"
           >
             <Disclosure.Panel className="sm:hidden">
-              <div className="space-y-2 px-2 pt-2 pb-3">
+              <div className="space-y-2 px-2 pb-3 pt-2">
                 {NAV_ROUTES.map((route) => (
                   <div key={route.name}>
                     <Link to={route.href}>
@@ -456,14 +457,10 @@ export function Header(): JSX.Element {
                 <DynamicCreatePostModal />
               </div>
 
-              <div className="relative mx-auto my-6 grid h-14 w-14 place-items-center">
-                <Image
-                  className="z-0 inline-block object-contain"
-                  src={img}
-                  alt="Homepage header image"
-                  fill={true}
-                  sizes="10vw"
-                />
+              <div className="my-6 text-center text-4xl font-extrabold leading-none tracking-tight">
+                <p className="bg-gradient-to-b from-dprimary to-dtertiary decoration-clone bg-clip-text text-3xl uppercase text-transparent">
+                  Summora
+                </p>
               </div>
             </Disclosure.Panel>
           </Transition>
