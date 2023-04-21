@@ -77,7 +77,7 @@ export function DropdownSelect({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <Listbox.Options className="absolute z-40 mt-1 max-h-72 w-full min-w-[18rem] overflow-auto rounded-md bg-white py-3 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm md:w-72">
+          <Listbox.Options className="absolute z-40 mt-1 max-h-96 w-full min-w-[14rem] overflow-auto rounded-md bg-white py-3 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm md:w-72 lg:min-w-[18rem]">
             {!items ? (
               <div className="py-2">
                 <NoContent>No options available.</NoContent>

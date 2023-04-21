@@ -54,7 +54,7 @@ export function CreatePostModal() {
           </p>
         </div>
 
-        <div className="mx-auto mt-10 mb-10 w-full">
+        <div className="mx-auto mb-10 mt-4 w-full lg:mt-10">
           <Form
             onSubmit={handleSubmit((data) => {
               createPost.mutate(
@@ -72,7 +72,7 @@ export function CreatePostModal() {
                 }
               )
             })}
-            className="my-4 flex w-full flex-col space-y-16 px-6 md:px-20"
+            className="flex w-full flex-col space-y-4 md:px-20 lg:space-y-16 lg:px-6"
           >
             <Input
               {...register('title')}

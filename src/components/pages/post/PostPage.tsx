@@ -2,14 +2,7 @@ import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Popover, Transition } from '@headlessui/react'
 import type { PostCategoryId } from '@prisma/client'
 import { useRouter } from 'next/router'
-import {
-  Fragment,
-  MutableRefObject,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { Fragment, MutableRefObject, useMemo, useRef, useState } from 'react'
 import { useFormState } from 'react-hook-form'
 import { z } from 'zod'
 import {
@@ -272,11 +265,7 @@ function PostPageInternal<
     await utils.postSegments.byPostId.invalidate({ postId })
   }
 
-  const [isPostEditable, setIsPostEditable] = useState(userId === post.authorId)
-  useEffect(
-    () => setIsPostEditable(userId === post.authorId),
-    [userId, post.authorId]
-  )
+  const isPostEditable = userId === post.authorId
 
   const createSegment = trpc.posts.createSegment.useMutation({
     onSuccess: invalidateSegments,
