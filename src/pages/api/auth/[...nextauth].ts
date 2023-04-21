@@ -13,18 +13,28 @@ export const authOptions: NextAuthOptions = {
       return session
     },
     async signIn({ user }) {
-      const email = user.email
-      const adminMailAdressesRaw = process.env.ADMIN_MAIL_ADRESSES
-      const adminMailAdresses = adminMailAdressesRaw?.split(',')
+      const isSignInActiveRaw = process.env.NEXT_PUBLIC_IS_SIGN_IN_ACTIVE
+      const isSignInActive = Boolean(isSignInActiveRaw)
 
-      // admins are always allowed to sign in/sign up
-      if (!!email && !!adminMailAdresses && adminMailAdresses.includes(email)) {
+      if (isSignInActive) {
         return true
       } else {
-        // Return false to display a default error message
-        return false
-        // Or you can return a URL to redirect to:
-        // return '/unauthorized'
+        const email = user.email
+        const adminMailAdressesRaw = process.env.ADMIN_MAIL_ADRESSES
+        const adminMailAdresses = adminMailAdressesRaw?.split(',')
+
+        // admins are always allowed to sign in/sign up
+        if (
+          !!email &&
+          !!adminMailAdresses &&
+          adminMailAdresses.includes(email)
+        ) {
+          return true
+        } else {
+          return false
+          // could also return an URL to redirect to
+          // return '/unauthorized'
+        }
       }
     },
   },
