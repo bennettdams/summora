@@ -122,13 +122,13 @@ function PostsListItem({
       <div className="text-center">
         <Link to={ROUTES.post(post.id)}>
           <div className="relative">
-            <div className="absolute top-0 left-0 hidden lg:inline">
+            <div className="absolute left-0 top-0 hidden lg:inline">
               <PostLikes postId={post.id} userId={userId} iconSize="big" />
             </div>
             <h2 className="text-xs font-semibold tracking-widest text-dsecondary">
               {post.categoryTitle}
             </h2>
-            <h1 className="mt-1 font-serif text-2xl font-semibold text-dprimary line-clamp-3">
+            <h1 className="mt-1 line-clamp-3 font-serif text-2xl font-semibold text-dprimary">
               {post.title}
             </h1>
             <p className="mt-3 leading-relaxed text-dsecondary">
@@ -182,7 +182,11 @@ function PostsListItem({
               </div>
               <div className="flex-1">
                 <span className="inline-flex items-center text-sm">
-                  <DateTime format="MM-DD hh:mm" date={post.updatedAt} />
+                  <DateTime
+                    format="MM-DD hh:mm"
+                    title="Updated at"
+                    date={post.updatedAt}
+                  />
                 </span>
               </div>
             </div>
@@ -231,7 +235,7 @@ function PostsListItemShort({
           <h2 className="text-xs font-semibold tracking-widest text-dsecondary">
             {post.categoryTitle}
           </h2>
-          <h1 className="mt-1 font-serif text-xl font-semibold text-dprimary line-clamp-2 sm:text-2xl">
+          <h1 className="mt-1 line-clamp-2 font-serif text-xl font-semibold text-dprimary sm:text-2xl">
             {post.title}
           </h1>
           <div className="absolute bottom-0 mt-2 flex w-full justify-center space-x-4 py-3 text-center leading-none">
@@ -239,7 +243,11 @@ function PostsListItemShort({
             <ViewsIcon noOfViews={post.noOfViews} />
             <CommentsIcon noOfComments={post.noOfComments} />
             <span className="inline-flex items-center text-sm leading-none">
-              <DateTime format="MM-DD hh:mm" date={post.updatedAt} />
+              <DateTime
+                format="MM-DD hh:mm"
+                title="Updated at"
+                date={post.updatedAt}
+              />
             </span>
           </div>
         </div>

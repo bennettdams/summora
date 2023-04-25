@@ -197,11 +197,19 @@ function UserPageInternal({
             <div className="mt-6 text-center">
               <p className="uppercase tracking-widest">Member since</p>
               <p className="text-lg font-semibold">
-                <DateTime format="MM-DD hh:mm" date={createdAt} />
+                <DateTime
+                  format="MM-DD hh:mm"
+                  title="Member since"
+                  date={createdAt}
+                />
               </p>
               <p className="uppercase tracking-widest">Last update</p>
               <p className="text-lg font-semibold">
-                <DateTime format="MM-DD hh:mm" date={updatedAt} />
+                <DateTime
+                  format="MM-DD hh:mm"
+                  title="Last update"
+                  date={updatedAt}
+                />
               </p>
             </div>
           </div>

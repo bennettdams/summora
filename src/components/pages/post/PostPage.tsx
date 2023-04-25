@@ -343,7 +343,11 @@ function PostPageInternal<
                 <IconDate size="small" />
               </div>
               <span className="ml-1">
-                <DateTime format="MM-DD hh:mm" date={post.createdAt} />
+                <DateTime
+                  format="MM-DD hh:mm"
+                  title="Created at"
+                  date={post.createdAt}
+                />
               </span>
             </div>
 
@@ -1050,7 +1054,11 @@ function CommentOptions({
               Created at
             </p>
             <p className="mt-2">
-              <DateTime format="YYYY-MM-DD hh:mm" date={comment.createdAt} />
+              <DateTime
+                format="YYYY-MM-DD hh:mm"
+                title="Created at"
+                date={comment.createdAt}
+              />
             </p>
           </div>
 
