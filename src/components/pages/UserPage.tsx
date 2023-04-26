@@ -289,7 +289,7 @@ function UserPageInternal({
         <PageSection label="Avatar preview">
           <Box>
             <div className="grid grid-cols-2 gap-10 p-10 text-center lg:grid-cols-3">
-              <div className="col-start-1 row-start-1 lg:col-auto">
+              <div className="col-start-1 row-start-1 grid place-items-center lg:col-auto">
                 <Avatar
                   userId={userId}
                   username={username}
@@ -303,7 +303,7 @@ function UserPageInternal({
                 <p>Small</p>
               </div>
 
-              <div className="col-start-2 row-start-1 lg:col-auto">
+              <div className="col-start-2 row-start-1 grid place-items-center lg:col-auto">
                 <Avatar
                   userId={userId}
                   username={username}
@@ -317,7 +317,7 @@ function UserPageInternal({
                 <p>Medium</p>
               </div>
 
-              <div className="col-span-2 row-start-3 lg:col-span-1 lg:row-start-1">
+              <div className="col-span-2 row-start-3 grid place-items-center lg:col-span-1 lg:row-start-1">
                 <Avatar
                   userId={userId}
                   username={username}
