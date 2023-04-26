@@ -195,7 +195,7 @@ export function ExplorePage(): JSX.Element {
       </PageSection>
 
       {choiceSelectControlMetric.selected.choiceId === 'likes' ? (
-        <PageSection label="Top 5 posts by likes">
+        <PageSection label="Top 10 posts by likes">
           {isLoadingTopLikes ? (
             <div className="grid place-items-center">
               <LoadingAnimation />
@@ -226,7 +226,7 @@ export function ExplorePage(): JSX.Element {
           )}
         </PageSection>
       ) : choiceSelectControlMetric.selected.choiceId === 'views' ? (
-        <PageSection label="Top 5 posts by views">
+        <PageSection label="Top 10 posts by views">
           {isLoadingTopViews ? (
             <div className="grid place-items-center">
               <LoadingAnimation />

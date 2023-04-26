@@ -165,7 +165,7 @@ export const postsRouter = router({
       // keep in sync with other "top" query
       return await ctx.prisma.post.findMany({
         select: defaultPostSelect,
-        take: 5,
+        take: 10,
         where: {
           updatedAt: { gte: createDateFromThePast(dateFromPast) },
           postCategoryId:
@@ -197,7 +197,7 @@ export const postsRouter = router({
       // keep in sync with other "top" query
       return await ctx.prisma.post.findMany({
         select: defaultPostSelect,
-        take: 5,
+        take: 10,
         where: {
           updatedAt: { gte: createDateFromThePast(dateFromPast) },
           postCategoryId:

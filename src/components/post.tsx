@@ -90,7 +90,7 @@ export function PostsList({
       ) : (
         <div
           ref={animateRef}
-          className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:gap-12"
+          className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4 lg:gap-12"
         >
           {posts.map((post) => (
             <PostsListItemShort key={post.id} post={post} userId={userIdAuth} />
@@ -128,7 +128,7 @@ function PostsListItem({
             <h2 className="text-xs font-semibold tracking-widest text-dsecondary">
               {post.categoryTitle}
             </h2>
-            <h1 className="mt-1 line-clamp-3 font-serif text-2xl font-semibold text-dprimary">
+            <h1 className="mt-1 line-clamp-3 font-serif text-xl font-semibold text-dprimary lg:text-2xl">
               {post.title}
             </h1>
             <p className="mt-3 leading-relaxed text-dsecondary">
@@ -230,12 +230,12 @@ function PostsListItemShort({
 }): JSX.Element {
   return (
     <Link to={ROUTES.post(post.id)}>
-      <Box padding="small" showShadow>
-        <div className="relative h-32 w-full text-center">
+      <Box padding={false} showShadow>
+        <div className="relative h-32 w-full p-1 text-center lg:p-2">
           <h2 className="text-xs font-semibold tracking-widest text-dsecondary">
             {post.categoryTitle}
           </h2>
-          <h1 className="mt-1 line-clamp-2 font-serif text-xl font-semibold text-dprimary sm:text-2xl">
+          <h1 className="mt-1 line-clamp-2 font-serif text-lg font-semibold text-dprimary sm:text-xl">
             {post.title}
           </h1>
           <div className="absolute bottom-0 mt-2 flex w-full justify-center space-x-4 py-3 text-center leading-none">
