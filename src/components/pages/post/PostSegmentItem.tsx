@@ -75,7 +75,8 @@ export function PostSegmentItem({
       padding={false}
       isHighlighted={isEditMode}
     >
-      <div className="flex flex-row items-center">
+      {/* `items-start` so the number is positioned at the top */}
+      <div className="flex flex-row items-start">
         <div className="inline-flex basis-10 items-center italic">
           {isLoading ? (
             <LoadingAnimation size="small" />
