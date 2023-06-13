@@ -43,8 +43,8 @@
     "vercel-build is used in the CI/CD pipeline. It uses Vercel's build step to run the prisma migrate deploy command to apply the migrations before Vercel deploys the serverless functions. See https://www.prisma.io/docs/guides/deployment/deployment-guides/deploying-to-vercel#prisma-workflow"
   ],
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.338.0",
-    "@aws-sdk/s3-presigned-post": "^3.338.0",
+    "@aws-sdk/client-s3": "^3.350.0",
+    "@aws-sdk/s3-presigned-post": "^3.350.0",
     "@formkit/auto-animate": "^1.0.0-beta.6",
     "@headlessui/react": "^1.7.14",
     "@heroicons/react": "^2.0.18",
