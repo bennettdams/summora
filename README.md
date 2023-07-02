@@ -1,3 +1,5 @@
+![Summora hero image](public/og-summora-230411.png)
+
 # Summora
 
 ## Everything, in summary
@@ -5,6 +7,8 @@
 Platform for user-generated articles on any topic.
 
 https://www.summora.com
+
+<a href="https://www.producthunt.com/posts/summora?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-summora" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=400850&theme=light" alt="Summora - Everything&#0044;&#0032;in&#0032;summary&#0044;&#0032;less&#0032;fluff&#0044;&#0032;more&#0032;facts | Product Hunt" style="width: 200px; height: 54px;" width="250" height="54" /></a>
 
 ### Built with
 
