@@ -12,7 +12,7 @@ import { NoContent } from './NoContent'
 import { Form, FormFieldError, FormSelect, FormSubmit, Input } from './form'
 import { Modal, useModal } from './modal'
 
-type SchemaCreatePost = z.infer<typeof schemaCreatePost>
+type SchemaCreatePost = z.input<typeof schemaCreatePost>
 
 const defaultValuesCreate: FormDefaultValuesUndefinable<
   SchemaCreatePost,

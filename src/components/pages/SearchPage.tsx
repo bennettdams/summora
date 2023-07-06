@@ -20,7 +20,7 @@ import { PostsList } from '../post'
 import { TagsList, TagsSelection } from '../tag'
 import { Subtitle } from '../typography'
 
-type SchemaPostSearch = z.infer<typeof schemaPostSearch>
+type SchemaPostSearch = z.input<typeof schemaPostSearch>
 
 export function SearchPage(): JSX.Element {
   const router = useRouter()
