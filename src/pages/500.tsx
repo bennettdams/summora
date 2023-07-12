@@ -6,7 +6,7 @@ import { Link } from '../components/link'
 import { Subtitle } from '../components/typography'
 import { ROUTES } from '../services/routing'
 
-export default function _PageError404() {
+export default function PageError404() {
   const router = useRouter()
 
   return (
