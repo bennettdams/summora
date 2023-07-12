@@ -54,9 +54,9 @@ import { PostSegment } from './PostSegment'
 export type SegmentPostPage = RouterOutput['postSegments']['byPostId'][number]
 export type SegmentItemPostPage = SegmentPostPage['items'][number]
 
-type SchemaUpdate = z.infer<typeof schemaUpdatePost>
-type SchemaUpdateCategory = z.infer<typeof schemaUpdatePostCategory>
-type SchemaCreateComment = z.infer<typeof schemaCreatePostComment>
+type SchemaUpdate = z.input<typeof schemaUpdatePost>
+type SchemaUpdateCategory = z.input<typeof schemaUpdatePostCategory>
+type SchemaCreateComment = z.input<typeof schemaCreatePostComment>
 
 export function PostPage(props: PostPageProps): JSX.Element {
   const { data: post, isLoading: isLoadingPost } = trpc.posts.byPostId.useQuery(

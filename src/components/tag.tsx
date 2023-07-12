@@ -113,7 +113,7 @@ export function Tag({
   )
 }
 
-type SchemaTagSearch = z.infer<typeof schemaTagSearch>
+type SchemaTagSearch = z.input<typeof schemaTagSearch>
 
 /**
  * Removes tags which are already included in a another list of tags.

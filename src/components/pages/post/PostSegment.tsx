@@ -32,7 +32,7 @@ const segmentImagePositionMap: { [K in PostSegmentImagePosition]: K } = {
   RIGHT: 'RIGHT',
 }
 
-type SchemaUpdateSegment = z.infer<typeof schemaUpdatePostSegment>
+type SchemaUpdateSegment = z.input<typeof schemaUpdatePostSegment>
 
 const defaultValuesCreate = { content: '' }
 

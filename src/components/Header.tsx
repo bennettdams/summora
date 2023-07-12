@@ -171,7 +171,7 @@ function UserNavbar() {
   )
 }
 
-type SchemaPostSearch = z.infer<typeof schemaPostSearch>
+type SchemaPostSearch = z.input<typeof schemaPostSearch>
 
 function SearchInputIcon({ onClick }: { onClick: () => void }): JSX.Element {
   return (

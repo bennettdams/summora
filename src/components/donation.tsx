@@ -121,8 +121,8 @@ function UserDonationUpdateRow({
   )
 }
 
-type SchemaUpdateDonationLink = z.infer<typeof schemaUpdateDonationLink>
-type SchemaCreateDonationLink = z.infer<typeof schemaCreateDonationLink>
+type SchemaUpdateDonationLink = z.input<typeof schemaUpdateDonationLink>
+type SchemaCreateDonationLink = z.input<typeof schemaCreateDonationLink>
 
 const defaultValuesCreate: FormDefaultValuesUndefinable<
   SchemaCreateDonationLink,
