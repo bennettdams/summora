@@ -107,7 +107,7 @@ const App: AppType<{ session: Session | null }> = ({
         `}</style>
 
         <div
-          className={`${globalFont.variable} ${globalFontSerif.variable} font-light flex h-screen min-h-screen flex-col bg-gradient-to-b from-dlight via-dsecondary/30 to-dlight font-sans text-gray-500 decoration-dsecondary caret-dprimary selection:bg-dprimary selection:text-dtertiary`}
+          className={`${globalFont.variable} ${globalFontSerif.variable} font-light flex h-screen min-h-screen flex-col bg-gradient-to-b from-dlight via-dsecondary/25 to-dlight font-sans text-gray-500 decoration-dsecondary caret-dprimary selection:bg-dprimary selection:text-dtertiary`}
         >
           <Header />
 
