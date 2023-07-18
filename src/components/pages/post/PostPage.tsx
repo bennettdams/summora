@@ -19,13 +19,11 @@ import { useOnClickOutside } from '../../../util/use-on-click-outside'
 import { useZodForm } from '../../../util/use-zod-form'
 import { Avatar } from '../../Avatar'
 import { ButtonAdd, ButtonRemove } from '../../Button'
-import { CommentsIcon } from '../../CommentsIcon'
 import { DateTime } from '../../DateTime'
 import { EditOverlay } from '../../EditOverlay'
 import { LoadingAnimation } from '../../LoadingAnimation'
 import { Page, PageSection } from '../../Page'
 import { StepList } from '../../StepList'
-import { ViewsIcon } from '../../ViewsIcon'
 import { DonateButton } from '../../donation'
 import {
   Form,
@@ -35,6 +33,7 @@ import {
   useIsSubmitEnabled,
 } from '../../form'
 import { IconCategory, IconDate, IconSource } from '../../icons'
+import { CommentsIcon, ViewsIcon } from '../../icons-custom'
 import { Link, LinkExternal } from '../../link'
 import { PostLikes } from '../../post-reusable'
 import { TagsList, TagsSelection } from '../../tag'
