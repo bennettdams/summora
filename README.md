@@ -24,11 +24,15 @@ Some interesting parts of the codebase:
 
 - [APIs](https://github.com/bennettdams/summora/tree/main/src/server/routers)
 - Image upload
-  - [Server](https://github.com/bennettdams/summora/blob/main/src/server/cloud-storage.ts)
-  - [Client](https://github.com/bennettdams/summora/blob/main/src/services/cloud-service.ts)
+  - [Server logic](https://github.com/bennettdams/summora/blob/main/src/server/cloud-storage.ts)
+  - [Client logic](https://github.com/bennettdams/summora/blob/main/src/services/cloud-service.ts)
+  - [Reusable upload component](https://github.com/bennettdams/summora/blob/main/src/components/ImageUpload.tsx)
+    - [Example: Avatar upload component](https://github.com/bennettdams/summora/blob/main/src/components/Avatar.tsx)
 - [Form components](https://github.com/bennettdams/summora/blob/main/src/components/form.tsx)
 - Post page
   - [Single post page](https://github.com/bennettdams/summora/blob/main/src/components/pages/post/PostPage.tsx)
-  - [Post comments](https://github.com/bennettdams/summora/blob/main/src/components/pages/post/post-comments.tsx)
+  - [Post comments (recursive tree)](https://github.com/bennettdams/summora/blob/main/src/components/pages/post/post-comments.tsx)
   - [Post segment](https://github.com/bennettdams/summora/blob/main/src/components/pages/post/PostSegment.tsx)
+- [Explore page](https://github.com/bennettdams/summora/blob/main/src/components/pages/ExplorePage.tsx)
+- [Search page](https://github.com/bennettdams/summora/blob/main/src/components/pages/SearchPage.tsx)
 - [Date formatting](https://github.com/bennettdams/summora/blob/main/src/util/date-time.ts)
