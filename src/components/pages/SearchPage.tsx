@@ -9,13 +9,13 @@ import {
 import { trpc, type RouterInput } from '../../util/trpc'
 import { useDebounce } from '../../util/use-debounce'
 import { useZodForm } from '../../util/use-zod-form'
-import { IconSearch } from '../Icon'
 import { Page, PageSection } from '../Page'
 import {
   CategorySelectionList,
   useCategorySelectionList,
 } from '../category-selection'
 import { Form, Input, InputCheckbox } from '../form'
+import { IconSearch } from '../icons'
 import { PostsList } from '../post-reusable'
 import { TagsList, TagsSelection } from '../tag'
 import { Subtitle } from '../typography'

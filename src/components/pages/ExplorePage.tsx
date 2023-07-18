@@ -3,13 +3,13 @@ import { trpc } from '../../util/trpc'
 import { useOnClickOutside } from '../../util/use-on-click-outside'
 import { Button } from '../Button'
 import { ChoiceSelect, useChoiceSelect } from '../ChoiceSelect'
-import { IconFilter, IconLiked, IconView } from '../Icon'
 import { LoadingAnimation } from '../LoadingAnimation'
 import { Page, PageSection } from '../Page'
 import {
   CategorySelectionList,
   useCategorySelectionList,
 } from '../category-selection'
+import { IconFilter, IconLiked, IconView } from '../icons'
 import { PostsList } from '../post-reusable'
 import { TagsList, TagsSelection } from '../tag'
 import { NoContent, Subtitle } from '../typography'

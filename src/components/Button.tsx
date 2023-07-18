@@ -14,7 +14,7 @@ import {
   IconQuestionMarkCircle,
   IconSize,
   IconTrash,
-} from './Icon'
+} from './icons'
 import { LoadingAnimation } from './LoadingAnimation'
 
 export interface ButtonProps {
@@ -59,7 +59,7 @@ export function Button({
         }` +
         ` ${
           !isBig
-            ? 'rounded py-2 px-2 text-base'
+            ? 'rounded px-2 py-2 text-base'
             : 'rounded-xl px-8 py-6 text-xl'
         }`
       }

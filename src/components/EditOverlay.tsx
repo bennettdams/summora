@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { IconEdit } from './Icon'
+import { IconEdit } from './icons'
 
 export function EditOverlay({
   children,

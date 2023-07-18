@@ -1,7 +1,7 @@
 import { ROUTES } from '../services/routing'
 import { Button } from './Button'
-import { IconSignIn } from './Icon'
 import { LoadingAnimation } from './LoadingAnimation'
+import { IconSignIn } from './icons'
 import { Link } from './link'
 
 export function AuthenticateButton({

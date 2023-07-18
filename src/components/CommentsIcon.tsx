@@ -1,4 +1,4 @@
-import { IconComment } from './Icon'
+import { IconComment } from './icons'
 
 export function CommentsIcon({
   noOfComments,

@@ -1,6 +1,6 @@
 import { Button } from '../components/Button'
-import { IconHome } from '../components/Icon'
 import { Page } from '../components/Page'
+import { IconHome } from '../components/icons'
 import { Link } from '../components/link'
 import { Title } from '../components/typography'
 import { ROUTES } from '../services/routing'

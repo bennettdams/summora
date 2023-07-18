@@ -22,7 +22,6 @@ import { ButtonAdd, ButtonRemove } from '../../Button'
 import { CommentsIcon } from '../../CommentsIcon'
 import { DateTime } from '../../DateTime'
 import { EditOverlay } from '../../EditOverlay'
-import { IconCategory, IconDate, IconSource } from '../../Icon'
 import { LoadingAnimation } from '../../LoadingAnimation'
 import { Page, PageSection } from '../../Page'
 import { StepList } from '../../StepList'
@@ -35,6 +34,7 @@ import {
   Input,
   useIsSubmitEnabled,
 } from '../../form'
+import { IconCategory, IconDate, IconSource } from '../../icons'
 import { Link, LinkExternal } from '../../link'
 import { PostLikes } from '../../post-reusable'
 import { TagsList, TagsSelection } from '../../tag'

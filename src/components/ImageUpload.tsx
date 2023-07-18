@@ -1,11 +1,11 @@
 import { ChangeEvent, useState } from 'react'
-import { IconAdd } from '../components/Icon'
 import { LoadingAnimation } from '../components/LoadingAnimation'
 import {
   checkImageFileExtension,
   maxFileSizeInBytes,
   validExtensions,
 } from '../services/cloud-service'
+import { IconAdd } from './icons'
 
 const validExtensionsBeautified = validExtensions
   .map((extension) => extension.toUpperCase())

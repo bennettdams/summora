@@ -1,5 +1,5 @@
-import { IconMail } from '../components/Icon'
 import { Page, PageSection } from '../components/Page'
+import { IconMail } from '../components/icons'
 import { LinkExternal } from '../components/link'
 
 export default function _AboutPage() {

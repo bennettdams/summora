@@ -8,16 +8,16 @@ import { trpc } from '../../../util/trpc'
 import { AuthenticateButton } from '../../AuthenticateButton'
 import { Button } from '../../Button'
 import { CreatePostModal } from '../../CreatePostModal'
+import { LoadingAnimation } from '../../LoadingAnimation'
+import { Page, PageSection } from '../../Page'
+import { StatisticsCard } from '../../StatisticsCard'
 import {
   IconExplore,
   IconIdea,
   IconKnowledge,
   IconLightning,
   IconMoney,
-} from '../../Icon'
-import { LoadingAnimation } from '../../LoadingAnimation'
-import { Page, PageSection } from '../../Page'
-import { StatisticsCard } from '../../StatisticsCard'
+} from '../../icons'
 import { Link } from '../../link'
 import { PostsList } from '../../post-reusable'
 import { NoContent } from '../../typography'

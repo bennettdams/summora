@@ -9,9 +9,9 @@ import { useOnClickOutside } from '../util/use-on-click-outside'
 import { useZodForm } from '../util/use-zod-form'
 import { Box } from './Box'
 import { ButtonAdd, ButtonAddSpecial } from './Button'
-import { IconTrash } from './Icon'
 import { LoadingAnimation } from './LoadingAnimation'
 import { Form, Input, useIsSubmitEnabled } from './form'
+import { IconTrash } from './icons'
 import { NoContent } from './typography'
 
 type TagTagslist = {

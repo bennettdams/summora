@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { Button } from '../components/Button'
-import { IconRefresh } from '../components/Icon'
 import { Page } from '../components/Page'
+import { IconRefresh } from '../components/icons'
 import { Link } from '../components/link'
 import { Subtitle } from '../components/typography'
 import { ROUTES } from '../services/routing'

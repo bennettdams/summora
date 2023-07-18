@@ -12,7 +12,6 @@ import {
 import { trpc } from '../util/trpc'
 import { useZodForm } from '../util/use-zod-form'
 import { ButtonRemove } from './Button'
-import { IconArrowDown, IconDonate } from './Icon'
 import { LoadingAnimation } from './LoadingAnimation'
 import {
   Form,
@@ -22,6 +21,7 @@ import {
   FormSubmit,
   Input,
 } from './form'
+import { IconArrowDown, IconDonate } from './icons'
 import { LinkExternal } from './link'
 import { Logo } from './logo'
 import { NoContent } from './typography'

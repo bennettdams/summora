@@ -15,10 +15,10 @@ import { Box } from '../../Box'
 import { ButtonRemove } from '../../Button'
 import { ChoiceSelect, useChoiceSelect } from '../../ChoiceSelect'
 import { EditOverlay } from '../../EditOverlay'
-import { IconArrowCircleDown, IconArrowCircleRight } from '../../Icon'
 import { LoadingAnimation } from '../../LoadingAnimation'
 import { PostSegmentImage } from '../../PostSegmentImage'
 import { Form, FormLabel, Input, useIsSubmitEnabled } from '../../form'
+import { IconArrowCircleDown, IconArrowCircleRight } from '../../icons'
 import { SegmentPostPage } from './PostPage'
 import { PostSegmentItem } from './PostSegmentItem'
 
@@ -94,7 +94,7 @@ export function PostSegment({
     defaultValues: defaultValuesCreate,
     mode: 'onBlur',
     reValidateMode: 'onBlur',
-    shouldFocusError: false
+    shouldFocusError: false,
   })
   const {
     errors: { content: errorContent },

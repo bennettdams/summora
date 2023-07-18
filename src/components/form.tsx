@@ -10,7 +10,7 @@ import {
 import { generalFormErrorKey } from '../lib/schemas'
 import { Button, ButtonProps } from './Button'
 import { DropdownItem, DropdownSelect } from './DropdownSelect'
-import { IconOkCircle } from './Icon'
+import { IconOkCircle } from './icons'
 import { LoadingAnimation } from './LoadingAnimation'
 
 export function FormLabel({
@@ -127,13 +127,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             (isSpecial
               ? `${
                   hideBottomBorderForSpecial ? 'border-none' : 'border-b-2'
-                } border-t-0 border-l-0 border-r-0 border-dtertiary bg-transparent outline-none focus:border-dprimary focus:ring-0 ${
+                } border-l-0 border-r-0 border-t-0 border-dtertiary bg-transparent outline-none focus:border-dprimary focus:ring-0 ${
                   small ? 'p-3 px-8' : 'p-6 px-12'
                 }`
               : 'rounded-md placeholder:text-indigo-300 hover:shadow-md disabled:bg-gray-100' +
                 // only show margin when there is a label
                 ` ${hasLabel && !small && 'mt-1'}` +
-                ` ${small ? 'py-1.5 px-2 text-xs' : 'text-sm'}` +
+                ` ${small ? 'px-2 py-1.5 text-xs' : 'text-sm'}` +
                 ` ${
                   !props.required
                     ? 'border-gray-300 focus:border-dprimary focus:ring-dprimary'

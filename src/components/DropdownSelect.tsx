@@ -1,6 +1,6 @@
 import { Listbox, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useState } from 'react'
-import { IconOk, IconSelector } from './Icon'
+import { IconOk, IconSelector } from './icons'
 import { NoContent } from './typography'
 
 export interface DropdownItem {

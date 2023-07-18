@@ -1,5 +1,5 @@
 import { ButtonIcon } from './Button'
-import { IconDownvote, IconSize, IconUpvote } from './Icon'
+import { IconDownvote, IconSize, IconUpvote } from './icons'
 
 export function VoteIcon({
   variant,

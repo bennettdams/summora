@@ -24,6 +24,8 @@ import { useZodForm } from '../util/use-zod-form'
 import { AuthenticateButton } from './AuthenticateButton'
 import { Avatar } from './Avatar'
 import { Button } from './Button'
+import { LoadingAnimation } from './LoadingAnimation'
+import { Form, Input, useIsSubmitEnabled } from './form'
 import {
   IconExplore,
   IconHome,
@@ -35,9 +37,7 @@ import {
   IconSize,
   IconUser,
   IconX,
-} from './Icon'
-import { LoadingAnimation } from './LoadingAnimation'
-import { Form, Input, useIsSubmitEnabled } from './form'
+} from './icons'
 import { Link } from './link'
 
 const DynamicCreatePostModal = dynamic(

@@ -1,5 +1,5 @@
 import { ButtonIcon } from './Button'
-import { IconLiked, IconSize, IconUnliked } from './Icon'
+import { IconLiked, IconSize, IconUnliked } from './icons'
 
 export function LikesIcon({
   isLiked,

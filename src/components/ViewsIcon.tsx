@@ -1,4 +1,4 @@
-import { IconView } from './Icon'
+import { IconView } from './icons'
 
 export function ViewsIcon({ noOfViews }: { noOfViews: number }): JSX.Element {
   return (
