@@ -17,7 +17,7 @@ import { Page, PageSection } from '../Page'
 import { StatisticsCard } from '../StatisticsCard'
 import { UserDonations } from '../donation'
 import { Form, Input, useIsSubmitEnabled } from '../form'
-import { PostsList } from '../post'
+import { PostsList } from '../post-reusable'
 
 export function UserPage(props: UserPageProps): JSX.Element {
   const {

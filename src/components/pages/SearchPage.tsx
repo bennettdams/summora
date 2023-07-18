@@ -16,7 +16,7 @@ import {
   useCategorySelectionList,
 } from '../category-selection'
 import { Form, Input, InputCheckbox } from '../form'
-import { PostsList } from '../post'
+import { PostsList } from '../post-reusable'
 import { TagsList, TagsSelection } from '../tag'
 import { Subtitle } from '../typography'
 

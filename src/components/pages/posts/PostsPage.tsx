@@ -20,7 +20,7 @@ import { NoContent } from '../../NoContent'
 import { Page, PageSection } from '../../Page'
 import { StatisticsCard } from '../../StatisticsCard'
 import { Link } from '../../link'
-import { PostsList } from '../../post'
+import { PostsList } from '../../post-reusable'
 
 export function PostsPage({
   noOfPosts,

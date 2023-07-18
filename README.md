@@ -27,5 +27,8 @@ Some interesting parts of the codebase:
   - [Server](https://github.com/bennettdams/summora/blob/main/src/server/cloud-storage.ts)
   - [Client](https://github.com/bennettdams/summora/blob/main/src/services/cloud-service.ts)
 - [Form components](https://github.com/bennettdams/summora/blob/main/src/components/form.tsx)
-- [Single post page](https://github.com/bennettdams/summora/blob/main/src/components/pages/post/PostPage.tsx)
+- Post page
+  - [Single post page](https://github.com/bennettdams/summora/blob/main/src/components/pages/post/PostPage.tsx)
+  - [Post comments](https://github.com/bennettdams/summora/blob/main/src/components/pages/post/post-comments.tsx)
+  - [Post segment](https://github.com/bennettdams/summora/blob/main/src/components/pages/post/PostSegment.tsx)
 - [Date formatting](https://github.com/bennettdams/summora/blob/main/src/util/date-time.ts)

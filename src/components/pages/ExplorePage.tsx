@@ -11,7 +11,7 @@ import {
   CategorySelectionList,
   useCategorySelectionList,
 } from '../category-selection'
-import { PostsList } from '../post'
+import { PostsList } from '../post-reusable'
 import { TagsList, TagsSelection } from '../tag'
 import { Subtitle } from '../typography'
 
