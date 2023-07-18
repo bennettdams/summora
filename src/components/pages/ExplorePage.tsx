@@ -5,7 +5,6 @@ import { Button } from '../Button'
 import { ChoiceSelect, useChoiceSelect } from '../ChoiceSelect'
 import { IconFilter, IconLiked, IconView } from '../Icon'
 import { LoadingAnimation } from '../LoadingAnimation'
-import { NoContent } from '../NoContent'
 import { Page, PageSection } from '../Page'
 import {
   CategorySelectionList,
@@ -13,7 +12,7 @@ import {
 } from '../category-selection'
 import { PostsList } from '../post-reusable'
 import { TagsList, TagsSelection } from '../tag'
-import { Subtitle } from '../typography'
+import { NoContent, Subtitle } from '../typography'
 
 function Choice({
   label,

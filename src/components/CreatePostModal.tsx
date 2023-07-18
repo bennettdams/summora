@@ -8,9 +8,9 @@ import { useZodForm } from '../util/use-zod-form'
 import { Button } from './Button'
 import { IconEdit } from './Icon'
 import { LoadingAnimation } from './LoadingAnimation'
-import { NoContent } from './NoContent'
 import { Form, FormFieldError, FormSelect, FormSubmit, Input } from './form'
 import { Modal, useModal } from './modal'
+import { NoContent } from './typography'
 
 type SchemaCreatePost = z.input<typeof schemaCreatePost>
 

@@ -14,7 +14,6 @@ import { useZodForm } from '../util/use-zod-form'
 import { ButtonRemove } from './Button'
 import { IconArrowDown, IconDonate } from './Icon'
 import { LoadingAnimation } from './LoadingAnimation'
-import { NoContent } from './NoContent'
 import {
   Form,
   FormFieldError,
@@ -25,6 +24,7 @@ import {
 } from './form'
 import { LinkExternal } from './link'
 import { Logo } from './logo'
+import { NoContent } from './typography'
 
 function DonationLink({
   userDonation,

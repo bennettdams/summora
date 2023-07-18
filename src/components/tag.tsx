@@ -11,8 +11,8 @@ import { Box } from './Box'
 import { ButtonAdd, ButtonAddSpecial } from './Button'
 import { IconTrash } from './Icon'
 import { LoadingAnimation } from './LoadingAnimation'
-import { NoContent } from './NoContent'
 import { Form, Input, useIsSubmitEnabled } from './form'
+import { NoContent } from './typography'
 
 type TagTagslist = {
   tagId: string
@@ -84,7 +84,7 @@ export function Tag({
   return (
     <div
       ref={tagRef}
-      className={`m-1 inline rounded bg-dtertiary py-0.5 px-1.5 leading-none text-white transition duration-200 ${
+      className={`m-1 inline rounded bg-dtertiary px-1.5 py-0.5 leading-none text-white transition duration-200 ${
         onClick && 'cursor-pointer hover:bg-dsecondary'
       }`}
       key={tag.tagId}

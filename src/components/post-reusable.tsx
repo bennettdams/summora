@@ -11,10 +11,10 @@ import { DateTime } from './DateTime'
 import { IconLong, IconShort, IconSize } from './Icon'
 import { LikesIcon } from './LikesIcon'
 import { LoadingAnimation } from './LoadingAnimation'
-import { NoContent } from './NoContent'
 import { ViewsIcon } from './ViewsIcon'
 import { Link } from './link'
 import { TagsList } from './tag'
+import { NoContent } from './typography'
 
 type PostsPostsList =
   | null

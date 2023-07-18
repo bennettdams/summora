@@ -11,11 +11,11 @@ import { ButtonRemove } from '../../Button'
 import { DateTime } from '../../DateTime'
 import { IconOptions, IconReply } from '../../Icon'
 import { LoadingAnimation } from '../../LoadingAnimation'
-import { NoContent } from '../../NoContent'
 import { VoteIcon } from '../../VoteIcon'
 import { Form, Input, useIsSubmitEnabled } from '../../form'
 import { Link } from '../../link'
 import { Modal, useModal } from '../../modal'
+import { NoContent } from '../../typography'
 
 type SchemaCreateComment = z.input<typeof schemaCreatePostComment>
 

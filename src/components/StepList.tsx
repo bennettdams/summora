@@ -1,4 +1,4 @@
-import { NoContent } from './NoContent'
+import { NoContent } from './typography'
 
 export function StepList({
   steps,

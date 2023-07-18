@@ -2,7 +2,7 @@ import type { PostCategoryId } from '@prisma/client'
 import { useState, type Dispatch, type SetStateAction } from 'react'
 import { trpc } from '../util/trpc'
 import { LoadingAnimation } from './LoadingAnimation'
-import { NoContent } from './NoContent'
+import { NoContent } from './typography'
 
 export function useCategorySelectionList() {
   return useState<PostCategoryId[]>([])

@@ -12,12 +12,12 @@ import { ButtonRemove } from '../Button'
 import { DateTime } from '../DateTime'
 import { EditOverlay } from '../EditOverlay'
 import { LoadingAnimation } from '../LoadingAnimation'
-import { NoContent } from '../NoContent'
 import { Page, PageSection } from '../Page'
 import { StatisticsCard } from '../StatisticsCard'
 import { UserDonations } from '../donation'
 import { Form, Input, useIsSubmitEnabled } from '../form'
 import { PostsList } from '../post-reusable'
+import { NoContent } from '../typography'
 
 export function UserPage(props: UserPageProps): JSX.Element {
   const {

@@ -1,6 +1,6 @@
 import type { DonationProviderId } from '@prisma/client'
 import Image from 'next/image'
-import { NoContent } from './NoContent'
+import { NoContent } from './typography'
 
 function createAssetPath(assetId: string): string {
   return `/assets/${assetId}`

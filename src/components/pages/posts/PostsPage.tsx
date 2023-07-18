@@ -16,11 +16,11 @@ import {
   IconMoney,
 } from '../../Icon'
 import { LoadingAnimation } from '../../LoadingAnimation'
-import { NoContent } from '../../NoContent'
 import { Page, PageSection } from '../../Page'
 import { StatisticsCard } from '../../StatisticsCard'
 import { Link } from '../../link'
 import { PostsList } from '../../post-reusable'
+import { NoContent } from '../../typography'
 
 export function PostsPage({
   noOfPosts,
