@@ -73,10 +73,20 @@ function Comment({
 
   const [animateRef] = useAutoAnimate<HTMLDivElement>()
 
+  /*
+   * Using `commentId` instead of `commentParentId` for the comment's parent might be misleading on first sight, but we use `commentId` here instead of `commentParentId`
+   * because we create a NEW comment "below" in the tree. In other words: THIS comment (`commentId`) is the future parent of
+   * the comment we want to create here.
+   */
+  const commentParentIdForCreateComment = comment.commentId
+
   const defaultValues: SchemaCreateComment = useMemo(
-    // this is misleading, but we use `commentId` here (instead of `commentParentId`) because we create a NEW comment "below" in the tree
-    () => ({ postId, commentParentId: comment.commentId, text: '' }),
-    [postId, comment.commentId]
+    () => ({
+      postId,
+      commentParentId: commentParentIdForCreateComment,
+      text: '',
+    }),
+    [postId, commentParentIdForCreateComment]
   )
   const {
     handleSubmit,
@@ -200,12 +210,7 @@ function Comment({
               onBlur={handleSubmit((data) => {
                 if (isSubmitEnabled) {
                   onAdd({
-                    /*
-                     * Using `commentId` instead of `commentParentId` is confusing on first sight, but we use `commentId` here instead of `commentParentId`
-                     * because we create a NEW comment "below" in the tree. Think about it like this: THIS comment (`commentId`) is the future parent of
-                     * the comment we want to create right now.
-                     */
-                    commentParentId: comment.commentId,
+                    commentParentId: commentParentIdForCreateComment,
                     text: data.text,
                   })
                   setShowCommentInput(false)
