@@ -51,14 +51,14 @@ async function deleteFolder(folderPath: string): Promise<{ ok: boolean }> {
   try {
     const { bucket: bucketName } = getS3ClientConfig()
 
-    const folderPathSanitizedForTrailingSlash = folderPath.endsWith('/')
-      ? folderPath.slice(0, -1)
-      : folderPath
     /**
+     * Here we add a trailing slash to the folder path if needed.
      * The trailing slash in the folder path is necessary to ensure that only objects within that specific folder
      * (and not objects with similar prefixes) are returned by the `listObjectsV2` method.
      */
-    const folderPathWithTrailingSlash = `${folderPathSanitizedForTrailingSlash}/`
+    const folderPathWithTrailingSlash = folderPath.endsWith('/')
+      ? folderPath
+      : `${folderPath}/`
 
     const listParams = {
       Bucket: bucketName,
