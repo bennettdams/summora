@@ -663,7 +663,7 @@ function CategorySelect({
   postId: string
   categoryIdInitial: PostCategoryId
   shouldShowDropdown: boolean
-  refExternal: MutableRefObject<HTMLDivElement>
+  refExternal: MutableRefObject<HTMLDivElement | null>
 }): JSX.Element {
   const utils = trpc.useContext()
   const { data: postCategories, isLoading: isLoadingCategories } =

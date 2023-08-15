@@ -1,17 +1,18 @@
-import { MutableRefObject, useState, useRef, useEffect } from 'react'
+import { MutableRefObject, useEffect, useRef, useState } from 'react'
 
-export function useHover<T>(
+export function useHover<T extends HTMLElement>(
   onEnter?: () => void,
-  onLeave?: () => void
-): [MutableRefObject<T>, boolean] {
+  onLeave?: () => void,
+): [MutableRefObject<T | null>, boolean] {
   const [isHovered, setIsHovered] = useState<boolean>(false)
 
-  const ref: any = useRef<T | null>(null)
+  const ref = useRef<T | null>(null)
 
   const handleMouseOver = (): void => {
     setIsHovered(true)
     onEnter && onEnter()
   }
+
   const handleMouseOut = (): void => {
     setIsHovered(false)
     onLeave && onLeave()
@@ -19,7 +20,7 @@ export function useHover<T>(
 
   useEffect(
     () => {
-      const node: any = ref.current
+      const node = ref.current
       if (node) {
         node.addEventListener('mouseover', handleMouseOver)
         node.addEventListener('mouseout', handleMouseOut)
@@ -30,7 +31,7 @@ export function useHover<T>(
         }
       }
     },
-    [ref.current] // Recall only if ref changes
+    [ref.current], // Recall only if ref changes
   )
 
   return [ref, isHovered]
