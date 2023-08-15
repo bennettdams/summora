@@ -77,7 +77,7 @@ export const postSegmentItemsRouter = router({
     .input(
       z.object({
         segmentItemId: z.string().cuid(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { segmentItemId } = input

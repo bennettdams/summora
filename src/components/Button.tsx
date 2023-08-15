@@ -134,7 +134,7 @@ export function ButtonRemove(props: ButtonProps): JSX.Element {
 }
 
 export function ButtonAdd(
-  props: OmitStrict<ButtonProps, 'icon'> & { isBig?: boolean }
+  props: OmitStrict<ButtonProps, 'icon'> & { isBig?: boolean },
 ): JSX.Element {
   return (
     <Button icon={<IconAdd />} {...props}>

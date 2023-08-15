@@ -20,6 +20,7 @@
     "type-check": "tsc --pretty --noEmit",
     "tc": "npm run type-check",
     "format": "prettier --write ./src/",
+    "format:check": "prettier --check ./src/",
     "find-dead-exports": "npx ts-prune --ignore 'node_modules' | grep -v getStaticProps |  grep -v getStaticPaths | grep -v getServerSideProps | grep -v default",
     "/////////////// DB": "",
     "p:dev": "npx prisma migrate dev --schema ./prisma/schema.prisma",

@@ -35,7 +35,7 @@ export function SearchPage(): JSX.Element {
       tagIdsToFilter: [],
       categoryIdsToFilter: [],
     }),
-    []
+    [],
   )
   const {
     handleSubmit: handleSubmitPostSearch,
@@ -58,7 +58,7 @@ export function SearchPage(): JSX.Element {
   const inputIncludeSubtitle = watchPostSearch('includeSubtitle')
   const inputIncludeSegmentsTitle = watchPostSearch('includeSegmentsTitle')
   const inputIncludeSegmentsSubtitle = watchPostSearch(
-    'includeSegmentsSubtitle'
+    'includeSegmentsSubtitle',
   )
 
   const isInputPostSearchValid =
@@ -100,7 +100,7 @@ export function SearchPage(): JSX.Element {
       enabled: isInputPostSearchValid,
       keepPreviousData: true,
       refetchOnWindowFocus: false,
-    }
+    },
   )
 
   // #############     URL SEARCH PARAMS
@@ -212,7 +212,7 @@ export function SearchPage(): JSX.Element {
                 tags={tagsForFilter}
                 onRemoveClick={(tagIdToRemove) => {
                   setTagsForFilter((prev) =>
-                    prev.filter((tagPrev) => tagPrev.tagId !== tagIdToRemove)
+                    prev.filter((tagPrev) => tagPrev.tagId !== tagIdToRemove),
                   )
                 }}
               />

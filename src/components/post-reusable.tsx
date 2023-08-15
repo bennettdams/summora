@@ -58,7 +58,7 @@ export function PostsList({
         icon: <IconShort />,
       },
     ],
-    initialViewVariant
+    initialViewVariant,
   )
 
   const [animateRef] = useAutoAnimate<HTMLDivElement>()

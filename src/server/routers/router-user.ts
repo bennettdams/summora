@@ -54,7 +54,7 @@ export const userRouter = router({
     .input(
       z.object({
         userId: z.string().cuid(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const { userId } = input

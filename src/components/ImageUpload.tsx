@@ -26,7 +26,7 @@ export function ImageUpload({
 }): JSX.Element {
   const [isUploading, setIsUploading] = useState(false)
   const [failedUploadMessage, setFailedUploadMessage] = useState<string | null>(
-    null
+    null,
   )
   const isLoading = isLoadingUpload || isUploading
   const isInputDisabled = isLoading
@@ -48,15 +48,15 @@ export function ImageUpload({
 
           if (!isValidImageExtension) {
             setFailedUploadMessage(
-              `You provided a ${fileExtension} file, but only the following are allowed: ${validExtensionsBeautified}`
+              `You provided a ${fileExtension} file, but only the following are allowed: ${validExtensionsBeautified}`,
             )
           } else if (file.size > maxFileSizeInBytes) {
             setFailedUploadMessage(
               `File is too big. Please provide a file with max. ${
                 maxFileSizeInBytes / 1024 / 1024
               } MB. You provided one with ${Math.round(
-                file.size / 1024 / 1024
-              )} MB.`
+                file.size / 1024 / 1024,
+              )} MB.`,
             )
           } else {
             setFailedUploadMessage(null)

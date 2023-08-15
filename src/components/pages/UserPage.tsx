@@ -30,7 +30,7 @@ export function UserPage(props: UserPageProps): JSX.Element {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchInterval: false,
-    }
+    },
   )
 
   return (

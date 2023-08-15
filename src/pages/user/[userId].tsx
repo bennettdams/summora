@@ -79,11 +79,11 @@ export const getStaticProps: GetStaticProps<
       if (isPromiseFulfilled(userPosts)) {
         noOfLikesReceived = userPosts.value.reduce(
           (acc, post) => acc + post._count.likedBy,
-          0
+          0,
         )
         noOfViewsReceived = userPosts.value.reduce(
           (acc, post) => acc + post.noOfViews,
-          0
+          0,
         )
       }
 

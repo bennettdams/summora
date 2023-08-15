@@ -8,7 +8,7 @@ export function serverOnly() {
 
 /** Type-guard useful for a result of `Promise.allSettled`. */
 export function isPromiseFulfilled<T>(
-  p: PromiseSettledResult<T>
+  p: PromiseSettledResult<T>,
 ): p is PromiseFulfilledResult<T> {
   return p.status === 'fulfilled'
 }

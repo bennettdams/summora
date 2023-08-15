@@ -54,7 +54,7 @@ export function PostSegment({
   isPostEditable: boolean
 }): JSX.Element {
   const [lastSuccessfulEdit, setLastSuccessfulEdit] = useState<Date | null>(
-    null
+    null,
   )
   const [isItemLoading, setIsItemLoading] = useState(false)
   const [isNewSegmentItem] = useState(() => !segment.title)
@@ -108,7 +108,7 @@ export function PostSegment({
 
   const [isSegmentEditMode, setIsSegmentEditMode] = useState(
     // segments without a title should be considered "new" and are shown in edit mode initially
-    () => isNewSegmentItem && isPostEditable
+    () => isNewSegmentItem && isPostEditable,
   )
 
   const refSegmentEdit = useRef<HTMLDivElement>(null)
@@ -132,7 +132,7 @@ export function PostSegment({
         icon: <IconArrowCircleRight />,
       },
     ],
-    segment.position
+    segment.position,
   )
 
   const defaultValuesUpdate: SchemaUpdateSegment = useMemo(
@@ -141,7 +141,7 @@ export function PostSegment({
       title: segment.title,
       subtitle: segment.subtitle ?? undefined,
     }),
-    [segment.id, segment.title, segment.subtitle]
+    [segment.id, segment.title, segment.subtitle],
   )
 
   const {
@@ -299,7 +299,7 @@ export function PostSegment({
                       segmentId: postSegmentId,
                       content: data.content,
                     },
-                    { onSuccess: () => resetCreateItem() }
+                    { onSuccess: () => resetCreateItem() },
                   )
                 }
               })}

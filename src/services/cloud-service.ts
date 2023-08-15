@@ -43,7 +43,7 @@ export const storageImagesPath = {
 }
 
 export function checkImageFileExtension(
-  fileType: string
+  fileType: string,
 ):
   | { isValidImageExtension: true; fileExtension: string }
   | { isValidImageExtension: false; fileExtension: null } {

@@ -81,7 +81,7 @@ export function Logo({
     return (
       <Image
         src={createAssetPath(
-          `${logo.assetInfo.assetId}.${logo.assetInfo.fileExtension}`
+          `${logo.assetInfo.assetId}.${logo.assetInfo.fileExtension}`,
         )}
         className="inline"
         alt={logo.assetInfo.assetId}

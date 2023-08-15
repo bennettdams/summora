@@ -60,7 +60,7 @@ export function ExplorePage(): JSX.Element {
         icon: <IconView />,
       },
     ],
-    'likes'
+    'likes',
   )
 
   const choiceSelectControlTimeRange = useChoiceSelect(
@@ -78,7 +78,7 @@ export function ExplorePage(): JSX.Element {
         label: 'Month',
       },
     ],
-    'week'
+    'week',
   )
 
   const [tagsForFilter, setTagsForFilter] = useState<
@@ -114,7 +114,7 @@ export function ExplorePage(): JSX.Element {
   useOnClickOutside(
     refFilterSection,
     () => setShowFilters(false),
-    refToggleFiltersButton
+    refToggleFiltersButton,
   )
 
   return (
@@ -145,7 +145,7 @@ export function ExplorePage(): JSX.Element {
                   tags={tagsForFilter}
                   onRemoveClick={(tagIdToRemove) => {
                     setTagsForFilter((prev) =>
-                      prev.filter((tagPrev) => tagPrev.tagId !== tagIdToRemove)
+                      prev.filter((tagPrev) => tagPrev.tagId !== tagIdToRemove),
                     )
                   }}
                 />

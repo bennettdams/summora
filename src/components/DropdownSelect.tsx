@@ -36,7 +36,7 @@ export function DropdownSelect({
     }
 )): JSX.Element {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(
-    selectedItemIdExternal ?? initialItem?.itemId ?? null
+    selectedItemIdExternal ?? initialItem?.itemId ?? null,
   )
 
   useEffect(() => {

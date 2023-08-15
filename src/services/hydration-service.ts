@@ -21,7 +21,7 @@ type CreateClientFn = () => QueryClient
  * @param transformCb Callback function that does the transformation when deserializing.
  */
 export function createHydrationHandler<TData extends QueryData>(
-  transformCb: TransformCallbackFn<TData>
+  transformCb: TransformCallbackFn<TData>,
 ): {
   createClient: CreateClientFn
   dehydrate: DehydrateFn
@@ -66,7 +66,7 @@ function dehydrate(client: QueryClient): DehydratedState {
  */
 function deserialize<TDataDeserialize extends QueryData>(
   dehydratedState: DehydratedState,
-  transformCb: TransformCallbackFn<TDataDeserialize>
+  transformCb: TransformCallbackFn<TDataDeserialize>,
 ): DehydratedState {
   return {
     ...dehydratedState,

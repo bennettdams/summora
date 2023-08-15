@@ -8,7 +8,7 @@ import { authOptions } from '../pages/api/auth/[...nextauth]'
  * @returns the entity the author was checked with
  */
 export async function ensureAuthorTRPC<
-  TEntity extends Record<string, unknown> | null
+  TEntity extends Record<string, unknown> | null,
 >({
   topic,
   userIdAuth,

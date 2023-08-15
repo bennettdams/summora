@@ -12,7 +12,7 @@ type Choice<TChoiceId extends string> = {
 
 type ChoiceSelectControl<
   TChoices extends readonly Choice<TChoiceId>[],
-  TChoiceId extends string
+  TChoiceId extends string,
 > = {
   selected: Choice<TChoiceId>
   setSelected: Dispatch<SetStateAction<Choice<TChoiceId>>>
@@ -21,7 +21,7 @@ type ChoiceSelectControl<
 
 export function useChoiceSelect<
   TChoices extends readonly Choice<TChoiceId>[],
-  TChoiceId extends string
+  TChoiceId extends string,
 >(
   choices: TChoices,
   // infer the values of all choice IDs from the given choices
@@ -29,11 +29,11 @@ export function useChoiceSelect<
     ? string extends UChoiceId
       ? never
       : UChoiceId
-    : never
+    : never,
 ): ChoiceSelectControl<TChoices, TChoices[number]['choiceId']> {
   const [selected, setSelected] = useState<Choice<TChoiceId>>(() => {
     const choiceFound = choices.find(
-      (choice) => choice.choiceId === initiallySelectedChoiceId
+      (choice) => choice.choiceId === initiallySelectedChoiceId,
     )
     if (!choiceFound) {
       throw new Error('Choice for choice ID not found.')
@@ -47,7 +47,7 @@ export function useChoiceSelect<
 
 export function ChoiceSelect<
   TChoices extends Choice<TChoiceId>[],
-  TChoiceId extends string
+  TChoiceId extends string,
 >({
   control,
   onSelect,

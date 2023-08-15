@@ -92,7 +92,7 @@ function formatDateToMonthAndDayAndHourAndMinute(date: Date): string {
  */
 function formatDateToMonthAndDayAndHourAndMinuteAndSecond(date: Date): string {
   return `${formatDateToMonthAndDay(date)} ${formatDateToHourAndMinuteAndSecond(
-    date
+    date,
   )}`
 }
 
@@ -103,7 +103,7 @@ function formatDateToMonthAndDayAndHourAndMinuteAndSecond(date: Date): string {
  */
 function formatDateToYearAndMonthAndDayAndHourAndMinute(date: Date): string {
   return `${formatDateToYearAndMonthAndDay(date)} ${formatDateToHourAndMinute(
-    date
+    date,
   )}`
 }
 

@@ -86,7 +86,7 @@ function Comment({
       commentParentId: commentParentIdForCreateComment,
       text: '',
     }),
-    [postId, commentParentIdForCreateComment]
+    [postId, commentParentIdForCreateComment],
   )
   const {
     handleSubmit,
@@ -142,7 +142,7 @@ function Comment({
               size="small"
               variant="upvote"
               isVoted={comment.upvotedBy.some(
-                (upvote) => upvote.userId === userId
+                (upvote) => upvote.userId === userId,
               )}
               onClick={() => onUpvote(comment.commentId)}
             />
@@ -150,7 +150,7 @@ function Comment({
               size="small"
               variant="downvote"
               isVoted={comment.downvotedBy.some(
-                (downvote) => downvote.userId === userId
+                (downvote) => downvote.userId === userId,
               )}
               onClick={() => onDownvote(comment.commentId)}
             />
@@ -309,7 +309,7 @@ function CommentOptions({
 }
 
 function createRootComments(
-  comments: RouterOutput['postComments']['byPostId']
+  comments: RouterOutput['postComments']['byPostId'],
 ): PostCommentTreeComment[] {
   return comments.map((comm) => ({
     ...comm,
@@ -348,7 +348,7 @@ function useCreateComment(postId: string) {
  */
 function createCommentTree(
   comments: PostCommentTreeComment[],
-  commentId: string | null
+  commentId: string | null,
 ): PostCommentTreeComment[] {
   return comments
     .filter((comment) => comment.commentParentId === commentId)
@@ -427,7 +427,7 @@ export function PostCreateComment({ postId }: { postId: string }): JSX.Element {
 
   const defaultValuesCreateComment: SchemaCreateComment = useMemo(
     () => ({ postId, commentParentId: null, text: '' }),
-    [postId]
+    [postId],
   )
 
   const {
@@ -461,7 +461,7 @@ export function PostCreateComment({ postId }: { postId: string }): JSX.Element {
               onSuccess: () => {
                 reset()
               },
-            }
+            },
           )
         }
       })}

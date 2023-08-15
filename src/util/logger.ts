@@ -4,7 +4,7 @@
  */
 export function logAPI(
   method: string | undefined,
-  additionalText?: string
+  additionalText?: string,
 ): void {
   if (process.env.NODE_ENV === 'development') {
     let log = `[API] | method: ${method}`

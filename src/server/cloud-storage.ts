@@ -68,7 +68,7 @@ async function deleteFolder(folderPath: string): Promise<{ ok: boolean }> {
     const { s3Client } = newS3Client()
 
     const listResponse = await s3Client.send(
-      new ListObjectsV2Command(listParams)
+      new ListObjectsV2Command(listParams),
     )
 
     if (!listResponse.Contents) {
@@ -94,7 +94,7 @@ async function deleteFolder(folderPath: string): Promise<{ ok: boolean }> {
       } else {
         if (!res.Deleted) {
           throw new Error(
-            'Deletion request was succesful, but nothing was deleted.'
+            'Deletion request was succesful, but nothing was deleted.',
           )
         } else {
           return {
@@ -152,7 +152,7 @@ export async function deletePostSegmentImageInStorage({
   postSegmentId: string
 }) {
   return await deleteFolder(
-    storageFolderPaths.postSegmentImage({ postId, postSegmentId })
+    storageFolderPaths.postSegmentImage({ postId, postSegmentId }),
   )
 }
 

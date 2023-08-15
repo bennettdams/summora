@@ -62,7 +62,7 @@ export const donationLinkRouter = router({
     .input(
       z.object({
         newDonationLink: schemaCreateDonationLink,
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { newDonationLink } = input
@@ -91,7 +91,7 @@ export const donationLinkRouter = router({
     .input(
       z.object({
         userId: z.string().cuid(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const { userId } = input
@@ -133,7 +133,7 @@ export const donationLinkRouter = router({
             },
             select: defaultDonationLinkSelect,
           })
-        })
+        }),
       )
     }),
   // DELETE
@@ -141,7 +141,7 @@ export const donationLinkRouter = router({
     .input(
       z.object({
         donationLinkId: z.string().cuid(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { donationLinkId } = input

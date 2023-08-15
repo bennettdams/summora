@@ -1,5 +1,5 @@
 export function serialize<TDataSerialize>(
-  data: TDataSerialize
+  data: TDataSerialize,
 ): TDataSerialize {
   return JSON.parse(JSON.stringify(data))
 }

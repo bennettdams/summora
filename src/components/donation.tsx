@@ -79,7 +79,7 @@ function UserDonationUpdateRow({
   children: ReactNode
 }): JSX.Element {
   const logoIdFromInput = donationProviders.find(
-    (prov) => prov.donationProviderId === inputDonationProviderId
+    (prov) => prov.donationProviderId === inputDonationProviderId,
   )?.donationProviderId
 
   if (!userDonation)
@@ -168,7 +168,7 @@ function UserDonationsUpdates({
         donationProviderId: userDonation.donationProviderId,
       })),
     }),
-    [userDonations]
+    [userDonations],
   )
 
   const {
@@ -182,7 +182,7 @@ function UserDonationsUpdates({
     mode: 'onSubmit',
   })
   const { errors: errorsUpdate, dirtyFields: dirtyFieldsUpdate } = useFormState(
-    { control: controlUpdate }
+    { control: controlUpdate },
   )
 
   const { fields: fieldsUpdate, remove: removeUpdate } = useFieldArray({
@@ -217,7 +217,7 @@ function UserDonationsUpdates({
           onSubmit={handleSubmitUpdate((data) => {
             /** We only want to submit dirty fields, so we don't have to update all in the DB. */
             const donationLinksDirty = data.donationLinksToUpdate.filter(
-              (_, index) => dirtyFieldsUpdate.donationLinksToUpdate?.at(index)
+              (_, index) => dirtyFieldsUpdate.donationLinksToUpdate?.at(index),
             )
 
             updateMany.mutate({
@@ -247,7 +247,7 @@ function UserDonationsUpdates({
               const userDonation =
                 userDonations.find(
                   (userDonation) =>
-                    userDonation.donationLinkId === field.donationLinkId
+                    userDonation.donationLinkId === field.donationLinkId,
                 ) ?? null
 
               /*
@@ -263,7 +263,7 @@ function UserDonationsUpdates({
                 )
 
               const inputDonationProviderId = watchUpdate(
-                'donationLinksToUpdate'
+                'donationLinksToUpdate',
               ).at(index)?.donationProviderId
 
               return (
@@ -298,7 +298,7 @@ function UserDonationsUpdates({
                 >
                   <Input
                     {...registerUpdate(
-                      `donationLinksToUpdate.${index}.address` as const
+                      `donationLinksToUpdate.${index}.address` as const,
                     )}
                     placeholder="Enter an address.."
                     defaultValue={field.address}
@@ -339,7 +339,7 @@ function UserDonationsUpdates({
             { newDonationLink: data },
             {
               onSuccess: () => resetCreate(),
-            }
+            },
           )
         })}
       >

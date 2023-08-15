@@ -94,7 +94,7 @@ export const postTagsRouter = router({
       z.object({
         postId: z.string().cuid(),
         tagId: z.string().cuid(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { postId, tagId } = input
@@ -118,7 +118,7 @@ export const postTagsRouter = router({
       z.object({
         postId: z.string().cuid(),
         tagId: z.string().cuid(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { postId, tagId } = input

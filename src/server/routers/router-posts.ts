@@ -346,7 +346,7 @@ export const postsRouter = router({
     .input(
       z.object({
         postId: z.string().cuid(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { postId } = input

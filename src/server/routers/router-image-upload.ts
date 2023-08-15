@@ -15,7 +15,7 @@ export const imageUploadRouter = router({
     .input(
       z.object({
         fileType: schemaImageFileType,
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { fileType } = input
@@ -45,7 +45,7 @@ export const imageUploadRouter = router({
       z.object({
         postSegmentId: z.string().cuid(),
         fileType: schemaImageFileType,
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { postSegmentId, fileType } = input

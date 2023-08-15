@@ -13,7 +13,7 @@ export const postLikesRouter = router({
     .input(
       z.object({
         postId: z.string().cuid(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const { postId } = input

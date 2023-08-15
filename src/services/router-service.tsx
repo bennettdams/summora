@@ -23,7 +23,7 @@ export function createRouteWithSearchParam({
 
 export function getSearchParam(
   searchParamKey: SearchParamKey,
-  routerQuery: URLSearchParamsNext
+  routerQuery: URLSearchParamsNext,
 ) {
   const searchParamRaw = routerQuery[searchParamKey]
   if (typeof searchParamRaw === 'string') {

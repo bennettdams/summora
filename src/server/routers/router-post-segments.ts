@@ -62,7 +62,7 @@ export const postSegmentsRouter = router({
     .input(
       z.object({
         postId: z.string().cuid(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const { postId } = input
@@ -98,7 +98,7 @@ export const postSegmentsRouter = router({
       z.object({
         postSegmentId: z.string().cuid(),
         position: z.nativeEnum(PostSegmentImagePosition),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { postSegmentId, position } = input
@@ -138,7 +138,7 @@ export const postSegmentsRouter = router({
     .input(
       z.object({
         segmentId: z.string().cuid(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { segmentId } = input

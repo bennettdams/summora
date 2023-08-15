@@ -10,7 +10,7 @@ import { OmitStrict, Undefinable } from '../types/util-types'
  */
 export type FormDefaultValuesUndefinable<
   TSchema extends z.ZodTypeAny['_output'],
-  TKeyToOverwrite extends keyof TSchema
+  TKeyToOverwrite extends keyof TSchema,
 > = OmitStrict<TSchema, TKeyToOverwrite> & {
   [K in keyof TSchema as TKeyToOverwrite]: Undefinable<TSchema[TKeyToOverwrite]>
 }
@@ -97,7 +97,7 @@ export const schemaUpdateDonationLink = z.object({
       .refine((data) => !!data.address || !!data.donationProviderId, {
         message: 'Either address or donation provider should be changed.',
         path: [generalFormErrorKey],
-      })
+      }),
   ),
 })
 

@@ -128,8 +128,8 @@ function filterTags({
   return tagsToFilter.filter(
     (tagToFilter) =>
       !tagsExisting.some(
-        (tagExisting) => tagExisting.tagId === tagToFilter.tagId
-      )
+        (tagExisting) => tagExisting.tagId === tagToFilter.tagId,
+      ),
   )
 }
 
@@ -160,7 +160,7 @@ export function TagsSelection({
 
   const defaultValuesTagSearch: SchemaTagSearch = useMemo(
     () => ({ searchInput: '' }),
-    []
+    [],
   )
   const {
     handleSubmit: handleSubmitTagSearch,
@@ -195,7 +195,7 @@ export function TagsSelection({
           (schemaTagSearch.shape.searchInput.minLength ?? 2),
       keepPreviousData: true,
       refetchOnWindowFocus: false,
-    }
+    },
   )
 
   async function handleAddTag(tag: TagTagslist): Promise<void> {
@@ -206,11 +206,11 @@ export function TagsSelection({
     if (isSubmitEnabled) {
       if (!inputTagSearch)
         throw new Error(
-          'There is no input for the tag label, this should not have happened.'
+          'There is no input for the tag label, this should not have happened.',
         )
       if (!postId)
         throw new Error(
-          'Wanted to create a tag but post ID is null, show not have happened.'
+          'Wanted to create a tag but post ID is null, show not have happened.',
         )
       createPostTag.mutate(
         { postId, tagLabel: inputTagSearch },
@@ -220,7 +220,7 @@ export function TagsSelection({
             utils.postTags.invalidate()
             utils.posts.invalidate()
           },
-        }
+        },
       )
     }
   }
@@ -333,7 +333,7 @@ function TagsPopularCategory({
     {
       categoryId: postCategoryId,
     },
-    { enabled: postCategoryId !== null }
+    { enabled: postCategoryId !== null },
   )
 
   return (

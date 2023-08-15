@@ -49,7 +49,7 @@ export function PostSegmentImage({
     trpc.imageUpload.getPresignedUrlPostSegmentImage.useMutation()
 
   const [isLoadingImageForUpload, setIsLoadingImageForUpload] = useState(
-    () => false
+    () => false,
   )
 
   return (
@@ -82,7 +82,7 @@ export function PostSegmentImage({
                         },
                       })
                     },
-                  }
+                  },
                 )
               }}
               isLoadingUpload={

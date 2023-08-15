@@ -52,7 +52,7 @@ export function PostPage(props: PostPageProps): JSX.Element {
   const { data: post, isLoading: isLoadingPost } = trpc.posts.byPostId.useQuery(
     {
       postId: props.postId,
-    }
+    },
   )
   const { userIdAuth } = useAuth()
 
@@ -231,7 +231,7 @@ function PostHeader({
       title,
       subtitle: subtitle ?? undefined,
     }),
-    [postId, title, subtitle]
+    [postId, title, subtitle],
   )
 
   const {
@@ -354,7 +354,7 @@ function PostMeta({
   // CATEGORY
   const [isShownCategoryDropdown, setIsShownCategoryDropdown] = useState(false)
   const [refCategory] = useHover<HTMLDivElement>(() =>
-    setIsShownCategoryDropdown(true)
+    setIsShownCategoryDropdown(true),
   )
   useOnClickOutside(refCategory, () => setIsShownCategoryDropdown(false))
 
@@ -481,7 +481,7 @@ function PostMeta({
               onClick={() => {
                 deletePost.mutate(
                   { postId },
-                  { onSuccess: () => router.push(ROUTES.home) }
+                  { onSuccess: () => router.push(ROUTES.home) },
                 )
               }}
               variant="secondary"
@@ -601,7 +601,7 @@ function SourceURLPopover({
                               onSuccess: () => {
                                 invalidate()
                               },
-                            }
+                            },
                           )
                         }
                       })}
@@ -632,7 +632,7 @@ function SourceURLPopover({
                         onClick={() =>
                           updateSourceURL.mutate(
                             { postId, sourceURL: null },
-                            { onSuccess: () => invalidate() }
+                            { onSuccess: () => invalidate() },
                           )
                         }
                       />
@@ -677,7 +677,7 @@ function CategorySelect({
       postId,
       categoryId: categoryIdInitial,
     }),
-    [postId, categoryIdInitial]
+    [postId, categoryIdInitial],
   )
 
   const {
@@ -722,7 +722,7 @@ function CategorySelect({
             {!categoryIdInitial
               ? 'Please select a category'
               : postCategories.find(
-                  (category) => category.id === categoryIdInitial
+                  (category) => category.id === categoryIdInitial,
                 )?.name ?? 'No category'}
           </span>
         </div>

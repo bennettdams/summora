@@ -46,7 +46,7 @@ export function PostSegmentItem({
 
   const defaultValues = useMemo(
     () => ({ segmentItemId: postSegmentItemId, content: itemContent }),
-    [itemContent, postSegmentItemId]
+    [itemContent, postSegmentItemId],
   )
 
   const {

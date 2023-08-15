@@ -62,7 +62,7 @@ export const postCommentsRouter = router({
     .input(
       z.object({
         postId: z.string().cuid(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const { postId } = input
@@ -103,7 +103,7 @@ export const postCommentsRouter = router({
     .input(
       z.object({
         commentId: z.string().cuid(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { commentId } = input
@@ -124,7 +124,7 @@ export const postCommentsRouter = router({
     .input(
       z.object({
         commentId: z.string().cuid(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { commentId } = input
@@ -166,7 +166,7 @@ export const postCommentsRouter = router({
     .input(
       z.object({
         commentId: z.string().cuid(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const { commentId } = input

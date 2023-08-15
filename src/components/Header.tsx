@@ -42,7 +42,7 @@ import { Link } from './link'
 
 const DynamicCreatePostModal = dynamic(
   () => import('./CreatePostModal').then((mod) => mod.CreatePostModal),
-  { ssr: false }
+  { ssr: false },
 )
 
 const NAV_ROUTES = [
@@ -85,7 +85,7 @@ function UserNavbarInternal({ userId }: { userId: string }) {
       refetchOnWindowFocus: false,
       refetchInterval: false,
       keepPreviousData: true,
-    }
+    },
   )
 
   return (
@@ -148,7 +148,7 @@ function UserNavbar() {
                   <p
                     className={classNames(
                       active && 'bg-dsecondary hover:text-white',
-                      'group block px-4 py-2 text-sm'
+                      'group block px-4 py-2 text-sm',
                     )}
                   >
                     <IconUser className="text-dsecondary group-hover:text-white" />
@@ -193,7 +193,7 @@ function SearchInput(): JSX.Element {
       tagIdsToFilter: [],
       categoryIdsToFilter: [],
     }),
-    []
+    [],
   )
   const {
     handleSubmit: handleSubmitPostSearch,
@@ -212,7 +212,7 @@ function SearchInput(): JSX.Element {
 
   const popoverSearchRef = useRef<HTMLDivElement | null>(null)
   useOnClickOutside(popoverSearchRef, () =>
-    setIsPopoverSearchInputActive(false)
+    setIsPopoverSearchInputActive(false),
   )
 
   function handleSearch(searchInput: string) {
@@ -223,7 +223,7 @@ function SearchInput(): JSX.Element {
         route: ROUTES.search,
         searchParamKey: 's',
         value: searchInput,
-      })
+      }),
     )
   }
 
@@ -357,7 +357,7 @@ export function Header(): JSX.Element {
                             route.href === asPath && route.href !== '/'
                               ? 'border-b border-b-dprimary text-dprimary'
                               : 'transition duration-200 hover:bg-dsecondary hover:text-white',
-                            'group rounded-md px-3 py-2.5 text-sm font-semibold'
+                            'group rounded-md px-3 py-2.5 text-sm font-semibold',
                           )}
                           aria-current={
                             route.href === asPath ? 'page' : undefined
@@ -433,7 +433,7 @@ export function Header(): JSX.Element {
                           route.href === asPath
                             ? 'rounded-md bg-dsecondary text-white'
                             : 'hover:rounded-md hover:bg-dprimary hover:text-white',
-                          'block px-3 py-2 text-base font-semibold'
+                          'block px-3 py-2 text-base font-semibold',
                         )}
                         aria-current={
                           route.href === asPath ? 'page' : undefined

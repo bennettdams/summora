@@ -9,7 +9,7 @@ export const useOnClickOutside = (
    * the other ref (here: the button), clicking the button would be considered an outside click.
    * We can therefore ignore outside clicks for the given ref.
    */
-  refExclude?: RefObject<HTMLElement>
+  refExclude?: RefObject<HTMLElement>,
 ): void => {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

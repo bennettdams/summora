@@ -86,7 +86,7 @@ export function Avatar({
     trpc.imageUpload.getPresignedUrlAvatar.useMutation()
 
   const [isLoadingImageForUpload, setIsLoadingImageForUpload] = useState(
-    () => false
+    () => false,
   )
 
   return (
@@ -125,7 +125,7 @@ export function Avatar({
                         },
                       })
                     },
-                  }
+                  },
                 )
               }}
               isLoadingUpload={

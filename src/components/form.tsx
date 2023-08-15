@@ -41,7 +41,7 @@ type FormSubmitProps<TFieldValues extends FieldValues> =
   }
 
 export function useIsSubmitEnabled<TFieldValues extends FieldValues>(
-  props: FormSubmitPropsShared<TFieldValues>
+  props: FormSubmitPropsShared<TFieldValues>,
 ) {
   const { isValid, isValidating, submitCount, isDirty, isSubmitting } =
     useFormState({ control: props.control })
@@ -57,7 +57,7 @@ export function useIsSubmitEnabled<TFieldValues extends FieldValues>(
 }
 
 export function FormSubmit<TFieldValues extends FieldValues>(
-  props: FormSubmitProps<TFieldValues>
+  props: FormSubmitProps<TFieldValues>,
 ): JSX.Element {
   const isEnabled = useIsSubmitEnabled(props)
 
@@ -113,7 +113,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     icon,
     ...props
   },
-  ref
+  ref,
 ): JSX.Element {
   return (
     <div className="relative">
@@ -226,7 +226,7 @@ export function FormFieldError<TFieldValues extends FieldValues>({
 }
 
 export function Form(
-  props: React.ComponentPropsWithoutRef<'form'>
+  props: React.ComponentPropsWithoutRef<'form'>,
 ): JSX.Element {
   return (
     <form className={props.className ?? 'inline-block w-full'} {...props}>
@@ -271,7 +271,7 @@ export function FormSelect<TFieldValues extends FieldValues>({
 
                 if (refSelect.current) {
                   refSelect.current.dispatchEvent(
-                    new Event('change', { bubbles: true })
+                    new Event('change', { bubbles: true }),
                   )
                 }
               }}

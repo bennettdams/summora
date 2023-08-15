@@ -15,7 +15,7 @@ export function useImage(
     queryKey: QueryKey
     downloadFn: (imagIedNotNull: string) => Promise<Blob | null>
     getPublicImageURL: (imagIedNotNull: string) => string | null
-  }
+  },
 ) {
   const {
     data,
@@ -50,7 +50,7 @@ export function useImage(
 
   // This is only executed in one case: The consumer has rendered that already has an existing image ID.
   const [publicURL] = useState<string | null>(
-    !!hasImage && !!imageId ? getPublicImageURL(imageId) : null
+    !!hasImage && !!imageId ? getPublicImageURL(imageId) : null,
   )
 
   async function handleRefetch() {

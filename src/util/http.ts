@@ -18,7 +18,7 @@ const base = `${isServer() ? process.env.NEXT_PUBLIC_BASE_URL : ''}${apiPrefix}`
 function createRequest(
   path: RequestInfo,
   args: RequestInit | undefined,
-  notJSON = false
+  notJSON = false,
 ) {
   if (notJSON) {
     return new Request(base + path, args)
@@ -65,7 +65,7 @@ async function http<T>(request: Request): Promise<HttpResponse<T>> {
  */
 export async function get<T>(
   path: string,
-  args: RequestInit = { method: 'get' }
+  args: RequestInit = { method: 'get' },
 ): Promise<HttpResponse<T>> {
   return await http<T>(createRequest(path, args))
 }
@@ -79,7 +79,7 @@ export async function post<T>(
   path: string,
   // TODO Record<string, unknown>?
   body: unknown,
-  args: RequestInit = { method: 'post', body: JSON.stringify(body) }
+  args: RequestInit = { method: 'post', body: JSON.stringify(body) },
 ): Promise<HttpResponse<T>> {
   return await http<T>(createRequest(path, args))
 }
@@ -96,7 +96,7 @@ export const FORM_DATA_FILE_KEY = 'fileToUpload'
 export async function postFile<T>(
   path: string,
   file: File,
-  args: RequestInit = { method: 'post' }
+  args: RequestInit = { method: 'post' },
 ): Promise<HttpResponse<T>> {
   const formData = new FormData()
   formData.append(FORM_DATA_FILE_KEY, file)
@@ -114,7 +114,7 @@ export async function put<T>(
   path: string,
   // TODO Record<string, unknown>?
   body: unknown,
-  args: RequestInit = { method: 'put', body: JSON.stringify(body) }
+  args: RequestInit = { method: 'put', body: JSON.stringify(body) },
 ): Promise<HttpResponse<T>> {
   return await http<T>(createRequest(path, args))
 }
@@ -126,7 +126,7 @@ export async function put<T>(
  */
 export async function deleteHTTP<T>(
   path: string,
-  args: RequestInit = { method: 'delete' }
+  args: RequestInit = { method: 'delete' },
 ): Promise<HttpResponse<T>> {
   return await http<T>(createRequest(path, args))
 }

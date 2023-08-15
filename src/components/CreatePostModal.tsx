@@ -69,7 +69,7 @@ export function CreatePostModal() {
                     reset()
                     await router.push(ROUTES.post(result.id))
                   },
-                }
+                },
               )
             })}
             className="flex w-full flex-col space-y-4 md:px-20 lg:space-y-16 lg:px-6"
