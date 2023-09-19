@@ -42,6 +42,9 @@ export const postLikesRouter = router({
 
       const isAlreadyLiked = await ctx.prisma.user.findFirst({
         where: { id: userIdAuth, likedPosts: { some: { id: postId } } },
+        select: {
+          id: true,
+        },
       })
 
       await ctx.prisma.post.update({
