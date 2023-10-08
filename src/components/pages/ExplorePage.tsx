@@ -66,6 +66,10 @@ export function ExplorePage(): JSX.Element {
   const choiceSelectControlTimeRange = useChoiceSelect(
     [
       {
+        choiceId: 'all',
+        label: 'All',
+      },
+      {
         choiceId: 'day',
         label: 'Day',
       },
@@ -78,7 +82,7 @@ export function ExplorePage(): JSX.Element {
         label: 'Month',
       },
     ],
-    'week',
+    'all',
   )
 
   const [tagsForFilter, setTagsForFilter] = useState<
@@ -93,7 +97,7 @@ export function ExplorePage(): JSX.Element {
     isLoading: isLoadingTopLikes,
     isError: isErrorTopLikes,
   } = trpc.posts.topByLikes.useQuery({
-    dateFromPast: choiceSelectControlTimeRange.selected.choiceId,
+    dateToFilter: choiceSelectControlTimeRange.selected.choiceId,
     tagIdsToFilter: tagsForFilter.map((tag) => tag.tagId),
     categoryIdsToFilter: categoryIdsForFilter,
   })
@@ -102,7 +106,7 @@ export function ExplorePage(): JSX.Element {
     isLoading: isLoadingTopViews,
     isError: isErrorTopViews,
   } = trpc.posts.topByViews.useQuery({
-    dateFromPast: choiceSelectControlTimeRange.selected.choiceId,
+    dateToFilter: choiceSelectControlTimeRange.selected.choiceId,
     tagIdsToFilter: tagsForFilter.map((tag) => tag.tagId),
     categoryIdsToFilter: categoryIdsForFilter,
   })

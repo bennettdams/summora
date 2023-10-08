@@ -160,14 +160,17 @@ export const postsRouter = router({
   topByViews: procedure
     .input(schemaPostsExplore)
     .query(async ({ ctx, input }) => {
-      const { dateFromPast, tagIdsToFilter, categoryIdsToFilter } = input
+      const { dateToFilter, tagIdsToFilter, categoryIdsToFilter } = input
 
       // keep in sync with other "top" query
       return await ctx.prisma.post.findMany({
         select: defaultPostSelect,
         take: 10,
         where: {
-          updatedAt: { gte: createDateFromThePast(dateFromPast) },
+          updatedAt:
+            dateToFilter === 'all'
+              ? undefined
+              : { gte: createDateFromThePast(dateToFilter) },
           postCategoryId:
             categoryIdsToFilter.length === 0
               ? undefined
@@ -192,14 +195,17 @@ export const postsRouter = router({
   topByLikes: procedure
     .input(schemaPostsExplore)
     .query(async ({ ctx, input }) => {
-      const { dateFromPast, tagIdsToFilter, categoryIdsToFilter } = input
+      const { dateToFilter, tagIdsToFilter, categoryIdsToFilter } = input
 
       // keep in sync with other "top" query
       return await ctx.prisma.post.findMany({
         select: defaultPostSelect,
         take: 10,
         where: {
-          updatedAt: { gte: createDateFromThePast(dateFromPast) },
+          updatedAt:
+            dateToFilter === 'all'
+              ? undefined
+              : { gte: createDateFromThePast(dateToFilter) },
           postCategoryId:
             categoryIdsToFilter.length === 0
               ? undefined

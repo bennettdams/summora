@@ -37,7 +37,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       where: { createdAt: { gte: yesterday } },
     }),
     ssg.posts.topByLikes.prefetch({
-      dateFromPast: 'week',
+      dateToFilter: 'week',
       tagIdsToFilter: [],
       categoryIdsToFilter: [],
     }),

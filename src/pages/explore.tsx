@@ -11,12 +11,12 @@ export const getStaticProps: GetStaticProps = async () => {
 
   await Promise.all([
     ssg.posts.topByLikes.prefetch({
-      dateFromPast: 'week',
+      dateToFilter: 'all',
       tagIdsToFilter: [],
       categoryIdsToFilter: [],
     }),
     ssg.posts.topByViews.prefetch({
-      dateFromPast: 'week',
+      dateToFilter: 'all',
       tagIdsToFilter: [],
       categoryIdsToFilter: [],
     }),

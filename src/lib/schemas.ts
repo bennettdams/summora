@@ -170,7 +170,7 @@ export const schemaEditUsername = z.object({
 
 export const schemaImageFileType = z.string().startsWith('image/')
 
-export const schemaDateFromPast = z.union([
+const schemaDateFromPast = z.union([
   z.literal('day'),
   z.literal('week'),
   z.literal('month'),
@@ -180,5 +180,5 @@ export type DateFromPast = z.infer<typeof schemaDateFromPast>
 export const schemaPostsExplore = z.object({
   tagIdsToFilter: z.array(z.string().cuid()),
   categoryIdsToFilter: z.array(schemaPostCategoryId),
-  dateFromPast: schemaDateFromPast,
+  dateToFilter: schemaDateFromPast.or(z.literal('all')),
 })
