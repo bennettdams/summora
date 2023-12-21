@@ -111,7 +111,7 @@ export function PostSegmentImage({
             // className={`object-contain duration-500 ease-in-out ${
             //   isLoadingImage ? 'blur-xl grayscale' : 'blur-0 grayscale-0'
             // }`}
-            onLoadingComplete={() => setIsLoadingImageForUpload(false)}
+            onLoad={() => setIsLoadingImageForUpload(false)}
           />
           <Modal
             forceFullWidth

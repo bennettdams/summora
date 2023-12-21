@@ -155,7 +155,7 @@ export function Avatar({
             // className={`rounded-full duration-75 ease-in-out ${
             //   isLoadingImage ? 'blur-2xl grayscale' : 'blur-0 grayscale-0'
             // }`}
-            onLoadingComplete={() => setIsLoadingImageForUpload(false)}
+            onLoad={() => setIsLoadingImageForUpload(false)}
           />
         </div>
       ) : (

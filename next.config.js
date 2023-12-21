@@ -5,9 +5,17 @@ const nextConfig = {
   //   ignoreBuildErrors: true,
   // },
   images: {
-    domains: [
-      'summora-prod.s3.amazonaws.com',
-      'condun-bucket-dev.s3.amazonaws.com',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'summora-prod.s3.amazonaws.com',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'condun-bucket-dev.s3.amazonaws.com',
+        port: '',
+      },
     ],
   },
 }
