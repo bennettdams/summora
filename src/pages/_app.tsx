@@ -1,5 +1,6 @@
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { type Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import { type AppType } from 'next/app'
@@ -118,6 +119,7 @@ const App: AppType<{ session: Session | null }> = ({
               <ErrorBoundary>
                 {/* <TailwindCSSBreakpoint /> */}
                 <Component {...pageProps} />
+                <SpeedInsights />
                 <Analytics />
               </ErrorBoundary>
             </main>
