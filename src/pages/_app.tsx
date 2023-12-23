@@ -4,7 +4,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { type Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import { type AppType } from 'next/app'
-import { Labrada, Nunito } from 'next/font/google'
+import { DM_Serif_Display, Nunito } from 'next/font/google'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useRef } from 'react'
@@ -21,7 +21,7 @@ const globalFont = Nunito({
   display: 'swap',
 })
 
-const globalFontSerif = Labrada({
+const globalFontSerif = DM_Serif_Display({
   subsets: ['latin'],
   weight: ['400'],
   variable: '--global-summora-font-serif',
